@@ -1,0 +1,37 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NEXTCLOUD ALLOW SYMLINKS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-17[Apr-Fri]19-05PM 
+
+##https://github.com/nextcloud/server/issues/1257
+
+sudo nano /var/www/html/nextcloud/lib/private/Files/Storage/Local.php
+
+LINE 54
+
+protected $allowSymlinks = true;
+
+NOT WORKING, ANYMORE, VALUE IS ALREADY TRUE IN NC 18
+
+
+==
+
+
+Changing the variable $allowSymlinks to true does seem to work.
+Not too sure about the vulnerabilities though.
+
+Changed: /lib/private/Files/Storage/Local.php
+
+In:
+
+class Local extends \OC\Files\Storage\Common {
+	protected $datadir;
+	protected $dataDirLength;
+	protected $allowSymlinks = false;
+...
+
+To:
+
+	protected $allowSymlinks = true;

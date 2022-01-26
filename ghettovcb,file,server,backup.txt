@@ -1,0 +1,1 @@
+/vmfs/volumes/dstore-vmback/ghvcb/util/hv2/bin/ghettoVCB-fs.sh -f /vmfs/volumes/dstore-vmback/ghvcb/util/hv2/bin/hv2vm-fs > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-hv2-fs-$(date +%m-%d-%y).log&

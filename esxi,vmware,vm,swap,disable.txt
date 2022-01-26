@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE DISABLE SWAP ON VM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-04[Jan-Sat]10-34AM 
+
+##NOT DONE, NOT WORKING
+
+sed -i '/sched.swap.derivedName*/c\sched.swap.vmxSwapEnabled = "FALSE"' /mnt/pool1/COSTBELT/COSTBELT.vmx

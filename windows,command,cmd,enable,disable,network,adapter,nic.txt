@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS DISABLE AND ENABLE NETWORK ADAPTER COMMAND LINE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-21[Aug-Fri]21-23PM 
+
+##https://www.action1.com/kb/disabling-or-enabling-network-adapter-in-Windows-with-WMIC.html
+
+==
+GET NIC INDEX
+==
+
+wmic nic get name, index
+
+==
+USE INDEX - DISABLE ADAPTER
+==
+
+wmic path win32_networkadapter where index = (1) call disable
+
+==
+ENABLE ADAPTER
+==
+
+wmic path win32_networkadapter where index = (1) call enable

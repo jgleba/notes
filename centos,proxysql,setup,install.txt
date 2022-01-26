@@ -1,0 +1,141 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS PROXYSQL INSTALL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-16[Apr-Thu]12-31PM 
+
+##https://community.hostek.com/t/high-availability-with-a-mariadb-galera-mysql-cluster-with-proxysql-tutorial/407
+##https://www.centlinux.com/2019/09/install-proxysql-load-balancer-mysql-centos-7.html
+
+##https://proxysql.com/
+##https://github.com/sysown/proxysql/releases/download/v2.0.10/proxysql-2.0.10-1-centos7.x86_64.rpm
+
+050820
+##https://mydbops.wordpress.com/2018/08/20/proxysql-series-percona-cluster-mariadb-cluster-galera-read-write-split/
+
+==
+DOWNLOAD AND INSTALL PROXYSQL
+==
+
+sudo wget https://github.com/sysown/proxysql/releases/download/v2.0.10/proxysql-2.0.10-1-centos7.x86_64.rpm
+sudo yum -y install proxysql-2.0.10-1-centos7.x86_64.rpm
+sudo yum -y install mysql
+
+==
+CHANGE CONF
+==
+
+sudo nano /etc/proxysql.cnf 
+
+CHANGE admin_credentials 
+
+UPDATE global_variables SET variable_value='admin:aBr4R7BYJy8ud42W' WHERE variable_name='admin-admin_credentials';
+
+#LOAD ADMIN VARIABLES TO RUNTIME;
+#SAVE ADMIN VARIABLES TO DISK;
+==
+ENABLE AND START
+==
+
+sudo systemctl enable proxysql && sudo systemctl start proxysql
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --permanent --add-port=6033/tcp
+sudo firewall-cmd --permanent --add-port=6032/tcp
+sudo firewall-cmd --reload
+
+==
+CONNECT
+==
+
+mysql -u admin -paBr4R7BYJy8ud42W -h 127.0.0.1 -P6032
+mysql -u admin -pC73J3NrajbR9Ay4N -h 127.0.0.1 -P6032
+
+mysql -u admin -pC73J3NrajbR9Ay4N -h 127.0.0.1 -P6032
+
+
+
+
+==
+ADD DB NODES
+==
+
+INSERT INTO mysql_servers(hostgroup_id,hostname,port) VALUES (1,'172.16.3.223',3306);
+INSERT INTO mysql_servers(hostgroup_id,hostname,port) VALUES (1,'172.16.3.224',3306);
+INSERT INTO mysql_servers(hostgroup_id,hostname,port) VALUES (1,'172.16.3.225',3306);
+
+050820
+INSERT INTO mysql_servers(hostgroup_id, hostname, port,weight,comment) VALUES (10,'172.16.3.223',3306,1000000,'WRITE');
+INSERT INTO mysql_servers(hostgroup_id, hostname, port,weight,comment) VALUES (11,'172.16.3.224',3306,1000,'READ');
+INSERT INTO mysql_servers(hostgroup_id, hostname, port,weight,comment) VALUES (11,'172.16.3.225',3306,1000,'READ');
+
+==
+CHECK
+==
+
+SELECT hostgroup_id,hostname,port,status FROM mysql_servers;
+
+==
+ADD MONITORING USER TO PROXYSQL CONFIG
+==
+
+UPDATE global_variables SET variable_value='monitor' WHERE variable_name='cluster_user';
+UPDATE global_variables SET variable_value='monitor' WHERE variable_name='cfW6V3yMnYPLTx6yjz9z';
+
+UPDATE global_variables SET variable_value='monitor' WHERE variable_name='cluster_user';
+UPDATE global_variables SET variable_value='monitor' WHERE variable_name='cfW6V3yMnYPLTx6yjz9z';
+
+==
+CHANGE MONITORING INTERVAL
+==
+
+UPDATE global_variables SET variable_value='2000' WHERE variable_name IN ('mysql-monitor_connect_interval','mysql-monitor_ping_interval','mysql-monitor_read_only_interval');
+
+==
+COMMIT CHANGES
+==
+
+LOAD MYSQL VARIABLES TO RUNTIME;
+LOAD MYSQL SERVERS TO RUNTIME;
+
+SAVE MYSQL VARIABLES TO DISK;
+SAVE MYSQL SERVERS TO DISK;
+
+050820
+load mysql servers to runtime;
+save mysql servers to disk;
+
+==
+CHECK AGAIN
+==
+
+SELECT * FROM monitor.mysql_server_connect_log ORDER BY time_start_us DESC LIMIT 10;
+
+==
+CONNECT TO PROXYSQL ADMIN
+==
+
+mysql -u admin -padmin -h 127.0.0.1 -P6032
+mysql -u admin -paBr4R7BYJy8ud42W -h 127.0.0.1 -P6032
+
+
+==
+050820
+==
+
+DEFINE READ AND WRITE
+
+INSERT INTO mysql_query_rules (rule_id,active,match_pattern,destination_hostgroup,apply) VALUES (1,1,'^SELECT.*FOR UPDATE$',10,1), (2,1,'^SELECT',11,1);
+
+==
+APPLICATION USER
+==
+
+INSERT INTO mysql_users (username,password,default_hostgroup) VALUES ('dbuser','Q3puuay6tCBX4qA8W9Qz',10);
+
+load mysql users to runtime;
+save mysql users to disk;

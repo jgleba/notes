@@ -1,0 +1,67 @@
+==================
+UPDATING WORDPRESS
+071219
+==================
+
+#https://wordpress.org/support/article/upgrading-wordpress-extended-instructions/
+
+==
+FROM WEBSITE
+==
+
+Overview of the Upgrade Process # Overview of the Upgrade Process
+
+    Backup your database.
+    Backup ALL your WordPress files in your WordPress directory. Don’t forget your .htaccess file.
+    Verify the backups you created are there and usable. This is essential.
+    Deactivate ALL your Plugins.
+    Ensure first four steps are completed. Do not attempt the upgrade unless you have completed the first four steps.
+    Download and extract the WordPress package from https://wordpress.org/download/.
+    Delete the old WordPress files on your site, but DO NOT DELETE
+    – wp-config.php file;
+    – wp-content folder; Special Exception: the wp-content/cache and the wp-content/plugins/widgets folders should be deleted.
+    – wp-images folder;
+    – .htaccess file–if you have added custom rules to your .htaccess, do not delete it;
+    – robots.txt file–if your blog lives in the root of your site (ie. the blog is the site) and you have created such a file, do not delete it.
+    Upload the new files from your computer’s hard drive to the appropriate WordPress folder on your site.
+    Run the WordPress upgrade program and follow the instructions on the screen.
+    Update Permalinks and .htaccess.
+    Install updated Plugins and Themes.
+    Reactivate Plugins
+    Review what has changed in WordPress.
+
+==
+JEDIT
+==
+	
+==
+PREP
+==
+
+BACK UP DB
+BACK UP FILES
+
+DISABLE ALL PLUGINS ON LIVE SITE
+
+==
+UPDATE
+==
+
+DOWNLOAD NEWEST VERSION
+
+#https://en-ca.wordpress.org/latest-en_CA.zip
+
+PLACE ON SERVER
+
+REPLACE wp-content folder with existing
+
+COPY .htaccess, wp-config.php and robots.txt INTO NEW SITE ROOT
+
+==
+GO LIVE WITH NEW SITE
+==
+
+GO TO SITE
+MAY NEED TO UPDATE DATABASE
+
+RE-ENABLE PLUGINS

@@ -1,0 +1,9 @@
+=================================
+SEARCH SHODAN.IO FROM ADDRESS BAR
+071119
+JGleba
+=================================
+
+#https://www.shodan.io/host/108.168.14.114
+
+#https://censys.io/ipv4/108.168.14.114

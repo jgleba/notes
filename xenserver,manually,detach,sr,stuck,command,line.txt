@@ -1,0 +1,9 @@
+Manually detach SR XenServer
+
+xe sr-list
+
+xe pbd-list sr-uuid=5afa9265-9385-a0b2-2e35-a15f09072f38
+
+xe pbd-unplug uuid=2d57f87c-cd10-2cba-f75c-ef0ca8be37fc
+
+xe sr-forget uuid=5afa9265-9385-a0b2-2e35-a15f09072f38

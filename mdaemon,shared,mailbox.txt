@@ -1,0 +1,7 @@
+for mdaemon log into server, with outlook and account set up.
+
+go to inbox, right click, properties
+
+change permissions to allow desired user access
+
+close and re-open outlook on client side, account will now show in sidebar

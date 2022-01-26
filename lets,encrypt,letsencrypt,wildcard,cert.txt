@@ -1,0 +1,10 @@
+##LETS ENCRYPT CERTBOT WILDCARD CERT
+##JGleba
+##11/03/2018
+
+#https://community.letsencrypt.org/t/wildcard-domain-step-by-step/58250/4
+#certbot-auto certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns --manual-auth-hook "/path/to/hook-script.sh" --manual-cleanup-hook "/path/to/hook-clean-script.sh" -d 'yourdomain.tld,*.yourdomain.tld'
+
+#TRIED 11/03/18, didn't work, having trouble with dns challenge, godaddy not updating fast enough
+
+certbot certonly --server https://acme-v02.api.letsencrypt.org/directory --manual --preferred-challenges dns -d 'jgleba.com,*.jgleba.com'

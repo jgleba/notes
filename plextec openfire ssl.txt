@@ -1,0 +1,1 @@
+PLEXOPENFIRE - openssl pkcs12 -``export -name yourserver.domain.com -``in cert_bundle.pem -inkey mykey.key -out keystore.p12 - pass

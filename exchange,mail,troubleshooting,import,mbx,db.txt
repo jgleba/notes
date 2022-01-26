@@ -1,0 +1,73 @@
+========================
+EXCHANGE TROUBLESHOOTING
+========================
+
+import not working, stalled
+
+status: StalledDueToCI
+
+https://social.technet.microsoft.com/Forums/azure/en-US/73fd09ad-34a4-4828-96b9-4861a65045ee/mailbox-moves-extremely-slow-and-stopping-with-stalledduetoci-status?forum=exchangesvrdeploy
+https://www.experts-exchange.com/questions/28553395/Exchange-Mailbox-Migration-Status-StalledDueToCI.html
+https://ogbytech.wordpress.com/2014/04/16/exchange-2013-mailbox-moves-are-slow-and-stop-with-status-stalledduetoci/
+
+Problem solved.  There is a bug in Exchange 2013 SP1 that Microsoft is currently working on.  The temporary workaround is to disable content indexing on the DB while you move your mailboxes by running:
+
+Disable the content index on the database as follows:
+Set-MailboxDatabase DB -IndexEnabled:$False
+
+Enable the content index on the database as follows:
+Set-MailboxDatabase DB -IndexEnabled:$True
+
+CHECKING
+
+Get-MailboxDatabaseCopyStatus  | ft -wrap -autosize name, status, contentindexstate,contentindexerrormessage
+
+TRYING, SEEMS TO BE WORKING
+
+https://social.technet.microsoft.com/Forums/azure/en-US/73fd09ad-34a4-4828-96b9-4861a65045ee/mailbox-moves-extremely-slow-and-stopping-with-stalledduetoci-status?forum=exchangesvrdeploy
+
+Set-MailboxDatabase DB -IndexEnabled:$False
+
+ONCE IMPORTS ARE COMPLETED
+
+Set-MailboxDatabase DB -IndexEnabled:$True
+
+MORE RESOURCE, MIGHT BE DIFFERENT
+
+INDEX WENT CORRUPT
+
+[PS] C:\Windows\system32>Get-MailboxDatabaseCopyStatus  | ft -wrap -autosize name, status, contentindexstate,contentinde
+xerrormessage
+
+Name                         Status  ContentIndexState ContentIndexErrorMessage
+----                         ------  ----------------- ------------------------
+DB-SETMA1\SRV-SFA-MBX5      Mounted            Healthy
+DB-SETMA2\SRV-SFA-MBX5      Mounted            Healthy
+DB-MOB1\SRV-SFA-MBX5        Mounted FailedAndSuspended The content index is corrupted.
+DB-MOB2\SRV-SFA-MBX5        Mounted            Healthy
+DB-EURGFTSEAQU\SRV-SFA-MBX5 Mounted            Healthy
+
+*VERY USEFUL, USED, FIXED CORRUPTED EXCHANGE SERVER INDEX*
+https://practical365.com/exchange-server/fix-failed-database-content-index-exchange-2013/
+
+FIXED
+
+http://www.yshvili.com/move-mailbox-new-moverequest-statusdetail-stalledduetoci-exchange-server-2013-sp1/
+http://blog.ryanbetts.co.uk/2014/08/mailbox-new-moverequest-statusdetail.html
+
+To resolve the issue, do the following:
+
+    Create a new Active Directory group that is named "ContentSubmitters" and then grant Admistrators and NetworkService full access to the group using the Security tab on the AD object. This is a dummy group and should be used as a placeholder only. You might want to add a description so that the group is not removed.
+    Force or wait for Active Directory replication.
+    Restart the following services:
+        Microsoft Exchange Search
+        Microsoft Exchange Search Host Controller
+
+This worked a treat for me! Almost immediately the StalledDuetoCI changed to either CopyingMessages or InitalSeeding on the problem mailboxes. The migration continues!
+
+
+
+
+MORE
+
+http://www.itquibbles.com/exchange-2013-mailbox-migration-stuck-syncing-stalledduetoci/

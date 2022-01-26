@@ -1,0 +1,28 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  AUTO TAB COMPLETION IN WEB SHELL UPGRADE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]18-58PM 
+
+##https://medium.com/bugbountywriteup/pimp-my-shell-5-ways-to-upgrade-a-netcat-shell-ecd551a180d2
+
+2. Tab Completion with STTY
+
+This is a great feature that I miss whenever I’m trying to type long file paths or avoid mistyping a file name. However there are a few steps involved and I usually end up having to dig through notes to find them all.
+
+This can get kind of messed up if you don’t already have pseudo-terminal functionality. If you can’t execute the python command in Step 1, try this at your own risk.
+
+First, background your netcat shell by typing:
+
+Ctrl+z
+
+This will appear as though you’ve lost your shell. Don’t worry! We’ll get it back. Next, in your local shell type:
+
+stty raw -echo
+
+Finally, foreground the netcat shell by typing:
+
+fg + [Enter x 2]
+
+This should return your shell with tab auto-completion!

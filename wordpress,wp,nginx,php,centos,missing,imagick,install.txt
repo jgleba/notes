@@ -1,0 +1,58 @@
+================================================
+WP PERFORMANCE SUGGESTION
+WEBCL NGINX NODES
+CHECKED TWOSHEEEP ADMIN -> TOOLS -> SITE HEALTH
+073119
+================================================
+
+==
+SEEING THIS
+==
+
+PHP modules perform most of the tasks on the server that make your site run. Any changes to these must be made by your server administrator.
+
+The WordPress Hosting Team maintains a list of those modules, both recommended and required, in the team handbook (opens in a new tab).
+
+    Warning The optional module, imagick, is not installed, or has been disabled.
+
+==
+INSTALLING imagick
+==
+
+##https://www.thedummyprogrammer.com/linux/install-imagick-library-for-php-on-linux-centos-7
+##https://www.linuxhelp.com/how-to-install-php-imagemagick-on-centos-7
+##https://www.scalescale.com/tips/nginx/install-imagemagick-php-imagick-centos/
+
+
+==
+INSTALL LOTS OF CRAP, WOULDNT WORK WITHOUT
+==
+
+sudo yum install php-pear -y
+sudo yum install ImageMagick -y
+sudo yum install php-devel -y
+sudo yum groupinstall " Development Tools"  -y
+sudo yum install ImageMagick ImageMagick-devel -y
+sudo pecl install Imagick
+
+Build process completed successfully
+Installing '/usr/lib64/php/modules/imagick.so'
+Installing '/usr/include/php/ext/imagick/php_imagick_shared.h'
+install ok: channel://pecl.php.net/imagick-3.4.4
+configuration option "php_ini" is not set to php.ini location
+You should add "extension=imagick.so" to php.ini
+[user@webcln5 sites-enabled]$
+
+==
+ADD TO PHP INI
+==
+
+sudo nano /etc/php.ini
+
+extension=imagick.so
+
+==
+REBOOT
+==
+
+sudo reboot

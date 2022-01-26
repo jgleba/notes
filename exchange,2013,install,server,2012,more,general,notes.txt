@@ -1,0 +1,300 @@
+﻿##MICROSOFT EXCHANGE 2013 INSTALL ON SERVER 2012R2
+##JGleba
+##03-13-2018
+
+ref:
+https://technet.microsoft.com/en-us/library/ff805042(v=exchg.150).aspx
+http://www.mustbegeek.com/install-exchange-server-2013-in-windows-server-2012/
+http://www.mustbegeek.com/configure-exchange-server-2013-to-send-and-receive-outside-email/
+https://www.vultr.com/docs/how-to-setup-exchange-2013-on-a-domain-controller-on-windows-server-2012
+https://prajwaldesai.com/how-to-install-exchange-server-2013/
+http://www.mustbegeek.com/configure-external-and-internal-url-in-exchange-2013/
+
+haproxy exchange ref:
+https://social.technet.microsoft.com/Forums/en-US/6a90e174-d595-4564-90c4-68b74c1c1115/exchange-2016-with-haproxy?forum=Exch2016HADR
+https://discourse.haproxy.org/t/high-number-of-connection-resets-during-transfers-exchange-2013/1158
+https://serverfault.com/questions/736946/exchange-2013-mapi-over-http-load-balancing-haproxy
+http://www.ubuntu-howtodoit.com/?p=66
+https://community.spiceworks.com/how_to/119439-how-to-use-haproxy-for-exchange-2013
+
+attachment limits
+https://www.codetwo.com/admins-blog/exchange-attachment-size-limit-find-change/
+https://technet.microsoft.com/en-us/library/hh529949(v=exchg.160).aspx
+https://exchange-server-guide.blogspot.com/2016/04/increase-file-attachment-size-in-exchange.html
+https://tipsforexchange.wordpress.com/2015/05/08/how-to-change-message-size-limit-in-exchange-server-2013/
+
+##PREREQUISITES
+AD ready
+
+##PREP
+
+On DC in powershell:
+Install-WindowsFeature RSAT-ADDS
+
+On MBX/CAS:
+Install-WindowsFeature AS-HTTP-Activation, Desktop-Experience, NET-Framework-45-Features, RPC-over-HTTP-proxy, RSAT-Clustering, RSAT-Clustering-CmdInterface, RSAT-Clustering-Mgmt, RSAT-Clustering-PowerShell, Web-Mgmt-Console, WAS-Process-Model, Web-Asp-Net45, Web-Basic-Auth, Web-Client-Auth, Web-Digest-Auth, Web-Dir-Browsing, Web-Dyn-Compression, Web-Http-Errors, Web-Http-Logging, Web-Http-Redirect, Web-Http-Tracing, Web-ISAPI-Ext, Web-ISAPI-Filter, Web-Lgcy-Mgmt-Console, Web-Metabase, Web-Mgmt-Console, Web-Mgmt-Service, Web-Net-Ext45, Web-Request-Monitor, Web-Server, Web-Stat-Compression, Web-Static-Content, Web-Windows-Auth, Web-WMI, Windows-Identity-Foundation, RSAT-ADDS
+
+On MBX or Edge Transport box:
+Install-WindowsFeature ADLDS
+Install-WindowsFeature RSAT-ADDS
+
+Download and install Microsoft Unified Communications Managed API 4.0
+https://www.microsoft.com/en-us/download/details.aspx?id=34992
+
+Download and install Microsoft Office 2010 Filter Pack
+https://www.microsoft.com/en-us/download/details.aspx?id=17062
+
+http://www.microsoft.com/en-us/download/details.aspx?id=26604
+Download and install Microsoft Office 2010 Filter Pack SP1
+
+GO THROUGH EXCHANGE SETUP
+
+MOVE DATABASE AND LOGS TO NEW DRIVE
+Get-MailboxDatabase
+Get-MailboxDatabase "Mailbox Database 1876301050" | FL Name,*Path*
+Move-Databasepath "Mailbox Database 1876301050" -EdbFilepath "E:\Exchange\Mailbox Database 1876301050.edb"  -LogFolderpath "E:\ExchangeLogs"
+
+Move-Databasepath "Mailbox Database 0552412834" -EdbFilepath "E:\Exchange\Mailbox Database 0552412834.edb"  -LogFolderpath "E:\ExchangeLogs"
+
+Mailbox Database 0552412834
+
+ECP -> MAIL FLOW
+Go through wizards for accepted domains, email address policies and create send connector
+
+ECP -> SERVERS -> VIRTUAL DIRECTORIES
+Change to reflect correct domain
+
+CONFIGURE INTERNAL URLS TO MATCH EXTERNAL URLS
+In PS:
+$HostName = "Ex2016MBX"
+Set-EcpVirtualDirectory "$HostName\ECP (Default Web Site)" -InternalUrl ((Get-EcpVirtualDirectory "$HostName\ECP (Default Web Site)").ExternalUrl)
+Set-WebServicesVirtualDirectory "$HostName\EWS (Default Web Site)" -InternalUrl ((get-WebServicesVirtualDirectory "$HostName\EWS (Default Web Site)").ExternalUrl)
+Set-ActiveSyncVirtualDirectory "$HostName\Microsoft-Server-ActiveSync (Default Web Site)" -InternalUrl ((Get-ActiveSyncVirtualDirectory "$HostName\Microsoft-Server-ActiveSync (Default Web Site)").ExternalUrl)
+Set-OabVirtualDirectory "$HostName\OAB (Default Web Site)" -InternalUrl ((Get-OabVirtualDirectory "$HostName\OAB (Default Web Site)").ExternalUrl)
+Set-OwaVirtualDirectory "$HostName\OWA (Default Web Site)" -InternalUrl ((Get-OwaVirtualDirectory "$HostName\OWA (Default Web Site)").ExternalUrl)
+Set-PowerShellVirtualDirectory "$HostName\PowerShell (Default Web Site)" -InternalUrl ((Get-PowerShellVirtualDirectory "$HostName\PowerShell (Default Web Site)").ExternalUrl)
+
+ECP -> SERVERS
+
+ECP -> SERVERS -> SERVER -> PROPERTIES -> OUTLOOK ANYWHERE
+
+Get-ClientAccessServer | Set-ClientAccessServer –AutoDiscoverServiceInternalUri https://autodiscover.jgleba.com/autodiscover/autodiscover.xml
+Set-ClientAccessServer -Identity MBG-MAIL -AutoDiscoverServiceInternalUri https://autodiscover.mustbegeek.com/Autodiscover/Autodiscover.xml
+Get-ClientAccessServer | FL AutoDiscoverServiceInternalUri
+
+ENABLE MAPI OVER HTTP
+Set-OrganizationConfig -MapiHttpEnabled $true
+
+Set-MapiVirtualDirectory -Identity "mail\mapi (Default Web Site)" -InternalUrl https://mail.jgleba.com/mapi -IISAuthenticationMethods Negotiate
+Set-MapiVirtualDirectory -Identity "mail\mapi (Default Web Site)" -ExternalUrl https://mail.jgleba.com/mapi -IISAuthenticationMethods Negotiate
+
+==
+LICENSE KEY USING, SEEMS TO WORK FINE
+==
+
+Exchange Server 2013 Enterprise Edition
+XXX
+
+
+==
+ATTACHMENT LIMITS
+==
+
+Client Access (frontend)
+%ExchangeInstallPath%FrontEnd\HttpProxy\Sync\web.config
+maxAllowedContentLength="30000000"   Not present by default (see comments).
+
+Client Access (frontend)
+%ExchangeInstallPath%FrontEnd\HttpProxy\Sync\web.config
+maxRequestLength="10240"
+
+Backend
+%ExchangeInstallPath%ClientAccess\Sync\web.config
+maxAllowedContentLength="30000000 bytes"   Not present by default (see comments).
+
+Backend
+%ExchangeInstallPath%ClientAccess\Sync\web.config
+maxRequestLength="10240"
+
+Backend	
+%ExchangeInstallPath%ClientAccess\Sync\web.config
+<add key="MaxDocumentDataSize" value="10240000"> 
+
+
+get-transportconfig | ft maxsendsize, maxreceivesize 
+get-receiveconnector | ft name, maxmessagesize 
+get-sendconnector | ft name, maxmessagesize 
+get-mailbox Administrator |ft Name, Maxsendsize, maxreceivesize
+
+Set-TransportConfig -MaxReceiveSize 100MB -MaxSendSize 100MB
+Get-SendConnector | Set-SendConnector -MaxMessageSize 100MB
+Get-ReceiveConnector | Set-ReceiveConnector -MaxMessageSize
+
+Global Transport Settings:
+
+Get-TransportConfig | Format-List -Property MaxReceiveSize, MaxSendSize
+
+All Send Connectors:
+
+Get-SendConnector | Format-List -Property Identity, MaxMessageSize
+
+All Receive Connectors
+
+Get-ReceiveConnector | Format-List -Property Identity, MaxMessageSize
+
+All Routing Group Connectors for the organizations, which got transitioned from legacy Exchange versions
+
+Get-RoutingGroupConnector | Format-List -Property Identity, MaxMessageSize
+
+Global Transport Settings:
+
+Set-TransportConfig -MaxReceiveSize 40MB -MaxSendSize 40MB
+
+All Send Connectors:
+
+Get-SendConnector | Set-SendConnector -MaxMessageSize 40MB
+
+All Receive Connectors
+
+Get-ReceiveConnector | Set-ReceiveConnector -MaxMessageSize 40MB
+
+All Routing Group Connectors for the legacy Exchange organizations
+
+Get-RoutingGroupConnector | Set-RoutingGroupConnector -MaxMessageSize 40MB
+
+
+CIRCULAR LOGGING
+==
+
+ECP -> Servers -> Databases -> pencil on your db -> maintenance -> circular logging check box
+
+DEFAULT MAILBOX LIMITS
+==
+
+ECP -> Servers -> Databases -> pencil on your db -> limits
+
+SHOW ALL MAILBOXES, EXPORT TO CSV
+==
+
+Get-Mailbox | Select UserPrincipalName, @{Name='EmailAddresses'; Expression={$_.EmailAddresses -join ","}} | Export-Csv C:\Temp\Addresses.csv
+
+==
+LIGHT SPAM FILTERING BY RBL - TRYING - 061119 - PAUSED - NOT SIMPLE
+==
+
+##http://woshub.com/configure-spam-protection-in-exchange-2013-rbl-providers/
+
+Install-TransportAgent -Name "Connection Filtering Agent" -TransportService FrontEnd -TransportAgentFactory "Microsoft.Exchange.Transport.Agent.ConnectionFiltering.ConnectionFilteringAgentFactory" -AssemblyPath "C:\Program Files\Microsoft\Exchange Server\V15\TransportRoles\agents\Hygiene\Microsoft.Exchange.Transport.Agent.Hygiene.dll"
+
+
+##IMPLEMENTED, RUNNING, 061119, NOT SURE IF WILL HELP OR NOT, GETTING MORE SPAM IN MAIN EMAIL ADDRESSES
+##https://practical365.com/exchange-server/add-ip-block-list-provider-exchange-server-2013-edge-transport/
+
+#MAIN BLACKLISTS
+zen.spamhaus.org zen.spamhaus.org 1
+bl.spamcop.net bl.spamcop.net 2
+Spamikaze psbl.surriel.com 3
+BarracudaCentral b.barracudacentral.org 4
+
+#ADDING TO EXCHANGE
+
+#Spamhaus
+Add-IPBlockListProvider -Name Spamhaus -LookupDomain zen.spamhaus.org -AnyMatch $true -Enabled $true -RejectionResponse "IP address is listed by Spamhaus"
+Set-IPBlockListProvider Spamhaus -RejectionResponse "IP address is listed by Spamhaus Zen."
+
+#Spamcop
+Add-IPBlockListProvider -Name Spamcop -LookupDomain bl.spamcop.net -AnyMatch $true -Enabled $true -RejectionResponse "IP address is listed by Spamcop"
+Set-IPBlockListProvider Spamcop -RejectionResponse "IP address is listed by Spamcop."
+
+#Spamikaze
+Add-IPBlockListProvider -Name Spamikaze -LookupDomain psbl.surriel.com -AnyMatch $true -Enabled $true -RejectionResponse "IP address is listed by Spamikaze"
+Set-IPBlockListProvider Spamikaze -RejectionResponse "IP address is listed by Spamikaze."
+
+#BarracudaCentral
+Add-IPBlockListProvider -Name BarracudaCentral -LookupDomain b.barracudacentral.org -AnyMatch $true -Enabled $true -RejectionResponse "IP address is listed by BarracudaCentral"
+Set-IPBlockListProvider BarracudaCentral -RejectionResponse "IP address is listed by BarracudaCentral."
+
+#CHECK
+
+Get-IPBlockListProvider
+
+Get-IPBlockListProvider <IPBlockListProviderIdentity>
+Get-IPBlockListProvider Spamhaus
+
+#SEE STATS - NOT WORKING
+
+cd "C:\Program Files\Microsoft\Exchange Server\V15\scripts"
+.\get-AntispamTopRBLProviders.ps1
+
+.\get-AntispamTopRBLProviders.ps1 -location "C:\Program Files\Microsoft\Exchange Server\V15\TransportRoles\Logs\FrontEnd\AgentLog"
+
+#REMOVING
+#https://www.informaticar.net/exchange-server-2013-how-to-configure-ip-block-list-providers/
+
+Remove-IPBlockListProvider -identity <name>
+
+Remove-IPBlockListProvider -identity Spamikaze
+Remove-IPBlockListProvider -identity BarracudaCentral
+
+##https://docs.microsoft.com/en-us/exchange/antispam-and-antimalware/antispam-protection/connection-filtering?view=exchserver-2019
+
+IP Block List providers
+IP Block List providers are frequently referred to as real-time block lists, or RBLs.
+IP Block List providers compile lists of mail server IP addresses that send spam.
+Many IP Block List providers also compile lists of mail server IP addresses that could be used for spam.
+Examples include mail servers that are configured for open relay, Internet service providers (ISPs) that assign dynamic IP addresses,
+and ISPs that allow SMTP mail server traffic from dial-up accounts.
+
+==
+
+#MORE ANTISPAM / CONTENT FILTER / RBL
+##https://docs.microsoft.com/en-us/exchange/antispam-and-antimalware/antispam-protection/connection-filtering-procedures?view=exchserver-2019
+
+TRIED
+
+[PS] C:\Program Files\Microsoft\Exchange Server\V15\scripts>Get-IPBlockListProvidersConfig | Format-List *Enabled,Bypassed*
+
+Enabled             : True
+ExternalMailEnabled : True
+InternalMailEnabled : False
+BypassedRecipients  : {}
+
+LOOKS LIKE IS ENABLED - 061119
+
+
+
+#MIGHT BE MISSING SOMETHING
+#https://www.techieshelp.com/exchange-2013-enable-anti-spam/
+
+==
+LOGS LOCATION FOR MESSAGE TRACKING, MESSAGE TRACE, TRACK EMAIL
+==
+
+C:\Program Files\Microsoft\Exchange Server\V15\TransportRoles\Logs\MessageTracking
+
+
+
+==
+11221
+==
+
+Error:
+This computer requires .NET Framework 4.8 (https://support.microsoft.com/kb/4503548).
+For more information, visit: https://docs.microsoft.com/Exchange/plan-and-deploy/system-requirements?view=exchserver-2016
+
+Error:
+This computer requires the Microsoft Unified Communications Managed API 4.0, Core Runtime 64-bit. Please install the software from http://go.microsoft.com/fwlink/?LinkId=260990.
+For more information, visit: https://docs.microsoft.com/Exchange/plan-and-deploy/deployment-ref/readiness-checks?view=exchserver-2016
+
+Error:
+Visual C++ 2013 Redistributable Package is a required component. Please install the required binaries and re-run the setup. Use URI https://www.microsoft.com/download/details.aspx?id=40784 to download the binaries.
+For more information, visit: http://technet.microsoft.com/library(EXCHG.150)/ms.exch.setupreadiness.VC2013RedistDependencyRequirement.aspx
+
+Warning:
+Setup will prepare the organization for Exchange Server 2016 by using 'Setup /PrepareAD'. No Exchange Server 2013 roles have been detected in this topology. After this operation, you will not be able to install any Exchange Server 2013 roles.
+For more information, visit: https://docs.microsoft.com/Exchange/plan-and-deploy/deployment-ref/readiness-checks?view=exchserver-2016
+
+Warning:
+Setup will prepare the organization for Exchange Server 2016 by using 'Setup /PrepareAD'. No Exchange Server 2010 roles have been detected in this topology. After this operation, you will not be able to install any Exchange Server 2010 roles.
+For more information, visit: https://docs.microsoft.com/Exchange/plan-and-deploy/deployment-ref/readiness-checks?view=exchserver-2016
+

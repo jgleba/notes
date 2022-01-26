@@ -1,0 +1,39 @@
+NGINX PHP-FPM CHANGE DEFAULT FILE CREATE PERMISSIONS
+072419
+
+by default nginx seems to create new files with 644, want to change to maybe 664:
+
+sudo systemctl edit php-fpm.service
+
+added to override file:
+
+umask 0002
+
+sudo systemctl restart php-fpm.service
+
+TRYING
+
+OVERRIDE FILE IS THERE, BUT NOT WORKING
+
+sudo systemctl daemon-reload && sudo systemctl restart php-fpm && sudo systemctl restart nginx
+
+TRYING THIS
+
+sudo nano /etc/php-fpm.d/www.conf
+
+change listen.mode from commented, default, 0660 to 0664, shouldn't make a change, but trying
+
+NO CHANGE
+
+Hi.
+What I do to achieve read / write on the /var/www directory is, beside doing all the solutions given in above I like to set ACL's on the directory, which solves my read/write problem for particular user.
+
+For example :
+
+setfacl -d -R -m u:amol:rwx /var/www
+
+-d : Default ACL permissions applied on new files
+-R : Apply the ACL permissions recursively
+-m : To set permissions
+
+sudo setfacl -d -R -m u:nginx:nginx ./wpgreeeninfo/wp-content/plugins/wp-instagram-post/vendor/mgp25/instagram-php/sessions/greeenorg

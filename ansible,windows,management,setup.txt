@@ -1,0 +1,83 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ANSIBLE WINDOWS MANAGEMENT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-12[Aug-Wed]17-38PM 
+
+##https://www.bookstack.cn/read/ansible-2.7-en/86931e37f4426697.md
+##https://github.com/diyan/pywinrm/issues/114
+
+==
+ON ANSIBLE BOX
+==
+
+sudo yum install python-pip
+sudo pip install pywinrm
+
+==
+ON REMOTE WINDOWS BOX - NOT NEEDED - VERY INSECURE WAY
+==
+
+winrm set winrm/config/service '@{AllowUnencrypted="true"}'
+
+OR
+
+powershell
+Set-Item WSMan:\localhost\Service\AllowUnencrypted $true
+
+==
+CHECK
+==
+
+winrm get winrm/config
+
+powershell
+Get-Item WSMan:\localhost\Service\AllowUnencrypted
+
+==
+IN ANSIBLE HOSTS FILE
+==
+
+[abc-ts:vars]
+ansible_user=user
+ansible_password='pass'
+ansible_connection=winrm
+ansible_winrm_transport=ntlm
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5985
+
+==
+SPLIT VARS INTO GROUP_VARS FILES
+==
+
+##https://charlesreid1.com/wiki/Ansible/Splitting_Hosts_File
+##https://gist.github.com/andreicristianpetcu/b892338de279af9dac067891579cad7d
+
+[user@ZXANS ansible]$ sudo cat /etc/ansible/group_vars/win_abc_dc
+ansible_user: user
+ansible_password: pass
+ansible_connection: winrm
+ansible_winrm_transport: ntlm
+ansible_winrm_server_cert_validation: ignore
+ansible_port: 5985
+
+==
+TEST PING
+==
+
+[user@ZXANS ~]$ ansible -m win_ping abc-ts
+[WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
+172.16.0.250 | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}
+
+
+
+
+NEED TO CHANGE TO VAULT AND SEPARATE YML FILE
+NEED TO SWITCH TO DOMAIN CREDS
+NEED TO MAKE WORK WITHOUT AllowUnencrypted
+NEED TO MAKE WORK WITH HTTPS ON PORT 5986
+

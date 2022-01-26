@@ -1,0 +1,73 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LARAVEL DOCKER SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-04[Dec-Wed]09-28AM 
+
+##https://medium.com/@shakyShane/laravel-docker-part-1-setup-for-development-e3daaefaf3c
+##https://laravel.com/docs/6.x/routing#view-routes
+##dg
+##https://sf-108-168-7-24.nip.io/d/19ff5b45220246aea489/
+##https://sf-108-168-7-24.nip.io/d/19ff5b45220246aea489/files/?p=/dlara.489s.laravel.2019-10-14.txt
+
+##https://www.digitalocean.com/community/tutorials/how-to-set-up-laravel-nginx-and-mysql-with-docker-compose
+
+==
+PERMISSIONS
+==
+sudo chown -R user:root dlara489
+sudo chmod -R 775 dlara489
+
+sudo chown -R user:root laravel
+sudo chmod -R 775 laravel
+
+sudo chown -R user:root ./
+sudo chmod -R 775 ./
+
+
+==
+DOWNLOAD LARAVEL
+==
+
+sudo curl -L https://github.com/laravel/laravel/archive/v5.3.16.tar.gz | tar xz
+#wget https://github.com/laravel/laravel/archive/v5.3.16.tar.gz | tar xz
+
+==
+RUN CONTAINER RUN COMPOSER
+==
+
+#docker run --rm -v $(pwd):/app composer/composer install
+docker run --rm -v $(pwd):/app composer:1.9 install
+
+==
+DOCKER BUILD
+==
+docker-compose build
+
+==
+DOCKER START LARAVEL
+==
+
+docker-compose up
+
+==
+LARAVEL ARTISAN KEY GENERATE AND OPTIMIZE
+==
+
+docker-compose exec app php artisan key:generate
+#Application key [base64:sEAl9NyOD0M5va310y2XL024ZjORyWZW3Q/z2LQUW0g=] set successfully.
+
+docker-compose exec app php artisan optimize
+
+==
+FILL DB, MIGRATE FROM EXISTING
+==
+
+docker-compose exec app php artisan migrate --seed
+
+==
+RUN PHP DEV SERVER FOR TESTING
+==
+
+docker-compose exec app php artisan serve

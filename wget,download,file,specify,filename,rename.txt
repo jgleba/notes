@@ -1,0 +1,1 @@
+sudo wget -O invoiceninja.zip https://download.invoiceninja.com/

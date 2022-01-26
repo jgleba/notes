@@ -1,0 +1,30 @@
+==================
+FIND LINUX VERSION
+==================
+
+*ubuntu*
+cat /etc/lsb-release
+cat /etc/lsb_release
+
+uname -a
+uname -r
+
+*good* *centos*
+cat /proc/version
+
+fedora: cat /etc/os-release
+
+*good* *ubuntu*
+lsb_release -a
+
+centos version - 050519 - works well
+
+ cat /etc/centos-release
+ 
+==
+040921
+==
+
+WORKS FOR MOST DIST.
+
+sudo cat /etc/os-release

@@ -1,0 +1,103 @@
+==============================================================
+OSSEC AGENT INSTALL (CENTOS, WINDOWS, OVA - VIRTUAL APPLIANCE)
+CREATED feb 2, 2017
+UPDATING - 070919
+==============================================================
+
+==
+INSTALL STUFF
+==
+
+sudo yum install mysql-devel postgresql-devel gcc inotify-tools
+
+==
+FIREWALL
+==
+sudo iptables -A INPUT -p udp --dport 1514 -j ACCEPT
+sudo /usr/sbin/iptables-save
+
+CENTOS AGENT DOWNLOAD / INSTALL
+==
+
+OLD VERSION
+
+sudo wget https://bintray.com/artifact/download/ossec/ossec-hids/ossec-hids-2.8.3.tar.gz
+
+sudo tar -xvf ossec-hids-2.8.3.tar.gz
+cd ossec-hids-2.8.3
+sudo ./install.sh
+
+==
+TRYING TO INSTALL AGENT - 070919 - GETTING ERROR WHEN INSTALLING ON FELB2 - USING OLD VERSION OF AGENT
+==
+
+5- Installing the system
+ - Running the Makefile
+./Makeall: line 127: cc: command not found
+./Makeall: line 128: ./isbigendian: No such file or directory
+INFO: Little endian set.
+
+ *** Making zlib (by Jean-loup Gailly and Mark Adler)  ***
+make[1]: Entering directory `/home/user/ossec-hids-2.8.3/src/external'
+cd zlib-1.2.8/; ./configure; make libz.a;
+Checking for gcc...
+Compiler error reporting is too harsh for ./configure (perhaps remove -Werror).
+** ./configure aborting.
+make[2]: Entering directory `/home/user/ossec-hids-2.8.3/src/external/zlib-1.2.8'
+make[2]: *** No rule to make target `libz.a'.  Stop.
+make[2]: Leaving directory `/home/user/ossec-hids-2.8.3/src/external/zlib-1.2.8'
+make[1]: *** [libz.a] Error 2
+make[1]: Leaving directory `/home/user/ossec-hids-2.8.3/src/external'
+
+Error Making zlib
+make: *** [all] Error 1
+
+==
+TRYING
+==
+
+sudo wget https://github.com/ossec/ossec-hids/archive/3.3.0.tar.gz
+sudo tar -xvf 3.3.0.tar.gz
+cd ossec-hids-3.3.0
+sudo ./install.sh
+
+==
+STILL GETTING ERROR, STUCK, GIVING UP FOR NOW
+==
+
+5- Installing the system
+ - Running the Makefile
+cc  -DMAX_AGENTS=2048 -DOSSECHIDS -DDEFAULTDIR=\"/var/ossec\" -DUSER=\"ossec\" -DREMUSER=\"ossecr\" -DGROUPGLOBAL=\"ossec\" -DMAILUSER=\"ossecm\" -DLinux -DINOTIFY_ENABLED -DZLIB_SYSTEM -I./external/pcre2-10.32//install/include/ -DPCRE2_STATIC -DUSE_PCRE2_JIT -DCLIENT -Wall -Wextra -I./ -I./headers/ -c external/cJSON/cJSON.c -o external/cJSON/cJSON.o
+make: cc: Command not found
+make: *** [external/cJSON/cJSON.o] Error 127
+
+ Error 0x5.
+ Building error. Unable to finish the installation.
+
+==
+CONTINUING INSTRUCTIONS FROM BEFORE
+==
+
+after install of agent add key
+sudo /var/ossec/bin/manage_agents
+
+after add key from server to client
+sudo /var/ossec/bin/ossec-control start
+
+==
+WINDOWS AGENT INSTALL
+==
+
+https://bintray.com/artifact/download/ossec/ossec-hids/ossec-agent-win32-2.8.3.exe
+
+==
+OVA (VIRTUAL APPLIANCE) INSTALL - NEVER TRIED
+==
+
+http://ossec.wazuh.com/vm/ossec-vm-2.8.3.ova
+
+==
+USEFUL CONFIG FILE LOCATION
+==
+
+sudo nano /var/ossec/etc/ossec.conf

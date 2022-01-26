@@ -1,0 +1,43 @@
+##CENTOS INSTALL RSYSLOG, SYSLOG SERVER
+##JGleba
+##12/27/2018
+##https://www.svennd.be/setup-central-syslog-server-on-centos-7/
+##others
+##https://www.tecmint.com/create-centralized-log-server-with-rsyslog-in-centos-7/
+##https://www.itzgeek.com/how-tos/linux/centos-how-tos/setup-syslog-server-on-centos-6-rhel-6.html
+##https://www.itzgeek.com/how-tos/linux/centos-how-tos/setup-syslog-server-on-centos-7-rhel-7.html
+
+#SERVER INSTALL
+
+##INSTALLING RSYSLOG
+sudo yum install rsyslog -y
+#was already installed on centos 7
+
+##CONFIGURE RSYSLOG
+sudo nano /etc/rsyslog.conf
+
+##uncomment server lines, using tcp:
+
+# Provides TCP syslog reception
+$ModLoad imtcp
+$InputTCPServerRun 514
+
+sudo systemctl restart rsyslog
+
+##FIREWALL
+##sudo iptables -I INPUT -p tcp --dport 514 -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=514/tcp --permanent
+sudo firewall-cmd --reload
+
+#CLIENT INSTALL
+sudo yum install rsyslog -y
+
+# edit the config
+nano +92 /etc/rsyslog.conf
+# add, this would log everything
+# possible you would wanne restrict this a bit 
+# see man rsyslog.conf http://linux.die.net/man/5/rsyslog.conf
+*.* @SERVER_IP:514
+
+TEST
+logger "Test message from the system `hostname`"

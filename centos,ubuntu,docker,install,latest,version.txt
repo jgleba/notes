@@ -1,0 +1,25 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU OR CENTOS DOCKER INSTALL LATEST VERSION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-02[Feb-Sun]12-44PM 
+
+==
+INSTALL
+==
+
+sudo curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+==
+START AND ENABLE ON BOOT
+==
+
+sudo systemctl start docker.service && sudo systemctl enable docker.service
+
+==
+SET NON ROOT USER ACCESS FOR DOCKER
+==
+
+sudo usermod -aG docker user

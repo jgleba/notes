@@ -1,0 +1,33 @@
+CENTOS DISK CHANGE, ADD, PROBLEMS - 060619
+
+added new disk to replace movies, to get back disk space
+
+when did that disk positions on vm changed
+
+wouldn't boot anymore
+
+kept going into emergency mode
+
+==
+
+stuck
+
+==
+
+removed all disks from /etc/fstab
+
+then would boot
+
+stuck on sdb
+
+tried to reset / rescan drives - no change
+
+tried to remove all disks and re-add - no change
+
+==
+
+FIXED
+
+==
+
+issue was that on tv shows disk, needed to be mounted at /dev/sdb1 NOT AT /dev/sdb like all other disks are mounted

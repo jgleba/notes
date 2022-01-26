@@ -1,0 +1,32 @@
+copy all files lin - use ./../../'.'
+
+
+
+
+
+
+yum install samba samba-client samba-common 
+mv /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+systemctl enable smb.service
+systemctl enable nmb.service
+systemctl restart smb.service
+systemctl restart nmb.service
+
+chcon -R -t samba_share_t
+
+
+groupadd smbgrp
+useradd srijan -G smbgrp
+smbpasswd -a srijan
+
+cd /samba
+chown -R srijan:smbgrp secured/
+
+
+[secured]
+ path = /samba/secured
+ valid users = @smbgrp
+ guest ok = no
+ writable = yes
+ browsable = yes

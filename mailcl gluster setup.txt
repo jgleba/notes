@@ -1,0 +1,241 @@
+##iRedmail FRONT END MAIL CLUSTER + GLUSTER SHARED MAILBOX STORAGE
+##Justin Gleba
+##12-28-2017
+
+OTHER REF - 02-09-19
+https://technologyadvice.com/blog/information-technology/ceph-vs-gluster/
+
+
+UPDATE
+======
+sudo yum install nano wget bzip2 -y
+sudo yum update -y
+
+SELINUX
+========
+##sudo nano /etc/sysconfig/selinux
+##sudo setenforce 0
+
+##WAY BETTER
+sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+
+HOSTS FILE
+==========
+sudo nano /etc/hosts
+
+172.16.3.111 mx1.jgleba.com mx1
+172.16.3.112 mx2.jgleba.com mx2
+172.16.3.113 mx3.jgleba.com mx3
+
+SSH SETUP
+=========
+sudo ssh-keygen
+
+sudo ssh-copy-id root@172.16.3.112
+sudo ssh-copy-id root@172.16.3.113
+
+sudo ssh-copy-id root@172.16.3.111
+sudo ssh-copy-id root@172.16.3.113
+
+sudo ssh-copy-id root@172.16.3.111
+sudo ssh-copy-id root@172.16.3.112
+
+ssh-copy-id root@172.16.3.211
+ssh-copy-id root@172.16.3.212
+ssh-copy-id root@172.16.3.213
+
+FIREWALL
+========
+sudo firewall-cmd --zone=public --add-port=24007/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49155/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24007/udp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49155/udp --permanent
+sudo firewall-cmd --reload
+
+sudo iptables -A IN_iredmail_allow -p tcp --dport 24007 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p tcp --dport 24008 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p tcp --dport 49152 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p tcp --dport 49153 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p tcp --dport 49154 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p tcp --dport 49155 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 24007 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 24008 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 49152 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 49153 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 49154 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 49155 -j ACCEPT
+sudo /usr/sbin/iptables-save
+
+CREATE DIRS
+===========
+sudo mkdir -p /j/bin
+cd /j/bin
+sudo nano iptables.sh
+sudo chmod -R 775 iptables.sh
+sudo crontab -e
+@reboot /bin/sh /j/bin/iptables.sh
+
+cd /home/
+sudo mkdir mbox
+sudo chown -R root:root mbox
+sudo chmod -R 775 mbox
+
+cd /home/
+sudo mkdir mbox2
+sudo chown -R root:root mbox2
+sudo chmod -R 775 mbox2
+
+cd /mnt
+sudo mkdir gluster
+sudo chown -R root:root /mnt/gluster
+sudo chmod -R 775 gluster
+
+mv /mnt/gluster/* /home/mbox2/
+
+sudo mv /mnt/gluster /mnt/gluster2
+
+sudo rm -r /mnt/gluster
+sudo mv /mnt/gluster2 /mnt/gluster
+
+sudo chown -R vmail:vmail /mnt/gluster
+sudo chmod -R 700 /mnt/gluster
+
+sudo rm -r /home/mbox2
+sudo rm -r /home/vmail
+sudo mkdir -p /home/web
+sudo chown -R root:root /home/web
+sudo chmod -R 755 /home/web
+sudo rm -r /mnt/gluster2
+sudo mkdir -p /mnt/gluster2
+sudo chown -R root:root /mnt/gluster2
+sudo chmod -R 755 /mnt/gluster2
+
+cd /var
+sudo rm -r www
+sudo ln -s /mnt/gluster2 www
+sudo chmod -R 775 /var/www
+
+cd /home/
+sudo rm -r 
+
+cd /j/bin
+sudo nano iptables.sh
+
+WEB DIRS 
+========
+sudo mkdir -p /home/web
+sudo chown -R root:apache /home/web
+sudo chmod -R 770 /home/web
+sudo chown -R root:apache /mnt/gl
+sudo chmod -R 770 /mnt/gl
+
+sudo chown -R root:root /mnt/gluster
+sudo chmod -R 775 /mnt/gluster
+sudo chown -R root:root /home/mbox
+sudo chmod -R 775 /home/mbox
+
+cd /var/www/
+sudo rm internet
+sudo ln -s /mnt/gl/internetroot internet
+sudo chown -R root:apache internet
+sudo chmod -R 775 /mnt/gl/internetroot
+
+cd /etc/httpd
+sudo rm sites-enabled
+sudo ln -s /mnt/gl/sites-enabled sites-enabled
+sudo chown -R root:apache sites-enabled
+sudo chmod -R 775 sites-enabled
+
+sudo chown -R root:apache conf
+sudo chmod -R 775 conf
+
+sudo cd
+cd /etc/httpd
+sudo rm conf
+sudo ln -s /mnt/gl/conf conf
+ls -la
+
+GLUSTER
+=======
+RUN INSTALL 3 TIMES ## CONFIRMED 01-10-2018
+sudo yum -y install glusterfs-server glusterfs-fuse glusterfs-cli glusterfs-resource-agents
+sudo yum -y install centos-release-gluster
+
+sudo systemctl enable glusterd.service
+sudo systemctl start glusterd.service
+
+gluster peer probe mx2
+gluster peer probe mx3
+
+gluster volume create iredmbox replica 3 mx1:/home/mbox mx2:/home/mbox mx3:/home/mbox force
+gluster volume start iredmbox
+
+gluster volume create iredwebvol1 replica 3 mx1:/home/web mx2:/home/web mx3:/home/web force
+gluster volume start iredwebvol1
+
+sudo gluster volume create webvol1 replica 4 webclnode1:/home/web webclnode2:/home/web webclnode3:/home/web webclnode4:/home/web force
+sudo gluster volume start webvol1
+
+sudo gluster peer probe webclnode2
+
+gluster volume set iredmbox network.ping-timeout 3
+
+FSTAB AUTO MOUNT
+================
+sudo nano /etc/fstab
+
+sleep 15
+mx1:iredmbox /mnt/gluster/  glusterfs  defaults,backupvolfile-server=mx2,backupvolfile-server=mx3,direct-io-mode=disable,_netdev  0       0
+sleep 15
+mx2:iredmbox /mnt/gluster/  glusterfs  defaults,backupvolfile-server=mx1,backupvolfile-server=mx3,direct-io-mode=disable,_netdev  0       0
+sleep 15
+mx3:iredmbox /mnt/gluster/  glusterfs  defaults,backupvolfile-server=mx1,backupvolfile-server=mx2,direct-io-mode=disable,_netdev  0       0
+
+sleep 15
+mx1:iredwebvol1 /mnt/gluster2/  glusterfs  defaults,backupvolfile-server=mx2,backupvolfile-server=mx3,direct-io-mode=disable,_netdev  0       0
+sleep 15
+mx2:iredwebvol1 /mnt/gluster2/  glusterfs  defaults,backupvolfile-server=mx1,backupvolfile-server=mx3,direct-io-mode=disable,_netdev  0       0
+sleep 15
+mx3:iredwebvol1 /mnt/gluster2/  glusterfs  defaults,backupvolfile-server=mx1,backupvolfile-server=mx2,direct-io-mode=disable,_netdev  0       0
+
+sleep 15
+webclnode1:webvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webclnode2,backupvolfile-server=webclnode3,backupvolfile-server=webclnode4,direct-io-mode=disable,_netdev  0       0
+sleep 15
+webclnode2:webvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webclnode3,backupvolfile-server=webclnode1,backupvolfile-server=webclnode4,direct-io-mode=disable,_netdev  0       0
+sleep 15
+webclnode3:webvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webclnode1,backupvolfile-server=webclnode2,backupvolfile-server=webclnode4,direct-io-mode=disable,_netdev  0       0
+sleep 15
+webclnode4:webvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webclnode1,backupvolfile-server=webclnode2,backupvolfile-server=webclnode3,direct-io-mode=disable,_netdev  0       0
+
+iRedmail SETUP
+==============
+
+sudo wget https://bitbucket.org/zhb/iredmail/downloads/iRedMail-0.9.7.tar.bz2
+sudo tar -xvf iRedMail-0.9.7.tar.bz2
+cd iRedMail-0.9.7
+
+sudo nano ./conf/global
+
+change mysql server to point to cluster
+
+MYSQL_SERVER='172.16.3.105' MYSQL_ROOT_USER='dbuser' MYSQL_GRANT_HOST='172.16.3.105' bash iRedMail.sh
+
+sudo cp -rv /mnt/gluster /root/
+
+sudo rm -R /mnt/gluster/*
+
+copy config to all machines
+scp -rv /root/iRedMail-0.9.7 root@172.16.3.112:/root/
+scp -rv /root/iRedMail-0.9.7 root@172.16.3.113:/root/
+
+cd /root/iRedMail-0.9.7/
+MYSQL_SERVER='172.16.3.105' MYSQL_ROOT_USER='dbuser' MYSQL_GRANT_HOST='172.16.3.105' bash iRedMail.sh
+

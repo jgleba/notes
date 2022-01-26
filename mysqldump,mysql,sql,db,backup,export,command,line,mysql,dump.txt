@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  mysql dump, mysqldump, export, db
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-05-07[May-Thu]12-31PM 
+
+mysqldump -u YourUser -p YourDatabaseName > wantedsqlfile.sql
+
+ mysqldump -u dbuser -p wptwothree > wptwothree_mysqldump.sql
+ 
+mysqldump -u jgleba -p -h 172.16.3.241 wpgreeen > wpgreeen_mysqldump.sql
+mysqldump -u jgleba -p -h 172.16.3.241 wptwosheeep > wptwosheeep_mysqldump.sql
+
+mysqldump -u jgleba -p wpshop > wpshop_mysqldump.sql
+mysqldump -u jgleba -p wpcl > wpcl_mysqldump.sql

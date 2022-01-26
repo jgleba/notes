@@ -1,0 +1,17 @@
+=======================
+TESTING ROUTER SECURITY
+071119
+JGleba
+=======================
+
+==
+GOOD SITES
+==
+
+#https://routersecurity.org/testrouter.php
+
+#https://hackertarget.com/nmap-online-port-scanner/
+
+#https://pentest-tools.com/home
+
+#https://badupnp.benjojo.co.uk/

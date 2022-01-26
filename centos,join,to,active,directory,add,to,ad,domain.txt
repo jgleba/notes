@@ -1,0 +1,110 @@
+=========================================
+CENTOS CONNECT TO ACTIVE DIRECTORY DOMAIN
+110619
+=========================================
+
+##https://www.linuxtechi.com/integrate-rhel7-centos7-windows-active-directory/
+
+==
+INSTALL STUFF
+==
+
+sudo yum install -y sssd realmd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools krb5-workstation openldap-clients policycoreutils-python
+
+==
+CHECK HOSTS FILE AND DNS FILE TO MAKE SURE DC CAN RESOLVE
+==
+
+ping dc1.domain.local
+
+sudo nano /etc/hosts
+sudo nano /etc/resolv.conf
+
+==
+JOIN TO DOMAIN
+==
+
+realm join --user=tech adserver.example.com
+sudo realm join --user=j dc1.domain.local
+
+==
+CHECK
+==
+
+[user@zxjprox ~]$ realm list
+domain.local
+  type: kerberos
+  realm-name: DOMAIN.LOCAL
+  domain-name: domain.local
+  configured: kerberos-member
+  server-software: active-directory
+  client-software: sssd
+  required-package: oddjob
+  required-package: oddjob-mkhomedir
+  required-package: sssd
+  required-package: adcli
+  required-package: samba-common-tools
+  login-formats: %U@domain.local
+  login-policy: allow-realm-logins
+
+==
+CANT QUERY A USER
+==
+
+sudo nano /etc/sssd/sssd.conf
+
+change
+
+use_fully_qualified_names = True
+fallback_homedir = /home/%u@%d
+
+to
+
+use_fully_qualified_names = False
+fallback_homedir = /home/%u
+
+sudo systemctl restart sssd
+sudo systemctl daemon-reload
+
+==
+CHECK GROUP ID FOR GROUP
+==
+
+getent group groupname
+
+==
+CHECK ID FOR USER
+==
+
+id username
+
+==
+SHOULD ADD GROUP TO /etc/group
+==
+
+sudo nano /etc/group
+
+==
+SMB CONFIG SO THAT AD CAN AUTHENICATE
+==
+
+NOT WORKING SO FAR, SMB DOESNT START
+
+##http://www.hexblot.com/blog/centos-7-active-directory-and-samba
+##https://bugs.centos.org/view.php?id=15046
+##https://www.svennd.be/samba-login-using-windows-ad-on-centos-7/
+
+       ##SWITCHING TO AD - 110719
+        #workgroup = WORKGROUP # CAPITALS make it work, domain controllers need hearing aids
+        #security = domain ##ads # active domain server
+        encrypt passwords = yes
+        #realm = DOMAIN.LOCAL # adapt to full domain url
+        #password server = DC1.DOMAIN.LOCAL
+        #kerberos method = secrets and keytab
+
+        workgroup = WORKGROUP
+        server string = zxfm
+        netbios name = zxfm
+        interfaces = lo eth0 172.16.0.0/24
+        hosts allow = 127. 172.16.0.
+        max protocol=SMB3

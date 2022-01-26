@@ -1,0 +1,19 @@
+GRE VPN on Mikrotik
+==
+
+on router 1
+
+in interfaces, gre tunnel
+add local and remote addresses of wans
+
+in ip/addresses
+add static route from local network to tunnel local address
+
+on router 2
+
+in interfaces, gre tunnel
+add local and remote addresses of wan, the other side
+
+in ip/addresses
+add static route from local network to tunnel local address
+

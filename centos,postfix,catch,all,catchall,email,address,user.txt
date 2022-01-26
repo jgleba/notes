@@ -1,0 +1,65 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POSTFIX CATCH ALL EMAIL ADDRESS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-25[Jan-Sat]17-59PM 
+
+##https://tecadmin.net/setup-catch-all-email-account-in-postfix/
+##https://blog.tiger-workshop.com/postfix-catch-all-email-address-handled-by-php/
+
+==
+CREATE USER
+==
+
+sudo useradd mailuser
+
+==
+CREATE VIRTUAL MAP
+==
+
+sudo nano /etc/postfix/virtual
+
+ADD
+
+@ab3q.tk mailuser
+
+sudo postmap /etc/postfix/virtual
+
+sudo nano /etc/postfix/main.cf
+
+ADD
+
+virtual_alias_maps = hash:/etc/postfix/virtual
+
+==
+RELOAD POSTFIX
+==
+
+sudo service postfix reload
+
+==
+
+NOT WORKING
+
+Jan 27 12:20:02 MAILCARE1 postfix/smtpd[5322]: NOQUEUE: reject: RCPT from mail-vs1-f41.google.com[209.85.217.41]: 451 4.3.5 <jgleba@gmail.com>: Sender address rejected: Server configuration error; from=<jgleba@gmail.com> to=<test@ab3q.tk> proto=ESMTP helo=<mail-vs1-f41.google.com>
+Jan 27 12:20:02 MAILCARE1 postfix/smtpd[5322]: disconnect from mail-vs1-f41.google.com[209.85.217.41]
+
+
+==
+TRANSPORT MAP
+==
+
+sudo nano /etc/postfix/transport
+
+ADD
+
+@ab3q.tk mailuser:
+
+sudo postmap /etc/postfix/transport
+
+sudo service postfix reload
+
+==
+WORKING NOW - WAS MISSING @ IN VIRTUAL MAP FILE
+==

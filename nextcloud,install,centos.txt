@@ -1,0 +1,297 @@
+##CENTOS 7 INSTALL NEXTCLOUD (APACHE, PHP 7.0, MYSQL) + BASIC HARDENING
+##06-19-2018
+##JGleba
+
+==
+CENTOS PREP
+==
+
+sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+sudo reboot
+sudo yum install nano wget unzip cifs-utils samba-client -y
+sudo yum install epel-release -y
+sudo yum update -y
+
+==
+APACHE
+==
+
+sudo yum install httpd mod_ssl -y
+sudo systemctl enable httpd
+sudo systemctl start httpd
+
+sudo nano /etc/httpd/conf/httpd.conf
+change 'ServerAdmin root@localhost' to 'ServerAdmin webmaster@jgleba.com'
+
+##ADD TO BOTTOM OF /etc/httpd/conf/httpd.conf
+
+IncludeOptional sites-enabled/*.conf
+ServerTokens Prod
+ServerSignature Off
+FileETag None
+TraceEnable off
+Header set X-XSS-Protection "1; mode=block"
+Timeout 180
+
+sudo mkdir -p /etc/httpd/sites-enabled
+
+sudo service httpd restart
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo rm /etc/httpd/conf.d/welcome.conf
+sudo touch /var/www/html/index.html
+
+sudo service httpd restart
+
+==
+PHP 7.0
+==
+
+sudo rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum install yum-utils -y
+sudo yum-config-manager --enable remi-php70
+##sudo yum --enablerepo=remi-php70
+sudo yum install php -y
+sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache -y
+
+sudo cp /etc/php.ini /etc/php.ini.bak
+sudo sed -i "s/post_max_size = 8M/post_max_size = 10G/" /etc/php.ini
+sudo sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 10G/" /etc/php.ini
+
+sudo nano /etc/php.ini
+change "expose_php = On" to "expose_php = Off"
+
+##need to fix, written 06-23-2018, tried, doesn't work
+##sudo sed -i -e 's/="expose_php = On"/="expose_php = Off"/g' /etc/php.ini
+
+==
+MARIADB (MYSQL)
+==
+
+sudo yum install mariadb mariadb-server -y
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+
+##set root password and lock mysql down - select 'y' to all
+sudo /usr/bin/mysql_secure_installation
+##sudo mysql_secure_installation
+
+mysql -u root -p
+
+##NEED TO CHOOSE 1. or 2.
+
+##1. create user grant all db privileges to user, can create database as user
+GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'user'@'%';
+FLUSH PRIVILEGES;
+exit
+mysql -u user -p
+create database nextcloud;
+
+##2. create database as root, create user, only allow user access to that database
+create database nextcloud;
+GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud'@'%';
+FLUSH PRIVILEGES;
+exit
+
+==
+NEXTCLOUD DATA DIRECTORY CONFIG
+==
+
+sudo mkdir -p /home/nextcloud
+sudo chown -R root:apache /home/nextcloud
+sudo chmod -R 770 /home/nextcloud
+
+==
+INSTALL NEXTCLOUD
+==
+
+cd /var/www/html/
+sudo wget https://download.nextcloud.com/server/releases/nextcloud-13.0.4.zip
+sudo unzip nextcloud-13.0.4.zip
+sudo chown -R root:apache /var/www/html
+sudo chmod -R 770 /var/www/html
+
+==
+HTTP VIRTUAL HOST FILE
+==
+
+sudo nano /etc/httpd/sites-enabled/nextcloud.conf
+
+<VirtualHost *:80>
+	ServerAdmin webmaster@jgleba.com
+	DocumentRoot "/var/www/html/nextcloud/"
+	ServerName nextcloud.jgleba.com
+	ServerAlias nextcloud.jgleba.com
+	<Directory "/var/www/html/nextcloud/">
+		Options +FollowSymLinks
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+</VirtualHost>
+
+==
+HTTPS VIRTUAL HOST FILE + FORCE REDIRECT
+==
+
+<VirtualHost *:80>
+    ServerName nextcloud.jgleba.com
+    ServerAlias nextcloud.jgleba.com
+    Redirect "/" "https://nextcloud.jgleba.com"
+</VirtualHost>
+
+<VirtualHost *:443>
+    SSLEngine On
+        ServerName nextcloud.jgleba.com
+        ServerAlias nextcloud.jgleba.com
+        ServerAdmin webmaster@jgleba.com
+        DocumentRoot "/var/www/html/nextcloud/"
+        <Directory "/var/www/html/nextcloud/">
+                Options +FollowSymLinks
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+    SSLCertificateFile /etc/letsencrypt/live/nextcloud.jgleba.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/nextcloud.jgleba.com/privkey.pem
+</VirtualHost>
+
+==
+NEXTCLOUD ALLOW SYMLINKS
+==
+
+##sudo nano /var/www/html/nextcloud/lib/private/Files/Storage/Local.php
+##change "protected $allowSymlinks = false;" to "protected $allowSymlinks = true;"
+
+##try this, need to check to make sure worked - written 06-23-2018 - never tried
+sudo sed -i -e 's/="protected $allowSymlinks = false;"/="protected $allowSymlinks = true;"/g' /var/www/html/nextcloud/lib/private/Files/Storage/Local.php
+
+==
+NEXTCLOUD RESCAN FOR NEW FILES
+==
+##sudo -u apache php /var/www/html/nextcloud/occ files:scan --all
+sudo -u root php /var/www/html/nextcloud/occ files:scan --all
+
+==
+NEXTCLOUD LOCK DOWN WEB PERMISSIONS WHEN DONE INSTALL
+==
+
+sudo chown -R root:apache /var/www/html
+sudo chmod -R 750 /var/www/html
+sudo chmod -R 770 /var/www/html/nextcloud/apps
+sudo chmod -R 770 /var/www/html/nextcloud/config
+
+==
+NEXTCLOUD PERFORMANCE AND TUNING
+==
+
+##make sure values in file below are correct and uncommented
+sudo nano /etc/php.d/10-opcache.ini
+
+opcache.enable=1
+opcache.enable_cli=1
+opcache.interned_strings_buffer=8
+opcache.max_accelerated_files=10000
+opcache.memory_consumption=128
+opcache.save_comments=1
+opcache.revalidate_freq=1
+
+==
+NEXTCLOUD CRON
+==
+
+##can vary based on which user needs to run cron
+
+##running cron as apache
+sudo crontab -u apache -e
+
+*/15 * * * * php -f /var/www/html/nextcloud/cron.php
+
+##running cron as root
+sudo crontab -e
+
+*/15 * * * * php -f /var/www/html/nextcloud/cron.php
+
+==
+NEXTCLOUD PHP LIMITS IN HTACCESS FILE AND HTTP STRICT TRANSPORT / SAMEORIGIN
+==
+
+sudo nano /var/www/html/nextcloud/.htaccess
+
+        <IfModule mod_headers.c>
+              Header always set Strict-Transport-Security "max-age=15552000; includeSubDomains"
+              Header always append X-Frame-Options SAMEORIGIN
+        </IfModule>
+		  
+
+##was:
+
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 511M
+  php_value post_max_size 511M
+  php_value memory_limit 511M
+  php_value mbstring.func_overload 0
+  php_value default_charset 'UTF-8'
+  php_value output_buffering 0
+  <IfModule mod_env.c>
+    SetEnv htaccessWorking true
+  </IfModule>
+</IfModule>
+
+##changed to:
+		  
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 10G
+  php_value post_max_size 10G
+  php_value memory_limit 10G
+  php_value mbstring.func_overload 0
+  php_value default_charset 'UTF-8'
+  php_value output_buffering 0
+  <IfModule mod_env.c>
+    SetEnv htaccessWorking true
+  </IfModule>
+</IfModule>
+
+==
+NEXTCLOUD FIXING LOCKED FILES
+==
+
+Manually disable locking state:
+
+put Nextcloud in maintenance mode: edit config/config.php and change this line: 'maintenance' => true,
+Empty table oc_file_locks: Use tools such as phpmyadmin or connect directly to your database and run (the default table prefix is oc_, this prefix can be different or even empty):
+DELETE FROM oc_file_locks WHERE 1
+disable maintenance mode (undo first step).
+Make sure your cron-jobs run properly (you admin page tells you when cron ran the last time): https://docs.nextcloud.org/server/13/admin_manual/configuration_server/background_jobs_configuration.html
+
+OLD
+
+sudo nano /var/www/html/nextcloud/config/config.php
+##wasn't in file
+##last time added to file and rebooted nextcloud didn't work anymore
+
+==
+
+CURRENTLY USING
+
+mysql -u user -p
+use nextcloud;
+DELETE FROM oc_file_locks WHERE 1;
+
+==
+
+FILE LOCKING
+04072019
+LOOKING INTO
+
+https://apps.nextcloud.com/apps/w2g2
+
+Nextcloud plugin that allows the users to lock files and folders.
+It works with files and folders owned by the user, shared by another user or inside a group folder.
+This is a fork from the Working2gether app, with enhancements.
+

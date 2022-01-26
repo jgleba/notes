@@ -1,0 +1,14 @@
+##Remote desktop not connecting from within rdp session, domain connected machine, keeps asking for creds, add generic cred to credential manager
+
+https://serverfault.com/questions/396722/your-system-administrator-does-not-allow-the-use-of-saved-credentials-to-log-on
+
+If you don't want to change local or server side GPOs:
+
+Go to Control Panel -> Credential Manager. You will see three sections:
+
+    Windows Credentials
+    Certificate-Based Credentials
+    Generic Credentials
+
+Remove the credentials from Windows Credentials and add it to Generic Credentials
+

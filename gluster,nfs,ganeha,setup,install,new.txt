@@ -1,0 +1,66 @@
+
+##INSTALL GLUSTER, GANESHA, EPEL, TOOLS
+sudo yum -y install epel-release
+sudo yum -y install glusterfs glusterfs-fuse glusterfs-server glusterfs-api glusterfs-cli
+sudo yum -y install glusterfs-ganesha nfs-ganesha-gluster 
+
+##START AND ENABLE
+sudo systemctl enable glusterd && sudo systemctl start glusterd
+
+##FIREWALL
+sudo systemctl disable firewalld && sudo systemctl stop firewalld
+
+sudo mkdir /var/run/gluster/shared_storage/nfs-ganesha 
+
+sudo nano /var/run/gluster/shared_storage/nfs-ganesha/ganesha.conf  
+
+#/var/run/gluster/shared_storage/nfs-ganesha/ganesha.conf 
+EXPORT 
+{ 
+        # Export Id (mandatory, each EXPORT must have a unique Export_Id) 
+        Export_Id = 69; 
+  
+        # Exported path (mandatory) 
+        Path = /simple; 
+  
+        # Exporting FSAL 
+       FSAL { 
+            Name = GLUSTER; 
+            Hostname = localhost; 
+            Volume = simple; 
+            } 
+        # Pseudo Path (required for NFS v4) 
+        Pseudo = /simple; 
+  
+        # Required for access (default is None) 
+        # Could use CLIENT blocks instead 
+        Access_Type = RW; 
+        Squash = No_root_squash #remove this for root squash   
+} 
+
+
+sudo nano /var/run/gluster/shared_storage/nfs-ganesha/ganesha-ha.conf
+
+#/var/run/gluster/shared_storage/nfs-ganesha/Ganesha-ha.conf 
+# Name of the HA cluster created. 
+# must be unique within the subnet 
+ 
+HA_NAME="ganesha-cluster1" 
+# 
+# The gluster server from which to mount the shared data volume. 
+#HA_VOL_SERVER="Node1" 
+# 
+# You may use short names or long names; you may not use IP addresses. 
+# Once you select one, stay with it as it will be mildly unpleasant to clean up$ 
+# 
+# The subset of nodes of the Gluster Trusted Pool that form the ganesha HA clus$ 
+HA_CLUSTER_NODES="Node1,Node2,Node3" 
+# 
+# Virtual IPs for each of the nodes specified above. 
+VIP_Node1="172.16.3.164" 
+VIP_Node2="172.16.3.165" 
+VIP_Node3="172.16.3.166" 
+
+
+##PCSD START AND ENABLE
+sudo systemctl enable pcsd  && sudo systemctl start pcsd 

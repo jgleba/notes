@@ -1,0 +1,38 @@
+##HAProxy + Nginx SSL, Add a new domain
+##JGleba
+##11-17-2018
+
+#HAProxy
+#==
+
+sudo certbot --nginx certonly -d domain.com
+
+cd /etc/letsencrypt/live/domain.com
+
+cat fullchain.pem privkey.pem > full.pem
+
+#add cert, frontend and backend to /etc/haproxy/haproxy.conf
+
+sudo service haproxy restart
+
+#Nginx to force redirection to SSL
+#==
+
+sudo nano /etc/nginx/sites-enabled/httpsredirects.conf
+
+#add to bottom:
+
+server {
+    listen 80;
+    server_name domain.com;
+    return 301 https://domain.com$request_uri;
+}
+
+#SSL Renew
+#==
+
+sudo nano /j/bin/certrenew.sh
+
+#add:
+
+bash -c "cat /etc/letsencrypt/live/domain.com/fullchain.pem /etc/letsencrypt/live/domain.com/privkey.pem > /etc/letsencrypt/live/domain.com/full.pem"

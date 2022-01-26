@@ -1,0 +1,48 @@
+EXCHANGE, EXPORT MALIBOX TO PST FILE, GET PROGRESS ON EXPORT
+============================================================
+
+USER NEEDS TO HAVE THIS ROLE FIRST
+
+New-ManagementRoleAssignment –Role “Mailbox Import Export” –User “DOMAIN\USER”
+
+REGULAR
+
+New-MailboxExportRequest -Mailbox username -FilePath \\path\to\save\pst\username.pst
+
+FASTER
+
+New-MailboxExportRequest -mailbox username -FilePath \\path\to\save\pst\username.pst -Priority Emergency
+
+EXPORT PROGRESS
+
+Get-MailboxExportRequest | Get-MailboxExportRequestStatistics
+
+IMPORT MAILBOX FROM PST FILE
+
+https://docs.microsoft.com/en-us/powershell/module/exchange/mailboxes/new-mailboximportrequest?view=exchange-ps
+
+New-MailboxImportRequest -mailbox username -FilePath \\path\of\source\pst\username.pst -Priority Emergency
+
+IMPORT PROGRESS
+
+Get-MailboxImportRequest | Get-MailboxImportRequestStatistics
+
+REMOVE COMPLETED IMPORT REQUESTS
+
+Get-MailboxImportRequest -Status Completed | Remove-MailboxImportRequest
+
+NEED TO TRY
+
+Get-MoveRequestStatistics | Select DisplayName,StatusDetail,PercentComplete
+
+OUTPUT IMPORT REPORT TO FILE
+
+Get-MailboxImportRequest | Get-MailboxImportRequestStatistics -IncludeReport | fl >c:\tmp\importreport.txt
+
+CHECK SIZE OF EXCHANGE DATABASE
+
+Get-MailboxDatabase -Status | select ServerName,Name,DatabaseSize
+
+CHECK EXPORT PROGRESS, LAST 24 HOURS, NICE DISPLAY, GOOD COMMAND - 100119
+
+Get-MailboxExportRequest | Get-MailboxExportRequestStatistics|where StartTimestamp -gt (Get-Date).AddHours(-24) |select SourceAlias,StartTimestamp,PercentComplete,Status,CompletionTimestamp,SourceMailboxIdentity|ft -autosize

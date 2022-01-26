@@ -1,0 +1,66 @@
+=============================
+CENTOS INSTALL MARIADB SERVER
+062619
+=============================
+
+#https://linuxize.com/post/install-mariadb-on-centos-7/
+
+==
+INSTALL
+==
+
+sudo yum install mariadb-server -y
+
+==
+START AND ENABLE
+==
+
+sudo systemctl start mariadb && sudo systemctl enable mariadb
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+SECURE CONFIG
+==
+
+sudo mysql_secure_installation
+
+==
+CREATE ADMIN USERS, ALLOW CONNECT FROM ANYWHWERE
+==
+
+GRANT ALL PRIVILEGES ON *.* TO 'user1'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* to 'user1'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'user2'@'%' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* to 'user2'@'%';
+
+==
+AFTER STARTING TO USE, FOUND NOT GOOD VERSION OF SQL INSTALLED, CHANGED VERSION
+GETTING ERROR WHEN TRYING TO IMPORT OSTICKET DB, EXPORTED FROM WEBCL DB
+ERROR 1214 (HY000) at line 25: The used table type doesn't support FULLTEXT inde                                                                                        xes
+==
+
+sudo service mariadb stop
+sudo yum remove mariadb-server -y
+
+sudo nano /etc/yum.repos.d/MariaDB10.1.repo
+
+ADD
+
+# MariaDB 10.1 CentOS repository list - created 2017-08-10 00:39 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+sudo yum update -y
+sudo yum -y install MariaDB-server MariaDB-client MariaDB-common
+
+sudo service mariadb start

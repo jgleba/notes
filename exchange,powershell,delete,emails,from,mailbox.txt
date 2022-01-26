@@ -1,0 +1,7 @@
+https://answers.microsoft.com/en-us/msoffice/forum/all/powershell-script-to-delete-emails-from-mailbox/7074aace-e38d-406a-9700-077ec2931bb3
+
+search-mailbox -identity <usermailbox> -searchquery {received:mm/dd/yyyy..mm/dd/yyyy} -deletecontent
+
+search-mailbox -identity usermailbox -searchquery {received:01/01/1950..02/15/2019} -LogOnly
+
+search-mailbox -identity usermailbox -searchquery {received:"01/01/1950..15/02/2019 09:30"} -EstimateResultOnly

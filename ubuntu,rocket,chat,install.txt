@@ -1,0 +1,83 @@
+##UBUNTU + ROCKET CHAT INSTALL
+##07-25-2018
+##JGleba
+
+#UPDATE AND INSTALL DEPS
+sudo apt update -y && sudo apt upgrade -y
+sudo apt-get install -y curl graphicsmagick build-essential
+
+#ADD MONGO REPO
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+sudo echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+
+#INSTALL MONGO
+sudo apt-get update -y
+sudo apt-get install -y --allow-unauthenticated mongodb-org-server mongodb-org
+
+#ENABLE ON BOOT AND START MONGO
+sudo systemctl enable mongod
+sudo systemctl start mongod
+
+#SECURING MONGODB
+mongo
+use admin
+show dbs
+db.createUser({user: "dbuser", pwd: "pass", roles:[{role: "userAdminAnyDatabase", db: "admin"}]})
+#db.createUser({user: "admin", pwd: "pass", roles:[{role: "userAdminAnyDatabase", db: "admin"}]})
+db.createUser({user: "dbadmin", pwd: "pass", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]})
+#db.createUser({user: "dbadmin", pwd: "pass", roles: [ { role: "root", db: "admin" } ]})
+#db.createUser({user: "dbadmin", pwd: "pass", roles: [ { role: "root", db: "rocketchat" } ]})
+
+exit
+  
+sudo nano /etc/mongod.conf
+ 
+#remove security section and add:
+ 
+security:
+ authorization: enabled
+  
+#RESTART MONGO AFTER CHANGES
+sudo systemctl restart mongod
+  
+mongo -u dbuser -p pass admin
+mongo -u dbadmin -p pass admin
+#mongo --port 27017 -u dbadmin -p pass admin
+
+#CREATE DATABASE, SAVE AND ASSIGN TO USER
+use rocketchat
+db.users.save( {username:"dbadmin"} )
+db.users.save( {username:"dbuser"} )
+
+#db.grantRolesToUser( "dbuser", [ <roles> ], { <writeConcern> } )
+#db.grantRolesToUser( "dbadmin", [ <roles> ], { <writeConcern> } )
+#db.createUser({user: "dbuser", pwd: "pass", roles:[{role: "userAdminAnyDatabase", db: "rocketchat"}]})
+#db.createUser({user: "dbadmin", pwd: "pass", roles: [ { role: "userAdminAnyDatabase", db: "rocketchat" } ]})
+#db.addUser({user: "dbuser" , pwd: "pass", roles: [  "userAdminAnyDatabase","readWriteAnyDatabase" ]})
+#db.grantRolesToUser("dbuser", [ { role: "root", db: "rocketchat" } ])
+#db.grantRolesToUser("dbadmin", [ { role: "root", db: "rocketchat" } ])
+
+#INSTALL NODE v10
+
+sudo curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+#INSTALL MORE DEPS
+sudo apt-get -y install g++ build-essential
+
+#DOWNLOAD ROCKET CHAT
+cd /opt
+sudo wget https://filesfr.jgleba.com/util/rocket.chat-0.67.0.tgz
+sudo tar -xvf rocket.chat-0.67.0.tgz
+sudo mv bundle Rocket.Chat
+
+sudo npm install -g node-gyp
+sudo npm install fibers
+
+
+##INSTALL ROCKETCHAT
+cd /opt/Rocket.Chat/programs/server
+sudo npm install
+
+
+

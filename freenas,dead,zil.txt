@@ -1,0 +1,25 @@
+Disable sync to improve performance when Zil is dead
+
+
+Following examples are for pool name=pool1-151 and dataset=data-151-pool1
+
+from shell:
+zfs set sync=disabled pool1-151/data-151-pool1 (for performance)
+
+zfs set sync=standard pool1-151/data-151-pool1 (Back to normal when Zil is replaced)
+
+zfs get all pool1-151/data-151-pool1|grep sync (to get sync status)
+
+sync=standard|always|disabled (sync options)
+
+
+to add ram disk:
+mdconfig -t malloc -s 2G (makes RAM disk)
+
+md0 (automatically assigns md0 and md1 for next drive md2, md3, ext.) (md=memory device)
+
+zpool add pool1-151 log md0 (add zil to pool)
+
+(remove via GUI)
+
+mdconfig -d -u 0 (removes RAM disk)

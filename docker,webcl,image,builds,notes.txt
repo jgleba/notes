@@ -1,0 +1,124 @@
+sudo docker exec -it <container_ID> bash
+
+sudo docker ps -a
+
+curl -X GET http://localhost:5000/v2/_catalog
+
+
+sudo docker build --tag=apache-php-56-cust1 .
+sudo docker tag apache-php-56-cust1:latest localhost:5000/apache-php-56-cust1
+sudo docker push localhost:5000/apache-php-56-cust1
+
+sudo docker build --tag=apache-php-56-cust2 .
+sudo docker tag apache-php-56-cust2:latest 127.0.0.1:5000/apache-php-56-cust2
+sudo docker push 127.0.0.1:5000/apache-php-56-cust2
+
+
+sudo docker build --tag=apache-php-72-cust1 .
+sudo docker tag apache-php-72-cust1:latest 127.0.0.1:5000/apache-php-72-cust1
+sudo docker push 127.0.0.1:5000/apache-php-72-cust1
+
+sudo docker build --tag=apache-php-72-cust2 .
+sudo docker tag apache-php-72-cust2:latest 127.0.0.1:5000/apache-php-72-cust2
+sudo docker push 127.0.0.1:5000/apache-php-72-cust2
+
+sudo docker build --tag=apache-php-72-cust3 .
+sudo docker tag apache-php-72-cust3:latest 127.0.0.1:5000/apache-php-72-cust3
+sudo docker push 127.0.0.1:5000/apache-php-72-cust3
+
+sudo docker build --tag=apache-php-72-cust4 .
+sudo docker tag apache-php-72-cust4:latest 127.0.0.1:5000/apache-php-72-cust4
+sudo docker push 127.0.0.1:5000/apache-php-72-cust4
+
+sudo docker build --tag=apache-php-56-orange .
+sudo docker tag apache-php-56-orange:latest 127.0.0.1:5000/apache-php-56-orange
+sudo docker push 127.0.0.1:5000/apache-php-56-orange
+
+sudo docker build --tag=apache-php-56-wiki1 .
+sudo docker tag apache-php-56-wiki1:latest 127.0.0.1:5000/apache-php-56-wiki1
+sudo docker push 127.0.0.1:5000/apache-php-56-wiki1
+
+sudo docker build --tag=apache-php-72-cust2 .
+
+sudo docker build --tag=centos7-jcust1 .
+sudo docker tag centos7-jcust1 127.0.0.1:5000/centos7-jcust1
+sudo docker push 127.0.0.1:5000/centos7-jcust1
+
+sudo docker pull wallabag/wallabag
+sudo docker tag wallabag/wallabag 127.0.0.1:5000/wallabagofficial
+sudo docker push 127.0.0.1:5000/wallabagofficial
+
+sudo docker pull centos
+sudo docker tag centos 127.0.0.1:5000/centosofficial
+sudo docker push 127.0.0.1:5000/centosofficial
+
+sudo docker build --tag=centos7-jcust1 .
+sudo docker tag centos7-jcust1 127.0.0.1:5000/centos7-jcust1
+sudo docker push 127.0.0.1:5000/centos7-jcust1
+
+sudo docker build --tag=centos7-jcust2 .
+sudo docker tag centos7-jcust2 127.0.0.1:5000/centos7-jcust2
+sudo docker push 127.0.0.1:5000/centos7-jcust2
+
+sudo docker pull dockersamples/visualizer:stable
+sudo docker tag dockersamples/visualizer:stable 127.0.0.1:5000/visualizerofficial
+sudo docker push 127.0.0.1:5000/visualizerofficial
+
+
+sudo docker pull mariadb
+sudo docker tag mariadb 127.0.0.1:5000/mariadbofficial
+sudo docker push 127.0.0.1:5000/mariadbofficial
+
+sudo docker pull redis:alpine
+sudo docker tag redis:alpine 127.0.0.1:5000/redisalpineofficial
+sudo docker push 127.0.0.1:5000/redisalpineofficial
+
+sudo docker pull wallabag/wallabag
+sudo docker tag wallabag/wallabag 127.0.0.1:5000/wallabagofficial
+sudo docker push 127.0.0.1:5000/wallabagofficial
+
+
+sudo docker build --tag=wallabag-cust1 .
+sudo docker tag wallabag-cust1 127.0.0.1:5000/wallabag-cust1
+sudo docker push 127.0.0.1:5000/wallabag-cust1
+
+
+sudo docker pull severalnines/mariadb
+sudo docker tag severalnines/mariadb 127.0.0.1:5000/mariadbgalera
+sudo docker push 127.0.0.1:5000/mariadbgalera
+
+
+sudo docker pull prestashop/prestashop
+sudo docker tag prestashop/prestashop 127.0.0.1:5000/prestashopofficial
+sudo docker push 127.0.0.1:5000/prestashopofficial
+
+DELETE CONTAINERS THAT ARE EXITED
+sudo docker rm $(sudo docker ps -qa --no-trunc --filter "status=exited")
+
+
+Installing:
+ iotop           noarch       0.6-4.el7                        base        52 k
+ nano            x86_64       2.3.1-10.el7                     base       440 k
+ net-tools       x86_64       2.0-0.24.20131004git.el7         base       306 k
+ unzip           x86_64       6.0-19.el7                       base       170 k
+ wget            x86_64       1.14-18.el7                      base       547 k
+
+
+ 
+ 
+ ALPINE
+ 
+ 
+ 127.0.0.1:5000/apache-php-72-alpine1
+ 
+sudo docker build --tag=apache-php-72-alpine1 .
+sudo docker tag apache-php-72-alpine1 127.0.0.1:5000/apache-php-72-alpine1
+sudo docker push 127.0.0.1:5000/apache-php-72-alpine1
+
+
+
+127.0.0.1:5000/apache-php72-alpine-wp
+
+sudo docker build --tag=apache-php72-alpine-wp .
+sudo docker tag apache-php72-alpine-wp 127.0.0.1:5000/apache-php72-alpine-wp
+sudo docker push 127.0.0.1:5000/apache-php72-alpine-wp

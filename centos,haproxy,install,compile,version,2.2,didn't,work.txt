@@ -1,0 +1,39 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY 2.2 UPGRADE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-01[May-Sat]14-30PM 
+
+##https://upcloud.com/community/tutorials/haproxy-load-balancer-centos/
+
+sudo wget http://www.haproxy.org/download/2.2/src/haproxy-2.2.14.tar.gz
+
+##INSTALL STUFF
+
+sudo yum install gcc pcre-devel tar make -y
+
+##MAKE
+
+tar xzvf haproxy-2.2.14.tar.gz -C ~/
+cd haproxy-2.2.14
+make TARGET=linux-glibc
+sudo make install
+
+sudo mkdir -p /etc/haproxy
+sudo mkdir -p /var/lib/haproxy 
+sudo touch /var/lib/haproxy/stats
+
+sudo ln -s /usr/local/sbin/haproxy /usr/sbin/haproxy
+
+sudo cp ~/haproxy-2.2.14/examples/haproxy.init /etc/init.d/haproxy
+sudo chmod 755 /etc/init.d/haproxy
+sudo systemctl daemon-reload
+
+sudo chkconfig haproxy on
+
+sudo useradd -r haproxy
+
+TRIED 05-01-21
+CONFIG DOESNT WORK, COMMENTED block, ssl backends, compression, sni STILL DIDNT WORK
+

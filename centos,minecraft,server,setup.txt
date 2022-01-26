@@ -1,0 +1,117 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS 7 MINECRAFT SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-28[Dec-Sat]13-05PM 
+
+##https://www.servermania.com/kb/articles/how-to-install-minecraft-server-on-centos-7/
+##https://linuxize.com/post/how-to-install-minecraft-server-on-centos-7/
+
+==
+PREP, ADDUSER, MAKE DIRS, GET MINECRAFT
+==
+
+sudo yum install java -y
+
+sudo adduser mc
+sudo passwd mc
+
+##BETTER
+sudo useradd -r -m -U -d /opt/minecraft -s /bin/bash minecraft
+
+sudo mkdir -p /j/minecraft
+cd /j/minecraft/
+
+sudo su - minecraft
+mkdir -p ~/{backups,tools,server}
+
+##https://www.minecraft.net/en-us/download/server
+##https://launcher.mojang.com/v1/objects/4d1826eebac84847c71a77f9349cc22afd0cf0a1/server.jar
+sudo wget https://launcher.mojang.com/v1/objects/4d1826eebac84847c71a77f9349cc22afd0cf0a1/server.jar
+
+sudo chmod +x server.jar
+sudo chown -R mc:mc server.jar
+sudo chown -R mc:mc /j/minecraft
+sudo chmod -R 775 /j/minecraft
+
+su mc
+
+sudo nano serverstart.sh
+java -Xmx3072M -Xms3072M -jar server.jar nogui&
+
+sudo runuser -l  mc -c '/j/minecraft/serverstart.sh'
+sudo runuser -l  mc -c 'java -Xmx3072M -Xms3072M -jar /j/minecraft/server.jar nogui&'
+
+sudo runuser -l  minecraft -c 'java -Xmx3072M -Xms3072M -jar /j/minecraft/server.jar nogui&'
+sudo runuser -l  minecraft -c 'java -Xmx3072M -Xms3072M -jar /opt/minecraft/server.jar nogui&'
+
+minecraft@cosmc1 server]$  java -Xmx3072M -Xms3072M -jar server.jar nogui
+ 
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=25575/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=25565/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+SERVICE
+==
+
+sudo nano /etc/systemd/system/minecraft.service
+
+[Unit]
+Description=Minecraft Server
+After=network.target
+
+[Service]
+User=minecraft
+Nice=1
+KillMode=none
+SuccessExitStatus=0 1
+ProtectHome=true
+ProtectSystem=full
+PrivateDevices=true
+NoNewPrivileges=true
+WorkingDirectory=/opt/minecraft/server
+ExecStart=/usr/bin/java -Xmx1024M -Xms512M -jar server.jar nogui
+ExecStop=/opt/minecraft/tools/mcrcon/mcrcon -H 127.0.0.1 -P 25575
+
+[Install]
+WantedBy=multi-user.target
+
+==
+EXAMPLE
+==
+
+[Unit]
+Description=Minecraft Server
+After=network.target
+
+[Service]
+User=minecraft
+Nice=1
+KillMode=none
+SuccessExitStatus=0 1
+ProtectHome=true
+ProtectSystem=full
+PrivateDevices=true
+NoNewPrivileges=true
+WorkingDirectory=/opt/minecraft/server
+ExecStart=/usr/bin/java -Xmx1024M -Xms512M -jar server.jar nogui
+ExecStop=/opt/minecraft/tools/mcrcon/mcrcon -H 127.0.0.1 -P 25575 -p strong-password stop
+
+[Install]
+WantedBy=multi-user.target
+
+
+==
+SERVICE START AND ENABLE
+==
+
+sudo systemctl daemon-reload
+sudo systemctl start minecraft
+sudo systemctl status minecraft
+sudo systemctl enable minecraft

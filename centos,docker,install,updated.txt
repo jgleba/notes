@@ -1,0 +1,23 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DOCKER INSTALL - UPDATED
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-07-03[Jul-Sat]17-47PM 
+
+sudo yum install docker -y
+
+sudo systemctl enable docker && sudo systemctl start docker 
+
+NOT WORKING
+
+sudo usermod -a -G docker user
+
+DID WORK TO USE DOCKER WITHOUT SUDO
+
+sudo nano /etc/docker/daemon.json
+
+ADD
+
+group: dockerroot
+

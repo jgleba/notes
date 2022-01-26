@@ -1,0 +1,104 @@
+STORAGE SPACES DIRECT SETUP
+July 11, 2017
+===========================
+
+##Install Server 2016
+##Make sure there is LAN as well as a private network for cluster communication, and machines have proper hostname
+##using: https://nirmalt.com/2016/05/01/storage-spaces-direct-with-3-vms-using-windows-server-2016-technical-preview-5/
+##https://www.starwindsoftware.com/blog/how-to-deploy-and-manage-storage-spaces-direct-cluster-using-scvmm-2016
+##https://www.starwindsoftware.com/blog/microsoft-storage-spaces-direct-4-node-setup-2
+##https://msandbu.wordpress.com/2015/09/06/setting-up-storage-spaces-direct-on-windows-server-2016-tp3/
+##https://medium.com/beyond-the-helpdesk/setting-up-and-configuring-storage-spaces-direct-in-windows-server-2016-4d2be85a8f7d
+latest resources
+##https://docs.microsoft.com/en-us/windows-server/storage/storage-spaces/storage-spaces-direct-overview
+##http://www.mmo-champion.com/threads/1450727-Guide-How-to-remove-a-Physical-Disk-from-Windows-Storage-Spaces-WITH-Parity
+
+
+
+run on all nodes, in powershell:
+Add-WindowsFeature -Name File-Services, Failover-Clustering -IncludeManagementTools
+
+validate cluster:
+Test-Cluster –Node ‘ss-node1’,'ss-node2’,'ss-node3’ –Include “Storage Spaces Direct”,Inventory,Network,”System Configuration”
+
+Test-Cluster –Node ‘node1’,'node2’,'node3’,'node4' –Include “Storage Spaces Direct”,Inventory,Network,”System Configuration”
+
+##when I did this the first time, failed.
+##config not suitable for clustering
+
+##Set all nodes as trusted. Did this from node 1:
+##https://stackoverflow.com/questions/21548566/how-to-add-more-than-one-machine-to-the-trusted-hosts-list-using-winrm
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value 'ss-node1,ss-node2,ss-node3'
+
+##now just seeing warnings
+##ad warning, no ad
+##updates warning
+##running all updates
+##still getting warnings about errors, moving forward
+
+New-Cluster –Name sscluster1 –Node <ss-node1,ss-node2,ss-node3>
+
+
+##worked aug 5, 2017
+New-Cluster –Name cluster1 –Node 'node1','node2','node3','node4' -NoStorage
+
+##enable S2D
+
+Enable-ClusterStorageSpacesDirect -AutoConfig:0 -SkipEligibilityChecks -Confirm
+
+Enable-ClusterStorageSpacesDirect -SkipEligibilityChecks
+
+##Set Quorum Witness (network share witness)
+Set-ClusterQuorum -NodeAndFileShareMajority “\\fileserver\fsw“
+
+
+STUFF
+
+Get-VirtualDisk
+
+Reset-PhysicalDisk -FriendlyName 'VMWare*'
+
+MAINTENANCE
+
+##shows running jobs
+Get-StorageJob 
+
+##health status
+Get-StorageHealthAction
+Get-StorageHealthReport - need to look into
+
+## add node to cluster
+Add-ClusterNode -Name <name>
+
+##see all disks in cluster
+Get-PhysicalDisk
+
+##cluster health
+Get-StorageSubSystem <cluster>
+##debugging
+Get-StorageSubSystem <cluster> | Debug-StorageSubSystem
+
+##can see all logging in event viewer
+
+SEE IOPS
+C:\ClusterStorage\Collect\Control\
+.\watch-cluster.ps1
+
+https://github.com/Microsoft/diskspd
+
+
+
+
+
+
+
+HOSTS File
+
+172.16.18.168 node1.sscl1.local
+172.16.18.167 node2.sscl1.local
+172.16.18.166 node3.sscl1.local
+172.16.18.165 node4.sscl1.local
+172.250.250.168 node1v.sscl1.local
+172.250.250.167 node2v.sscl1.local
+172.250.250.166 node3v.sscl1.local
+172.250.250.165 node4v.sscl1.local

@@ -1,0 +1,69 @@
+=====================================
+ROBOCOPY GOOD USAGE
+COPY / MIRROR FOLDER, EXCLUDING OLDER
+060419
+=====================================
+
+https://superuser.com/questions/671244/robocopy-to-copy-only-new-folders-and-files
+
+RoboCopy.exe  "\\\SourceServer\Folder" "X:\WEB" /copy:datso /mir /fft /r:0 /w:0 /secfix /mt:20 /xo /xf thumbs.db /log+:X:\TON-FS4.log /nc /ns /np /ndl /nfl /tee
+
+Explanation: X:\WEB is my destination folder.
+
+Switches:
+/copy:datso: Specifies the file properties to copy:
+(d: Data,a: Attributes,t: Time stamps,s: NTFS access control list (ACL),o: Owner information)
+/mir: Mirrors a directory tree
+/fft: Assumes FAT file times, important when copying data
+/r:0: Number of retries on failed
+/w:0: Wait time between retries 0 seconds
+/secfix: Fixes file security on all files, even skipped ones
+/mt:20: Creates 20 threads copies
+/xo: Excludes older files - if destination file exists and is the same date or newer than the source - don't bother to overwrite it.
+/xf thumbs.db: Excludes "thumbs.db" files (path) you can use wild characters here (ei: *.mp3)
+/log+:filename.log: Writes the status output to the specified log file
+(appends to the existing log file) or to use a new log just /log:filename.log
+
+Not this particuar case but I hope that will help someone when they do file servers migration.
+
+==
+JEDIT
+==
+
+RoboCopy.exe  "\\\SourceServer\Folder" "X:\WEB" /copy:datso /mir /fft /r:0 /w:0 /secfix /mt:20 /xo
+
+==
+ROBOCOPY WITH UNC
+==
+
+https://stackoverflow.com/questions/1030739/how-can-i-copy-network-files-using-robocopy
+
+robocopy \\SourceServer\Path \\TargetServer\Path filename.txt
+
+==
+JEDIT 2 - TRYING - 060419
+==
+
+RoboCopy.exe  "\\\SourceServer\Folder" "\\\TargetServer\Path" /copy:datso /mir /fft /r:0 /w:0 /secfix /mt:20 /xo
+
+NOT WORKING
+
+RoboCopy.exe  "\\172.16.0.106\0" "\\172.16.0.107\0\test" /copy:datso /mir /fft /r:0 /w:0 /secfix /mt:20 /xo
+
+TRYING LESS OPTIONS
+
+RoboCopy.exe  "\\172.16.0.106\0" "\\172.16.0.107\0\test" /copy:datso /mir /fft /r:0 /w:0 /mt:20 /xo
+
+GETTING
+
+2019/06/04 13:37:57 ERROR 1307 (0x0000051B) Copying NTFS Security to Destination
+ Directory \\172.16.0.107\0\test\
+This security ID may not be assigned as the owner of this object.
+
+WORKING
+
+RoboCopy.exe  "\\172.16.0.106\0" "\\172.16.0.107\0\test" /mir /fft /r:0 /w:0 /mt:20 /xo
+
+WORKING - CREATES MISSING DESTINATION DIRECTORIES
+
+RoboCopy.exe  "\\172.16.0.106\0" "\\172.16.0.107\0\test\0" /mir /fft /r:0 /w:0 /mt:20 /xo

@@ -1,0 +1,12 @@
+=======================================================================================
+ADRESTORE - SYSINTERNALS - RESTORE DELETED AD OBJECT THAT IS IN TOMBSTONE - SERVER 2008
+060419
+=======================================================================================
+
+##https://www.mowasay.com/2016/06/windows-restoring-objects-with-microsoft-adrestore-previously-sysinternals/
+
+USING
+
+adrestore.exe from sysinternals
+
+adrestore -r *user*

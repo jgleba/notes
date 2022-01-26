@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU INSTALL ZFS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-30[Jan-Thu]19-05PM 
+
+
+sudo apt install zfsutils-linux
+
+
+IMPORT POOL
+
+zpool import -m Tank1

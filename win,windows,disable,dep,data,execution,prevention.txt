@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS DISABLE DEP, DATA EXECUTION PREVENTION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-28[Sep-Mon]11-05AM 
+
+DISABLE DEP
+
+Open Command line with Administrator level and run
+
+bcdedit.exe /set nx AlwaysOff

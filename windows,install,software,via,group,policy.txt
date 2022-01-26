@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL SOFTWARE VIA GROUP POLICY - NOT WORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-10[Feb-Wed]10-47AM 
+
+##https://community.spiceworks.com/how_to/57202-deploying-firefox-with-group-policy
+##https://community.spiceworks.com/how_to/157295-use-group-policy-to-install-firefox-or-chrome-and-create-custom-shortcuts-on-the-desktop

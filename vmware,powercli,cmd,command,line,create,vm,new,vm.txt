@@ -1,0 +1,15 @@
+==============================
+VMWARE POWERCLI CREATE NEW VM
+111519
+==============================
+
+$VMNAME = "TEST1"
+$DISK = "10"
+$CPUCOUNT = "2"
+$MEMORYGB = "2"
+$DATASTORE = "fnas"
+$VMNETWORK = "VLAN"
+
+New-VM –Name $VMNAME -ResourcePool JGDC1Cluster1  –DiskGB $DISK –DiskStorageFormat Thin –DataStore $DATASTORE -Location $DATASTOREFOLDER –MemoryGB $MEMORYGB -NumCpu $CPUCOUNT –NetworkName $VMNETWORK
+Get-VM -Name $VMNAME | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name $VMNAME | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false

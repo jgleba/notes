@@ -1,0 +1,1126 @@
+#====================================================
+#CENTOS 7 + CONSUL + HAPROXY + BIND DNS - SERVICE DISCOVERY
+#05-24-2019
+#JGleba
+#====================================================
+#
+#https://computingforgeeks.com/how-to-setup-consul-cluster-on-centos-rhel/
+##interesting##https://gist.github.com/GovardhanKanala/42fa15656146ddc8fc8e0f0ce5b2bd67
+
+#==
+#INITIAL
+#==
+
+sudo yum install wget nano unzip -y
+
+#==
+#HOSTNAME
+#==
+
+# Server 1 - 172.16.3.191
+sudo hostnamectl set-hostname webclfeconsul1.jgleba.com --static
+
+# Server 2 - 172.16.3.192
+sudo hostnamectl set-hostname webclfeconsul2.jgleba.com --static
+
+# Server 2 - 172.16.3.193
+sudo hostnamectl set-hostname webclfeconsul3.jgleba.com --static
+
+#==
+#HOSTS FILE
+#==
+
+sudo nano /etc/hosts
+
+172.16.3.191 webclfeconsul1.jgleba.com webclfeconsul1
+172.16.3.192 webclfeconsul2.jgleba.com webclfeconsul2
+172.16.3.193 webclfeconsul3.jgleba.com webclfeconsul3
+
+#==
+#DOWNLOAD AND INSTALL CONSUL
+#==
+
+cd /tmp/
+sudo wget https://releases.hashicorp.com/consul/1.5.1/consul_1.5.1_linux_amd64.zip
+sudo unzip consul_1.5.1_linux_amd64.zip
+sudo mv consul /usr/local/bin/
+
+#==
+#CREATE USER AND GROUP AND ASSIGN PERMS
+#==
+
+sudo groupadd --system consul
+sudo useradd -s /sbin/nologin --system -g consul consul
+
+sudo mkdir -p /var/lib/consul /etc/consul.d
+sudo chown -R consul:consul /var/lib/consul /etc/consul.d
+sudo chmod -R 775 /var/lib/consul /etc/consul.d
+
+#==
+#BOOSTRAPPING 3 NODE CLUSTER START - ON NODE 1
+#==
+
+sudo nano /etc/systemd/system/consul.service
+
+#ADD:
+
+##
+# Consul systemd service unit file
+[Unit]
+Description=Consul Service Discovery Agent
+Documentation=https://www.consul.io/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul agent \
+	-node=webclfeconsul1 \
+	-config-dir=/etc/consul.d
+
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+Restart=on-failure
+SyslogIdentifier=consul
+
+[Install]
+WantedBy=multi-user.target
+##
+
+#==
+#GENERATE CONSUL SECRET
+#==
+
+consul keygen
+######
+
+#==
+#CREATE JSON FILE
+#==
+
+sudo nano /etc/consul.d/config.json
+
+#ADD:
+
+{
+     "advertise_addr": "172.16.3.191",
+     "bind_addr": "172.16.3.191",
+     "bootstrap_expect": 3,
+     "client_addr": "0.0.0.0",
+     "datacenter": "JGDC1",
+     "data_dir": "/var/lib/consul",
+     "domain": "consul",
+     "enable_script_checks": true,
+     "dns_config": {
+         "enable_truncate": true,
+         "only_passing": true
+     },
+     "enable_syslog": true,
+     "encrypt": "######key#########",
+     "leave_on_terminate": true,
+     "log_level": "INFO",
+     "rejoin_after_leave": true,
+     "retry_join": [
+         "webclfeconsul1",
+         "webclfeconsul2",
+         "webclfeconsul3"
+     ],
+     "server": true,
+     "start_join": [
+         "webclfeconsul1",
+         "webclfeconsul2",
+         "webclfeconsul3"
+     ],
+     "ui": true
+ }
+
+#==
+#VALIDATE CONSUL CONFIG ON NODE 1
+#==
+
+consul validate /etc/consul.d/config.json 
+#Configuration is valid!
+
+#==
+#NODE 2 CONFIG
+#==
+
+sudo nano /etc/systemd/system/consul.service
+
+##
+[Unit]
+Description=Consul Service Discovery Agent
+Documentation=https://www.consul.io/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul agent \
+	-node=webclfeconsul2 \
+	-config-dir=/etc/consul.d
+
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+Restart=on-failure
+SyslogIdentifier=consul
+
+[Install]
+WantedBy=multi-user.target
+##
+
+#==
+#CONFIG JSON
+#==
+
+#USE SAME AS NODE 1 BUT CHANGE IP
+
+sudo nano /etc/consul.d/config.json
+
+{
+     "advertise_addr": "172.16.3.192",
+     "bind_addr": "172.16.3.192",
+     "bootstrap_expect": 3,
+     "client_addr": "0.0.0.0",
+     "datacenter": "JGDC1",
+     "data_dir": "/var/lib/consul",
+     "domain": "consul",
+     "enable_script_checks": true,
+     "dns_config": {
+         "enable_truncate": true,
+         "only_passing": true
+     },
+     "enable_syslog": true,
+     "encrypt": "9PRdyPoztV9Kk8+xnYLO5g==",
+     "leave_on_terminate": true,
+     "log_level": "INFO",
+     "rejoin_after_leave": true,
+     "retry_join": [
+         "webclfeconsul1",
+         "webclfeconsul2",
+         "webclfeconsul3"
+     ],
+     "server": true,
+     "start_join": [
+         "webclfeconsul1",
+         "webclfeconsul2",
+         "webclfeconsul3"
+     ],
+     "ui": true
+ }
+ 
+#==
+#NODE 3 CONFIG
+#==
+
+sudo nano /etc/systemd/system/consul.service
+
+##
+[Unit]
+Description=Consul Service Discovery Agent
+Documentation=https://www.consul.io/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=consul
+Group=consul
+ExecStart=/usr/local/bin/consul agent \
+	-node=webclfeconsul3 \
+	-config-dir=/etc/consul.d
+
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+Restart=on-failure
+SyslogIdentifier=consul
+
+[Install]
+WantedBy=multi-user.target
+##
+
+#==
+#CONFIG JSON
+#==
+
+#USE SAME AS NODE 1 BUT CHANGE IP
+
+sudo nano /etc/consul.d/config.json
+
+{
+     "advertise_addr": "172.16.3.193",
+     "bind_addr": "172.16.3.193",
+     "bootstrap_expect": 3,
+     "client_addr": "0.0.0.0",
+     "datacenter": "JGDC1",
+     "data_dir": "/var/lib/consul",
+     "domain": "consul",
+     "enable_script_checks": true,
+     "dns_config": {
+         "enable_truncate": true,
+         "only_passing": true
+     },
+     "enable_syslog": true,
+     "encrypt": "9PRdyPoztV9Kk8+xnYLO5g==",
+     "leave_on_terminate": true,
+     "log_level": "INFO",
+     "rejoin_after_leave": true,
+     "retry_join": [
+         "webclfeconsul1",
+         "webclfeconsul2",
+         "webclfeconsul3"
+     ],
+     "server": true,
+     "start_join": [
+         "webclfeconsul1",
+         "webclfeconsul2",
+         "webclfeconsul3"
+     ],
+     "ui": true
+ }
+
+#== 
+#FIREWALL - ALL NODES
+#==
+
+sudo firewall-cmd  --add-port={8300,8301,8302,8400,8500,8600}/tcp --permanent
+sudo firewall-cmd  --add-port={8301,8302,8600}/udp --permanent
+sudo firewall-cmd --reload
+
+#==
+#ENABLE AND START ON ALL NODES
+#==
+
+sudo systemctl start consul
+sudo systemctl enable consul
+
+#==
+#CHECK STATUS
+#==
+
+consul members
+
+consul members -detailed
+
+#==
+#CONSUL UI
+#==
+
+http://<consul-IP>:8500/ui
+
+
+
+
+#==
+#DNS - BIND - USING SOME FROM ISPCONF SETUP
+#==
+
+sudo yum install bind-utils -y
+
+#====
+#====FROM ISPCONFIG START - PORT 8600
+
+sudo yum -y install bind bind-utils haveged
+
+sudo cp /etc/named.conf /etc/named.conf_bak
+sudo cat /dev/null > /etc/named.conf
+sudo nano /etc/named.conf
+
+#ADD;
+
+
+##########
+//
+// named.conf
+//
+// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+// server as a caching only nameserver (as a localhost DNS resolver only).
+//
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+options {
+        listen-on port 53 { any; };
+        listen-on-v6 port 53 { any; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        allow-query     { any; };
+				allow-recursion {"none";};
+        recursion no;
+};
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+include "/etc/named.conf.local";
+###############
+
+#==
+#MAKE FILE
+#==
+
+sudo touch /etc/named.conf.local
+
+#==
+#START AND ENABLE BIND / NAMED
+#==
+
+sudo systemctl enable named.service
+sudo systemctl start named.service
+sudo systemctl enable haveged.service
+sudo systemctl start haveged.service
+
+sudo systemctl restart named.service
+
+#====
+#====FROM ISPCONFIG END
+
+#################################
+####################################
+###################################
+
+####TRYING THIS FOR BIND
+
+###
+##https://learn.hashicorp.com/consul/security-networking/forwarding
+
+sudo nano /etc/named.conf
+
+#ADD:
+
+options {
+  listen-on port 53 { 127.0.0.1; };
+  listen-on-v6 port 53 { ::1; };
+  directory       "/var/named";
+  dump-file       "/var/named/data/cache_dump.db";
+  statistics-file "/var/named/data/named_stats.txt";
+  memstatistics-file "/var/named/data/named_mem_stats.txt";
+  allow-query     { localhost; };
+  recursion yes;
+
+  dnssec-enable no;
+  dnssec-validation no;
+
+  /* Path to ISC DLV key */
+  bindkeys-file "/etc/named.iscdlv.key";
+
+  managed-keys-directory "/var/named/dynamic";
+};
+
+include "/etc/named/consul.conf";
+
+#==
+#DNS ZONE FILE
+#==
+
+#ADD:
+
+sudo nano /etc/named/consul.conf
+
+zone "consul" IN {
+  type forward;
+  forward only;
+  forwarders { 127.0.0.1 port 8600; };
+};
+
+sudo nano /etc/dnsmasq.d/10-consul
+
+#ADD:
+
+# Enable forward lookup of the 'consul' domain:
+server=/consul/127.0.0.1#8600
+
+# Uncomment and modify as appropriate to enable reverse DNS lookups for
+# common netblocks found in RFC 1918, 5735, and 6598:
+#rev-server=0.0.0.0/8,127.0.0.1#8600
+#rev-server=10.0.0.0/8,127.0.0.1#8600
+#rev-server=100.64.0.0/10,127.0.0.1#8600
+rev-server=127.0.0.1/8,127.0.0.1#8600
+#rev-server=169.254.0.0/16,127.0.0.1#8600
+#rev-server=172.16.0.0/12,127.0.0.1#8600
+rev-server=172.16.3.0/12,127.0.0.1#8600
+#rev-server=192.168.0.0/16,127.0.0.1#8600
+#rev-server=224.0.0.0/4,127.0.0.1#8600
+#rev-server=240.0.0.0/4,127.0.0.1#8600
+
+
+#==
+#INSTALL START CONFIGURE UNBOUND
+#==
+
+sudo yum install unbound -y
+
+sudo cp /etc/unbound/unbound.conf  /etc/unbound/orig_unbound.conf
+sudo mv /etc/unbound/unbound.conf /dev/null
+sudo nano /etc/unbound/unbound.conf
+
+#ADD;
+
+#Allow insecure queries to local resolvers
+server:
+  do-not-query-localhost: no
+  domain-insecure: "consul"
+
+#Add consul as a stub-zone
+stub-zone:
+  name: "consul"
+  stub-addr: 127.0.0.1@8600
+  
+include: "/etc/unbound/conf.d/*.conf"
+
+#==
+#SYSTEMD-RESOLVED CONF
+#==
+
+sudo nano /etc/systemd/resolved.conf
+
+DNS=127.0.0.1
+Domains=~consul
+Domains=~jgleba.com
+
+#==
+#DNS FIREWALL
+#==
+
+sudo iptables -t nat -A OUTPUT -d localhost -p udp -m udp --dport 53 -j REDIRECT --to-ports 8600
+sudo iptables -t nat -A OUTPUT -d localhost -p tcp -m tcp --dport 53 -j REDIRECT --to-ports 8600
+sudo firewall-cmd --reload
+
+sudo systemctl enable unbound
+sudo systemctl start unbound
+sudo systemctl status unbound
+
+##05-24-2019 - UNBOUND NOT STARTING
+
+
+
+
+
+
+
+
+#==
+#HAPROXY INSTALL, START AND ENABLE
+#==
+
+sudo yum install haproxy -y
+
+sudo systemctl enable haproxy
+sudo systemctl start haproxy
+
+sudo nano /etc/haproxy/haproxy.cfg
+
+##
+
+
+
+##
+
+#==
+#HAPROXY FIREWALL
+#==
+
+sudo firewall-cmd  --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+
+
+
+
+
+
+#==
+#CREATE MANUAL SERVICE - NO HEALTH CHECK
+#==
+
+#NODE 1
+
+sudo nano /j/webcl2mysql1.json
+
+{
+  "ID": "webcl2mysql1",
+  "Name": "webcl2mysql",
+  "Address": "172.16.3.223",
+  "Port": 3306
+}
+
+sudo nano /j/webcl2mysql2.json
+
+{
+  "ID": "webcl2mysql2",
+  "Name": "webcl2mysql",
+  "Address": "172.16.3.224",
+  "Port": 3306
+}
+
+sudo nano /j/webcl2mysql3.json
+
+{
+  "ID": "webcl2mysql3",
+  "Name": "webcl2mysql",
+  "Address": "172.16.3.224",
+  "Port": 3306
+}
+
+curl -X PUT --data-binary @webcl2mysql1.json http://localhost:8500/v1/agent/service/register
+curl -X PUT --data-binary @webcl2mysql2.json http://localhost:8500/v1/agent/service/register
+curl -X PUT --data-binary @webcl2mysql3.json http://localhost:8500/v1/agent/service/register
+
+#==
+#DEREGISTER MANUAL SERVICE
+#==
+
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webcl2mysql1
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webcl2mysql2
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webcl2mysql3
+
+#==
+#CREATE MANUAL SERVICE - WITH HEALTH CHECK - NOT WORKING
+#==
+
+sudo nano /j/webcl2mysql1_checksql.json
+
+ "ID": "webcl2mysql1",
+  "Name": "webcl2mysql",
+  "Address": "172.16.3.223",
+  "Port": 3306,
+  "check": {
+    "http": "http://172.17.0.3:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+
+sudo nano /j/webclnode1.json 
+
+  "ID": "webclnode1.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.210",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.210:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+   
+sudo nano /j/webclnode2.json  
+   
+  "ID": "webclnode2.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.211",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.211:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+   
+   sudo nano /j/webclnode3.json  
+   
+  "ID": "webclnode3.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.212",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.212:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+   
+   sudo nano /j/webclnode4.json  
+   
+  "ID": "webclnode4.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.213",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.213:80",
+    "interval": "10s",
+    "timeout": "1s"
+	}
+	
+#ALL IN ONE - NOT WORKING
+
+sudo nano /j/webclfenodes.json
+
+  "ID": "webclnode1.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.210",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.210:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+  
+  "ID": "webclnode2.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.211",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.211:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+     
+  "ID": "webclnode3.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.212",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.212:80",
+    "interval": "10s",
+    "timeout": "1s"
+   }
+    
+  "ID": "webclnode4.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.213",
+  "Port": 80,
+  "check": {
+    "http": "http://172.16.3.213:80",
+    "interval": "10s",
+    "timeout": "1s"
+	}
+
+
+### ALL IN ONE - TRY AGAIN - NO CHECK - ONLY REGISTERED ONE WEB NODE TO SERVICE
+
+
+sudo cp  /j/webclfenodes.json /j/webclfenodes_v1.json 
+sudo nano /j/webclfenodes.json 
+
+{
+  "ID": "webclnode1.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.210",
+  "Port": 80
+}
+
+{
+  "ID": "webclnode2.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.211",
+  "Port": 80
+}
+
+{
+  "ID": "webclnode3.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.212",
+  "Port": 80
+}
+
+{
+  "ID": "webclnode4.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.213",
+  "Port": 80
+}
+
+
+#==
+#MULTIPLE SINGLE FILES - TRYING AGAIN 
+#==
+
+sudo cp  /j/webclnode1.json /j/webclnode1_v1.json 
+sudo cp  /j/webclnode2.json /j/webclnode2_v1.json 
+sudo cp  /j/webclnode3.json /j/webclnode3_v1.json 
+sudo cp  /j/webclnode4.json /j/webclnode4_v1.json 
+
+sudo nano /j/webclnode1.json 
+
+{
+  "ID": "webclnode1.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.210",
+  "Port": 80
+}
+
+sudo nano /j/webclnode2.json 
+
+{
+  "ID": "webclnode2.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.211",
+  "Port": 80
+}
+
+sudo nano /j/webclnode3.json 
+
+{
+  "ID": "webclnode3.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.212",
+  "Port": 80
+}
+
+sudo nano /j/webclnode4.json 
+
+{
+  "ID": "webclnode4.webclfenodes.jgdc1.consul",
+  "Name": "webclfenodes.jgdc1.consul",
+  "Address": "172.16.3.213",
+  "Port": 80
+}
+
+
+#==
+#REGISTER
+#==
+
+curl -X PUT --data-binary @webclfenodes.json http://localhost:8500/v1/agent/service/register
+
+curl -X PUT --data-binary @webclnode1.json http://localhost:8500/v1/agent/service/register
+curl -X PUT --data-binary @webclnode2.json http://localhost:8500/v1/agent/service/register
+curl -X PUT --data-binary @webclnode3.json http://localhost:8500/v1/agent/service/register
+curl -X PUT --data-binary @webclnode4.json http://localhost:8500/v1/agent/service/register
+
+#==
+##DEREGISTER
+#==
+
+#curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webclfenodes.jgdc1.consul
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webclnode1.webclfenodes.jgdc1.consul
+
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webclnode1.webclfenodes.jgdc1.consul
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webclnode2.webclfenodes.jgdc1.consul
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webclnode3.webclfenodes.jgdc1.consul
+curl -X PUT  http://localhost:8500/v1/agent/service/deregister/webclnode4.webclfenodes.jgdc1.consul
+
+#==
+
+#https://learn.hashicorp.com/consul/getting-started/services
+##TEST sudo echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}}' > ./web.json
+##TEST sudo echo '{"service": {"name": "webclfenodes", "tags": ["webclfenodes"], "port": 80}}' > ./webclfenodes.json
+
+
+#==
+#CONSUL TEMPLATE INSTALL
+#==
+
+#https://danielparker.me/haproxy/consul/srv/haproxy-srv-consul/
+
+#https://github.com/hashicorp/consul-template
+#https://releases.hashicorp.com/consul-template/0.20.0/
+#https://sonnguyen.ws/install-consul-and-consul-template-in-ubuntu-14-04/
+
+cd /tmp
+sudo wget https://releases.hashicorp.com/consul-template/0.20.0/consul-template_0.20.0_linux_amd64.tgz
+
+sudo tar -xvf consul-template_0.20.0_linux_amd64.tgz
+sudo chmod a+x consul-template
+sudo mv consul-template /usr/bin/consul-template
+
+sudo rm consul-template_0.20.0_linux_amd64.tgz
+
+#==
+#CONSUL TEMPLATE EXAMPLE
+#==
+
+#https://sonnguyen.ws/install-consul-and-consul-template-in-ubuntu-14-04/
+
+Run Consul-Template:
+	
+consul-template \
+    -consul 127.0.0.1:8500 \
+    -template "$PATH_TO_YOUR_TEMPLATE:$PATH_TO_CONFIG_FILE" \
+    -retry 30s
+
+
+#==
+
+#https://github.com/hashicorp/consul-template/blob/master/examples/haproxy.md
+
+Global Service Load Balancer
+
+Here is an example template for rendering an HAProxy configuration file with Consul Template:
+
+global
+    daemon
+    maxconn {{key "service/haproxy/maxconn"}}
+
+defaults
+    mode {{key "service/haproxy/mode"}}{{range ls "service/haproxy/timeouts"}}
+    timeout {{.Key}} {{.Value}}{{end}}
+
+listen http-in
+    bind *:8000{{range service "release.web"}}
+    server {{.Node}} {{.Address}}:{{.Port}}{{end}}
+
+Save this file to disk at a place reachable by the Consul Template process like /tmp/haproxy.conf.ctmpl and run Consul Template:
+
+$ consul-template \
+  -template="/tmp/haproxy.conf.ctmpl:/etc/haproxy/haproxy.conf"
+
+Here is an example of what the file may render:
+
+global
+    daemon
+    maxconn 4
+
+defaults
+    mode default
+    timeout 5
+
+listen http-in
+    bind *:8000
+    server nyc3-worker-2 104.131.109.224:80
+    server nyc3-worker-3 104.131.59.59:80
+    server nyc3-worker-1 104.131.86.92:80
+
+    For a list of functions, please see the Consul Template README
+    For template syntax, please see the golang text/template documentation
+
+#==
+
+#==
+#START A CONSUL TEMPLATE
+#==
+
+#https://github.com/hashicorp/consul-template
+
+Start Consul Template:
+
+consul-template -template "in.tpl:out.txt" -once
+
+#==
+#MORE CONSUL TEMPLATE
+#==
+
+#https://dzone.com/articles/consul-proxysql-and-mysql-ha
+#https://www.haproxy.com/blog/haproxy-and-consul-with-dns-for-service-discovery/
+#https://danielparker.me/haproxy/consul/srv/haproxy-srv-consul/
+
+#==
+#CONSUL CLOUDFLARE
+#==
+
+#https://www.terraform.io/docs/providers/cloudflare/r/record.html
+
+#==
+#NOT UNDERSTANDING CONSUL TEMPLATE BUT EXAMPLE BELOW IS STARTING TO MAKE SENSE
+#070319
+#==
+
+#https://github.com/hashicorp/consul-template/blob/master/examples/haproxy.md
+
+HAProxy Consul Template Example
+Here is an example template for rendering an HAProxy configuration file with Consul Template:
+Save this file to disk at a place reachable by the Consul Template process like /tmp/haproxy.conf.ctmpl and run Consul Template:
+
+==
+
+global
+    daemon
+    maxconn {{key "service/haproxy/maxconn"}}
+
+defaults
+    mode {{key "service/haproxy/mode"}}{{range ls "service/haproxy/timeouts"}}
+    timeout {{.Key}} {{.Value}}{{end}}
+
+listen http-in
+    bind *:8000{{range service "release.web"}}
+    server {{.Node}} {{.Address}}:{{.Port}}{{end}}
+
+==
+#run Consul Template
+
+consul-template -template="/tmp/haproxy.conf.ctmpl:/etc/haproxy/haproxy.conf" 
+
+==
+
+Here is an example of what the file may render:
+
+==
+ 
+ global
+    daemon
+    maxconn 4
+
+defaults
+    mode default
+    timeout 5
+
+listen http-in
+    bind *:8000
+    server nyc3-worker-2 104.131.109.224:80
+    server nyc3-worker-3 104.131.59.59:80
+    server nyc3-worker-1 104.131.86.92:80
+	
+==
+
+ANOTHER TEMPLATE EXAMPLE THAT KIND OF MAKES SENSE - NEED TO EDIT THOUGH
+
+==
+
+#https://github.com/haproxytech/haproxy/blob/master/blog/integration_with_consul/haproxy.conf.tmpl
+# haproxy/blog/integration_with_consul/haproxy.conf.tmpl 
+
+==
+
+global
+  daemon
+#  debug
+  pidfile /haproxy.pid
+  stats socket /haproxy.sock level admin
+  maxconn {{key "service/haproxy/maxconn"}}
+  log 10.42.0.1:514 local0 info
+  server-state-file /haproxy.serverstates
+  description HAProxy / consul demo
+
+resolvers consul
+  nameserver consul 127.0.0.1:8600
+  accepted_payload_size 8192
+
+defaults
+  log global
+  option httplog
+  option socket-stats
+  load-server-state-from-file global
+  default-server init-addr none inter 1s rise 2 fall 2
+  mode {{key "service/haproxy/mode"}}
+  {{range ls "service/haproxy/timeouts"}}
+  timeout {{.Key}} {{.Value}}{{end}}
+
+frontend http-in
+  bind *:80
+  maxconn {{key "service/haproxy/maxconn"}}
+  use_backend b_%[req.hdr(Host),lower,word(1,:)]
+
+{{range services}}{{$servicename := .Name}}{{$nbsrvkeyname := printf "service/haproxy/backend/%s/nbsrv" $servicename}}
+backend b_{{$servicename}}.{{key "service/haproxy/domainname"}}
+  server-template {{$servicename}} {{keyOrDefault $nbsrvkeyname "10"}} _{{$servicename}}._tcp.service.consul resolvers consul resolve-prefer ipv4 check
+{{end}}
+
+frontend stats
+  bind *:1936
+  mode http
+  option forceclose
+  stats enable
+  stats uri /
+  stats show-legends
+  stats show-desc
+  stats show-node
+stats refresh 2
+
+==
+
+==
+ANOTHER EXAMPLE
+==
+
+#https://github.com/camptocamp/docker-haproxy-consul/blob/master/haproxy.tmpl
+
+global
+        chroot /var/lib/haproxy
+        user haproxy
+        group haproxy
+
+        # Default SSL material locations
+        ca-base /etc/ssl/certs
+        crt-base /etc/ssl/private
+
+        # Default ciphers to use on SSL-enabled listening sockets.
+        # For more information, see ciphers(1SSL). This list is from:
+        #  https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+        ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+        ssl-default-bind-options no-sslv3
+
+defaults
+        mode http
+        timeout connect 5000
+        timeout client 50000
+        timeout server 50000
+
+listen stats
+        bind *:8080
+        stats enable
+        stats uri /
+
+frontend www
+        bind *:80
+
+# generated by consul-template
+{{ range services }}
+  {{ $service := . }}
+        acl host_{{ $service.Name }} hdr(host) -i {{ $service.Name | replaceAll "_" "." }}
+  {{ if env "HAPROXY_DOMAIN" }}
+    {{ $haproxy_domain := env "HAPROXY_DOMAIN" | split ":" }}
+    {{ range $haproxy_domain }}
+        acl host_{{ $service.Name }} hdr(host) -i {{ $service.Name | replaceAll "_" "." }}.{{ . }}
+    {{ end }}
+  {{ end }}
+  {{ range .Tags }}
+    {{ if . | regexMatch "server_alias=" }}
+        acl host_{{ $service.Name }} hdr(host) -i {{ . | regexReplaceAll ".*=" "" }}
+    {{ end }}
+  {{ end }}
+
+        use_backend {{ .Name }}_backend if host_{{ .Name }}
+{{ end }}
+
+{{ range services }}
+backend {{ .Name }}_backend
+  {{ if .Tags | contains "sticky_session" }}
+      # sticky
+  {{ end }}
+  {{ range service .Name }}
+        server {{ .ID }} {{ .Address }}:{{ .Port }}
+  {{ end }}
+{{ end }}
+
+
+==
+HAPROXY SRV DNS RECORD USAGE
+070419
+==
+
+#https://www.haproxy.com/documentation/aloha/9-5/traffic-management/lb-layer7/dns-srv-records/
+
+Retrieve a list of servers
+
+To get the list of servers, HAProxy performs a DNS query like the following shell command, using as a service called red as an example:
+
+dig -t srv _http._tcp.red.domain.local
+
+The service discovery returns the following records:
+
+;; QUESTION SECTION:
+;_http._tcp.red.domain.local. IN SRV
+
+;; ANSWER SECTION:
+_http._tcp.red.domain.local. 30 IN SRV 10 25 8080 3963643338366463.red.domain.local.
+_http._tcp.red.domain.local. 30 IN SRV 10 25 8080 3366376637306635.red.domain.local.
+_http._tcp.red.domain.local. 30 IN SRV 10 25 8080 3464316362303933.red.domain.local.
+_http._tcp.red.domain.local. 30 IN SRV 10 25 8080 3963326437356461.red.domain.local.
+
+;; ADDITIONAL SECTION:
+3963643338366463.red.domain.local. 30 IN A 10.1.29.2
+3366376637306635.red.domain.local. 30 IN A 10.1.29.3
+3464316362303933.red.domain.local. 30 IN A 10.1.71.2
+3963326437356461.red.domain.local. 30 IN A 10.1.71.3
+
+Upon receiving this response, HAProxy adjusts its configuration to the number of records returned. As more records are added/removed this will change, up to the maximum number of servers specified in the server-template line.
+
+
+==
+MORE INFO, COULD BE GOOD
+070419
+==
+
+#https://aws.amazon.com/blogs/compute/service-discovery-via-consul-with-amazon-ecs/
+#https://sites.google.com/site/mytechnicalcollection/cloud-computing/tools/consul---service-discovery

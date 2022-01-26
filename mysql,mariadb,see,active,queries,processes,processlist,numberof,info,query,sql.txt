@@ -1,0 +1,44 @@
+mysql see all running processes/queries
+==
+
+mysqladmin -u user -ppassword --verbose processlist --sleep 1
+
+watch 'mysql -u user -ppassword -e "show full processlist;"'
+
+show full processlist;
+
+mysql see number running processes/queries
+==
+
+TRIED TO USE AGAIN - 062419 - NOT WORKING - NOT DOING ANYTHING
+
+SHOW STATUS WHERE 'variable_name' = 'Threads_connected';
+
+watch 'mysql -u user -ppassword -e "SHOW STATUS WHERE 'variable_name' = 'Threads_connected';"'
+
+mysql info
+==
+
+show session status;
+
+show global status;
+
+mysqladmin -u user -ppassword status --sleep 1
+
+show status like 'Conn%';
+
+show status like '%onn%';
+
+SHOWS LOTS - CONNECTION NUMBERS
+
+mysql -u user -ppassword -e "show status like '%onn%';"
+
+mysqladmin -u user -ppassword proc stat
+
+GOOD ONE - TRIED TO USE AGAIN - 062419 - NOT WORKING - TOO MANY QUERIES, TOO HARD TO SEE, CAN SEE FULL PROCESS LIST FROM ADMINER
+
+mysqladmin -u user -ppassword --verbose proc stat --sleep 1
+
+MORE INFO ABOUT CURRENT SQL STATUS
+
+ SELECT * from information_schema.GLOBAL_STATUS where VARIABLE_NAME='QUERIES' OR VARIABLE_NAME='THREADS_CONNECTED' OR VARIABLE_NAME='THREADS_RUNNING' OR VARIABLE_NAME='SLOW_QUERIES' ;

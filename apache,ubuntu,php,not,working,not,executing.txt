@@ -1,0 +1,7 @@
+UBUNTU, APACHE, PHP not working, not executing, can see php code in broswer
+
+PHP not properly enabled with apache
+
+This working with Ubuntu 1604, October 18, 2018
+
+sudo apt-get install libapache2-mod-php

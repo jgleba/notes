@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PLEX XML ERROR
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-07[Aug-Fri]15-24PM 
+
+##https://forums.plex.tv/t/192-168-x-x-32400-displays-this-xml-file-does-not-appear-to-have-any-style-information/178043
+
+IF GETTING PLEX XML ERROR:
+
+HIT ip:32400/web
+

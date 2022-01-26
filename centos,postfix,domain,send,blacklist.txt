@@ -1,0 +1,25 @@
+=======================================
+POSTFIX CENTOS DOMAIN SENDING BLACKLIST
+080119
+=======================================
+
+#https://www.linuxquestions.org/questions/linux-server-73/how-to-block-domains-postfix-684924/
+
+sudo nano /etc/postfix/main.cf
+
+#ADD
+
+smtpd_sender_restrictions = hash:/etc/postfix/domainblacklist
+reject_unauth_destination = hash:/etc/postfix/domainblacklist
+
+sudo nano /etc/postfix/domainblacklist
+
+aol.com     REJECT
+yahoo.com   REJECT
+msn.com     REJECT
+
+placeholder.com     REJECT
+
+sudo postmap hash:/etc/postfix/domainblacklist
+
+sudo service postfix restart

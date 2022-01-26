@@ -1,0 +1,2214 @@
+==========================================================================
+CENTOS KUBERNETES MULTI MASTER CLUSTER SETUP + METALLB AND TRAEFIK INGRESS
+3 MASTER NODES, 3 WORKER NODES
+2 HAPROXY LB WITH VIP
+KUBEADM, KUBECTL, KUBELET, ETCD, WEAVE, DOCKER
+112119
+JGleba
+=========================================================================
+
+##https://blog.inkubate.io/install-and-configure-a-multi-master-kubernetes-cluster-with-kubeadm/
+
+GOOD KUBERNETES REF
+##https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+##https://kubernetes.io/docs/concepts/workloads/pods/pod/
+##https://www.weave.works/blog/running-highly-available-clusters-with-kubeadm
+##https://www.digitalocean.com/community/tutorials/an-introduction-to-kubernetes
+
+==
+NEXT TIME CHECK
+==
+
+[WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the Docker cgroup driver. The recommended driver is "systemd". Please follow the guide at https://kubernetes.io/docs/setup/cri/
+[WARNING SystemVerification]: this Docker version is not on the list of validated versions: 19.03.5. Latest validated version: 18.09
+
+==
+GLOBAL PRE-FLIGHT
+==
+
+sudo yum update -y
+SWAP OFF ON VM LEVEL
+su root
+
+==
+FIREWALL OFF ON ALL MASTERS AND WORKERS - NOT WORKING WITHOUT
+==
+
+sudo systemctl stop firewalld && sudo systemctl disable firewalld
+
+#==
+#FIREWALL ON MASTERS AND WORKERS
+#==
+
+#sudo firewall-cmd --zone=public --add-port=6443/tcp --permanent
+#sudo firewall-cmd --zone=public --add-port=6443/udp --permanent
+#sudo firewall-cmd --zone=public --add-port=2379-2380/tcp --permanent
+#sudo firewall-cmd --zone=public --add-port=2379-2380/udp --permanent
+#sudo firewall-cmd --zone=public --add-port=10250-10252/tcp --permanent
+#sudo firewall-cmd --zone=public --add-port=10250-10252/udp --permanent
+#sudo firewall-cmd --zone=public --add-port=10255/tcp --permanent
+#sudo firewall-cmd --zone=public --add-port=10255/udp --permanent
+#sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
+#sudo firewall-cmd --zone=public --add-port=8080/udp --permanent
+#sudo firewall-cmd --reload
+
+==
+FIREWALL ON HAPROXY1 AND HAPROXY2
+==
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --zone=public --add-port=6443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6443/udp --permanent
+sudo firewall-cmd --zone=public --add-port=8080/udp --permanent
+sudo firewall-cmd --zone=public --add-port=9999/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9999/udp --permanent
+sudo firewall-cmd --zone=public --add-port=9000/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9001/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+HOSTS FILE ON ALL
+==
+
+echo "
+172.16.3.160 kube1master1
+172.16.3.161 kube1master2
+172.16.3.162 kube1master3
+172.16.3.180 kube1worker1
+172.16.3.181 kube1worker2
+172.16.3.182 kube1worker3
+172.16.3.170 kube1haproxy1
+172.16.3.171 kube1haproxy2" >> /etc/hosts
+
+==
+USING HAPROXY MACHINES TO MANAGE
+INSTALL CLIENT TOOLS ON HAPROXY1 AND HAPROXY2
+==
+
+sudo wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64
+sudo wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64
+sudo chmod +x cfssl*
+sudo mv cfssl_linux-amd64 /usr/local/bin/cfssl
+sudo mv cfssljson_linux-amd64 /usr/local/bin/cfssljson
+
+==
+VERIFY VERSION
+==
+
+cfssl version
+
+==
+DOWNLOAD AND INSTALL LATEST KUBECTL - ON ALL MACHINES WHERE MANAGEMENT MIGHT HAPPEN - HAPROXY1, 2 MASTER1, 2, 3
+==
+
+##https://kubernetes.io/docs/tasks/tools/install-kubectl/
+
+sudo curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+sudo chmod +x kubectl
+sudo mv kubectl /usr/local/bin
+
+==
+VERIFY VERSION
+==
+
+kubectl version
+
+OR
+
+kubectl version -o json
+
+NOT SURE IF ERROR BELOW MATTERS OR NOT
+
+[root@kube1haproxy1 user]# kubectl version
+Client Version: version.Info{Major:"1", Minor:"16", GitVersion:"v1.16.3", GitCommit:"b3cbbae08ec52a7fc73d334838e18d17e8512749", GitTreeState:"clean", BuildDate:"2019-11-13T11:23:11Z", GoVersion:"go1.12.12", Compiler:"gc", Platform:"linux/amd64"}
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+[root@kube1haproxy1 user]# kubectl version -o json
+{
+  "clientVersion": {
+    "major": "1",
+    "minor": "16",
+    "gitVersion": "v1.16.3",
+    "gitCommit": "b3cbbae08ec52a7fc73d334838e18d17e8512749",
+    "gitTreeState": "clean",
+    "buildDate": "2019-11-13T11:23:11Z",
+    "goVersion": "go1.12.12",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+  }
+}
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+CONTINUE
+
+==
+INSTALL HAPROXY ON HAPROXY1 AND HAPROXY2
+==
+
+sudo yum install centos-release-scl -y
+sudo yum install rh-haproxy18-haproxy rh-haproxy18-haproxy-syspaths -y
+
+==
+HAPROXY CONFIG
+==
+
+echo "
+global
+    nbproc 2
+    nbthread 6
+    cpu-map auto:1/1-2 0-1
+    log         127.0.0.1 local2
+    chroot      /var/opt/rh/rh-haproxy18/lib/haproxy
+    pidfile     /var/run/rh-haproxy18-haproxy.pid
+    maxconn     100000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/opt/rh/rh-haproxy18/lib/haproxy/stats
+
+defaults
+    mode                    tcp
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    #option http-server-close
+    #option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 5
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 99000
+
+    ##DNS RESOLVERS FOR DNS SERVICE DISCOVERY - TESTING - 100619
+    ##https://www.haproxy.com/blog/dns-service-discovery-haproxy/
+    resolvers internaldns
+    nameserver dns1 172.16.3.10:53
+    nameserver dns2 172.16.3.11:53
+    accepted_payload_size 8192 # allow larger DNS payloads
+
+##CHECK BETWEEN HAPROXY SERVERS
+##ADDED 04/05 2019
+##072019 MOVING TO TOP
+peers mypeer
+    peer kube1haproxy1 172.16.3.170:9999
+    peer kube1haproxy2 172.16.3.171:9999
+
+##EMAIL NOTIFICATIONS - WORKING-030819
+##MAILERS SECTION STAYS HERE AT FRONTEND
+mailers mta
+mailer smtp1 172.16.3.7:25
+#mailer smtp2 172.16.3.2:25
+##PLACE BELOW IN EACH BACKEND FOR NOTIFICATIONS FOR THAT BACKEND
+#email-alert mailers mta
+#email-alert level notice
+#email-alert from haproxy-webcl-fe@jgleba.com
+#email-alert to example@jgleba.com
+
+frontend kube1
+bind :6443
+option tcplog
+mode tcp
+default_backend kube1
+
+backend kube1
+mode tcp
+balance leastconn
+option tcp-check
+email-alert mailers mta
+email-alert level notice
+email-alert from haproxy-kube1@jgleba.com
+email-alert to example@jgleba.com
+server master1 172.16.3.160:6443 check fall 3 rise 2
+server master2 172.16.3.161:6443 check fall 3 rise 2
+server master3 172.16.3.162:6443 check fall 3 rise 2
+
+##STATS START
+listen stats # Define a listen section called "stats"
+    bind :9000 process 1 # Listen on localhost:9000
+    bind :9001 process 2 # Listen on localhost:9001
+    #bind-process 1
+    mode http
+    acl stats_network_allowed src 127.0.0.0/8
+    acl stats_network_allowed src 172.16.3.101
+    acl stats_network_allowed src 172.16.0.101
+    acl stats_network_allowed src 172.16.0.250
+    tcp-request connection reject if !stats_network_allowed
+    stats enable  # Enable stats page
+    stats show-node
+    ##stats refresh 30s
+    stats refresh 20s
+    ##stats refresh 5s
+    #stats hide-version  # Hide HAProxy version
+    stats realm Haproxy\ Statistics  # Title text for popup window
+    stats uri /haproxy_stats  # Stats URI
+    stats auth jg:jg  # Authentication credentials
+" > /etc/haproxy/haproxy.cfg
+
+==
+START AND ENABLE HAPROXY
+==
+
+sudo systemctl enable haproxy && sudo systemctl start haproxy 
+#sudo systemctl status haproxy
+
+==
+INSTALL KEEPALIVED ON HAPROXY1 AND HAPROXY2
+==
+
+sudo yum install keepalived -y
+
+echo "
+net.ipv4.conf.default.rp_filter = 0
+net.ipv4.conf.all.rp_filter = 0" >> /etc/sysctl.conf
+sudo sysctl -p
+
+==
+HAPROXY1
+==
+
+echo "
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-kube1-lb1@jgleba.com
+   smtp_server 172.16.3.7
+   smtp_connect_timeout 30
+   router_id kube1haproxy1
+   #vrrp_skip_check_adv_addr
+   #vrrp_strict
+   #vrrp_garp_interval 0
+   #vrrp_gna_interval 0
+}
+
+vrrp_instance VIP_KUBE1_LB {
+    state MASTER
+    #state BACKUP
+    interface ens192
+    virtual_router_id 53
+    ##priority 90
+    priority 110
+    advert_int 2
+    smtp_alert
+    preempt_delay 5
+    authentication {
+        auth_type PASS
+        auth_pass abc
+    }
+	unicast_src_ip 172.16.3.170   # IP address of local interface
+    unicast_peer {            # IP address of peer interface
+        172.16.3.171
+    }
+    virtual_ipaddress {
+        172.16.3.175
+    }
+}" | sudo tee /etc/keepalived/keepalived.conf
+
+==
+HAPROXY2
+==
+
+echo "
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-kube1-lb1@jgleba.com
+   smtp_server 172.16.3.7
+   smtp_connect_timeout 30
+   router_id kube1haproxy2
+   #vrrp_skip_check_adv_addr
+   #vrrp_strict
+   #vrrp_garp_interval 0
+   #vrrp_gna_interval 0
+}
+
+vrrp_instance VIP_KUBE1_LB {
+    #state MASTER
+    state BACKUP
+    interface ens192
+    virtual_router_id 53
+    priority 100
+    advert_int 2
+    smtp_alert
+    #preempt_delay 10
+    authentication {
+        auth_type PASS
+        auth_pass abc
+    }
+	unicast_src_ip 172.16.3.171   # IP address of local interface
+    unicast_peer {            # IP address of peer interface
+        172.16.3.170
+    virtual_ipaddress {
+        172.16.3.175
+    }
+}" | sudo tee /etc/keepalived/keepalived.conf
+
+==
+START AND ENABLE KEEPALIVED
+==
+
+sudo systemctl enable keepalived && sudo systemctl start keepalived
+
+==
+CREATE CA ON HAPROXY1
+==
+
+sudo nano ca-config.json
+{
+  "signing": {
+    "default": {
+      "expiry": "87600h"
+    },
+    "profiles": {
+      "kubernetes": {
+        "usages": ["signing", "key encipherment", "server auth", "client auth"],
+        "expiry": "87600h"
+      }
+    }
+  }
+}
+
+sudo nano ca-csr.json
+{
+  "CN": "JKube1CA",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+  {
+    "C": "JKube1",
+    "L": "JKube1",
+    "O": "JKube1",
+    "OU": "JKube1",
+    "ST": "JKube1"
+  }
+ ]
+}
+
+#sudo nano ca-csr.json
+#{
+#  "CN": "Kubernetes",
+#  "key": {
+#    "algo": "rsa",
+#    "size": 2048
+#  },
+#  "names": [
+#  {
+#    "C": "IE",
+#    "L": "Cork",
+#    "O": "Kubernetes",
+#    "OU": "CA",
+#    "ST": "Cork Co."
+#  }
+# ]
+#}
+
+==
+GENERATE CERTS AND KEYS FOR CA
+==
+
+cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+
+==
+CREATE CA FOR ETCD CLUSTER
+==
+
+sudo nano kubernetes-csr.json
+{
+  "CN": "JKube1",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+  {
+    "C": "JKube1",
+    "L": "JKube1",
+    "O": "JKube1",
+    "OU": "JKube1",
+    "ST": "JKube1"
+  }
+ ]
+}
+
+#sudo nano kubernetes-csr.json
+#{
+#  "CN": "kubernetes",
+#  "key": {
+#    "algo": "rsa",
+#    "size": 2048
+#  },
+#  "names": [
+#  {
+#    "C": "IE",
+#    "L": "Cork",
+#    "O": "Kubernetes",
+#    "OU": "Kubernetes",
+#    "ST": "Cork Co."
+#  }
+# ]
+#}
+
+==
+GENERATE CERTS AND KEYS
+==
+
+NEEDS TO BE UPDATED ON NEXT REBUILD
+
+cfssl gencert \
+-ca=ca.pem \
+-ca-key=ca-key.pem \
+-config=ca-config.json \
+-hostname=172.16.3.160,172.16.3.161,172.16.3.162,172.16.3.170,172.16.3.171,172.16.3.175,127.0.0.1,kubernetes.default \
+-profile=kubernetes kubernetes-csr.json | \
+cfssljson -bare kubernetes
+
+##ORIG
+#cfssl gencert \
+#-ca=ca.pem \
+#-ca-key=ca-key.pem \
+#-config=ca-config.json \
+#-hostname=172.16.3.160,172.16.3.161,172.16.3.162,172.16.3.170,172.16.3.171,172.16.3.175,127.0.0.1,kubernetes.default \
+#-profile=kubernetes kubernetes-csr.json | \
+#cfssljson -bare kubernetes
+
+==
+COPY CERTS TO ALL MACHINES
+==
+
+NEEDS TO BE UPDATED ON NEXT REBUILD
+
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.160:/root/
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.161:/root/
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.162:/root/
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.180:/root/
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.181:/root/
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.182:/root/
+scp ca.pem kubernetes.pem kubernetes-key.pem root@172.16.3.171:/root/
+
+==
+INSTALL DOCKER ON ALL MASTERS AND WORKERS
+==
+
+##https://docs.docker.com/install/linux/docker-ce/centos/
+
+##INSTALL VERSION 18.09, TRY AGAIN NEXT TIME
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+VERSION=18.09.9-3.el7
+sudo yum install -y docker-ce-$VERSION docker-ce-cli-$VERSION
+
+##ANOTHER WAY, LATEST VERSION
+#sudo curl -fsSL https://get.docker.com -o get-docker.sh
+#sudo sh get-docker.sh
+
+sudo systemctl start docker.service && sudo systemctl enable docker.service
+
+==
+SET NON ROOT USER ACCESS FOR DOCKER
+==
+
+sudo usermod -aG docker user
+
+==
+INSTALL kubelet kubeadm kubectl ON ALL MASTERS AND WORKERS
+==
+
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+sudo yum install -y kubelet kubeadm kubectl
+
+sudo systemctl enable kubelet.service && sudo systemctl start kubelet.service
+
+==
+NETWORK STUFF ON MASTERS AND WORKERS AFTER DOCKER AND KUBELET INSTALL
+==
+
+sudo modprobe br_netfilter
+echo "1" > /proc/sys/net/bridge/bridge-nf-call-iptables
+echo '1' > /proc/sys/net/ipv4/ip_forward
+#sudo echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+#sudo sed -i -e 's/=1/=0/g' "/proc/sys/net/bridge/bridge-nf-call-iptables"
+
+#==
+#CHANGE CGROUP - FILE NOT FOUND - NEED TO FIGURE OUT
+#==
+#
+#sudo sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#
+#sudo systemctl daemon-reload
+#sudo systemctl restart kubelet && sudo systemctl enable kubelet
+
+==
+ETCD CLUSTER INSTALL ON ALL MASTERS
+==
+
+==
+MASTER1
+==
+
+sudo mkdir /etc/etcd /var/lib/etcd
+sudo cp /root/ca.pem /root/kubernetes.pem /root/kubernetes-key.pem /etc/etcd
+
+sudo curl -s https://api.github.com/repos/etcd-io/etcd/releases/latest \
+  | grep browser_download_url \
+  | grep linux-amd64 \
+  | cut -d '"' -f 4 \
+  | wget -qi -
+  
+sudo tar xvf *.tar.gz
+cd etcd-*/
+sudo mv etcd* /usr/local/bin/
+cd ..
+sudo rm -rf etcd*
+
+==
+CHECK VERSION
+==
+
+etcd --version
+
+==
+MASTER2 AND MASTER3
+==
+
+sudo mkdir /etc/etcd /var/lib/etcd
+sudo scp root@172.16.3.160:/etc/etcd/ca.pem /etc/etcd/
+sudo scp root@172.16.3.160:/etc/etcd/kubernetes.pem /etc/etcd/
+sudo scp root@172.16.3.160:/etc/etcd/kubernetes-key.pem /etc/etcd/
+sudo scp -r root@172.16.3.160:/etc/etcd /etc/etcd/
+
+sudo curl -s https://api.github.com/repos/etcd-io/etcd/releases/latest \
+  | grep browser_download_url \
+  | grep linux-amd64 \
+  | cut -d '"' -f 4 \
+  | wget -qi -
+  
+sudo tar xvf *.tar.gz
+cd etcd-*/
+sudo mv etcd* /usr/local/bin/
+cd ..
+sudo rm -rf etcd*
+
+==
+MASTER1 CREATE ETCD CONFIG FILE
+==
+
+echo '[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+  --name 172.16.3.160 \
+  --cert-file=/etc/etcd/kubernetes.pem \
+  --key-file=/etc/etcd/kubernetes-key.pem \
+  --peer-cert-file=/etc/etcd/kubernetes.pem \
+  --peer-key-file=/etc/etcd/kubernetes-key.pem \
+  --trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://172.16.3.160:2380 \
+  --listen-peer-urls https://172.16.3.160:2380 \
+  --listen-client-urls https://172.16.3.160:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://172.16.3.160:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster 172.16.3.160=https://172.16.3.160:2380,172.16.3.161=https://172.16.3.161:2380,172.16.3.162=https://172.16.3.162:2380 \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/etcd.service
+
+==
+ENABLE AND START ETCD
+==
+
+sudo systemctl daemon-reload && sudo systemctl enable etcd && sudo systemctl restart etcd
+
+##sudo systemctl status etcd
+
+==
+MASTER2 CONFIG FILE
+==
+
+echo '[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+  --name 172.16.3.161 \
+  --cert-file=/etc/etcd/kubernetes.pem \
+  --key-file=/etc/etcd/kubernetes-key.pem \
+  --peer-cert-file=/etc/etcd/kubernetes.pem \
+  --peer-key-file=/etc/etcd/kubernetes-key.pem \
+  --trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://172.16.3.161:2380 \
+  --listen-peer-urls https://172.16.3.161:2380 \
+  --listen-client-urls https://172.16.3.161:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://172.16.3.161:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster 172.16.3.160=https://172.16.3.160:2380,172.16.3.161=https://172.16.3.161:2380,172.16.3.162=https://172.16.3.162:2380 \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/etcd.service
+
+==
+ENABLE AND START ETCD
+==
+
+sudo systemctl daemon-reload && sudo systemctl enable etcd && sudo systemctl restart etcd
+
+==
+MASTER3 CONFIG FILE
+==
+
+echo '[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+  --name 172.16.3.162 \
+  --cert-file=/etc/etcd/kubernetes.pem \
+  --key-file=/etc/etcd/kubernetes-key.pem \
+  --peer-cert-file=/etc/etcd/kubernetes.pem \
+  --peer-key-file=/etc/etcd/kubernetes-key.pem \
+  --trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://172.16.3.162:2380 \
+  --listen-peer-urls https://172.16.3.162:2380 \
+  --listen-client-urls https://172.16.3.162:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://172.16.3.162:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster 172.16.3.160=https://172.16.3.160:2380,172.16.3.161=https://172.16.3.161:2380,172.16.3.162=https://172.16.3.162:2380 \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target' > /etc/systemd/system/etcd.service
+
+==
+ENABLE AND START ETCD
+==
+
+sudo systemctl daemon-reload && sudo systemctl enable etcd && sudo systemctl restart etcd
+
+##sudo systemctl status etcd
+
+==
+VERIFY ETCD CLUSTER WORKING
+==
+
+ETCDCTL_API=3 etcdctl member list
+
+[root@kube1master1 kubernetes]# ETCDCTL_API=3 etcdctl member list
+485d50ee9e163c26, started, 172.16.3.161, https://172.16.3.161:2380, https://172.16.3.161:2379
+68a94de8dd42bb2e, started, 172.16.3.160, https://172.16.3.160:2380, https://172.16.3.160:2379
+d4b79a9beac6b93d, started, 172.16.3.162, https://172.16.3.162:2380, https://172.16.3.162:2379
+
+==
+INITALIZING MASTER NODES, MASTER1 CONFIG
+==
+
+######NEXT TIME TRY v1
+echo 'apiVersion: kubeadm.k8s.io/v1
+GET THIS ERROR TRYING v1
+ sudo kubeadm init --config=config.yaml
+W0111 11:01:43.339191    3595 strict.go:47] unknown configuration schema.GroupVersionKind{Group:"kubeadm.k8s.io", Version:"v1", Kind:"ClusterConfiguration"} for scheme definitions in "k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/scheme/scheme.go:31" and "k8s.io/kubernetes/cmd/kubeadm/app/componentconfigs/scheme.go:28"
+no kind "ClusterConfiguration" is registered for version "kubeadm.k8s.io/v1" in scheme "k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/scheme/scheme.go:31"
+To see the stack trace of this error execute with --v=5 or higher
+
+##sudo nano config.yaml
+
+echo 'apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+kubernetesVersion: stable
+apiServerCertSANs:
+- 172.16.3.175
+controlPlaneEndpoint: "172.16.3.175:6443"
+etcd:
+  external:
+    endpoints:
+    - https://172.16.3.160:2379
+    - https://172.16.3.161:2379
+    - https://172.16.3.162:2379
+    caFile: /etc/etcd/ca.pem
+    certFile: /etc/etcd/kubernetes.pem
+    keyFile: /etc/etcd/kubernetes-key.pem
+networking:
+  podSubnet: 10.252.0.0/16
+apiServerExtraArgs:
+  apiserver-count: "3"' > config.yaml
+  
+==
+INIT CLUSTER ON MASTER1
+==
+
+sudo kubeadm init --config=config.yaml
+
+==
+OUTPUT FROM LATEST INIT ON MASTER1
+==
+
+==
+011620 - 651pm
+==
+
+011120 - 1103am
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of control-plane nodes by copying certificate authorities
+and service account keys on each node and then running the following as root:
+
+  kubeadm join 172.16.3.175:6443 --token vmukmg.tgggx2opl7oaibol \
+    --discovery-token-ca-cert-hash sha256:3c914b5bef758fbd2ba4002a739bd9d39f7c92ea57f69e1addd0deae2c895a2f \
+    --control-plane
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.16.3.175:6443 --token vmukmg.tgggx2opl7oaibol \
+    --discovery-token-ca-cert-hash sha256:3c914b5bef758fbd2ba4002a739bd9d39f7c92ea57f69e1addd0deae2c895a2f
+
+
+112219 - 930pm
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of control-plane nodes by copying certificate authorities
+and service account keys on each node and then running the following as root:
+
+  kubeadm join 172.16.3.175:6443 --token 31wvfm.8ihmonfgo520yeia \
+    --discovery-token-ca-cert-hash sha256:10d178f58ef6eb126f7459d47a049681fe1cc1d4d18d55e1cc204ff9793683cc \
+    --control-plane
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.16.3.175:6443 --token 31wvfm.8ihmonfgo520yeia \
+    --discovery-token-ca-cert-hash sha256:10d178f58ef6eb126f7459d47a049681fe1cc1d4d18d55e1cc204ff9793683cc
+
+==
+COPY CERTS TO ALL OTHER MASTERS FROM MASTER1 AND REMOVE EXISTING API CERT AND KEY FOR INIT
+==
+
+sudo scp -rv root@172.16.3.160:/etc/kubernetes/pki /etc/kubernetes/
+sudo rm /etc/kubernetes/pki/apiserver*
+
+==
+INIT ON MASTER2
+==
+
+  kubeadm join 172.16.3.175:6443 --token 31wvfm.8ihmonfgo520yeia \
+    --discovery-token-ca-cert-hash sha256:10d178f58ef6eb126f7459d47a049681fe1cc1d4d18d55e1cc204ff9793683cc \
+    --control-plane
+
+==
+INIT ON MASTER3
+==
+
+  kubeadm join 172.16.3.175:6443 --token 31wvfm.8ihmonfgo520yeia \
+    --discovery-token-ca-cert-hash sha256:10d178f58ef6eb126f7459d47a049681fe1cc1d4d18d55e1cc204ff9793683cc \
+    --control-plane
+
+==
+JOIN WORKERS, RUN ON ALL WORKERS
+==
+
+kubeadm join 172.16.3.175:6443 --token 31wvfm.8ihmonfgo520yeia \
+    --discovery-token-ca-cert-hash sha256:10d178f58ef6eb126f7459d47a049681fe1cc1d4d18d55e1cc204ff9793683cc
+
+==
+ON HAPROXY1 AND HAPROXY2 COPY CONFIG FROM MASTER FOR MANAGEMENT, ALLOW user USER TO ADMINISTER AS WELL
+==
+
+sudo mkdir -p /etc/kubernetes/
+sudo scp root@172.16.3.160:/etc/kubernetes/admin.conf /etc/kubernetes/admin.conf
+
+#root
+
+
+
+
+#user
+
+mkdir /home/user/.kube
+cp /etc/kubernetes/admin.conf /home/user/.kube/config
+sudo chown -R user:user /home/user/.kube/config
+
+==
+VERIFY KUBERNETES SO FAR
+==
+
+#sudo kubectl --kubeconfig /etc/kubernetes/admin.conf get nodes
+
+kubectl get nodes
+NAME           STATUS     ROLES    AGE     VERSION
+kube1master1   NotReady   master   33m     v1.16.3
+kube1master2   NotReady   master   6m26s   v1.16.3
+kube1master3   NotReady   master   4m39s   v1.16.3
+kube1worker1   NotReady   <none>   78s     v1.16.3
+kube1worker2   NotReady   <none>   37s     v1.16.3
+kube1worker3   NotReady   <none>   10s     v1.16.3
+
+==
+LOCK DOWN KUBECTL CONFIG ON ALL MANAGEMENT MACHINES (HAPROXY AND MASTERS)
+==
+
+sudo chmod 600 /etc/kubernetes/admin.conf
+sudo chown user:root /etc/kubernetes/admin.conf
+sudo chown user:root /home/user/.kube/config
+chmod 600 /home/user/.kube/config
+sudo chown root:root /root/.kube/config
+sudo chmod 600 /root/.kube/config
+
+==
+DEPLOY OVERLAY NETWORK - TRYING WEAVE / WEAVE NET
+ON HAPROXY1 - OR MANAGEMENT MACHINE
+==
+
+##sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(sudo kubectl version | base64 | tr -d '\n')"
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+
+==
+ISSUES WITH WEAVE
+==
+
+[root@kube1haproxy1 ~]# kubectl apply -f https://git.io/weave-kube-1.6
+serviceaccount/weave-net created
+clusterrole.rbac.authorization.k8s.io/weave-net created
+clusterrolebinding.rbac.authorization.k8s.io/weave-net created
+role.rbac.authorization.k8s.io/weave-net created
+rolebinding.rbac.authorization.k8s.io/weave-net created
+unable to recognize no matches for kind "DaemonSet" in version "extensions/v1beta1"
+
+##https://github.com/weaveworks/weave/issues/3658
+
+#kubectl apply -f "https://frontend.dev.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
+#serviceaccount/weave-net configured
+#clusterrole.rbac.authorization.k8s.io/weave-net configured
+#clusterrolebinding.rbac.authorization.k8s.io/weave-net configured
+#role.rbac.authorization.k8s.io/weave-net configured
+#rolebinding.rbac.authorization.k8s.io/weave-net configured
+#daemonset.apps/weave-net created
+
+==
+GOOD TROUBLESHOOTING, VIEW LOGS
+==
+
+kubectl logs -n kube-system weave-net-xrgzv weave
+
+==
+VERIFY ALL, GET INFO
+LOTS OF INFO COMMANDS BELOW
+==
+
+[root@kube1haproxy1 user]# kubectl get nodes
+NAME           STATUS   ROLES    AGE   VERSION
+kube1master1   Ready    master   92m   v1.16.3
+kube1master2   Ready    master   87m   v1.16.3
+kube1master3   Ready    master   86m   v1.16.3
+kube1worker1   Ready    <none>   84m   v1.16.3
+kube1worker2   Ready    <none>   84m   v1.16.3
+kube1worker3   Ready    <none>   84m   v1.16.3
+
+==
+
+[root@kube1haproxy1 user]# kubectl get nodes -o wide
+NAME           STATUS   ROLES    AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                KERNEL-VERSION               CONTAINER-RUNTIME
+kube1master1   Ready    master   92m   v1.16.3   172.16.3.160   <none>        CentOS Linux 7 (Core)   3.10.0-1062.4.3.el7.x86_64   docker://19.3.5
+kube1master2   Ready    master   87m   v1.16.3   172.16.3.161   <none>        CentOS Linux 7 (Core)   3.10.0-1062.4.3.el7.x86_64   docker://19.3.5
+kube1master3   Ready    master   86m   v1.16.3   172.16.3.162   <none>        CentOS Linux 7 (Core)   3.10.0-1062.4.3.el7.x86_64   docker://19.3.5
+kube1worker1   Ready    <none>   84m   v1.16.3   172.16.3.180   <none>        CentOS Linux 7 (Core)   3.10.0-1062.4.3.el7.x86_64   docker://19.3.5
+kube1worker2   Ready    <none>   84m   v1.16.3   172.16.3.181   <none>        CentOS Linux 7 (Core)   3.10.0-1062.4.3.el7.x86_64   docker://19.3.5
+kube1worker3   Ready    <none>   84m   v1.16.3   172.16.3.182   <none>        CentOS Linux 7 (Core)   3.10.0-1062.4.3.el7.x86_64   docker://19.3.5
+
+==
+
+[root@kube1haproxy1 user]# kubectl get pods -n kube-system
+NAME                                   READY   STATUS    RESTARTS   AGE
+coredns-5644d7b6d9-gmlmj               1/1     Running   1          90m
+coredns-5644d7b6d9-jb9fb               1/1     Running   1          90m
+kube-apiserver-kube1master1            1/1     Running   1          89m
+kube-apiserver-kube1master2            1/1     Running   1          85m
+kube-apiserver-kube1master3            1/1     Running   1          84m
+kube-controller-manager-kube1master1   1/1     Running   1          89m
+kube-controller-manager-kube1master2   1/1     Running   1          85m
+kube-controller-manager-kube1master3   1/1     Running   1          84m
+kube-proxy-4s2vf                       1/1     Running   1          84m
+kube-proxy-cjfwc                       1/1     Running   1          90m
+kube-proxy-m46s5                       1/1     Running   1          85m
+kube-proxy-mjrgs                       1/1     Running   1          83m
+kube-proxy-q5c5c                       1/1     Running   1          82m
+kube-proxy-vg5h4                       1/1     Running   1          83m
+kube-scheduler-kube1master1            1/1     Running   1          89m
+kube-scheduler-kube1master2            1/1     Running   1          85m
+kube-scheduler-kube1master3            1/1     Running   1          84m
+weave-net-692nw                        2/2     Running   3          47m
+weave-net-7mlq7                        2/2     Running   3          48m
+weave-net-blzhj                        2/2     Running   2          47m
+weave-net-mwmlq                        2/2     Running   3          47m
+weave-net-rmp64                        2/2     Running   3          47m
+weave-net-xrgzv                        2/2     Running   3          46m
+
+==
+
+[root@kube1haproxy1 user]# kubectl get all
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   92m
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get all -A
+NAMESPACE        NAME                                       READY   STATUS    RESTARTS   AGE
+kube-system      pod/coredns-5644d7b6d9-gmlmj               1/1     Running   3          12d
+kube-system      pod/coredns-5644d7b6d9-jb9fb               1/1     Running   3          12d
+kube-system      pod/kube-apiserver-kube1master1            1/1     Running   4          12d
+kube-system      pod/kube-apiserver-kube1master2            1/1     Running   7          12d
+kube-system      pod/kube-apiserver-kube1master3            1/1     Running   8          12d
+kube-system      pod/kube-controller-manager-kube1master1   1/1     Running   7          12d
+kube-system      pod/kube-controller-manager-kube1master2   1/1     Running   7          12d
+kube-system      pod/kube-controller-manager-kube1master3   1/1     Running   8          12d
+kube-system      pod/kube-proxy-4s2vf                       1/1     Running   8          12d
+kube-system      pod/kube-proxy-cjfwc                       1/1     Running   4          12d
+kube-system      pod/kube-proxy-m46s5                       1/1     Running   7          12d
+kube-system      pod/kube-proxy-mjrgs                       1/1     Running   7          12d
+kube-system      pod/kube-proxy-q5c5c                       1/1     Running   3          12d
+kube-system      pod/kube-proxy-vg5h4                       1/1     Running   5          12d
+kube-system      pod/kube-scheduler-kube1master1            1/1     Running   6          12d
+kube-system      pod/kube-scheduler-kube1master2            1/1     Running   8          12d
+kube-system      pod/kube-scheduler-kube1master3            1/1     Running   8          12d
+kube-system      pod/weave-net-692nw                        2/2     Running   20         12d
+kube-system      pod/weave-net-7mlq7                        2/2     Running   12         12d
+kube-system      pod/weave-net-blzhj                        2/2     Running   11         12d
+kube-system      pod/weave-net-mwmlq                        2/2     Running   20         12d
+kube-system      pod/weave-net-rmp64                        2/2     Running   22         12d
+kube-system      pod/weave-net-xrgzv                        2/2     Running   9          12d
+metallb-system   pod/controller-65895b47d4-2hqqt            1/1     Running   0          2d14h
+metallb-system   pod/speaker-4vjc4                          1/1     Running   0          2d14h
+metallb-system   pod/speaker-7gq52                          1/1     Running   0          2d14h
+metallb-system   pod/speaker-pr4tx                          1/1     Running   0          2d14h
+metallb-system   pod/speaker-vvh4d                          1/1     Running   0          2d14h
+metallb-system   pod/speaker-x7qwx                          1/1     Running   0          2d14h
+metallb-system   pod/speaker-xxhv8                          1/1     Running   0          2d14h
+
+NAMESPACE     NAME                              TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)                       AGE
+default       service/kubernetes                ClusterIP      10.96.0.1        <none>         443/TCP                       11h
+kube-system   service/kube-dns                  ClusterIP      10.96.0.10       <none>         53/UDP,53/TCP,9153/TCP        12d
+kube-system   service/traefik-ingress-service   LoadBalancer   10.100.137.156   172.16.3.144   80:31889/TCP,8080:30705/TCP   11h
+
+NAMESPACE        NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system      daemonset.apps/kube-proxy   6         6         6       6            6           beta.kubernetes.io/os=linux   12d
+kube-system      daemonset.apps/weave-net    6         6         6       6            6           <none>                        12d
+metallb-system   daemonset.apps/speaker      6         6         6       6            6           beta.kubernetes.io/os=linux   2d14h
+
+NAMESPACE        NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system      deployment.apps/coredns      2/2     2            2           12d
+metallb-system   deployment.apps/controller   1/1     1            1           2d14h
+
+NAMESPACE        NAME                                    DESIRED   CURRENT   READY   AGE
+kube-system      replicaset.apps/coredns-5644d7b6d9      2         2         2       12d
+metallb-system   replicaset.apps/controller-65895b47d4   1         1         1       2d14h
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl config view
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://172.16.3.175:6443
+  name: kubernetes
+contexts:
+- context:
+    cluster: kubernetes
+    user: kubernetes-admin
+  name: kubernetes-admin@kubernetes
+current-context: kubernetes-admin@kubernetes
+kind: Config
+preferences: {}
+users:
+- name: kubernetes-admin
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+
+[user@kube1haproxy1 ~]$ kubectl describe nodes kube1worker1
+Name:               kube1worker1
+Roles:              <none>
+Labels:             beta.kubernetes.io/arch=amd64
+                    beta.kubernetes.io/os=linux
+                    kubernetes.io/arch=amd64
+                    kubernetes.io/hostname=kube1worker1
+                    kubernetes.io/os=linux
+Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock
+                    node.alpha.kubernetes.io/ttl: 0
+                    volumes.kubernetes.io/controller-managed-attach-detach: true
+CreationTimestamp:  Fri, 22 Nov 2019 21:39:59 -0500
+Taints:             <none>
+Unschedulable:      false
+Conditions:
+  Type                 Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
+  ----                 ------  -----------------                 ------------------                ------                       -------
+  NetworkUnavailable   False   Sat, 30 Nov 2019 18:13:59 -0500   Sat, 30 Nov 2019 18:13:59 -0500   WeaveIsUp                    Weave pod has set this
+  MemoryPressure       False   Tue, 03 Dec 2019 15:33:06 -0500   Sat, 30 Nov 2019 18:13:13 -0500   KubeletHasSufficientMemory   kubelet has sufficient memory available
+  DiskPressure         False   Tue, 03 Dec 2019 15:33:06 -0500   Sat, 30 Nov 2019 18:13:13 -0500   KubeletHasNoDiskPressure     kubelet has no disk pressure
+  PIDPressure          False   Tue, 03 Dec 2019 15:33:06 -0500   Sat, 30 Nov 2019 18:13:13 -0500   KubeletHasSufficientPID      kubelet has sufficient PID available
+  Ready                True    Tue, 03 Dec 2019 15:33:06 -0500   Sat, 30 Nov 2019 18:13:13 -0500   KubeletReady                 kubelet is posting ready status
+Addresses:
+  InternalIP:  172.16.3.180
+  Hostname:    kube1worker1
+Capacity:
+ cpu:                2
+ ephemeral-storage:  25154820Ki
+ hugepages-2Mi:      0
+ memory:             3880636Ki
+ pods:               110
+Allocatable:
+ cpu:                2
+ ephemeral-storage:  23182682074
+ hugepages-2Mi:      0
+ memory:             3778236Ki
+ pods:               110
+System Info:
+ Machine ID:                 6d42c181bba646299c02a033389633f5
+ System UUID:                42315BA4-707A-4605-BA82-0275070C6697
+ Boot ID:                    85e5efb7-20a4-4625-87e4-6baf2b840aaa
+ Kernel Version:             3.10.0-1062.4.3.el7.x86_64
+ OS Image:                   CentOS Linux 7 (Core)
+ Operating System:           linux
+ Architecture:               amd64
+ Container Runtime Version:  docker://19.3.5
+ Kubelet Version:            v1.16.3
+ Kube-Proxy Version:         v1.16.3
+PodCIDR:                     10.252.3.0/24
+PodCIDRs:                    10.252.3.0/24
+Non-terminated Pods:         (4 in total)
+  Namespace                  Name                           CPU Requests  CPU Limits  Memory Requests  Memory Limits  AGE
+  ---------                  ----                           ------------  ----------  ---------------  -------------  ---
+  kube-system                kube-proxy-mjrgs               0 (0%)        0 (0%)      0 (0%)           0 (0%)         10d
+  kube-system                weave-net-mwmlq                20m (1%)      0 (0%)      0 (0%)           0 (0%)         10d
+  metallb-system             controller-65895b47d4-2hqqt    100m (5%)     100m (5%)   100Mi (2%)       100Mi (2%)     20h
+  metallb-system             speaker-pr4tx                  100m (5%)     100m (5%)   100Mi (2%)       100Mi (2%)     20h
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests    Limits
+  --------           --------    ------
+  cpu                220m (11%)  200m (10%)
+  memory             200Mi (5%)  200Mi (5%)
+  ephemeral-storage  0 (0%)      0 (0%)
+Events:              <none>
+	
+[user@kube1haproxy1 ~]$ kubectl get pods --output=wide
+No resources found in default namespace.
+
+
+==
+METALLB TO BE ABLE TO CREATE LOADBALANCER TYPE SERVICE ON BARE METAL KUBERNETES
+CAN BE USED WITH AN INGRESS (TRAEFIK, HAPROXY, NGINX)
+==
+
+METALLB REF
+##https://metallb.universe.tf/
+##https://metallb.universe.tf/concepts/
+##https://metallb.universe.tf/usage/
+##https://metallb.universe.tf/installation/
+##https://stackoverflow.com/questions/55162890/loadbalancing-for-kubernetes-in-non-cloud-environment
+##https://medium.com/@JockDaRock/metalloadbalancer-kubernetes-on-prem-baremetal-loadbalancing-101455c3ed48
+##https://medium.com/@JockDaRock/kubernetes-metal-lb-for-on-prem-baremetal-cluster-in-10-minutes-c2eaeb3fe813
+##https://github.com/danderson/metallb
+##https://kubernetes.github.io/ingress-nginx/deploy/baremetal/
+
+METALLB NETWORK OVERLAY CHOICES
+##https://metallb.universe.tf/installation/network-addons/
+
+==
+DEPLOY MANIFEST FOR METALLB v0.8.3
+==
+
+kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml
+
+[user@kube1haproxy1 ~]$ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml
+namespace/metallb-system unchanged
+podsecuritypolicy.policy/speaker created
+serviceaccount/controller unchanged
+serviceaccount/speaker unchanged
+clusterrole.rbac.authorization.k8s.io/metallb-system:controller unchanged
+clusterrole.rbac.authorization.k8s.io/metallb-system:speaker configured
+role.rbac.authorization.k8s.io/config-watcher configured
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller unchanged
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker unchanged
+rolebinding.rbac.authorization.k8s.io/config-watcher unchanged
+daemonset.apps/speaker created
+deployment.apps/controller created
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS              RESTARTS   AGE
+kube-system      coredns-5644d7b6d9-gmlmj               1/1     Running             3          9d
+kube-system      coredns-5644d7b6d9-jb9fb               1/1     Running             3          9d
+kube-system      kube-apiserver-kube1master1            1/1     Running             4          9d
+kube-system      kube-apiserver-kube1master2            1/1     Running             7          9d
+kube-system      kube-apiserver-kube1master3            1/1     Running             8          9d
+kube-system      kube-controller-manager-kube1master1   1/1     Running             7          9d
+kube-system      kube-controller-manager-kube1master2   1/1     Running             7          9d
+kube-system      kube-controller-manager-kube1master3   1/1     Running             8          9d
+kube-system      kube-proxy-4s2vf                       1/1     Running             8          9d
+kube-system      kube-proxy-cjfwc                       1/1     Running             4          9d
+kube-system      kube-proxy-m46s5                       1/1     Running             7          9d
+kube-system      kube-proxy-mjrgs                       1/1     Running             7          9d
+kube-system      kube-proxy-q5c5c                       1/1     Running             3          9d
+kube-system      kube-proxy-vg5h4                       1/1     Running             5          9d
+kube-system      kube-scheduler-kube1master1            1/1     Running             6          9d
+kube-system      kube-scheduler-kube1master2            1/1     Running             8          9d
+kube-system      kube-scheduler-kube1master3            1/1     Running             8          9d
+kube-system      weave-net-692nw                        2/2     Running             20         9d
+kube-system      weave-net-7mlq7                        2/2     Running             12         9d
+kube-system      weave-net-blzhj                        2/2     Running             11         9d
+kube-system      weave-net-mwmlq                        2/2     Running             20         9d
+kube-system      weave-net-rmp64                        2/2     Running             22         9d
+kube-system      weave-net-xrgzv                        2/2     Running             9          9d
+metallb-system   controller-65895b47d4-2hqqt            0/1     ContainerCreating   0          9s
+metallb-system   speaker-4vjc4                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-7gq52                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-pr4tx                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-vvh4d                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-x7qwx                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-xxhv8                          0/1     ContainerCreating   0          9s
+
+==
+METALLB CONFIG
+==
+
+https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/example-layer2-config.yaml
+
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  namespace: metallb-system
+#  name: config
+#data:
+#  config: |
+#    address-pools:
+#    - name: my-ip-space
+#      protocol: layer2
+#      addresses:
+#      - 192.168.1.240/28
+	 
+sudo nano metallbconfig.yaml	 
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: vlan1723
+      protocol: layer2
+      addresses:
+      - 172.16.3.144/28
+	  
+
+==
+DEPLOY METALLB CONFIG
+==
+
+kubectl apply -f metallbconfig.yaml
+
+
+##==
+##TRAEFIK INGRESS, DEPLOYPMENT, CONTROLLER - REPLICA 2, INGRESS SERVICE TYPE LOADBALANCER
+##WORKING
+##121019
+##==
+
+##https://docs.traefik.io/v1.7/user-guide/kubernetes/
+##https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/traefik-deployment.yaml
+##https://raw.githubusercontent.com/containous/traefik/v1.7/examples/k8s/traefik-rbac.yaml
+
+BIGGEST HELP, YOUTUBE
+##https://www.youtube.com/watch?v=xYiYIjlAgHY
+##https://www.youtube.com/watch?v=A_PjjCM1eLA&t=1114s
+
+NO WORK
+##https://github.com/dusansusic/kubernetes-traefik/blob/master/README.md
+
+HELPED
+##https://www.devtech101.com/2019/02/23/using-metallb-and-traefik-load-balancing-for-your-bare-metal-kubernetes-cluster-part-1/
+##https://www.devtech101.com/2019/03/02/using-traefik-as-your-ingress-controller-combined-with-metallb-on-your-bare-metal-kubernetes-cluster-part-2/
+##https://itnext.io/traefik-cluster-as-ingress-controller-for-kubernetes-99fa6c34402
+
+==
+CONFIGURE RBAC AND TRAEFIK DEPLOYMENT
+2 REPLICAS ON CONTROLLERS
+1 TRAEFIK INGRESS SERVICES
+==
+
+sudo nano traefik-rbac.yaml
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+    - extensions
+    resources:
+    - ingresses/status
+    verbs:
+    - update
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+
+kubectl create -f traefik-rbac.yaml
+  
+sudo nano traefik-deployment.yaml
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: traefik-ingress-lb
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+      - image: traefik:v1.7
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+        - name: admin
+          containerPort: 8080
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+  type: LoadBalancer
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service-2
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+  type: LoadBalancer
+
+
+==
+APPLY RBAC AND DEPLOYMENT OF TRAEFIK INGRESS
+==
+
+kubectl apply -f traefik-rbac.yaml
+kubectl apply -f traefik-deployment.yaml
+
+==
+INGRESS DONE
+==
+
+==
+INGRESS RESOURCE FOR NGINX DEPLOYMENT/SERVICE - TEST
+==
+
+sudo nano ingress-nginx-resource.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-nginx-resource
+spec:
+  rules:
+  - host: nginx.kube1.jgleba.com
+  http:
+    paths:
+	- backend:
+	    serviceName: nginx
+		servicePort: 80
+		
+		
+
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "foo"
+  namespace: production
+
+spec:
+  rules:
+    - host: foo.com
+      http:
+        paths:
+          - path: /bar
+            backend:
+              serviceName: service1
+              servicePort: 80
+          - path: /foo
+            backend:
+              serviceName: service1
+              servicePort: 80
+			  
+			  
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "ingress-testwp"
+  namespace: default
+
+spec:
+  rules:
+    - host: wp.kube1.jgleba.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: wordpress
+              servicePort: 80
+
+==
+YAML FORMAT AND SYNTAX ALWAYS SEEMS TO BE AN ISSUE
+BELOW WORKED, TAKEN FROM WEB BECAUSE ABOVE NOT WORKING, GIVING YAML ERRORS
+==
+
+[user@kube1haproxy1 yamls]$ cat ingress-testwp.yaml
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "ingress-testwp"
+  namespace: default
+spec:
+  rules:
+    - host: wp.kube1.jgleba.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: wordpress
+              servicePort: 80
+		
+
+		
+		
+[user@kube1haproxy1 ~]$ kubectl create -f ingress-nginx-resource.yaml
+ingress.extensions/ingress-nginx-resource created
+
+[user@kube1haproxy1 ~]$ kubectl describe ingress
+Name:             ingress-nginx-resource
+Namespace:        default
+Address:
+Default backend:  default-http-backend:80 (<none>)
+Rules:
+  Host                    Path  Backends
+  ----                    ----  --------
+  nginx.kube1.jgleba.com
+                             nginx:80 (10.44.0.3:80)
+Annotations:
+Events:  <none>
+
+ 
+==
+KUBERNETES DASHBOARD INSTALL
+121019
+==
+
+##https://github.com/kubernetes/dashboard
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+ 
+NEED HEAPSTER, DEPRECATED
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+==
+JUNK
+==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+ 
+==
+KUBERNETES INGRESS CONTROLLER - FIRST TRY, WASNT WORKING
+==
+
+HAPROXY MIGHT WORK
+
+##https://www.haproxy.com/documentation/hapee/1-9r1/traffic-management/kubernetes-ingress-controller/
+##https://www.haproxy.com/blog/dissecting-the-haproxy-kubernetes-ingress-controller/
+
+HAPROXY INGRESS REF
+##https://github.com/jcmoraisjr/haproxy-ingress
+##https://github.com/haproxytech/kubernetes-ingress
+##https://hub.kubeapps.com/charts/incubator/haproxy-ingress
+##https://kubernetes.github.io/ingress-nginx/deploy/baremetal/
+
+
+TRYING
+
+kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+CHECK
+
+[user@kube1haproxy1 ~]$  kubectl get pods -n haproxy-controller
+NAME                                       READY   STATUS    RESTARTS   AGE
+haproxy-ingress-596fb4b4f4-fxfh6           1/1     Running   0          2m29s
+ingress-default-backend-558fbc9b46-dvfhs   1/1     Running   0          2m29s
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE            NAME                                       READY   STATUS    RESTARTS   AGE
+haproxy-controller   haproxy-ingress-596fb4b4f4-fxfh6           1/1     Running   0          111s
+haproxy-controller   ingress-default-backend-558fbc9b46-dvfhs   1/1     Running   0          111s
+kube-system          coredns-5644d7b6d9-gmlmj                   1/1     Running   3          4d19h
+kube-system          coredns-5644d7b6d9-jb9fb                   1/1     Running   3          4d19h
+kube-system          kube-apiserver-kube1master1                1/1     Running   3          4d19h
+kube-system          kube-apiserver-kube1master2                1/1     Running   5          4d19h
+kube-system          kube-apiserver-kube1master3                1/1     Running   6          4d19h
+kube-system          kube-controller-manager-kube1master1       1/1     Running   5          4d19h
+kube-system          kube-controller-manager-kube1master2       1/1     Running   5          4d19h
+kube-system          kube-controller-manager-kube1master3       1/1     Running   6          4d19h
+kube-system          kube-proxy-4s2vf                           1/1     Running   6          4d19h
+kube-system          kube-proxy-cjfwc                           1/1     Running   3          4d19h
+kube-system          kube-proxy-m46s5                           1/1     Running   5          4d19h
+kube-system          kube-proxy-mjrgs                           1/1     Running   4          4d19h
+kube-system          kube-proxy-q5c5c                           1/1     Running   3          4d19h
+kube-system          kube-proxy-vg5h4                           1/1     Running   4          4d19h
+kube-system          kube-scheduler-kube1master1                1/1     Running   4          4d19h
+kube-system          kube-scheduler-kube1master2                1/1     Running   6          4d19h
+kube-system          kube-scheduler-kube1master3                1/1     Running   6          4d19h
+kube-system          weave-net-692nw                            2/2     Running   15         4d18h
+kube-system          weave-net-7mlq7                            2/2     Running   10         4d18h
+kube-system          weave-net-blzhj                            2/2     Running   8          4d18h
+kube-system          weave-net-mwmlq                            2/2     Running   12         4d18h
+kube-system          weave-net-rmp64                            2/2     Running   18         4d18h
+kube-system          weave-net-xrgzv                            2/2     Running   9          4d18h
+
+[user@kube1haproxy1 ~]$ kubectl get svc --namespace=haproxy-controller
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                     AGE
+haproxy-ingress           NodePort    10.104.224.110   <none>        80:32384/TCP,443:30175/TCP,1024:31436/TCP   4m47s
+ingress-default-backend   ClusterIP   10.102.53.33     <none>        8080/TCP                                    4m47s
+
+==
+DELETE HAPROXY INGRESS
+==
+
+kubectl delete -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+==
+STOP WITH HAPROXY INGRESS
+NOT UNDERSTANDING THE CONCEPTS CORRECTLY
+==
+
+==
+113019
+==
+
+FOUND HAPROXY STATS PAGE ON ALL MASTERS, NOT SURE IF ALL THE SAME PAGE
+
+http://172.16.3.160:31436
+http://172.16.3.161:31436
+http://172.16.3.162:31436
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+==
+TRAEFIK CONFIG - FIRST TRY, DIDNT WORK
+==
+
+sudo nano traefik-ingress.yaml
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: kube-system
+  name: traefik-conf
+data:
+  traefik.toml: |
+    # traefik.toml
+    logLevel = "DEBUG"
+
+    [traefikLog]
+      filePath = "log/traefik.log"
+      format   = "json"
+
+    [accessLog]
+      filePath = "log/access.log"
+      format = "json"
+    
+    defaultEntryPoints = ["http"]
+    
+    [entryPoints]
+        [entryPoints.http]
+        users =  ['admin:$apr1$45MPs8rQ$lwSvQ0rNFU8ElUwuG1l.T/']
+        address = ":9090"
+    
+    [web]
+    address = ":8095"
+    
+    [backends]
+      [backends.backend]
+         [backends.backend.LoadBalancer]
+           method = "wrr"
+         [backends.backend.servers.server1]
+         url = ":8080"
+         weight = 1
+    
+    [frontends]
+      [frontends.frontend1]
+      backend = "backend"
+        [frontends.frontend1.routes.test_1]
+        rule = "Host:dashboard-traefik.kube1.jgleba.com"
+---
+kind: DaemonSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      volumes:
+      - name: config
+        configMap:
+          name: traefik-conf
+      # Enable this only if using static wildcard cert
+      # stored in a k8s Secret instead of LetsEncrypt
+      #- name: ssl
+      #  secret:
+      #    secretName: traefik-cert
+      containers:
+      - image: traefik
+        name: traefik-ingress-lb
+        resources:
+          limits:
+            cpu: 200m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+        volumeMounts:
+        - mountPath: "/config"
+          name: "config"
+        ports:
+        - name: http
+          containerPort: 80
+        - name: admin
+          containerPort: 8080
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+        - --web
+        - --kubernetes
+        - --configfile=/config/traefik.toml
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+  type: LoadBalancer
+
+NOT WORKING
+
+[user@kube1haproxy1 ~]$ kubectl apply -f traefik-ingress.yaml
+clusterrole.rbac.authorization.k8s.io/traefik-ingress-controller unchanged
+clusterrolebinding.rbac.authorization.k8s.io/traefik-ingress-controller unchanged
+serviceaccount/traefik-ingress-controller unchanged
+configmap/traefik-conf unchanged
+error: error validating "traefik-ingress.yaml": error validating data: ValidationError(DaemonSet.spec): missing required field "selector" in io.k8s.api.apps.v1.DaemonSetSpec; if you choose to ignore these errors, turn validation off with --validate=false
+
+==
+
+TRYING
+
+##https://medium.com/@dusansusic/traefik-ingress-controller-for-k8s-c1137c9c05c4
+
+CREATE NAMESPACE
+kubectl create namespace traefik
+
+CREATE TLS KEY AND CERT
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./tls.key -out ./tls.crt -subj "/CN=*.kube1.jgleba.com"
+
+CREATE SECRET OBJECT
+kubectl create secret tls traefik-ui-tls-cert --key ./tls.key --cert ./tls.crt
+
+CONFIG
+
+sudo nano traefik-ingress.yaml
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-configmap
+  namespace: traefik
+data:
+  traefik.toml: |
+    defaultEntryPoints = ["http","https"]
+    [entryPoints]
+      [entryPoints.http]
+      address = ":80"
+      [entryPoints.https]
+      address = ":443"
+        [entryPoints.https.tls]
+          [[entryPoints.https.tls.certificates]]
+          CertFile = "/ssl/tls.crt"
+          KeyFile = "/ssl/tls.key"
+      [entryPoints.traefik]
+        address = ":8080"
+        [entryPoints.traefik.auth.basic]
+        users = ["admin:$apr1$45MPs8rQ$lwSvQ0rNFU8ElUwuG1l.T/"]
+    [kubernetes]
+      [kubernetes.ingressEndpoint]
+        publishedService = "traefik/traefik"
+    [ping]
+    entryPoint = "http"
+    [api]
+    entryPoint = "traefik"
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - ingresses/status
+  verbs:
+  - update
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: traefik
+#volumes:
+#  - name: traefik-ui-tls-cert
+#    secret:
+#      secretName: traefik-ui-tls-cert
+#  - name: traefik-configmap
+#    configMap:
+#      name: traefik-configmap
+#volumeMounts:
+#  - mountPath: "/ssl"
+#    name: "traefik-ui-tls-cert"
+#  - mountPath: "/config"
+#    name: "traefik-configmap"
+ports:
+  - name: http
+    containerPort: 80
+  - name: https
+    containerPort: 443
+  - name: dashboard
+    containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik
+  namespace: traefik
+  annotations: {}
+    # service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+spec:
+  selector:
+    k8s-app: traefik-ingress
+  ports:
+  - protocol: TCP
+    port: 80
+    name: http
+  - protocol: TCP
+    port: 443
+    name: https
+  type: LoadBalancer
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-dashboard
+  namespace: traefik
+spec:
+  selector:
+    k8s-app: traefik-ingress
+  ports:
+  - port: 8080
+    name: dashboard
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-dashboard-ingress
+  namespace: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+spec:
+  rules:
+  - host: traefik-dashboard.kube1.jgleba.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: traefik-dashboard
+          servicePort: 8080
+		  
+NOT WORKING
+
+[user@kube1haproxy1 ~]$ kubectl apply -f traefik-ingress.yaml
+configmap/traefik-configmap unchanged
+clusterrole.rbac.authorization.k8s.io/traefik-ingress-controller unchanged
+error: error validating "traefik-ingress.yaml": error validating data: ValidationError(ClusterRoleBinding): unknown field "ports" in io.k8s.api.rbac.v1beta1.ClusterRoleBinding; if you choose to ignore these errors, turn validation off with --validate=false
+
+TRYING
+
+##https://github.com/dusansusic/kubernetes-traefik
+
+sudo openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout ./tls.key -out ./tls.crt -subj "/CN=kube1.jgleba.com"
+sudo cat tls.crt | base64 -w0
+sudo cat tls.key | base64 -w0
+
+kubectl create namespace traefik
+
+##Modify entryPoints.traefik.auth.basic section of configmap.yaml with new admin username/password
+
+kubectl apply -f ./ -n traefik
+	
+[user@kube1haproxy1 kubernetes-traefik]$ kubectl apply -f ./ -n traefik
+configmap/traefik-ingress-configmap created
+deployment.apps/traefik-ingress-controller created
+ingress.extensions/traefik-ingress-controller-dashboard-ingress created
+clusterrole.rbac.authorization.k8s.io/traefik-ingress-clusterrole created
+clusterrolebinding.rbac.authorization.k8s.io/traefik-ingress-clusterrolebinding created
+serviceaccount/traefik-ingress-serviceaccount created
+service/traefik-ingress-controller-http-service created
+service/traefik-ingress-controller-dashboard-service created
+secret/traefik-ui-tls-cert created
+
+[user@kube1haproxy1 kubernetes-traefik]$ kubectl get all -A
+NAMESPACE        NAME                                              READY   STATUS             RESTARTS   AGE
+kube-system      pod/coredns-5644d7b6d9-gmlmj                      1/1     Running            3          12d
+kube-system      pod/coredns-5644d7b6d9-jb9fb                      1/1     Running            3          12d
+kube-system      pod/kube-apiserver-kube1master1                   1/1     Running            4          12d
+kube-system      pod/kube-apiserver-kube1master2                   1/1     Running            7          12d
+kube-system      pod/kube-apiserver-kube1master3                   1/1     Running            8          12d
+kube-system      pod/kube-controller-manager-kube1master1          1/1     Running            7          12d
+kube-system      pod/kube-controller-manager-kube1master2          1/1     Running            7          12d
+kube-system      pod/kube-controller-manager-kube1master3          1/1     Running            8          12d
+kube-system      pod/kube-proxy-4s2vf                              1/1     Running            8          12d
+kube-system      pod/kube-proxy-cjfwc                              1/1     Running            4          12d
+kube-system      pod/kube-proxy-m46s5                              1/1     Running            7          12d
+kube-system      pod/kube-proxy-mjrgs                              1/1     Running            7          12d
+kube-system      pod/kube-proxy-q5c5c                              1/1     Running            3          12d
+kube-system      pod/kube-proxy-vg5h4                              1/1     Running            5          12d
+kube-system      pod/kube-scheduler-kube1master1                   1/1     Running            6          12d
+kube-system      pod/kube-scheduler-kube1master2                   1/1     Running            8          12d
+kube-system      pod/kube-scheduler-kube1master3                   1/1     Running            8          12d
+kube-system      pod/weave-net-692nw                               2/2     Running            20         12d
+kube-system      pod/weave-net-7mlq7                               2/2     Running            12         12d
+kube-system      pod/weave-net-blzhj                               2/2     Running            11         12d
+kube-system      pod/weave-net-mwmlq                               2/2     Running            20         12d
+kube-system      pod/weave-net-rmp64                               2/2     Running            22         12d
+kube-system      pod/weave-net-xrgzv                               2/2     Running            9          12d
+metallb-system   pod/controller-65895b47d4-2hqqt                   1/1     Running            0          2d15h
+metallb-system   pod/speaker-4vjc4                                 1/1     Running            0          2d15h
+metallb-system   pod/speaker-7gq52                                 1/1     Running            0          2d15h
+metallb-system   pod/speaker-pr4tx                                 1/1     Running            0          2d15h
+metallb-system   pod/speaker-vvh4d                                 1/1     Running            0          2d15h
+metallb-system   pod/speaker-x7qwx                                 1/1     Running            0          2d15h
+metallb-system   pod/speaker-xxhv8                                 1/1     Running            0          2d15h
+traefik          pod/traefik-ingress-controller-5c944459f7-2k766   0/1     CrashLoopBackOff   4          2m5s
+traefik          pod/traefik-ingress-controller-5c944459f7-lrwnl   0/1     CrashLoopBackOff   4          2m5s
+
+NAMESPACE     NAME                                                   TYPE           CLUSTER-IP       EXTERNAL-IP    PORT(S)                       AGE
+default       service/kubernetes                                     ClusterIP      10.96.0.1        <none>         443/TCP                       11h
+kube-system   service/kube-dns                                       ClusterIP      10.96.0.10       <none>         53/UDP,53/TCP,9153/TCP        12d
+kube-system   service/traefik-ingress-service                        LoadBalancer   10.100.137.156   172.16.3.144   80:31889/TCP,8080:30705/TCP   11h
+traefik       service/traefik-ingress-controller-dashboard-service   ClusterIP      10.102.197.174   <none>         8080/TCP                      2m6s
+traefik       service/traefik-ingress-controller-http-service        NodePort       10.104.72.248    <none>         80:32199/TCP,443:32282/TCP    2m6s
+
+NAMESPACE        NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system      daemonset.apps/kube-proxy   6         6         6       6            6           beta.kubernetes.io/os=linux   12d
+kube-system      daemonset.apps/weave-net    6         6         6       6            6           <none>                        12d
+metallb-system   daemonset.apps/speaker      6         6         6       6            6           beta.kubernetes.io/os=linux   2d15h
+
+NAMESPACE        NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system      deployment.apps/coredns                      2/2     2            2           12d
+metallb-system   deployment.apps/controller                   1/1     1            1           2d15h
+traefik          deployment.apps/traefik-ingress-controller   0/2     2            0           2m7s
+
+NAMESPACE        NAME                                                    DESIRED   CURRENT   READY   AGE
+kube-system      replicaset.apps/coredns-5644d7b6d9                      2         2         2       12d
+metallb-system   replicaset.apps/controller-65895b47d4                   1         1         1       2d15h
+traefik          replicaset.apps/traefik-ingress-controller-5c944459f7   2         2         0       2m7s
+
+
+
+
+
+
+
+METALLB EXTRA
+
+
+==
+KEEP GOING WITH METALLB - DIDNT WORK - KEEP GOING
+==
+
+[user@kube1haproxy1 ~]$ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+namespace/metallb-system created
+serviceaccount/controller created
+serviceaccount/speaker created
+clusterrole.rbac.authorization.k8s.io/metallb-system:controller created
+clusterrole.rbac.authorization.k8s.io/metallb-system:speaker created
+role.rbac.authorization.k8s.io/config-watcher created
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller created
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker created
+rolebinding.rbac.authorization.k8s.io/config-watcher created
+unable to recognize "https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml": no matches for kind "DaemonSet" in version "apps/v1beta2"
+unable to recognize "https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml": no matches for kind "Deployment" in version "apps/v1beta2"
+
+
+
+
+
+==
+CREATE TEST NGINX USING METALLB
+==
+
+[user@kube1haproxy1 ~]$ kubectl apply -f https://raw.githubusercontent.com/JockDaRock/metallb-testing/master/nginxlb.yml
+service/nginx created
+error: unable to recognize "https://raw.githubusercontent.com/JockDaRock/metallb-testing/master/nginxlb.yml": no matches for kind "Deployment" in version "apps/v1beta2"
+
+MAKE FILE MYSELF, CHANGE VERSION TO apps/v1
+
+sudo nano nginxlbconfig.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1
+        ports:
+        - name: http
+          containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
+
+kubectl apply -f nginxlbconfig.yaml
+
+NOW HAVE NGINX LOAD BALANCER TYPE, CAN ACCESS ON IP AT PORT 8080 OR ON ALL MASTERS AND WORKERS ON INTERNAL PORT 31433
+
+[user@kube1haproxy1 ~]$ kubectl get services
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+kubernetes   ClusterIP      10.96.0.1       <none>        443/TCP          10d
+nginx        LoadBalancer   10.98.174.103   172.16.3.80   8080:31433/TCP   15h
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS    RESTARTS   AGE
+default          nginx-5f78746595-fltkp                 1/1     Running   0          15h
+kube-system      coredns-5644d7b6d9-gmlmj               1/1     Running   3          10d
+kube-system      coredns-5644d7b6d9-jb9fb               1/1     Running   3          10d
+kube-system      kube-apiserver-kube1master1            1/1     Running   4          10d
+kube-system      kube-apiserver-kube1master2            1/1     Running   7          10d
+kube-system      kube-apiserver-kube1master3            1/1     Running   8          10d
+kube-system      kube-controller-manager-kube1master1   1/1     Running   7          10d
+kube-system      kube-controller-manager-kube1master2   1/1     Running   7          10d
+kube-system      kube-controller-manager-kube1master3   1/1     Running   8          10d
+kube-system      kube-proxy-4s2vf                       1/1     Running   8          10d
+kube-system      kube-proxy-cjfwc                       1/1     Running   4          10d
+kube-system      kube-proxy-m46s5                       1/1     Running   7          10d
+kube-system      kube-proxy-mjrgs                       1/1     Running   7          10d
+kube-system      kube-proxy-q5c5c                       1/1     Running   3          10d
+kube-system      kube-proxy-vg5h4                       1/1     Running   5          10d
+kube-system      kube-scheduler-kube1master1            1/1     Running   6          10d
+kube-system      kube-scheduler-kube1master2            1/1     Running   8          10d
+kube-system      kube-scheduler-kube1master3            1/1     Running   8          10d
+kube-system      weave-net-692nw                        2/2     Running   20         10d
+kube-system      weave-net-7mlq7                        2/2     Running   12         10d
+kube-system      weave-net-blzhj                        2/2     Running   11         10d
+kube-system      weave-net-mwmlq                        2/2     Running   20         10d
+kube-system      weave-net-rmp64                        2/2     Running   22         10d
+kube-system      weave-net-xrgzv                        2/2     Running   9          10d
+metallb-system   controller-65895b47d4-2hqqt            1/1     Running   0          15h
+metallb-system   speaker-4vjc4                          1/1     Running   0          15h
+metallb-system   speaker-7gq52                          1/1     Running   0          15h
+metallb-system   speaker-pr4tx                          1/1     Running   0          15h
+metallb-system   speaker-vvh4d                          1/1     Running   0          15h
+metallb-system   speaker-x7qwx                          1/1     Running   0          15h
+metallb-system   speaker-xxhv8                          1/1     Running   0          15h
+

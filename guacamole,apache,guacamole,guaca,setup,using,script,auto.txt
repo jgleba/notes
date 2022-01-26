@@ -1,0 +1,25 @@
+======================
+APACHE GUACAMOLE SETUP
+040619
+======================
+#REF:
+#https://github.com/Zer0CoolX/guacamole-install-rhel
+
+sudo wget https://github.com/Zer0CoolX/guacamole-install-rhel/archive/master.zip
+
+sudo unzip master.zip
+
+cd guacamole-install-rhel-master
+
+sudo chmod +x guac-install.sh
+
+sudo ./guac-install.sh
+
+#copied my own certs into /etc/letsencrypt...
+#change nginx conf
+
+sudo nano /etc/nginx/conf.d/guacamole_ssl.conf
+
+==
+
+USED AGAIN 121720, WORKED, 2FA ON

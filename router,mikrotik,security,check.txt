@@ -1,0 +1,29 @@
+Router security check - learn RouterOS - 09-24-2015
+
+~Change your Admin password!
+~ Add another user to the system and disable the admin
+account!
+~ Select a Good, strong password
+~ Disable Services that are not needed
+~ If you don't use Telnet, FTP or SSH, turn them off!
+~ Input Chain: Only allow Established and Related
+Connections in your firewall
+Input Chain: Identify Port Scanners and massive SYN
+Attacks
+~ Add Source IPs to address lists
+~ Input Chain: Drop hackers and PSD IPs from the dynamic
+address lists.
+Input Chain: Only allow services that you are using on your
+router in your firewall
+~ Limit ICMP Pings to something manageable
+~ Drop Excessive Pings
+~ Allow only services you use
+~ Winbox
+~ SSH, Telnet, or FTP
+~ Input Chain: Only allow management connections from
+trusted IP addresses
+~ Build an Address list for management IPs
+~ Drop others
+~ Input Chain: Log other data that makes it past the other
+rules.
+~Input Chain: Drop that other data

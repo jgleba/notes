@@ -1,0 +1,30 @@
+Hi Guys
+
+The 2740dw does support on board scan to email but you need to run this firmware update first.
+
+Todd Ladouceur
+Support Engineer 
+E todd@plextec.com
+T 519-893-5126 Ext. 111  |  905-608-0988 Ext. 111
+Helpdesk 519-893-5126 Ext. 1 | 905-608-0988 Ext. 1
+
+For technical requests, send your emails to tickets@plextec.com
+
+Plextec Inc. | www.plextec.com
+5-C Paulander Dr. Kitchener, ON N2M 5B6 
+
+This e-mail message, including any accompanying attachments contains confidential and/or privileged material, and is intended only for the person to whom it is addressed (the "addressee").  Any review, retransmission, dissemination or other use that a person other than the addressee makes of this communication is prohibited.  If you have received this e-mail in error, please notify the sender by reply e-mail immediately, and permanently delete the message received.
+
+From: solutions@brother.ca [mailto:solutions@brother.ca] 
+Sent: Monday, February 1, 2016 1:15 PM
+To: Todd Ladouceur <todd@plextec.com>
+Subject: Scan to E-mail Server update for MFC-L2740DW
+
+Hello,
+
+Please use the link below to download the Scan to E-mail Server update for your Brother MFC-L2740DW machine.
+
+http://support.brother.com/g/b/downloadend.aspx?c=ca&lang=en&prod=mfcl2740dw_us_eu_as&os=93&dlid=dlf004627_000&flang=4&type3=78
+
+Thanks,
+Robert

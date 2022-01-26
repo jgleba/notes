@@ -1,0 +1,71 @@
+
+zfs utils
+Project ID: 1
+0
+The repository for this project is empty
+
+You can create files directly in GitLab using one of the following options.
+
+Command line instructions
+
+You can also upload existing files from your computer using the instructions below.
+Git global setup
+
+git config --global user.name "jgleba"
+git config --global user.email "example@jgleba.com"
+
+Create a new repository
+
+git clone https://git.jgleba.com/jgleba/zfs-utils.git
+cd zfs-utils
+touch README.md
+git add README.md
+git commit -m "add README"
+git push -u origin master
+
+Push an existing folder
+
+cd existing_folder
+git init
+git remote add origin https://git.jgleba.com/jgleba/zfs-utils.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master
+
+Push an existing Git repository
+
+cd existing_repo
+git remote rename origin old-origin
+git remote add origin https://git.jgleba.com/jgleba/zfs-utils.git
+git push -u origin --all
+git push -u origin --tags
+
+==
+
+git add .
+git commit -m "add files"
+git push -u origin master
+
+==
+SHOWS LIST OF COMMITS AND OTHER INFO
+==
+
+log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+
+==
+ADD COLOURS TO GIT CMD
+==
+
+git config --global color.ui true
+ 
+==
+GIT STATUS
+==
+
+shows which files have changed
+
+==
+GIT DIFF
+==
+
+shows what changed

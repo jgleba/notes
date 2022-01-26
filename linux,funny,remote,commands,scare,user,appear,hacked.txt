@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX REMOTELY CONTROL PC SPEAKER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-06[Apr-Mon]11-26AM 
+
+sudo modprobe pcspkr
+sudo -u tv say "test"

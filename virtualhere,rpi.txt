@@ -1,0 +1,5 @@
+wget http://www.virtualhere.com/sites/default/files/usbserver/vhusbdx86_64 (e.g x86_64, see list below)
+chmod +x ./vhusbdx86_64 (to make that file executable)
+sudo ./vhusbdx86_64 -b (to run it in the background)
+
+https://www.virtualhere.com/sites/default/files/usbserver/vhusbdarm

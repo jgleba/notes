@@ -1,0 +1,90 @@
+====================================================
+MYSQL MARIADB GALERA CLUSTER SHUTDOWN, RESTART, HOW
+070319
+JGleba
+====================================================
+
+==
+SHUTDOWN, GRACEFUL
+==
+
+DO ON NODES 2, 3 FIRST
+
+sudo service mariadb stop
+
+THEN ON NODE 1
+
+sudo service mariadb stop
+
+==
+START UP
+==
+
+JUST START NEW CLUSTER ON ONE OF THE NODES, USUALLY NODE1
+
+sudo galera_new_cluster
+
+THEN ON NODES 2, 3
+
+sudo service mariadb start
+
+==
+SOME EXTRA INFO
+==
+
+#https://dba.stackexchange.com/questions/151941/how-to-restart-mariadb-galera-cluster
+#https://serverfault.com/questions/648242/debian-autostart-mariadb-galera-cluster
+#https://stackoverflow.com/questions/23356623/mysql-galera-autostart-from-boot-wsrep-new-cluster
+
+==
+MORE INFO - 071819
+==
+
+#https://www.wpintense.com/2018/04/26/how-to-maintain-and-manage-a-wordpress-cluster/
+
+Quick recover of PerconaDB cluster failure
+If all of your DB servers crashed simultaneously, you need to find out which node has the latest data. It may be more than 1 node, in which case you can pick either as the one to bootstrap from.
+
+mysqld_safe –wsrep-recover
+
+Look for the ‘Recovered position’ line in the output, and note the number at the end for each node. Whichever node has the highest number, that one will be your bootstrap node.
+
+pgrep mysql
+
+If the above returns any process IDs, run the following to kill them:
+
+kill -9 1234567
+
+(replace 1234567 with the IDs listed by pgrep)
+
+vi /var/lib/mysql/grastate.dat
+
+Edit the 0 next to safe_to_bootstrap to 1.
+/etc/init.d/mysql bootstrap-pxc
+
+Now on the other nodes, run this:
+service mysql start
+
+==
+HAVE HAD THE BEST LUCK THIS WAY - 071819
+==
+
+WHEN ALL CRASH AT SAME TIME OR CLOSE TOGETHER (STORAGE ISSUE, HV CRASH)
+
+CHECK GRASTATE.DAT ON ALL NODES
+
+sudo cat /var/lib/mysql/grastate.dat
+
+IF ALL -1 then edit grastate.dat and change "safe_to_bootstrap" to 1 on node1, then bootstrap cluster from node1
+
+sudo galera_new_cluster
+
+START OTHER NODES WITH
+
+sudo service mariadb start
+
+ONCE HAD SEQ NUMBER -1 ON 2 NODES AND VERY HIGH NUMBER
+HAD TRIED TO START FROM OTHER NODES PRIOR, SO MAYBE THATS WHY FAILED
+CHANGED GRASTATE.DAT SAFE TO BOOTSRAP BUT FAILED, WAS NODE2 THAT WAS HIGHEST NUMBER
+HAD TO RESTORE THAT TIME, WAS SOMEWHERE AROUND 070119
+

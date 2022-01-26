@@ -1,0 +1,11 @@
+AD CONNECT SYNC MANUALLY
+
+DO FROM ADCONNECT MACHINE IN POWERSHELL
+
+PARTIAL
+
+Start-ADSyncSyncCycle -PolicyType Delta
+
+FULL
+
+Start-ADSyncSyncCycle -PolicyType Initial

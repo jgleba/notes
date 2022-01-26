@@ -1,0 +1,30 @@
+===========================
+ZFS GENERAL USAGE COMMANDS
+061719
+===========================
+
+
+==
+POOL / VOLUME INFO
+==
+
+zpool status
+
+zpool list
+
+zfs list
+
+zfs get all poolname
+
+
+
+==
+DISK STATS, USAGE
+==
+
+iostat
+
+gstat
+
+QUITE GOOD
+zpool iostat -v 1

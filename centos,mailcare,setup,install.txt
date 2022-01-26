@@ -1,0 +1,29 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS MAILCARE SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-25[Jan-Sat]16-49PM 
+
+##DO COMPOSER AND NPM SETUP
+
+sudo composer install && sudo npm install
+
+sudo php artisan mailcare:install
+
+NOT WORKING
+
+[user@MAILCARE1 mailcare1]$ [user@MAILCARE1 mailcare1]$ sudo php artisan mailcare:install
+[user@MAILCARE1 ma-bash: [user@MAILCARE1: command not found
+[user@MAILCARE1 mailcare1]$ PHP Parse error:  syntax error, unexpected 'class' (T_CLASS), expecting identifier (T_STRING) or variable (T_VARIABLE) or '{' or '$' in /j/mailcare1/artisan on line 31
+
+sudo php artisan mailcare:configure-postfix /etc/postfix ab3q.tk forge
+
+sudo nano /etc/postfix/main.cf
+
+myhostname = ab3q.tk
+
+Replace the line myhostname = * by myhostname = example.org 
+Add one new line smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination for security purposes. 
+Add one new line local_recipient_maps = to accept any mailbox under the domain myhostname
+

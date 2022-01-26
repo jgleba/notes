@@ -1,0 +1,95 @@
+##CENTOS 7 + OPENNMS
+##Justin Gleba
+##12-30-17
+
+OPENNMS PREP AND JAVA INSTALL
+=============================
+sudo wget http://yum.opennms.org/repofiles/opennms-repo-stable-rhel7.noarch.rpm
+sudo yum install opennms-repo-stable-rhel7.noarch.rpm -y
+sudo yum install java-1.7.0-openjdk-1.7.0*
+
+HOSTS FILE
+==========
+sudo nano /etc/hosts
+10.0.0.7 cosnms
+
+POSTGRESQL
+==========
+sudo yum install postgresql postgresql-server
+sudo /sbin/service postgresql initdb
+sudo /sbin/service postgresql start
+sudo systemctl enable postgresql
+
+sudo nano /var/lib/pgsql/data/postgresql.conf
+
+    #------------------------------------------------------------------------------
+    # CONNECTIONS AND AUTHENTICATION
+    #------------------------------------------------------------------------------
+
+    listen_addresses = 'localhost'
+    max_connections = 512
+
+    #------------------------------------------------------------------------------
+    # RESOURCE USAGE (except WAL)
+    #------------------------------------------------------------------------------
+
+    shared_buffers = 1024MB
+	
+sudo nano /var/lib/pgsql/data/pg_hba.conf
+Update the configuration file as shown below and change the METHOD settings from "ident" to "trust"
+
+sudo service postgresql restart
+
+INSTALL OPENNMS
+================
+sudo yum -y install opennms
+sudo /opt/opennms/bin/runjava -s
+
+sudo /opt/opennms/bin/install -dis
+
+GET ERROR
+
+sudo -u postgres psql postgres
+
+UPDATE pg_database SET datistemplate = FALSE WHERE datname = 'template1';
+DROP DATABASE template1;
+CREATE DATABASE template1 WITH TEMPLATE = template0 ENCODING = 'UNICODE';
+UPDATE pg_database SET datistemplate = TRUE WHERE datname = 'template1';
+\c template1
+VACUUM FREEZE;
+
+\q
+
+RERUN
+
+sudo /opt/opennms/bin/install -dis
+
+FIREWALL
+=========
+sudo iptables -A INPUT -p tcp --dport 8980 -j ACCEPT
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 8980 -j ACCEPT
+sudo /usr/sbin/iptables-save
+sudo firewall-cmd --zone=public --add-port=8980/tcp --permanent
+sudo firewall-cmd --reload
+
+START OPENNMS
+=============
+sudo systemctl start opennms
+sudo systemctl enable opennms
+
+STILL NOT WORKING, CAN'T TELNET, FIREWALL ISSUE - OPENNMS NOT STARTING
+
+cd /opt/opennms/bin/
+sudo ./runjava -s
+sudo ./install -dis
+sudo systemctl enable opennms
+sudo systemctl start opennms
+
+ISSUE WAS HOSTS FILE AND FIREWALL
+
+WAS VERY HELPFUL
+sudo cat /opt/opennms/logs/output.log
+
+DATABASE CREDS LOCATION
+=======================
+sudo nano /opt/opennms/etc/opennms-datasources.xml

@@ -1,0 +1,34 @@
+finally I can help someone here! I'm doing this now...
+
+Download the universal forwarder from splunk. Make sure you get the appropriate one! Install it on your seconion box. It will install to /opt/splunkforwarder/
+
+In your snort.conf file, 
+make sure you have:
+
+output alert_full: alert.full
+
+Restart Snort to push changes
+alert.full will be in your config logdir:/somepath
+
+In your splunk config files,
+
+/opt/splunkforwarder/etc/system/local$ cat inputs.conf
+[monitor:///pathto/alert.full]
+index = an_indexname_that_makes_since_to_you_on_your_splunkSERVER
+followTail = 1
+sourcetype = snort_alert_full
+
+/opt/splunkforwarder/etc/system/local$ cat outputs.conf
+[tcpout]
+defaultGroup=my_indexers
+
+[tcpout:my_indexers]
+server=ip.address.of.splunkServer:port_you_are_listening_on
+[tcpout-server://ip.address.of.splunkServer:port_you_are_listening_on]
+
+restart your splunk forwarder
+
+/opt/splunkforwarder/bin/splunk restart
+
+I'll keep an eye on this post incase you have problems. 
+

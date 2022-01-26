@@ -1,0 +1,18 @@
+==============================
+ESXI JOIN TO ACTIVE DIRECTORY
+071419
+==============================
+
+#https://www.altaro.com/vmware/how-to-join-esxi-to-active-directory-for-improved-management-and-security/
+
+point hv at proper dns
+
+in advanced settings, config, scroll down almost all the way, theres 'ESX Admins' group, is AD group, change to proper AD group
+
+set dns name to full fqdn
+
+in esxi authenication services
+
+enter full domain
+
+for user use: user@full.domain

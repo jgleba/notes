@@ -1,0 +1,270 @@
+
+
+
+
+alpine logs
+
+sh-4.4# cd lo
+localhost/ logs/
+bash-4.4# cd logs/
+access.log  error.log
+bash-4.4# cd logs/
+access.log  error.log
+bash-4.4# cd logs/
+bash-4.4# ls
+access.log  error.log
+bash-4.4# cat access.log
+10.255.0.2 - - [27/Feb/2019:05:30:49 +0000] "GET / HTTP/1.1" 200 34 "-" "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0"
+10.255.0.2 - - [27/Feb/2019:05:32:08 +0000] "GET / HTTP/1.1" 200 30 "-" "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0"
+bash-4.4# pwd
+/var/www/logs
+
+
+ash: cd: log: No such file or directory
+bash-4.4# ls -la
+total 0
+drwxr-xr-x    3 root     root            73 Feb 27 05:42 .
+drwxr-xr-x   12 root     root           136 Feb 26 06:48 ..
+lrwxrwxrwx    1 root     root            25 Feb 27 05:42 html -> /var/www/localhost/htdocs
+drwxr-xr-x    4 root     root            35 Feb 27 05:13 localhost
+lrwxrwxrwx    1 root     root            16 Feb 27 05:13 logs -> /var/log/apache2
+lrwxrwxrwx    1 root     root            16 Feb 27 05:13 modules -> /usr/lib/apache2
+lrwxrwxrwx    1 root     root            12 Feb 27 05:13 run -> /run/apache2
+bash-4.4# pwd
+/var/www
+bash-4.4#
+
+
+
+
+
+
+
+
+
+========
+
+
+
+
+
+
+bozon before perm change
+
+1@webcld2 sites]$ ls -al
+total 37712
+drwxr-xr-x  7 root root     4096 Feb 26 21:26 .
+drwxr-xr-x  5 root root     4096 Feb 18 13:54 ..
+drwxr-xr-x  8 root root     4096 Feb 24 22:19 bozon
+drwxr-xr-x 11 root root     4096 Feb 24 23:05 freshrss
+-rwxr-xr-x  1 root root       30 Feb 27 00:53 index.html
+drwxr-xr-x  4 root root     4096 Feb 18 11:56 opencart
+-rw-r--r--  1 root root 20131494 Feb 18 17:13 opencart-master.zip
+drwxr-xr-x  6 root root     4096 Feb 26 21:06 yclas
+drwxr-xr-x  6 root root     4096 Feb 26 21:32 yclas2
+-rw-r--r--  1 root root 18455291 Feb 18 13:52 yclas-master.zip
+[user@webcld2 sites]$ cd bozon/
+[user@webcld2 bozon]$ ls -al
+total 85
+drwxr-xr-x 8 root root  4096 Feb 24 22:19 .
+drwxr-xr-x 7 root root  4096 Feb 26 21:26 ..
+-rwxr-xr-x 1 root root  9072 Feb 24 22:19 changelog.md
+-rwxr-xr-x 1 root root  4099 Feb 24 22:19 config.php
+-rwxr-xr-x 1 root root   429 Feb 24 22:19 contributors.md
+drwxr-xr-x 3 root root  4096 Feb 24 22:19 core
+-rwxr-xr-x 1 root root    28 Feb 24 22:19 .gitignore
+-rwxr-xr-x 1 root root  1748 Feb 24 22:19 index.php
+-rwxr-xr-x 1 root root 32308 Feb 24 22:19 LICENCE.md
+drwxr-xr-x 2 root root  4096 Feb 24 22:19 locale
+drwxrwxrwx 4 root root  4096 Feb 24 22:19 private
+-rwxr-xr-x 1 root root  4337 Feb 24 22:19 readme.md
+drwxr-xr-x 3 root root  4096 Feb 24 22:19 templates
+drwxr-xr-x 3 root root  4096 Feb 24 22:19 thumbs
+drwxr-xr-x 3 root root  4096 Feb 24 22:19 uploads
+
+
+
+
+
+
+
+
+
+
+==================
+
+
+
+
+^C
+--- 172.16.3.15 ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 0.474/0.663/1.042 ms
+bash-4.4# sudo scp -rv
+bash: sudo: command not found
+bash-4.4# scp -rv
+bash: scp: command not found
+bash-4.4# cat ./
+conf.d/        httpd.conf     magic          mime.types     sites-enabled/
+bash-4.4# cat ./
+conf.d/        httpd.conf     magic          mime.types     sites-enabled/
+bash-4.4# cat ./
+conf.d/        httpd.conf     magic          mime.types     sites-enabled/
+bash-4.4# cat ./conf.d/
+default.conf      info.conf         languages.conf    mpm.conf          php7-module.conf  userdir.conf
+bash-4.4# cat ./conf.d/
+default.conf      info.conf         languages.conf    mpm.conf          php7-module.conf  userdir.conf
+bash-4.4# cat ./conf.d/php7-module.conf
+LoadModule php7_module modules/mod_php7.so
+
+DirectoryIndex index.php index.html
+
+<FilesMatch \.php$>
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Uncomment the following to allow .phps files to be handled by the php source filter,
+# and displayed as syntax-highlighted source code
+#<FilesMatch "\.phps$">
+#    SetHandler application/x-httpd-php-source
+#</FilesMatch>
+bash-4.4#
+
+
+
+
+
+
+
+
+====
+
+
+
+IncludeOptional /etc/apache2/conf.d/*.conf
+NameVirtualHost *:80
+IncludeOptional sites-enabled/*.conf
+bash-4.4#
+bash-4.4# cat /etc/apache2/httpd.conf | grep proxy
+bash-4.4# cat /etc/apache2/httpd.conf | grep rewrite
+#LoadModule rewrite_module modules/mod_rewrite.so
+bash-4.4#
+
+
+
+#LoadModule mpm_event_module modules/mod_mpm_event.so
+LoadModule mpm_prefork_module modules/mod_mpm_prefork.so
+#LoadModule mpm_worker_module modules/mod_mpm_worker.so
+LoadModule authn_file_module modules/mod_authn_file.so
+#LoadModule authn_dbm_module modules/mod_authn_dbm.so
+#LoadModule authn_anon_module modules/mod_authn_anon.so
+#LoadModule authn_dbd_module modules/mod_authn_dbd.so
+#LoadModule authn_socache_module modules/mod_authn_socache.so
+LoadModule authn_core_module modules/mod_authn_core.so
+LoadModule authz_host_module modules/mod_authz_host.so
+LoadModule authz_groupfile_module modules/mod_authz_groupfile.so
+LoadModule authz_user_module modules/mod_authz_user.so
+#LoadModule authz_dbm_module modules/mod_authz_dbm.so
+#LoadModule authz_owner_module modules/mod_authz_owner.so
+#LoadModule authz_dbd_module modules/mod_authz_dbd.so
+
+#LoadModule\ mpm_event_module\ modules/mod_mpm_event.so\LoadModule\ proxy_module\ modules/mod_proxy.so
+
+sed -i "s|#LoadModule\ mpm_event_module\ modules/mod_mpm_event.so|LoadModule\ proxy_module\ modules/mod_proxy.so|" /etc/apache2/httpd.conf
+
+sed -i -e 's/=enforcing/=disabled/g'
+
+RUN sed -i "s,#LoadModule authn_dbm_module modules/mod_authn_dbm.so,LoadModule\ proxy_module\ modules/mod_proxy.so," /etc/apache2/httpd.conf
+RUN sed -i "s,#LoadModule authn_anon_module modules/mod_authn_anon.so,LoadModule\ proxy_http_module\ modules/mod_proxy_http.so," /etc/apache2/httpd.conf
+
+
+
+
+
+=====
+
+
+
+
+
+#
+# Control access to UserDir directories.  The following is an example
+# for a site where these directories are restricted to read-only.
+#
+<Directory "/home/*/public_html">
+    AllowOverride FileInfo AuthConfig Limit Indexes
+    Options MultiViews Indexes SymLinksIfOwnerMatch IncludesNoExec
+    Require method GET POST OPTIONS
+</Directory>
+
+</IfModule>
+
+
+
+==
+
+
+
+bash-4.4# cd /etc/conf.d/
+bash-4.4# ls -la
+total 8
+drwxr-xr-x    2 root     root            21 Feb 27 19:49 .
+drwxr-xr-x   21 root     root          4096 Feb 27 20:27 ..
+-rw-r--r--    1 root     root          1662 Feb 14 21:47 apache2
+bash-4.4# cd apache2
+bash: cd: apache2: Not a directory
+bash-4.4# cat apache2
+# /etc/conf.d/apache2: config file for /etc/init.d/apache2
+
+#
+# The default processing model (MPM) is the process-based
+# 'prefork' model. A thread-based model, 'worker', is also
+# available, but does not work with some modules (such as PHP).
+#
+#HTTPD=/usr/sbin/httpd.worker
+
+HTTPD="/usr/sbin/httpd"
+
+#
+# To pass additional options (for instance, -D definitions) to the
+# httpd binary at startup, set HTTPD_OPTS here.
+#
+HTTPD_OPTS=
+
+# Extended options for advanced uses of Apache ONLY
+# You don't need to edit these unless you are doing crazy Apache stuff
+# As not having them set correctly, or feeding in an incorrect configuration
+# via them will result in Apache failing to start
+# YOU HAVE BEEN WARNED.
+
+# PID file
+#PIDFILE=/run/apache2/httpd.pid
+
+# timeout for startup/shutdown checks
+#TIMEOUT=10
+
+# ServerRoot setting
+#SERVERROOT=/var/www
+
+# Configuration file location
+# - If this does NOT start with a '/', then it is treated relative to
+# $SERVERROOT by Apache
+#CONFIGFILE=/etc/apache2/httpd.conf
+
+# Location to log startup errors to
+# They are normally dumped to your terminal.
+#STARTUPERRORLOG="/var/log/apache2/startuperror.log"
+
+# A command that outputs a formatted text version of the HTML at the URL
+# of the command line. Designed for lynx, however other programs may work.
+#LYNX="lynx -dump"
+
+# The URL to your server's mod_status status page.
+# Required for status and fullstatus
+#STATUSURL="http://localhost/server-status"
+
+# Method to use when reloading the server
+# Valid options are 'restart' and 'graceful'
+# See http://httpd.apache.org/docs/2.2/stopping.html for information on
+# what they do and how they differ.
+#RELOAD_TYPE="graceful"

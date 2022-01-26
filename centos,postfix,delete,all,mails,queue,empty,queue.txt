@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DELETE MAILS FROM POSTFIX QUEUE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-10-21[Oct-Thu]14-48PM 
+
+##https://sharadchhetri.com/how-to-delete-mail-queue-in-postfix/
+
+postsuper -d mail_queue_id
+
+Scenario 2: Remove ALL mails from queue
+
+postsuper -d ALL
+
+Scenario 3: Remove only ALL deferred mails which are in queue
+
+postsuper -d ALL deferred

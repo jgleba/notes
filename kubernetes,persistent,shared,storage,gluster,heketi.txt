@@ -1,0 +1,612 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS + GLUSTERFS + HEKETI
+#@  PERSISTENT SHARED STORAGE FOR KUBERNETES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-17[Dec-Tue]20-02PM 
+
+##https://medium.com/searce/glusterfs-dynamic-provisioning-using-heketi-as-external-storage-with-gke-bd9af17434e5
+
+==
+HOSTS FILE ON ALL NODES
+==
+
+sudo echo " 
+172.16.3.167 kube1gluster1
+172.16.3.168 kube1gluster2
+172.16.3.169 kube1gluster3
+" | sudo tee -a /etc/hosts
+
+==
+INSTALL STUFF ON ALL NODES, RUN THREE TIMES
+==
+
+sudo yum install -y epel-release
+sudo yum install -y centos-release-gluster glusterfs-server glusterfs
+
+==
+INSTALL GLUSTER ON KUBE WORKER NODES
+==
+
+#sudo yum install -y epel-release
+#sudo yum install -y centos-release-gluster
+#sudo yum install -y glusterfs
+#sudo yum install -y centos-release-gluster glusterfs 
+
+sudo yum install -y epel-release
+sudo yum install -y centos-release-gluster glusterfs-server glusterfs
+
+==
+ENABLE AND START GLUSTER ON ALL NODES
+==
+
+sudo systemctl start glusterd && sudo systemctl enable glusterd
+
+==
+FIREWALL
+==
+
+##DISABLING FOR NOW
+##sudo service firewalld stop && sudo systemctl disable firewalld
+
+#sudo firewall-cmd --zone=public --add-port=24007-24008/tcp --permanentfirewall-cmd --zone=public --add-port=24009/tcp --permanent
+#sudo firewall-cmd --zone=public --add-service=nfs --add-service=samba --add-service=samba-client --permanent
+#sudo firewall-cmd --zone=public --add-port=111/tcp --add-port=139/tcp --add-port=445/tcp --add-port=965/tcp --add-port=2049/tcp --add-port=38465-38469/tcp --add-port=631/tcp --add-port=111/udp --add-port=963/udp --add-port=49152-49251/tcp --permanent
+#sudo firewall-cmd --reload
+
+==
+CONNECT GLUSTER NODES
+==
+
+sudo gluster peer probe kube1gluster1
+sudo gluster peer probe kube1gluster2
+sudo gluster peer probe kube1gluster3
+
+==
+
+root@kube1gluster3 user]# sudo gluster peer status
+Number of Peers: 2
+
+Hostname: kube1gluster1
+Uuid: 4e8a5b63-6de0-43fe-9783-b14e63401e06
+State: Peer in Cluster (Connected)
+
+Hostname: kube1gluster2
+Uuid: 7a07bd9e-5ab3-4614-b41f-27daab425d5f
+State: Peer in Cluster (Connected)
+
+==
+INSTALL HEKETI ON ALL NODES AND ON ALL KUBE WORKER NODES
+==
+
+sudo wget https://github.com/heketi/heketi/releases/download/v8.0.0/heketi-v8.0.0.linux.amd64.tar.gz
+sudo tar xzvf heketi-v8.0.0.linux.amd64.tar.gz
+cd heketi
+sudo cp heketi heketi-cli /usr/local/bin/
+heketi -v
+
+==
+FILE PERMS FOR HEKETI ON ALL NODES
+==
+
+sudo groupadd -r -g 515 heketi
+sudo useradd -r -c "Heketi user" -d /var/lib/heketi -s /bin/false -m -u 515 -g heketi heketi
+sudo mkdir -p /var/lib/heketi && sudo chown -R heketi:heketi /var/lib/heketi
+sudo mkdir -p /var/log/heketi && sudo chown -R heketi:heketi /var/log/heketi
+sudo mkdir -p /etc/heketi
+
+==
+INSTALL HEKETI CLIENT ON ALL KUBE WORKER NODES
+==
+
+sudo yum install heketi-client -y
+
+==
+CREATE KEY, ALLOW SSH VIA KEY, ON ALL NODES - LATEST - USED SAME KEY ON ALL NODES
+==
+
+sudo ssh-keygen -f /etc/heketi/heketi_key -t rsa -N ''
+sudo chown heketi:heketi /etc/heketi/heketi_key*
+sudo cp /etc/heketi/heketi_key.pub /etc/heketi/authorized_keys
+
+sudo mkdir -p /root/.ssh/
+sudo mkdir -p /home/user/.ssh/
+
+sudo cp /etc/heketi/authorized_keys /home/user/.ssh/ /root/.ssh/
+
+sudo chmod 600 /root/.ssh/authorized_keys
+sudo chmod 700 /root/.ssh
+sudo service sshd restart
+
+==
+HEKETI CONFIG
+==
+
+sudo nano /etc/heketi/heketi.json
+
+sudo echo "
+{
+  "_port_comment": "Heketi Server Port Number",
+  "port": "8080",
+ 
+  "_use_auth": "Enable JWT authorization. Please enable for deployment",
+  "use_auth": true,
+ 
+  "_jwt": "Private keys for access",
+  "jwt": {
+    "_admin": "Admin has access to all APIs",
+    "admin": {
+      "key": "EjTm2cEq2AMRFe5S"
+    },
+    "_user": "User only has access to /volumes endpoint",
+    "user": {
+      "key": "EjTm2cEq2AMRFe5S"
+    }
+  },
+ 
+  "_glusterfs_comment": "GlusterFS Configuration",
+  "glusterfs": {
+    "_executor_comment": [
+      "Execute plugin. Possible choices: mock, ssh",
+      "mock: This setting is used for testing and development.",
+      "      It will not send commands to any node.",
+      "ssh:  This setting will notify Heketi to ssh to the nodes.",
+      "      It will need the values in sshexec to be configured.",
+      "kubernetes: Communicate with GlusterFS containers over",
+      "            Kubernetes exec api."
+    ],
+    "executor": "ssh",
+ 
+    "_sshexec_comment": "SSH username and private key file information",
+    "sshexec": {
+      "keyfile": "/etc/heketi/heketi_key",
+      "user": "root",
+      "port": "22",
+      "fstab": "/etc/fstab"
+    },
+ 
+    "_kubeexec_comment": "Kubernetes configuration",
+    "kubeexec": {
+      "host" :"https://kubernetes.host:8443",
+      "cert" : "/path/to/crt.file",
+      "insecure": false,
+      "user": "kubernetes username",
+      "password": "password for kubernetes user",
+      "namespace": "OpenShift project or Kubernetes namespace",
+      "fstab": "Optional: Specify fstab file on node.  Default is /etc/fstab"
+    },
+ 
+    "_db_comment": "Database file name",
+    "db": "/var/lib/heketi/heketi.db",
+    "brick_max_size_gb" : 1024,
+    "brick_min_size_gb" : 1,
+    "max_bricks_per_volume" : 33,
+ 
+    "_loglevel_comment": [
+      "Set log level. Choices are:",
+      "  none, critical, error, warning, info, debug",
+      "Default is warning"
+    ],
+    "loglevel" : "debug"
+  }
+}" | sudo tee /etc/heketi/heketi.json
+
+==
+CREATE HEKETI SERVICE FILE
+==
+
+#sudo nano /etc/systemd/system/heketi.service
+
+sudo echo "[Unit]
+Description=Heketi Server
+Requires=network-online.target
+After=network-online.target
+ 
+[Service]
+Type=simple
+User=heketi
+Group=heketi
+PermissionsStartOnly=true
+PIDFile=/run/heketi/heketi.pid
+Restart=on-failure
+RestartSec=10
+WorkingDirectory=/var/lib/heketi
+RuntimeDirectory=heketi
+RuntimeDirectoryMode=0755
+ExecStartPre=[ -f "/run/heketi/heketi.pid" ] && /bin/rm -f /run/heketi/heketi.pid
+ExecStart=/usr/local/bin/heketi --config=/etc/heketi/heketi.json
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+ 
+[Install]
+WantedBy=multi-user.target" | sudo tee /etc/systemd/system/heketi.service
+
+==
+HEKETI CONFIG
+==
+
+==
+ADDED NEW DISK /dev/sdb
+CHANGED TOPOLOGY CONFIG TO POINT TO NEW DRIVES
+==
+
+#sudo nano /etc/heketi/topology.json
+
+sudo echo "{
+  "clusters": [
+    {
+      "nodes": [
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "kube1gluster1"
+              ],
+              "storage": [
+                "172.16.3.167"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/dev/sdb"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "kube1gluster2"
+              ],
+              "storage": [
+                "172.16.3.168"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/dev/sdb"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "kube1gluster3"
+              ],
+              "storage": [
+                "172.16.3.169"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/dev/sdb"
+          ]
+        }
+      ]
+    }
+  ]
+}" | sudo tee /etc/heketi/topology.json
+
+==
+COPY KEYS TO ALL GLUSTER NODES
+==
+
+sudo scp -rv /etc/heketi root@172.16.3.168:/etc/
+sudo scp -rv /etc/heketi root@172.16.3.169:/etc/
+
+sudo scp -rv /root/.ssh root@172.16.3.168:/root/
+sudo scp -rv /root/.ssh root@172.16.3.169:/root/
+
+==
+RELOAD DAEMONS, START AND ENABLE HEKETI
+==
+
+sudo systemctl daemon-reload
+sudo systemctl start heketi.service && sudo systemctl enable heketi
+sudo journalctl -xe -u heketi
+
+==
+RUN ON GLUSTER NODE1 TO LOAD VARS
+==
+
+##export HEKETI_CLI_SERVER=http://kube1gluster1:8080
+##export HEKETI_CLI_USER=admin
+##export HEKETI_CLI_KEY=AuTwBn4WgaeVWdNH
+
+export HEKETI_CLI_SERVER=http://172.16.3.167:8080
+export HEKETI_CLI_USER=admin
+export HEKETI_CLI_KEY=EjTm2cEq2AMRFe5S
+
+==
+LOAD HEKETI TOPOLOGY
+==
+
+heketi-cli topology load --json=/etc/heketi/topology.json
+
+==
+011820
+==
+
+[user@kube1gluster1 heketi]$ heketi-cli topology load --json=/etc/heketi/topology.json
+Creating cluster ... ID: d9ea02964d36d9eadd29ca062f3d65ca
+   Allowing file volumes on cluster.
+   Allowing block volumes on cluster.
+   Creating node kube1gluster1 ... Unable to create node: New Node doesn't have glusterd running
+   Found node kube1gluster2 on cluster 89b05e9d625822407ace9d8cd462d2c6
+        Found device /dev/sdb
+   Found node kube1gluster3 on cluster 89b05e9d625822407ace9d8cd462d2c6
+        Found device /dev/sdb
+
+
+WAS MISSING KEY IN /root/.ssh/authorized_keys
+
+[user@kube1gluster1 heketi]$ sudo nano /root/.ssh/authorized_keys
+[user@kube1gluster1 heketi]$ sudo nano /root/.ssh/authorized_keys
+[user@kube1gluster1 heketi]$ sudo mkdir -p /root/.ssh/
+[user@kube1gluster1 heketi]$ sudo nano /root/.ssh/authorized_keys
+[user@kube1gluster1 heketi]$ sudo nano topology.json
+[user@kube1gluster1 heketi]$ heketi-cli topology load --json=/etc/heketi/topology.json
+Creating cluster ... ID: 6599ba90902806ccfb60c0b1909b929b
+   Allowing file volumes on cluster.
+   Allowing block volumes on cluster.
+   Creating node kube1gluster1 ... ID: e58816f9ea49883fc7224ff2446a1aa0
+        Adding device /dev/sdb ... OK
+   Found node kube1gluster2 on cluster 89b05e9d625822407ace9d8cd462d2c6
+        Found device /dev/sdb
+   Found node kube1gluster3 on cluster 89b05e9d625822407ace9d8cd462d2c6
+        Found device /dev/sdb
+
+
+
+heketi-cli topology load --json=/etc/heketi/topology.json
+
+==
+
+[root@kube1gluster1 heketi]# heketi-cli topology load --json=/etc/heketi/topology.json
+        Found node kube1gluster1 on cluster 0a17fffd4275f3da7618b1e8374e819d
+                Adding device /dev/sdb ... OK
+        Found node kube1gluster2 on cluster 0a17fffd4275f3da7618b1e8374e819d
+                Adding device /dev/sdb ... OK
+        Found node kube1gluster3 on cluster 0a17fffd4275f3da7618b1e8374e819d
+                Adding device /dev/sdb ... OK
+[root@kube1gluster1 heketi]#
+
+==
+CREATE VOLUME - NOT NEEDED IF USING FOR KUBE STORAGE - KUBE CREATES ITS OWN VOLUMES
+==
+
+heketi-cli volume create --size=49
+ heketi-cli volume create --size=49
+Name: vol_fea06594e839ec5ea9eb62c6888401aa
+Size: 49
+Volume Id: fea06594e839ec5ea9eb62c6888401aa
+Cluster Id: fa1c6f6e174d13db4d667fd26626133c
+Mount: 172.16.3.168:vol_fea06594e839ec5ea9eb62c6888401aa
+Mount Options: backup-volfile-servers=172.16.3.167,172.16.3.169
+Block: false
+Free Size: 0
+Reserved Size: 0
+Block Hosting Restriction: (none)
+Block Volumes: []
+Durability Type: replicate
+Distributed+Replica: 3
+
+==
+
+[root@kube1gluster1 heketi]# gluster volume info
+
+Volume Name: vol_cd17f0b92a3f157163b19a12723d9486
+Type: Replicate
+Volume ID: 49c0ce65-76c4-4326-9561-605c67fcd8bd
+Status: Started
+Snapshot Count: 0
+Number of Bricks: 1 x 3 = 3
+Transport-type: tcp
+Bricks:
+Brick1: 172.16.3.167:/var/lib/heketi/mounts/vg_b293b895d0087b022662263979d020c2/brick_d058107f0ee3b6df0005d82547c8964e/brick
+Brick2: 172.16.3.168:/var/lib/heketi/mounts/vg_cb0d67d756d53f45281969e0f276e1c5/brick_ebaefde8d90292851dc2e7a2e490afc9/brick
+Brick3: 172.16.3.169:/var/lib/heketi/mounts/vg_9315792b0f1045490fb006a817c6b90e/brick_d2fe4279e3389d9fa39942807fae38b3/brick
+Options Reconfigured:
+transport.address-family: inet
+nfs.disable: on
+performance.client-io-threads: off
+
+
+==
+CREATE STORAGECLASS AND PVC
+==
+
+sudo nano gluster-storage-class.yaml
+
+[user@kube1haproxy1 yamls]$ cat gluster-storage-class.yaml
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: heketi-gluster
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://172.16.3.167:8080"
+  restuser: "admin"
+  restuserkey: "EjTm2cEq2AMRFe5S"
+
+  
+[user@kube1haproxy1 yamls]$ cat gluster-storage-class-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: heketi-gluster
+ annotations:
+   volume.beta.kubernetes.io/storage-class: heketi-gluster
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+
+
+
+==
+
+011220
+
+==
+
+GOT IT WORKING
+
+GLUSTER+HEKETI+NGINX POD USING VOLUME
+
+NEEDED TO INSTALL HEKETI + GLUSTER CLIENTS ON WORKER NODES
+
+[user@kube1haproxy1 yamls]$ cat gluster-storage-class-pvc-2.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: heketi-gluster2
+ annotations:
+   volume.beta.kubernetes.io/storage-class: heketi-gluster
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+
+	 
+[user@kube1haproxy1 yamls]$ cat 4-heketi-nginx.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      volumes:
+      - name: www
+        persistentVolumeClaim:
+          claimName: heketi-gluster2
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+		 
+
+		 
+		 
+
+==
+012320
+ANOTHER WORKING EXAMPLE - NOT REALLY SO CONFUSED AS USUAL - VOLUME DOESN"T SEEM TO BE WORKING
+==
+
+[user@kube1haproxy1 ~]$ cat nginxtest2.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+      - name: www
+        persistentVolumeClaim:
+          claimName: heketi-gluster
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1
+        ports:
+        - name: http
+          containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: ClusterIP
+
+[user@kube1haproxy1 ~]$ cat nginxtest2-ingress.yaml
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: "ingress-nginxtest"
+  namespace: default
+spec:
+  rules:
+    - host: nginx.kube1.jgleba.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: nginx
+              servicePort: 80
+[user@kube1haproxy1 ~]$
+
+
+		 
+==
+KEEPALIVED CONFIG FOR VIP - HEKETI DOESNT SEEM TO BE WORKING USING VIP EVEN THOUGH VIP IS ON NODE1
+==
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-kube1-gluster@jgleba.com
+   smtp_server 172.16.3.7
+   smtp_connect_timeout 30
+   router_id kubegluster3
+}
+
+vrrp_instance VIP_100 {
+    state MASTER
+    #state BACKUP
+    interface ens192
+    virtual_router_id 101
+    priority 100
+    advert_int 2
+    smtp_alert
+    preempt_delay 5
+    authentication {
+        auth_type PASS
+        auth_pass pFwOdt7T
+    }
+    unicast_src_ip 172.16.3.167   # IP address of local interface
+    unicast_peer {            # IP address of peer interface
+        172.16.3.168
+        172.16.3.169
+    }
+    virtual_ipaddress {
+        172.16.3.166
+    }
+}

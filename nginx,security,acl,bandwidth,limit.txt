@@ -1,0 +1,8 @@
+=====================
+NGINX SECURITY STUFF
+071219
+=====================
+
+#https://docs.nginx.com/nginx/admin-guide/security-controls/controlling-access-proxied-tcp/
+
+ACLS, BANDWIDTH LIMITING

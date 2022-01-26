@@ -1,0 +1,185 @@
+=====================
+APACHE BENCHMARK, AB
+WEB SERVER BENCHMARK
+050119
+=====================
+
+#https://blog.codeship.com/performance-tuning-haproxy/
+#https://httpd.apache.org/docs/2.4/programs/ab.html
+#http://www.loadbalancer.org/blog/load-balancer-performance-benchmarking-haproxy-on-ec2-quick-and-dirty-style/
+
+==
+
+ab -c 2500 -n 5000 -s 90 http://172.16.3.200:443/
+
+==
+
+ab -c 2500 -n 5000 -s 90 http://172.16.3.233:3306/
+
+==
+
+Benchmarking 172.16.3.233 (be patient)
+Completed 500 requests
+Completed 1000 requests
+Completed 1500 requests
+Completed 2000 requests
+Completed 2500 requests
+Completed 3000 requests
+Completed 3500 requests
+Completed 4000 requests
+Completed 4500 requests
+Completed 5000 requests
+Finished 5000 requests
+
+
+Server Software:
+Server Hostname:        172.16.3.233
+Server Port:            3306
+
+Document Path:          /
+Document Length:        0 bytes
+
+Concurrency Level:      2500
+Time taken for tests:   4.931 seconds
+Complete requests:      5000
+Failed requests:        0
+Write errors:           0
+Total transferred:      554446 bytes
+HTML transferred:       0 bytes
+Requests per second:    1013.94 [#/sec] (mean)
+Time per request:       2465.621 [ms] (mean)
+Time per request:       0.986 [ms] (mean, across all concurrent requests)
+Transfer rate:          109.80 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.1      0       2
+Processing:     0    1   0.1      1       5
+Waiting:        0    1   0.1      1       5
+Total:          1    1   0.2      1       5
+
+Percentage of the requests served within a certain time (ms)
+  50%      1
+  66%      1
+  75%      1
+  80%      1
+  90%      1
+  95%      1
+  98%      1
+  99%      1
+ 100%      5 (longest request)
+[user@zxjprox bin]$
+
+==
+
+ab -c 50 -n 1000 -s 90 http://172.16.3.233:3306/
+
+==
+
+Benchmarking 172.16.3.233 (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:
+Server Hostname:        172.16.3.233
+Server Port:            3306
+
+Document Path:          /
+Document Length:        0 bytes
+
+Concurrency Level:      50
+Time taken for tests:   1.045 seconds
+Complete requests:      1000
+Failed requests:        0
+Write errors:           0
+Total transferred:      110000 bytes
+HTML transferred:       0 bytes
+Requests per second:    957.15 [#/sec] (mean)
+Time per request:       52.239 [ms] (mean)
+Time per request:       1.045 [ms] (mean, across all concurrent requests)
+Transfer rate:          102.82 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.9      0      27
+Processing:     0    1   1.0      1      31
+Waiting:        0    1   1.0      1      30
+Total:          1    1   1.8      1      58
+
+Percentage of the requests served within a certain time (ms)
+  50%      1
+  66%      1
+  75%      1
+  80%      1
+  90%      1
+  95%      1
+  98%      1
+  99%      2
+ 100%     58 (longest request)
+
+==
+
+ab -c 10 -n 5000 -s 90 http://172.16.3.233:3306/
+
+==
+
+Benchmarking 172.16.3.233 (be patient)
+Completed 500 requests
+Completed 1000 requests
+Completed 1500 requests
+Completed 2000 requests
+Completed 2500 requests
+Completed 3000 requests
+Completed 3500 requests
+Completed 4000 requests
+Completed 4500 requests
+Completed 5000 requests
+Finished 5000 requests
+
+
+Server Software:
+Server Hostname:        172.16.3.233
+Server Port:            3306
+
+Document Path:          /
+Document Length:        0 bytes
+
+Concurrency Level:      10
+Time taken for tests:   4.631 seconds
+Complete requests:      5000
+Failed requests:        0
+Write errors:           0
+Total transferred:      550000 bytes
+HTML transferred:       0 bytes
+Requests per second:    1079.59 [#/sec] (mean)
+Time per request:       9.263 [ms] (mean)
+Time per request:       0.926 [ms] (mean, across all concurrent requests)
+Transfer rate:          115.97 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.1      0       3
+Processing:     0    1   0.1      1       4
+Waiting:        0    1   0.1      1       4
+Total:          1    1   0.1      1       4
+
+Percentage of the requests served within a certain time (ms)
+  50%      1
+  66%      1
+  75%      1
+  80%      1
+  90%      1
+  95%      1
+  98%      1
+  99%      1
+ 100%      4 (longest request)

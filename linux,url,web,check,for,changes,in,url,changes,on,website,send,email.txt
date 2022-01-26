@@ -1,0 +1,86 @@
+======================================================
+CANNOT NARROW DOWN KINEDO.COM ISSUE, MIGHT BE JS ERROR
+CURL WEBSITE, DO DIFF CHECK, EMAIL IF DIFFERENT, ARCHIVE EACH CURL
+111219
+======================================================
+
+==
+FIRST THOUGHTS, ROUGH NOTES
+==
+
+curl -k https://example.com  -L -o example.com-$(date +"%m-%d-%Y-%H-%M").txt
+VAR LASTPAGECHECK = echo example.com-$(date +"%m-%d-%Y-%H-%M").txt
+VAR CURRPAGECHECK = echo example.com-$(date +"%m-%d-%Y-%H-%M").txt
+if 
+	diff LASTPAGECHECK CURRPAGECHECK != 0
+	echo "EXAMPLE.COM BROKEN" | /usr/sbin/sendmail example@jgleba.com
+fi
+
+==
+
+#!/bin/bash
+
+# monitor.sh - Monitors a web page for changes
+# sends an email notification if the file change
+# http://bhfsteve.blogspot.com/2013/03/monitoring-web-page-for-changes-using.html
+
+EMAIL="example@jgleba.com"
+URL="https://example.com"
+
+for (( ; ; )); do
+    mv new.html old.html 2> /dev/null
+    curl -k $URL -L --compressed -s > new.html
+    DIFF_OUTPUT="$(diff new.html old.html)"
+	echo $DIFF_OUTPUT > diffcheck.txt
+    if [ "0" != "${#DIFF_OUTPUT}" ]; then
+		##echo $DIFF_OUTPUT | /usr/sbin/sendmail -s "example BROKEN - MAYBE - NEED TO CHECK" $EMAIL
+		(echo "Subject: example BROKEN - MAYBE - NEED TO CHECK"; cat diffcheck.txt | grep -v value) | /usr/sbin/sendmail -t $EMAIL
+		rm diffcheck.txt
+		sleep 30
+    fi
+done
+
+KINDA WORKS, TRYING TO FIND SOMETHING BETTER, GET EMAILS NO MATTER WHAT, LOOPS WEIRDLY
+
+==
+
+#!/bin/bash
+
+EMAIL="example@jgleba.com"
+URL="https://example.com"
+
+mv new.html old.html 2> /dev/null
+mv new2.html old2.html 2> /dev/null
+curl -k $URL -L --compressed -s > new.html
+cat new.html | grep -v value > new2.html
+DIFF_OUTPUT="$(diff new2.html old2.html)"
+echo $DIFF_OUTPUT > diffcheckout.txt
+if [ "0" != "${#DIFF_OUTPUT}" ]; then
+	##echo $DIFF_OUTPUT | /usr/sbin/sendmail -s "example BROKEN - MAYBE - NEED TO CHECK" $EMAIL
+	(echo "Subject: example BROKEN - MAYBE - NEED TO CHECK"; cat diffcheckout.txt | grep -v value) | /usr/sbin/sendmail -t $EMAIL
+	rm diffcheckout.txt
+fi
+
+==
+
+curl -k https://example.com -L --compressed -s > new.html
+
+==
+
+#!/bin/bash
+
+EMAIL="example@jgleba.com"
+URL="https://example.com"
+
+mv new.html old.html
+mv new2.html old2.html
+curl -k $URL -L --compressed -s > new.html
+cat new.html | grep -v value > new2.html
+DIFF_OUTPUT="$(diff new2.html old2.html)"
+echo $DIFF_OUTPUT > diffcheckout.txt
+if [ "0" != "${#DIFF_OUTPUT}" ]; then
+	(echo "Subject: example BROKEN - MAYBE - NEED TO CHECK"; cat diffcheckout.txt | grep -v value) | /sbin/sendmail -t $EMAIL
+	rm diffcheckout.txt
+fi
+
+==

@@ -1,0 +1,41 @@
+==================================
+FREENAS DEDUPLICATION INFO / CHECK
+110119
+==================================
+
+##https://www.ixsystems.com/community/threads/can-i-just-turn-dedup-on-to-enable-dedup-on-an-existing-freenas-11-1-zfs-data-set-pool.70296/
+##https://www.oracle.com/technical-resources/articles/it-infrastructure/admin-o11-113-size-zfs-dedup.html
+##https://www.ixsystems.com/community/threads/zdb-what-am-i-missing.69558/
+##https://www.reddit.com/r/zfs/comments/6donos/freenas_and_deduplication/
+
+[root@freenas] ~# zdb -S -U /data/zfs/zpool.cache pool1
+Simulated DDT histogram:
+
+bucket              allocated                       referenced
+______   ______________________________   ______________________________
+refcnt   blocks   LSIZE   PSIZE   DSIZE   blocks   LSIZE   PSIZE   DSIZE
+------   ------   -----   -----   -----   ------   -----   -----   -----
+     1    36.2M   4.53T   3.14T   3.17T    36.2M   4.53T   3.14T   3.17T
+     2    1.66M    213G    164G    165G    3.49M    447G    342G    345G
+     4     146K   18.2G   11.3G   11.5G     693K   86.6G   54.4G   55.2G
+     8    20.8K   2.60G   1.92G   1.94G     213K   26.5G   19.6G   19.8G
+    16    5.65K    722M    543M    547M     126K   15.7G   11.9G   12.0G
+    32    7.40K    946M    875M    875M     324K   40.4G   37.6G   37.6G
+    64    27.4K   3.43G   3.40G   3.40G    2.51M    322G    319G    319G
+   128       26   3.25M    104K    139K    4.89K    626M   19.6M   26.1M
+   256        8      1M     32K   42.6K    3.11K    398M   12.4M   16.6M
+   512        8      1M     32K   42.6K    5.39K    690M   21.6M   28.7M
+    1K        4    512K     16K   21.3K    5.57K    713M   22.3M   29.7M
+    4K        1    128K      4K   5.33K    7.47K    956M   29.9M   39.8M
+   16K        2    256K      8K   10.7K    33.9K   4.23G    135M    180M
+ Total    38.1M   4.76T   3.31T   3.35T    43.6M   5.45T   3.90T   3.94T
+
+dedup = 1.18, compress = 1.40, copies = 1.01, dedup * compress / copies = 1.63
+
+[root@freenas] ~# date
+Fri Nov  1 14:50:27 EDT 2019
+
+DOESNT MAKE SENSE
+
+dedup = 1.18 NEEDS TO BE >2
+

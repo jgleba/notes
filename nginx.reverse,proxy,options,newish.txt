@@ -1,0 +1,48 @@
+nginx prox options, have removed to get better performance on nginx proxy
+still disconnects after heavy load, but seems a little bit better
+july10 ,2016
+
+proxy_connect_timeout 7d;
+proxy_send_timeout 7d;
+proxy_read_timeout 7d;
+proxy_buffering off;
+proxy_redirect off;
+send_timeout   7d;
+
+
+==
+
+
+old vhost file
+
+==
+
+server {
+
+        listen   443;
+        server_name rd.jgleba.com;
+
+        ssl on;
+        ssl_certificate /etc/ssl/rdjglbundle.crt;
+        ssl_certificate_key /etc/ssl/rdjgl.key;
+
+	location / {
+	  proxy_pass http://10.0.0.120:8080/guacamole/;
+	  proxy_buffering off;
+          proxy_redirect off;
+}
+}
+
+    upstream tomcat_server {
+	# Tomcat is listening on default 8080 port
+        server 10.0.0.120:8080 fail_timeout=999;
+    }
+
+
+
+===
+
+
+installing guacamole on centos
+
+http://sourceforge.net/projects/guacamoleinstallscript/files/CentOS/guacamole-install-script.sh

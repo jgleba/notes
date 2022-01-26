@@ -1,0 +1,36 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OFFICE 365, GET ALL SHARED MAILBOXES, CHECK TO SEE IF LICENSE IS ASSIGNED
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-18[Aug-Tue]08-34AM 
+
+##https://petri.com/licensing-exchange-online-shared-mailboxes
+
+worked 081820
+
+$SMbx = Get-Mailbox -RecipientTypeDetails SharedMailbox -ResultSize Unlimited
+$Report = @()
+ForEach ($S in $SMbx) {
+  $Stat = (Get-MailboxStatistics -Identity $S.Alias | Select ItemCount, TotalItemSize)
+  $ReportLine = [PSCustomObject][Ordered]@{
+    Mailbox     = $S.DisplayName
+    TotalItems  = $Stat.ItemCount
+    MailboxSize = $Stat.TotalItemSize
+    Quota       = $S.ProhibitSendReceiveQuota
+    Licensed    = $S.SkuAssigned}
+ $Report += $ReportLine }
+$Report | Format-Table Mailbox, TotalItems, MailboxSize, Quota, Licensed -AutoSize
+ 
+ 
+Mailbox                                 TotalItems MailboxSize                  Quota                          Licensed
+-------                                 ---------- -----------                  -----                          --------
+Customer Services                              143 860.3 KB (880,957 bytes)     100 GB (107,374,182,400 bytes)    False
+Office 365 Book Feedback                       298 6.237 MB (6,540,441 bytes)   100 GB (107,374,182,400 bytes)
+Redirect for Removed Mailboxes                 198 814 KB (833,494 bytes)       100 GB (107,374,182,400 bytes)
+Redmond Shared Events                         3770 190.5 MB (199,706,644 bytes) 100 GB (107,374,182,400 bytes)
+Company Information                            252 897.4 KB (918,922 bytes)     100 GB (107,374,182,400 bytes)
+Office 365 for IT Pros Customer Queries        212 2.052 MB (2,151,205 bytes)   100 GB (107,374,182,400 bytes)     True
+
+==
+

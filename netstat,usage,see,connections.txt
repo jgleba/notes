@@ -1,0 +1,15 @@
+netstat, see active connections and count	
+
+#https://www.huffpost.com/entry/how-to-stop-most-website_b_10014570
+
+netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+
+##removes junk line
+netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort | grep -v Address | grep -v "servers)"
+
+##watch not working
+watch netstat -ntu | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort | grep -v Address | grep -v "servers)"
+
+less good way
+
+netstat -atc

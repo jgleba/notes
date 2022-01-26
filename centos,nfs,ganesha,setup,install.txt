@@ -1,0 +1,68 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS NFS GANESHA INSTALL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-05[Feb-Wed]21-46PM 
+
+==
+REPO
+==
+
+sudo yum --enablerepo=centos-gluster40 -y install nfs-ganesha-gluster 
+
+==
+CONFIG
+==
+
+sudo nano /etc/ganesha/ganesha.conf 
+
+ # create new
+NFS_CORE_PARAM {
+    # possible to mount with NFSv3 to NFSv4 Pseudo path
+    mount_path_pseudo = true;
+    # NFS protocol
+    Protocols = 3,4;
+}
+EXPORT_DEFAULTS {
+    # default access mode
+    Access_Type = RW;
+}
+EXPORT {
+    # uniq ID
+    Export_Id = 101;
+    # mount path of Gluster Volume
+    Path = "/home/glustervol1";
+    FSAL {
+    	# any name
+        name = GLUSTER;
+        # hostname or IP address of this Node
+        hostname="172.16.3.167";
+        # Gluster volume name
+        volume="glustervol1";
+    }
+    # config for root Squash
+    Squash="No_root_squash";
+    # NFSv4 Pseudo path
+    Pseudo="/home/glustervol1";
+    # allowed security options
+    SecType = "sys";
+}
+LOG {
+    # default log level
+    Default_Log_Level = WARN;
+}
+
+
+==
+ENABLE AND START
+==
+
+sudo systemctl enable nfs-ganesha && sudo systemctl start nfs-ganesha 
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --add-service=nfs --permanent 
+sudo firewall-cmd --reload 

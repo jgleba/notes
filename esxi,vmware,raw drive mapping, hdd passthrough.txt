@@ -1,0 +1,54 @@
+How to passthrough SATA drives directly on VMWare EXSI 6.5 as RDMs
+
+There aren't many tutorials about this, the only tutorials I've found were about passing through entire PCIe cards to VMs, or refered to old ESXI versions (below 6.5) that used a more comprehensive desktop client instead of the web app. In v6.5, the web app was introduced and the desktop client was deprecated. This tutorial shows you how to pass SATA HDDs to the virtual machine on VMWare ESXI 6.5. This tutorial is partially based on VMWare's own KB and the now deprecated Forza IT blog post.
+Summary
+
+We attach the SATA HDDs as an RDM (Raw Device Mapper) into an existing virtual disk on command line, then on the web app, we attach a new SCSI controller to the VM, and attach the newly created RDM as an "existing HDD" to the newly created SCSI controller.
+Prerequisite knowledge
+
+If you're new to EXSI, you should know a few things:
+
+    A Datastore is basically this separate layer that sits between a physical device/disk and a virtual disk. A datastore can max the storage of a physical disk, or not. A datastore can have many virtual disks. Virtual disks is what a virtual machine will stores files on.
+    RDM aka Raw Device Mapper is a pointer file that acts like a virtual disk but instead maps directly to a physical disk. RDMs on EXSI 6.5 has to be created in the command line.
+
+Instructions
+
+    Before you get started, make sure you've got a VM setup, and running. In my example, I have a virtual machine and virtual disk both conveniently named Ubuntu Storage
+
+    In EXSI's web interface, log in, go to the home page. Click on Actions > Services > Enable Secure Shell (SSH).
+
+    Open an SSH session to the ESXi/ESX host.
+
+# ssh root@YOUR_EXSI_IP -p 22
+
+    Run this command to list the disks that are attached to the ESXi host:
+
+# ls -l /vmfs/devices/disks
+
+It should look like this. We care about the physical disks with the prefix t10
+
+[root@localhost:~] ls -l /vmfs/devices/disks
+total 12221184373
+-rw-------    1 root     root     5000981078016 Feb  1 10:04 t10.ATA_____HGST_HDN726050ALE610____________________NAG4P4YX____________
+
+Here I have a HGST 5TB disks attached to SATA that I'm trying to passthrough to my VM. There will be other listings here of datastores, and virtual disks that is not relevant.
+
+    Attach a physicak disk as a RDM
+
+# vmkfstools -z /vmfs/devices/disks/t10.ATA_____HGST_HDN726050ALE610____________________NAG4P4YX____________ "/vmfs/volumes/Samsung 850 Pro/Ubuntu Storage/HGST_RDM_1.vmdk"
+
+    Make sure you read Prerequisite knowledge section about datastores, and virtual disks first.
+
+    vmkfstools is attaching the physical disk and mapping it to a vmdk file. vmdk files can only mount in virtual disk folders. e.g. /vmfs/volumes/Samsung 850 Pro/Ubuntu Storage/ folders.
+
+    The folder structure is in this format: /vmfs/volumes/DATASTORE/VIRTUAL_DISK/ The VIRTUAL_DISK should be the name of the virtual disk you're using in your VM, for me it's called Ubuntu Storage. You should cd /vmfs/volumes/ and ls around to find the right virtual disk.
+
+    Attach the newly created RDM to the VM
+
+    Go back to the web app, go to the Virtual Machine, and click Edit.
+    Under Add Another Device, click SCSI controller
+    Under Add Another Device, click Existing hard disk and select the newly created vmdk file. You'll have to use the Datastore file browser to select the HGST_RDM_1.vmdk file
+    Once the HDD is created, under the new disk e.g. Hard disk 2, expand it and make sure it's using the newly created SCSI controller. You'll have to click on the drop down and select e.g. SCSI controller 1 and SCSI (1:0)
+    Change Disk Mode to Independent - persistent
+
+Note: We use independent persistent mode because RDMs won't work with VMWare disk snapshots. More thorough explanation here.

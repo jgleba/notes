@@ -1,0 +1,28 @@
+/interface bridge settings
+set use-ip-firewall=yes
+
+/interface bridge settings
+set use-ip-firewall-for-pppoe=yes
+
+/ip firewall mangle
+add chain=prerouting dst-address=192.168.3.0/24 in-interface=bridge-local action=accept 
+
+/ip firewall mangle
+add chain=prerouting dst-address=192.168.236.0/24 in-interface=bridge-236 action=accept 
+
+/ip firewall mangle
+add chain=input  in-interface=ether1-gateway connection-mark=no-mark action=mark-connection new-connection-mark=WAN1 passthrough=no
+add chain=input  in-interface=pppoe-dsl1 connection-mark=no-mark action=mark-connection new-connection-mark=WAN2 passthrough=no
+
+/ip firewall mangle
+add chain=output  out-interface=ether1-gateway connection-mark=WAN1 action=mark-routing new-routing-mark=WAN1 passthrough=no
+add chain=output  out-interface=pppoe-dsl1 connection-mark=WAN2 action=mark-routing new-routing-mark=WAN2 passthrough=no
+
+/ip firewall mangle
+add chain=prerouting connection-mark=no-mark dst-address-type=!local  in-interface=bridge-local per-connection-classifier=both-addresses:2/0  action=mark-connection new-connection-mark=WAN1
+add chain=prerouting connection-mark=no-mark dst-address-type=!local  in-interface=bridge-236 per-connection-classifier=both-addresses:2/1  action=mark-connection new-connection-mark=WAN2
+
+/ip firewall mangle
+add chain=prerouting  connection-mark=WAN1 in-interface=bridge-local action=mark-routing new-routing-mark=WAN1  passthrough=no
+add chain=prerouting  connection-mark=WAN2 in-interface=bridge-236 action=mark-routing new-routing-mark=WAN2  passthrough=no
+

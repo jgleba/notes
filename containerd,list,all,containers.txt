@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CONTAINERD LIST ALL CONTAINERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-06-16[Jun-Wed]15-48PM 
+
+##https://github.com/containerd/containerd/issues/1815
+
+ctr --namespace k8s.io containers ls

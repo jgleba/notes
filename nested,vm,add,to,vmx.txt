@@ -1,0 +1,6 @@
+to allow nested in vmware
+add:
+
+vmx.allowNested = TRUE
+
+to .vmx file

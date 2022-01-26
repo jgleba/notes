@@ -1,0 +1,61 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS POSTFIX DKIM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-04-14[Apr-Wed]13-10PM 
+
+##https://www.linuxtechi.com/configure-domainkeys-with-postfix-on-centos-7/
+##https://tecadmin.net/setup-domainkeys-dkim-on-postfix-centos-rhel/
+
+sudo yum install epel-release -y
+
+sudo yum install -y opendkim
+
+sudo opendkim-default-keygen
+
+sudo nano /etc/opendkim.conf
+
+CHANGE TO
+
+#Mode    v
+
+#KeyFile /etc/opendkim/keys/jgleba.private
+KeyTable        /etc/opendkim/KeyTable
+
+SigningTable   refile:/etc/opendkim/SigningTable
+ExternalIgnoreList      refile:/etc/opendkim/TrustedHosts
+InternalHosts   refile:/etc/opendkim/TrustedHosts
+
+sudo nano /etc/opendkim/KeyTable
+
+#ADD
+
+default._domainkey.jgleba.com jgleba.com:default:/etc/opendkim/keys/jgleba.private
+
+==
+
+sudo nano  /etc/opendkim/SigningTable
+
+*@jgleba.com default._domainkey.jgleba.com
+
+sudo nano /etc/opendkim/TrustedHosts
+
+jgleba.com
+mail.jgleba.com
+ab3w.com
+myvdesktop.com
+
+sudo nano /etc/postfix/main.cf 
+
+smtpd_milters = inet:127.0.0.1:8891
+non_smtpd_milters = $smtpd_milters
+milter_default_action = accept
+
+sudo service opendkim start
+sudo systemctl enable opendkim
+
+ADD DNS RECORDS CLOUDFLARE FROM jgleba.txt
+
+
+

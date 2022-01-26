@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FIND FILES MODIFIED BETWEEN DATES LINUX, FIND FILES FROM USER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-07[Aug-Fri]11-18AM 
+
+FIND FILES MODIFIED BETWEEN DATES
+
+find / -type f -newermt "2020-08-01" ! -newermt "2020-08-07" -ls 2>/dev/null
+
+find / -type f -newermt "2020-08-01" ! -newermt "2020-08-07" -ls 2>/dev/null | grep -v ' var'
+
+FIND FILES FROM USER
+
+find / -user user 2>/dev/null
+
+FIND FILES THAT ARE WRITABLE
+
+find . -writable
+

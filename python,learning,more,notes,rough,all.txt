@@ -1,0 +1,156 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PYTHON LEARNING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-01[Oct-Thu]14-12PM 
+
+##https://ngelinux.com/python-ping-script-ping-a-list-of-hosts-servers-from-a-file-in-python/
+
+==
+MULTILINE STRING
+==
+
+print("""a
+b
+c""")
+
+==
+PRINT MULTPLE
+==
+
+print("ABC" * 100)
+
+==
+PING
+==
+
+[user@zxcj ~]$ cat ping3.py
+#!/usr/bin/python
+import os
+os.system("ping -c 4 8.8.8.8")
+
+[user@zxcj ~]$ python ping3.py
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=5.69 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=116 time=5.63 ms
+^C
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 5.634/5.666/5.699/0.081 ms
+
+[user@zxcj ~]$ python3 ping3.py
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=116 time=5.66 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=116 time=5.68 ms
+^C
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 5.661/5.672/5.683/0.011 ms
+
+==
+
+[user@zxcj ~]$ cat whoami.py
+#!/usr/bin/python
+import os
+os.system("whoami")
+[user@zxcj ~]$ python whoami.py
+user
+
+==
+
+READ AND WRITE FILE
+
+==
+
+user@zxcj python]$ cat readfile.py
+#!/usr/bin/python
+
+file = open("abc.txt", "r")
+print(file.read())
+
+[user@zxcj python]$ python readfile.py
+abcdefg
+
+==
+
+[user@zxcj python]$ cat abc.txt
+abcdefg
+
+[user@zxcj python]$ cat writefile.py
+#!/usr/bin/python
+
+file = open("abc.txt", "a")
+file.write("hijklmop")
+file.close()
+
+[user@zxcj python]$ python writefile.py
+
+[user@zxcj python]$ cat abc.txt
+abcdefg
+hijklmop
+
+==
+READ USER INPUT
+==
+
+x = input('Enter junk here')
+file=open('userjunk.txt', 'w')
+file.write(x)
+file.close()
+
+ANOTHER WAY, WILL AUTO CLOSE FILE WHEN DONE
+
+#!/usr/bin/python
+x = input('Enter junk here')
+with open('userjunk.txt', 'w') as file
+file.write(x)
+
+##https://stackoverflow.com/questions/3011680/take-user-input-and-put-it-into-a-file-in-python
+filename = input ("filename: ");
+with open (filename, "w") as f:
+  f.write (input ());
+  
+  
+file = input ("file: ");
+with open (file, "w") as f:
+  f.write (input ());
+  
+
+RETRY - NOT WORKING
+
+#!/usr/bin/python
+x = input('Enter junk here')
+print (x)
+with open('userjunk.txt', 'w') as file
+file.write(x)
+
+
+==
+
+WORKING
+
+#!/usr/bin/python
+x = raw_input('Enter junk here')
+file = open('userjunk.txt', 'w')
+file.write(x)
+file.close()
+
+==
+EVAL BOOL FROM STATEMENT
+==
+
+#!/usr/bin/python
+x = "a b c"
+print('a' in x)
+
+[user@zxcj python]$ python pythonbool.py
+True
+
+==
+RANDOM NUMBER
+==
+
+import random
+print(random.randrange(0,100))
+

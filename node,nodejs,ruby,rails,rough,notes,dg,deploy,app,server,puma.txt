@@ -1,0 +1,11 @@
+nvm - node version manager
+package.json - has all versions
+package lock.json
+
+puma - app server for rails
+
+rvm - ruby version manager
+rbenv - another version manager
+
+ruby, gem file, gem lock file
+

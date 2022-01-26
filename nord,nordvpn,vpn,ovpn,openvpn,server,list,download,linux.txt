@@ -1,0 +1,6 @@
+=======================================
+NORDVPN SERVERS OPENVPN DOWNLOAD LINUX
+072019
+=======================================
+
+sudo wget https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip

@@ -1,0 +1,18 @@
+﻿RDP BRUTE FORCE DROP & PREVENT
+
+/ip firewall filter
+add action=drop chain=forward log-prefix="RDPBlocked" src-address-list=RDPBlocked
+
+add action=add-src-to-address-list address-list=RDPBlocked address-list-timeout=1w chain=forward connection-state=new dst-port=3389 log=no log-prefix="RDPBlocked" protocol=tcp src-address-list=rdp_stage6
+
+add action=add-src-to-address-list address-list=rdp_stage6 address-list-timeout=1s chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage5
+
+add action=add-src-to-address-list address-list=rdp_stage5 address-list-timeout=1s chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage4
+
+add action=add-src-to-address-list address-list=rdp_stage4 address-list-timeout=1s chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage3
+
+add action=add-src-to-address-list address-list=rdp_stage3 address-list-timeout=1s chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage2
+
+add action=add-src-to-address-list address-list=rdp_stage2 address-list-timeout=1s chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage1
+
+add action=add-src-to-address-list address-list=rdp_stage1 address-list-timeout=1s chain=forward connection-state=new dst-port=3389 protocol=tcp

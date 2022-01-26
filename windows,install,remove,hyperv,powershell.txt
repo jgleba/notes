@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL AND REMOVE HYPERV POWERSHELL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-11-02[Nov-Mon]12-12PM 
+
+##https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/get-started/install-the-hyper-v-role-on-windows-server
+
+INSTALL
+
+Install-WindowsFeature -Name Hyper-V -ComputerName <computer_name> -IncludeManagementTools -Restart
+
+Install-WindowsFeature -Name Hyper-V -ComputerName hyperv1 -IncludeManagementTools -Restart
+
+Install-WindowsFeature -Name Hyper-V -ComputerName hv1 -IncludeManagementTools -Restart
+
+Install-WindowsFeature -Name Hyper-V -ComputerName WIWVS25.wescast.com -IncludeManagementTools -Restart
+
+REMOVE
+
+Remove-WindowsFeature -Name Hyper-V -ComputerName hyperv1

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+##=======================
+##CENTOS NETINFO SCRIPT
+##121219
+##JGleba
+##=======================
+
+$HOSTNAMEVAL="webcln1-1"
+$IPADDRVAL=""
+$GATEWAYVAL="172.16.3.254"
+$DNS1VAL=""
+$DNS2VAL=""
+
+echo "$HOSTNAMEVAL" | sudo tee /etc/hostname
+sudo sed -i '/BOOTPROTO*/c\BOOTPROTO=static' /etc/sysconfig/network-scripts/ifcfg-ens192
+sudo sed -i '/IPV6INIT*/c\IPV6INIT=no' /etc/sysconfig/network-scripts/ifcfg-ens192
+sudo sed -i '/NETBOOT*/c\NETBOOT=no' /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "IPADDR=$IPADDRVAL" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "PREFIX=24" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "GATEWAY=$GATEWAYVAL | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "DNS1=$DNS1VAL" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "DNS2=$DNS1VAL" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192

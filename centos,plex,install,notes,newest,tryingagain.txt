@@ -1,0 +1,109 @@
+=========================================
+CENTOS PLEX INSTALL, UPGRADING AT BOTTOM
+040619
+=========================================
+
+##have tried before, found that when VM was moved all settings were lost, looks like was tried 022617
+
+
+##DOWNLOAD AND MOVE PLEX TO MACHINE THAT WILL BE PLEX SERVER
+
+##NOT CORRECT LINK, SIGNED INTO PLEX WEB AND DOWNLOADED CENTOS VERSION
+##https://downloads.plex.tv/plex-media-server-new/1.15.3.876-ad6e39743/windows/PlexMediaServer-1.15.3.876-ad6e39743-x86.exe
+##https://app.plex.tv
+##plexmediaserver-1.15.3.876-ad6e39743.x86_64.rpm
+
+##072119
+##BUILDING FR PLEX
+##SIGNED INTO OTHER PLEX SERVER, THERE WAS UPDATE, CLICKED DOWNLOAD, DOWNLOADED TO LOCAL MACHINE, MOVED TO FS, COPIED FROM FS TO NEW PLEX MACHINE
+sudo scp -rv user@172.16.0.15:/home/x/dat/short/j/softw/3linux/media/plexmediaserver-1.16.2.1321-ad17d5f9e.x86_64.rpm ./
+
+##INSTALL
+
+sudo yum install plexmediaserver-1.15.3.876-ad6e39743.x86_64.rpm -y
+sudo yum install plexmediaserver-1.16.2.1321-ad17d5f9e.x86_64.rpm -y
+ 
+##START AND ENABLE
+
+sudo systemctl enable plexmediaserver.service
+sudo systemctl start plexmediaserver.service
+
+##FIREWALL1
+
+sudo firewall-cmd --zone=public --add-port=32400/tcp --permanent
+sudo firewall-cmd --reload
+
+##CHANGE PERMISSIONS
+
+sudo chown -R plex:plex /var/lib/plexmediaserver
+
+http://[your-server-ip-address]:32400/web/
+
+172.16.0.25:/32400/web/
+
+plex.jgleba.com
+
+##NOT WORKING CORRECTLY, SERVER NOT SHOWING UP
+
+##https://support.plex.tv/articles/200288586-installation/?_ga=2.3830896.1935056768.1554580224-1514987860.1554580224
+
+Opening the Plex Web App on a Device Other than the Server Itself
+On the Same Local Network
+To open Plex Web App from a different device than the server computer while still on the same network:
+
+Open a browser window
+Type http://server.local.ip.address:32400/web into the address bar (e.g “http://192.168.1.5:32400/web”)
+The browser will connect to the server and load Plex Web App
+
+##HAVE TO GO HERE
+
+http://172.16.0.25:32400/web/
+http://172.18.1.25:32400/web/
+
+##NOW BETTER, GETTING PROPER SETUP
+
+##ADDING MEDIA
+
+#INSTALL SAMBA TO CONNECT TO SHARE
+sudo yum install samba samba-client cifs-utils samba-common -y
+
+##make dirs
+sudo mkdir -p /mnt/fm/Media
+sudo mkdir -p /path/to/bin
+cd /path/to/bin
+
+##make smb cred file
+
+##add to fstab
+sudo nano /etc/fstab
+//172.16.0.106/Media          /mnt/fm/Media/        cifs            user,uid=plex,gid=smbgrp,file_mode=0755,dir_mode=0775,rw,suid,credentials=/path/to/pass              0 0
+
+##smb group
+sudo groupadd smbgrp
+sudo usermod -a -G smbgrp user
+sudo usermod -a -G smbgrp plex
+
+sudo chown -R plex:smbgrp /mnt/fm
+
+##MOUNT ALL
+sudo mount -a
+
+##MOVED VM TO OTHER HV. SEEMED TO WORK FINE. 040619.
+
+##MOVED AGAIN 072119, HAD TO GO THROUGH SETUP SCREEN AGAIN FROM LOCAL MACHINE, SECOND PLEX SERVER SHOWED UP, ALL MEDIA STILL THERE
+
+
+====
+
+==
+ATTEMPTED UPGRADE - 072119 - WORKED AS EXPECTED - SHOULD MAKE A SMALL SCRIPT, SHOULD BE FINE TO AUTO UPGRADE
+==
+
+##GET
+sudo scp -rv user@172.16.0.15:/home/x/dat/short/j/softw/3linux/media/plexmediaserver-1.16.2.1321-ad17d5f9e.x86_64.rpm ./
+
+##INSTALL UPDATED VERSION
+sudo yum install plexmediaserver-1.16.2.1321-ad17d5f9e.x86_64.rpm -y
+
+##RESTART AFTER UPGRADE
+sudo systemctl restart plexmediaserver.service

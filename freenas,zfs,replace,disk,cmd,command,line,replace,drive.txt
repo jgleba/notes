@@ -1,0 +1,17 @@
+==============================
+ZFS COMMAND LINE REPLACE DRIVE
+061019
+==============================
+
+##NEED TO TEST
+
+##http://www.unixsheikh.com/articles/battle-testing-data-integrity-verification-with-zfs-btrfs-and-mdadm-dm-integrity.html#zfs-power-outage
+
+Now I need to identify the new drive:
+
+$ ls -l /dev/disk/by-id/
+ata-ST31000340NS_9QJ0DVN2 -> ../../sdb
+
+Then I need to replace the old drive with the new. The procedure, since the old drive is completely gone, is not to detach and then replace, but simply to replace with zpool replace pool old_device new_device.
+
+# zpool replace pool1 ata-ST31000340NS_9QJ0EQ1V ata-ST31000340NS_9QJ0DVN2

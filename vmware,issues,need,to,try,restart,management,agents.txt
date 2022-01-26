@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NEXT VMWARE AD LOSS, TRY THIS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-29[Feb-Sat]18-25PM 
+
+##https://docs.vmware.com/en/VMware-vSphere/6.7/com.vmware.psc.doc/GUID-8C553435-27CD-4410-ACA9-9A84EA1D7334.html
+
+/bin/service-control --restart --all
+

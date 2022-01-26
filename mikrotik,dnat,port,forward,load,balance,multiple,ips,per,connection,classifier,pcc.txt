@@ -1,0 +1,30 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK MULTIPLE IP IN DNAT (PORT FORWARD)
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-06[Dec-Fri]12-28PM 
+
+##https://forum.mikrotik.com/viewtopic.php?t=120238
+##https://forum.mikrotik.com/viewtopic.php?t=115431
+##https://forum.mikrotik.com/viewtopic.php?t=77469
+##https://wiki.mikrotik.com/wiki/How_PCC_works_(beginner)
+##https://forum.mikrotik.com/viewtopic.php?t=67464
+##https://wiki.mikrotik.com/wiki/Manual:PCC
+
+==
+ALLOWS LOAD BALANCING OF PACKETS TO MULTIPLE DESTINATIONS, CAN BE USED FOR DNAT
+==
+
+/ip firewall nat
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.200
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.200
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.200
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.199
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.199
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.199
+
+add action=dst-nat chain=dstnat comment="j centos ssh VIP1" dst-port=65011 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.200 to-ports=65011
+add action=dst-nat chain=dstnat comment="j centos ssh VIP2" dst-port=65011 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.199 to-ports=65011

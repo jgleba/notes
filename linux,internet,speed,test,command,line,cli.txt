@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  COMMAND LINE INTERNET SPEED TEST
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-10[Mar-Wed]11-20AM 
+
+##https://opensource.com/article/20/1/internet-speed-tests
+##https://askubuntu.com/questions/104755/how-to-check-internet-speed-via-terminal
+
+curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python -

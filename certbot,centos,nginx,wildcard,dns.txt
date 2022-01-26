@@ -1,0 +1,74 @@
+##CERTBOT LETS ENCRYPT WILDCARD CERT
+##03162019
+##JGleba
+
+##challenge needs to be dns
+##had to switch dns to cloudflare
+##using api key
+
+##https://certbot-dns-cloudflare.readthedocs.io/en/stable/#credentials
+
+##https://developerinsider.co/how-to-create-and-auto-renew-lets-encrypt-wildcard-certificate/
+##https://www.digitalocean.com/community/tutorials/how-to-retrieve-let-s-encrypt-ssl-wildcard-certificates-using-cloudflare-validation-on-centos-7
+
+sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d *.jgleba.com --manual --preferred-challenges dns-01 certonly
+
+====
+
+sudo yum install python-certbot-nginx
+
+ 1220  sudo certbot --nginx certonly -d *.jgleba.com
+ 1221  cat certrenew.sh
+ 1222  sudo certbot --nginx certonly --preferred-challenges dns -d *.jgleba.com
+ 1223  sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d *.jgleba.com --manual --preferred-challenges dns-01 certonly
+ 1254  sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials /path/to/cflaresecret -d *.dg.jgleba.com
+ 1255  sudo nano .cflaresecret.ini
+ 1256  ls -al
+ 1257  sudo chmod -R 700 .cflaresecret.ini
+ 1258  ls -al
+ 1259  sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials /path/to/cflaresecret -d *.dg.jgleba.com
+ 1269  sudo nano .cflaresecret.ini
+ 1270  sudo nano certrenew-jgleba.sh
+ 1271  sudo nano /etc/haproxy/haproxy.cfg
+ 1272  sudo nano certrenew-jgleba.sh
+ 1273  sudo bash -c "cat /etc/letsencrypt/live/dg.jgleba.com/fullchain.pem /etc/letsencrypt/live/dg.jgleba.com/privkey.pem > /etc/letsencrypt/live/dg.jgleba.com/full.pem"
+ 
+ 1247  sudo yum install certbot-dns-cloudflare
+ 
+ 
+ [user@webclfelb1 bin]$ cat certrenew-jgleba.sh
+#!/bin/bash
+
+##JGleba
+## --CREATED-- 03-16-2019 --UPDATED-- 03-16-2019
+############# crontab live running every other odd day *date* --- not for wildcard yet
+
+##Let's Encrypt SSL Cert Renew Routine - WILDCARD - *.jgleba.com
+
+##FRIST CERT OBTAINED WITH
+
+##sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d *.jgleba.com --manual --preferred-challenges dns-01 certonly
+##sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d *.dg.jgleba.com --manual --preferred-challenges dns-01 certonly
+##WORKED TO AUTO GENERATE WILDCARD - 03162019
+##sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials /path/to/cflaresecret -d *.dg.jgleba.com
+
+
+##HAVENT TRIED YET
+##USING
+##https://certbot-dns-cloudflare.readthedocs.io/en/stable/#credentials
+
+##forces path for cron, wasnt working from cron - added 02-22-2019
+PATH=$PATH:/usr/sbin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+
+##certbot renew --dns-cloudflare --dns-cloudflare-credentials /path/to/cflaresecret > /j/bin/certrenew-jgleba.log
+
+sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials /path/to/cflaresecret -d *.jgleba.com *.dg.jgleba.com > /j/bin/certrenew-jgleba.log
+
+if ! [[ 'cat /j/bin/certrenew-jgleba.log | grep "No renewals were attempted."' ]] || [[ $(( $(date +%s) - $(date +%s -r /etc/letsencrypt/renewal) )) -le 600 ]]; then
+   bash -c "cat /etc/letsencrypt/live/jgleba.com/fullchain.pem /etc/letsencrypt/live/jgleba.com/privkey.pem > /etc/letsencrypt/live/jgleba.com/full.pem" ## jgleba.com wildcard - first 03162019
+   bash -c "cat /etc/letsencrypt/live/dg.jgleba.com/fullchain.pem /etc/letsencrypt/live/dg.jgleba.com/privkey.pem > /etc/letsencrypt/live/dg.jgleba.com/full.pem" ## dg.jgleba.com wildcard - second 03162019
+   service haproxy restart
+fi
+
+
+

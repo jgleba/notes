@@ -1,0 +1,25 @@
+          ";
+        // line 2
+        if (((isset($context["view"]) ? $context["view"] : null) == "home")) {
+            // line 3
+            echo "                <div class=\"messages information\">
+
+                </div>
+                ";
+        }
+    }
+
+
+	
+	sudo nano ./wallabag/cache/c7/26/d4710e72716163580562ab13e8e3.php
+	
+	[root@zxsw2 default]# grep -rnw './wallabag' -e 'v2 is out'
+./wallabag/themes/default/orig_messages.twig_orig:4:                    <p><a href="http://doc.wallabag.org">wallabag v2 is out, please read the documentation to upgrade.</a></p>
+[root@zxsw2 default]# sudo nano _messages.twig
+[root@zxsw2 default]# grep -rnw './wallabag' -e 'messages information'
+./wallabag/cache/c7/26/d4710e72716163580562ab13e8e3.php:26:            echo "                <div class=\"messages information\">
+./wallabag/themes/default/orig_messages.twig_orig:3:                <div class="messages information">
+[root@zxsw2 default]# sudo nano ./wallabag/cache/c7/26/d4710e72716163580562ab13e8e3.php
+
+
+

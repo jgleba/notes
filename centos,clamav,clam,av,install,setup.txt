@@ -1,0 +1,52 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS CLAMAV SETUP INSTALL (INSTALLING ON SPAM FILTER)
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-03[May-Mon]09-26AM 
+
+##https://www.hostinger.com/tutorials/how-to-install-clamav-centos7
+##https://www.transip.eu/knowledgebase/entry/700-installing-clamav-in-centos7/
+
+##INSTALL STUFF
+
+sudo yum -y install epel-release
+
+##INSTALL CLAMAV
+
+sudo yum -y install clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd
+
+##CONFIGURE CLAMAV
+
+sudo sed -i -e "s/^Example/#Example/" /etc/clamd.d/scan.conf
+sudo sed -i -e "s/#LocalSocket /LocalSocket /" /etc/clamd.d/scan.conf
+
+sudo sed -i -e "s/^Example/#Example/" /etc/freshclam.conf
+
+##UPDATE DB
+
+sudo freshclam
+
+##CREATE SERVICE
+
+sudo nano /usr/lib/systemd/system/freshclam.service
+
+[Unit]
+Description = freshclam scanner
+After = network.target
+
+[Service]
+Type = forking
+ExecStart = /usr/bin/freshclam -d -c 1
+Restart = on-failure
+PrivateTmp =true
+
+[Install]
+WantedBy=multi-user.target
+
+##START AND ENABLE
+
+sudo systemctl enable clamd@scan
+sudo systemctl enable freshclam
+sudo systemctl start clamd@scan
+sudo systemctl start freshclam

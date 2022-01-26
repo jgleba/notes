@@ -1,0 +1,8 @@
+=========================================
+LINUX RSYNC OVER SSH ON NON STANDARD PORT
+090519
+=========================================
+
+##https://mike-hostetler.com/rsync-non-standard-ssh-port/
+
+rsync -avz source file -e "ssh -p port" user@host:/path/to/dest

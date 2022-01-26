@@ -1,0 +1,23 @@
+https://www.experts-exchange.com/questions/28992309/Unable-to-send-emails-with-multiple-attachments-using-Send-MailMessage-in-powershell.html
+
+Clear-Host
+$SMTPServer = "mail.abc.com"
+$From = "admin@abc.com"
+$folder = Get-ChildItem "E:\Attachments\" -Recurse -Directory
+$file_attachments = @()
+foreach ($subfolder in $folder)
+{
+if ($subfolder.Name -eq "Customer A")
+{
+$custa = Get-ChildItem "E:\Attachments\Customer A\" | Select -exp FullName
+Write-Host "Folder Customer A is Present"
+Send-MailMessage -From $From -to customerA@xyz.com -SmtpServer $SMTPServer -Attachments $custa -Subject "Sending File A"
+}
+if ($subfolder.Name -eq "Customer B")
+{
+Clear-Variable -name file_attachments
+Write-Host "Folder Customer B is Present"
+$custb = Get-ChildItem "E:\Attachments\Customer B\" | Select -exp FullName
+Send-MailMessage -From $From -to customerB@domain.com -SmtpServer $SMTPServer -Attachments $custb -Subject "Sending invoice B"
+}
+}

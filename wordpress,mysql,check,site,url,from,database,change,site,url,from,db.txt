@@ -1,0 +1,17 @@
+=====================================================================
+WORDPRESS CHECK SITE URL FROM DATABASE, UPDATE SITE URL FROM DATABASE
+070219
+=====================================================================
+
+==
+CHECK URL
+==
+
+SELECT * FROM wp_options WHERE option_name IN ('siteurl', 'home');
+
+==
+UPDATE URL
+==
+
+update wp_options set option_value = 'https://www.abc.com' where option_name = 'siteurl';
+update wp_options set option_value = 'https://www.abc.com' where option_name = 'home';

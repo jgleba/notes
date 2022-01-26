@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  BASH LINUX NOTES, GENERAL THINGS, ROUGH, ALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-10[Apr-Fri]15-15PM 
+
+##==
+##CALL SCRIPT WITH PARAMETER - PASSING VAR INTO NEXT SCRIPT
+##==
+sh ./wpstart2-vost-create.sh
+cat /wpstart2-vost.sh > $SITECONFIG
+
+##==
+##EXPORT, ADD VAR TO ENVIRONMENT VARS, CAN BE USED AS A HACKY GLOBAL VAR
+##==
+
+export WP_ADMIN_USERNAME="admin"
+export ##PRINTS
+
+##==
+##WINDOWS LIKE, SLEEP COMMAND, COUNTS DOWN TIMER, CAN CONTINUE WITH KEY PRESS, CONTINUES ONCE TIME HAS ELAPSED 
+##FROM DG
+##==
+
+timeout1=15 ; read -t "${timeout1}" -p "Press ENTER or wait $timeout1 seconds..." || true ;  echo ;

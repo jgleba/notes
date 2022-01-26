@@ -1,0 +1,35 @@
+=========================================
+CHECK_MK SERVICE CHECKS TIMEOUTS LOCATION
+110519
+=========================================
+
+#https://monitoring-portal.org/t/service-check-timed-out/717
+
+GETTING LOTS OF:
+
+Host:     172.18.1.2
+Alias:    HV1-Fr
+Address:  172.18.1.2
+Service:  Check_MK
+State:    OK -> CRITICAL (PROBLEM)
+Command:  check-mk
+Output:   (Service Check Timed Out)
+Perfdata: 
+
+==
+MAIN FILE
+==
+
+sudo nano /opt/omd/sites/jgleba/etc/nagios/nagios.d/tuning.cfg
+
+==
+EDIT THIS ONE, TAKES PRECEDENCE
+==
+
+sudo nano /opt/omd/sites/jgleba/etc/nagios/nagios.cfg
+
+sudo nano /opt/omd/sites/jgdc/etc/nagios/nagios.cfg
+
+sudo nano /opt/omd/sites/jghome/etc/nagios/nagios.cfg
+
+service_check_timeout=1800

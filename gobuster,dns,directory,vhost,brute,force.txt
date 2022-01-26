@@ -1,0 +1,80 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GOBUSTER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]12-42PM 
+
+==
+BRUTEFORCE DNS DIR LISTING TOOL
+==
+
+==
+ENUMERATE SUBDOMAINS FROM WORDLIST
+==
+
+gobuster dns -d jgleba.com -w subdomains.txt
+
+user@kali:~$ gobuster dns -d jgleba.com -w subdomains.txt
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Domain:     jgleba.com
+[+] Threads:    10
+[+] Timeout:    1s
+[+] Wordlist:   subdomains.txt
+===============================================================
+2020/08/04 12:42:29 Starting gobuster
+===============================================================
+Found: files.jgleba.com
+Found: mail.jgleba.com
+===============================================================
+2020/08/04 12:42:29 Finished
+===============================================================
+
+user@kali:~$ cat subdomains.txt
+abc
+files
+mail
+
+==
+ENUMERATE VHOSTS FROM WORDLIST
+==
+
+gobuster vhost -u jgleba.com -w subdomains.txt
+
+user@kali:~$ gobuster vhost -u https://jgleba.com -w subdomains.txt
+===============================================================
+Gobuster v3.0.1
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@_FireFart_)
+===============================================================
+[+] Url:          https://jgleba.com
+[+] Threads:      10
+[+] Wordlist:     subdomains.txt
+[+] User Agent:   gobuster/3.0.1
+[+] Timeout:      10s
+===============================================================
+2020/08/04 12:46:49 Starting gobuster
+===============================================================
+Found: mail.jgleba.com (Status: 301) [Size: 0]
+===============================================================
+2020/08/04 12:46:49 Finished
+===============================================================
+
+==
+EXAMPLE USING KALI SECLISTS WORDLIST
+==
+
+gobuster vhost -u jgleba.com -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt -o vhosts-jgleba.com
+
+
+==
+ANOTHER EXAMPLE, DOING RECON ON DIRS
+==
+
+gobuster dir -u https://jgleba.com -w /usr/share/seclists/Discovery/Web-Content/raft-large-words.txt -o gobuster.out -x php
+
+ALTERNATIVE
+
+https://github.com/maurosoria/dirsearch

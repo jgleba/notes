@@ -1,0 +1,31 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ADD USERS FROM CSV FILE ACTIVE DIRECTORY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-20[May-Thu]11-24AM 
+
+==
+USERS CSV
+==
+
+First,Last,UserID,Department
+Madeline,Parrish,MParrish,Sales
+Phil,Alfonso,PAlfonso,IT
+Rigoberto,Nowell,RNowell,Research
+Amparo,Harrington,AHarrington,Development
+
+==
+IMPORT USERS
+==
+
+$users = Import-CSV users.csv
+
+ForEach ($u in $users) {
+    $path = "OU=" + $u.Department + ",DC=Adatum,DC=com"
+    $upn = $u.UserID + "@adatum.com"
+    $display = $u.First + " " + $u.Last
+    Write-Host "Creating $display in $path"
+    New-ADUser -GivenName $u.First -Surname $u.Last -Name $display -DisplayName $display -SamAccountName $u.UserID -UserPrincipalName $UPN -Path $path -Department $u.Department
+}
+

@@ -1,0 +1,22 @@
+download from:
+
+https://nexcenter.brovada.com/NxAdmin/DownloadFile.do
+
+sign in with fvidal creds
+
+download:
+
+
+
+NexCenter v3.x
+•NexCenter Client v3.x - Installer
+•NexPrinter V3.0 Installer
+
+install client first
+
+==
+
+log in, install updates
+
+shared data location, usually with pb, NexCenterData folder
+

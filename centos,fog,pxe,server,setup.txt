@@ -1,0 +1,656 @@
+================================
+CENTOS FOG PXE BOOT SERVER SETUP
+111219
+================================
+
+##https://fogproject.org/download
+##https://wiki.fogproject.org/wiki/index.php/Integrating_FOG_into_an_Existing_Network
+##https://wiki.fogproject.org/wiki/index.php/FOG_on_an_Isolated_Network
+
+##https://forum.mikrotik.com/viewtopic.php?t=29769
+##http://sheldija.net/fog-with-mikrotik-as-a-dhcp-server/
+
+##adding ubuntu
+##https://forums.fogproject.org/topic/12365/booting-ubuntu-18-04-live-cd/9
+##https://github.com/vrillusions/ubuntu-kickstart/blob/master/18.04/ks-1804-minimalvm.cfg
+##https://forums.fogproject.org/topic/10944/using-fog-to-pxe-boot-into-your-favorite-installer-images/5
+
+==
+INSTALLING
+==
+
+sudo wget https://github.com/FOGProject/fogproject/archive/1.5.7.tar.gz
+sudo mv 1.5.7.tar.gz fogproject-1.5.7.tar.gz
+sudo tar -xzvf fogproject-1.5.7.tar.gz
+cd fogproject-1.5.7/bin
+sudo ./installfog.sh
+
+==
+INSTALL OPTIONS OVERVIEW - FIRST INSTALL - 111319
+==
+
+ * Here are the settings FOG will use:
+ * Base Linux: Redhat
+ * Detected Linux Distribution: CentOS Linux
+ * Interface: eno16777984
+ * Server IP Address: 172.16.0.45
+ * Server Subnet Mask: 255.255.255.0
+ * Server Hostname: zxpxe.jgleba.com
+ * Installation Type: Normal Server
+ * Internationalization: 0
+ * Image Storage Location: /images
+ * Using FOG DHCP: No
+ * DHCP will NOT be setup but you must setup your
+ | current DHCP server to use FOG for PXE services.
+
+ * On a Linux DHCP server you must set: next-server and filename
+
+ * On a Windows DHCP server you must set options 066 and 067
+
+ * Option 066/next-server is the IP of the FOG Server: (e.g. 172.16.0.45)
+ * Option 067/filename is the bootfile: (e.g. undionly.kpxe)
+
+
+ * Are you sure you wish to continue (Y/N)
+
+ ==
+ 
+ * Is the MySQL password blank? (Y/n) n
+ * Enter the MySQL password:
+ * Re-enter the MySQL password:
+ 
+ WRONG ANSWER, SHOULD BE y
+ 
+ ==
+ 
+ 
+ * You still need to install/update your database schema.
+ * This can be done by opening a web browser and going to:
+
+   http://172.16.0.45/fog/management
+
+ * Press [Enter] key when database is updated/installed.
+
+ ==
+ 
+ ==
+ SECOND TRY INSTALL
+ ==
+ 
+  * Stopping FOGImageSize.service Service.......................OK
+ * Is the MySQL password blank? (Y/n) y
+ * Setting up and starting MySQL...............................Done
+ * Backing up user reports.....................................Done
+ * Stopping web service........................................OK
+ * Removing vhost file.........................................OK
+ * Setting up Apache and PHP files.............................OK
+ * Testing and removing symbolic links if found................OK
+ * Backing up old data.........................................OK
+ * Copying new files to web folder.............................OK
+ * Creating config file........................................OK
+ * Downloading kernel, init and fog-client binaries............Done
+ * Extracting the binaries archive.............................OK
+ * Copying binaries to destination paths.......................OK
+ * Enabling apache and fpm services on boot....................OK
+ * Creating SSL CA.............................................OK
+ * Creating SSL Private Key....................................OK
+ * Creating SSL Certificate....................................OK
+ * Creating auth pub key and cert..............................OK
+ * Resetting SSL Permissions...................................OK
+ * Setting up Apache virtual host (no SSL).....................OK
+ * Starting and checking status of web services................OK
+ * Changing permissions on apache log files....................OK
+ * Backing up database.........................................Failed!
+
+ ==
+ 
+http://172.16.0.45/fog/management/?node=schema
+
+==
+
+If you would like to backup your FOG database you can do so using MySQL Administrator or by running the following command in a terminal window (Applications->System Tools->Terminal), this will save the backup in your home directory.
+
+mysqldump --allow-keywords -x -v fog > fogbackup.sql
+
+Your FOG database schema is not up to date, either because you have updated or this is a new FOG installation. If this is an upgrade, there will be a database backup stored on your FOG server defaulting under the folder /home/fogDBbackups. Should anything go wrong, this backup will enable you to return to the previous install if needed.
+
+Are you sure you wish to install or update the FOG database?
+
+RAN DB INSTALLER
+
+NOW PROMPTED TO LOG IN
+
+Web Interface
+Default username is fog
+Default password is password 
+
+WORKED
+
+CHANGED fog user password
+
+CREATED jgleba user
+
+ADDED DHCP OPTIONS IN MIKROTIK
+
+FIREWALL
+
+NEED PORT 80 AND:
+
+ Are these what your looking for
+
+ http://www.fogproject.org/wiki/index.php?title=WOL_Forwarding#WoL_Forwarding   
+ 
+ Time Service             Port 37
+  TACACS                   Port 49
+  Domain Name Services     Port 53
+  Trivial File Transfer    Port 69
+  DHCP (BootP)             Port 67 and Port 68
+  NetBIOS Name Server      Port 137
+  NetBIOS Datagram Server  Port 138
+
+You have to add the pcs to FOG then link them to your image before you can deploy them. If you add the FOG client to your image you can set it up to change the computer name and join a domain
+
+==
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=37/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=37/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49/udp --permanent
+sudo firewall-cmd --zone=public --add-port=53/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=53/udp --permanent
+sudo firewall-cmd --zone=public --add-port=67/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=67/udp --permanent
+sudo firewall-cmd --zone=public --add-port=68/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=68/udp --permanent
+sudo firewall-cmd --zone=public --add-port=69/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=69/udp --permanent
+sudo firewall-cmd --zone=public --add-port=137/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=137/udp --permanent
+sudo firewall-cmd --zone=public --add-port=138/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=138/udp --permanent
+sudo firewall-cmd --reload
+
+==
+
+CREATED NEW JUNK VM, ATTACHED TO VLAN1720
+GETTING IP (DHCP WORKING) AND:
+
+fog tftp open timeout
+
+MIGHT BE MIKROTIK ISSUE
+
+##http://sheldija.net/fog-with-mikrotik-as-a-dhcp-server/
+
+DID FROM WINBOX
+
+/ip dhcp-server network set 0 boot-file-name=undionly.kkpxe next-server=172.16.0.45
+
+==
+
+TESTING
+
+tftp -v 127.0.0.1 -c get pxelinux.0
+tftp -v 172.16.0.45 -c get pxelinux.0
+
+tftp -v 172.16.0.45 -c get undionly.kkpxe
+tftp -v 172.16.0.45 -c get undionly.kpxe
+
+==
+
+WASNT INSTALLED CORRECTLY
+
+INSTALLED AGAIN
+
+NOW WORKING
+
+NEW VM ON VLAN1720 BOOTS TO FOG GUI
+
+==
+
+NOW NEED TO HOOK UP TO ISOS AND FIGURE OUT HOW TO BOOT ISO
+
+==
+
+==
+ADDING MY OWN MENU ITEM
+==
+
+##https://wiki.fogproject.org/wiki/index.php/Edit_PXE_menu_to_create_sub_menus
+
+sudo nano /tftpboot/pxelinux.cfg/default
+
+LABEL CentOS7
+kernel fog/hirens/memdisk
+append iso initrd=fog/dell/MyHirensBootCD.iso raw
+MENU LABEL CentOS7
+TEXT HELP
+CentOS7
+ENDTEXT
+
+
+item CentOS7 CentOS7
+:CentOS7
+sanboot http://${fog-ip}/${fog-webroot}/images/iso/CentOS-7.0-1406-x86_64-Minimal.iso
+chain memdisk iso raw||
+goto MENU
+
+JUNK NOTES
+
+##https://forums.fogproject.org/topic/10944/using-fog-to-pxe-boot-into-your-favorite-installer-images/8
+
+mount -o loop -t CentOS7 /mnt/fp/iso/CentOS-7.0-1406-x86_64-Minimal.iso /mnt/loop
+
+
+sudo mkdir -p /tftpboot/os/centos7
+
+sudo cp /images/os/centos7/images/pxeboot/vmlinuz /tftpboot/os/centos7
+sudo cp /images/os/centos7/images/pxeboot/initrd.img /tftpboot/os/centos7
+
+==
+
+
+
+    Now we’ll mount the Centos 7 installer over the loop directory. Then we’ll copy the contents of the DVD to the directory we built above.
+
+mount -o loop -t iso9660 /{full path where you have the iso stored}/CentOS7-x86_64.iso /mnt/loop
+
+cp -R /mnt/loop/* /images/os/centos/7
+umount /mnt/loop
+
+    Finally we’ll copy the pxe boot kernel and intfs to the tftpboot directory.
+
+cp /images/os/centos/7/images/pxeboot/vmlinuz /tftpboot/os/centos/7
+cp /images/os/centos/7/images/pxeboot/initrd.img /tftpboot/os/centos/7
+
+    The last bit of magic we need to do is setup a new FOG iPXE boot menu entry for this OS.
+    In the fog WebGUI go to FOG Configuration->iPXE New Menu Entry
+    Set the following fields
+    Menu Item: os.Centos7
+    Description: Centos 7 v1607 {or what ever version you are building}
+    Parameters:
+    kernel tftp://${fog-ip}/os/centos/7/vmlinuz
+    initrd tftp://${fog-ip}/os/centos/7/initrd.img
+    imgargs vmlinuz initrd=initrd.img root=live:nfs://${fog-ip}:/images/os/centos/7/LiveOS/squashfs.img ip=dhcp inst.repo=nfs:${fog-ip}:/images/os/centos/7 splash quiet
+    boot || goto MENU
+    Menu Show with: All Hosts
+    That’s it, just pxe boot your target system and pick Centos 7 from the FOG iPXE boot menu.
+
+	
+	
+	
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:nfs://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=nfs:${fog-ip}:/images/os/centos7 splash quiet
+boot || goto MENU
+
+JUNK NOTES END
+
+
+
+TRYING
+
+##https://forums.fogproject.org/topic/8488/how-to-pxe-boot-cent-os-7/63
+
+
+
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:nfs://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=nfs:${fog-ip}:/images/os/centos7 splash quiet
+boot || goto MENU
+
+
+
+initrd tftp://${fog-ip}/os/centos7/vmlinuz
+chain tftp://${fog-ip}//os/centos7/vmlinuz initrd=initrd.img root=live:http://${fog-ip}/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http//:${fog-ip}:/images/os/centos7 splash quiet – || read void
+boot || goto MENU
+
+initrd tftp://${fog-ip}/os/centos7/vmlinuz
+chain tftp://${fog-ip}//os/centos7/vmlinuz initrd=initrd.img root=live:http://${fog-ip}/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http//:${fog-ip}:/images/os/centos7 splash quiet
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7 locale=en_US.UTF-8 splash quiet
+boot || goto MENU
+
+
+
+WORKING EXAMPLE, EDITED THROUGH IPXE SETTINGS IN FOG WEB INTERFACE
+
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7 locale=en_US.UTF-8 splash quiet
+boot || goto MENU
+
+LATEST WITH CENTOS KICKSTART AUTO INSTALL
+
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7 inst.ks=172.16.0.45/0/ks.cfg splash quiet
+boot || goto MENU
+
+
+==
+STEPS TO ADD NEW OS TO PXE
+==
+
+==
+FIRST MOUNT ISO, COPY TO PXE SERVER
+==
+
+cd /mnt/fp/iso/
+sudo mount -o loop -t iso9660 /mnt/fp/iso/CentOS-7-x86_64-NetInstall-1908.iso /mnt/loop
+sudo mkdir -p /images/os/centos7-1908-netinstall
+sudo cp -R /mnt/loop/* /images/os/centos7-1908-netinstall
+
+sudo mount -o loop -t iso9660 /mnt/fp/iso/CentOS-7-x86_64-Minimal-1908.iso /mnt/loop
+sudo mkdir -p /images/os/centos7-1908
+sudo cp -R /mnt/loop/* /images/os/centos7-1908
+
+sudo mount -o loop -t iso9660 /mnt/fp/iso/ubuntu-18.04.3-live-server-amd64.iso /mnt/loop
+sudo mkdir -p /images/os/ubuntu1804
+sudo cp -R /mnt/loop/* /images/os/ubuntu1804
+
+==
+UNMOUNT ISO
+==
+
+sudo umount /mnt/loop
+
+==
+COPY SOME BOOT THING
+==
+
+sudo mkdir -p /tftpboot/os/centos7-1908-netinstall
+sudo cp /images/os/centos7-1908-netinstall/images/pxeboot/vmlinuz /tftpboot/os/centos7-1908-netinstall
+sudo cp /images/os/centos7-1908-netinstall/images/pxeboot/initrd.img /tftpboot/os/centos7-1908-netinstall
+
+sudo mkdir -p /tftpboot/os/centos7-1908
+sudo cp /images/os/centos7-1908/images/pxeboot/vmlinuz /tftpboot/os/centos7-1908
+sudo cp /images/os/centos7-1908/images/pxeboot/initrd.img /tftpboot/os/centos7-1908
+
+##http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/
+
+sudo wget http://archive.ubuntu.com/ubuntu/dists/bionic-updates/main/installer-amd64/current/images/netboot/netboot.tar.gz
+sudo scp user@172.16.0.4:/home/user/netboot.tar.gz /tftpboot/os/ubuntu1804/
+sudo gunzip netboot.tar.gz
+sudo tar -xvf netboot.tar
+
+
+sudo mkdir -p /tftpboot/os/ubuntu1804
+sudo cp /images/os/ubuntu1804/ubuntu/isolinux/isolinux.cfg /tftpboot/os/ubuntu1804/
+
+sudo nano 
+
+default live-install
+label live-install
+  menu label ^Install Ubuntu
+  kernel /casper/vmlinuz.efi
+  append  file=/cdrom/ks.preseed auto=true priority=critical debian-installer/locale=en_US keyboard-configuration/layoutcode=us ubiquity/reboot=true languagechooser/language-name=English countrychooser/shortlist=US localechooser/supported-locales=en_US.UTF-8 boot=casper automatic-ubiquity initrd=/casper/initrd.lz quiet splash noprompt noshell ---
+
+  label server
+        menu label ^Server
+        menu default
+        kernel ubuntu-installer/amd64/linux
+        append auto=true url=http://172.16.0.45/os/ubuntu1804 locale=en_US keymap=us initrd=ubuntu-installer/amd64/initrd.gz vga=6 --- quiet
+		
+  label server
+        menu label ^Server
+        menu default
+        kernel ubuntu-installer/amd64/linux
+        append auto=true url=http://172.16.0.45/os/ubuntu1804 locale=en_US keymap=us interface=ens192 hostname= initrd=ubuntu-installer/amd64/initrd.gz vga=6 --- quiet
+		
+
+	LABEL generic
+    MENU LABEL Install generic Ubuntu 18.04
+    KERNEL pxe/ubuntu/ubuntu-18.04-x86_64
+    IPAPPEND 1
+    APPEND initrd=pxe/ubuntu/ubuntu-18.04-x86_64.img ksdevice=eth0 \
+    locale=en_US.UTF-8 keyboard-configuration/layoutcode=us \
+    interface=eth0 hostname=unassigned \
+    url=http://192.168.100.240/preseed/14.04-generic-nolvm.cfg \
+    live-installer/net-image=http://192.168.100.240/ubuntu/14.04.2/install/filesystem.squashfs
+  
+sudo cp /images/os/ubuntu1804/images/pxeboot/vmlinuz /tftpboot/os/ubuntu1804
+sudo cp /images/os/ubuntu1804/images/pxeboot/initrd.img /tftpboot/os/ubuntu1804
+
+sudo cp -rf /images/os/ubuntu1804/casper/* /tftpboot/os/ubuntu1804
+
+sudo chown -R apache:apache /images/os/ubuntu1804
+sudo chmod -R 775 /images/os/ubuntu1804
+
+sudo chown -R apache:apache /images/os/centos7-1908
+sudo chmod -R 775 /images/os/centos7-1908
+
+sudo mkdir -p /var/www/html/fog/0/centos7-1908
+sudo mkdir -p /var/www/html/fog/0/centos7-1406
+sudo mkdir -p /var/www/html/fog/0/ubuntu1804
+
+sudo cp /var/www/html/fog/0/ks.cfg /var/www/html/fog/0/centos7-1908/
+
+sudo chown -R apache:apache /var/www/html/fog/0
+sudo chmod -R 775 /var/www/html/fog/0
+
+
+==
+CREATE NEW iPXE MENU ITEM IN PXE SERVER
+==
+
+    In the fog WebGUI go to FOG Configuration->iPXE New Menu Entry
+    Set the following fields
+    Menu Item: os.CentOS7-1908-Netinstall-KS
+    Description: CentOS7 1908 Netinstall KS
+    Menu Show with: All Hosts
+	
+	    In the fog WebGUI go to FOG Configuration->iPXE New Menu Entry
+    Set the following fields
+    Menu Item: os.CentOS7-1908-KS
+    Description: CentOS7 1908 KS
+    Menu Show with: All Hosts
+	
+	In the fog WebGUI go to FOG Configuration->iPXE New Menu Entry
+    Set the following fields
+    Menu Item: os.Ubuntu1804-KS
+    Description: Ubuntu1804 KS
+    Menu Show with: All Hosts
+
+PARAMETERS
+
+kernel tftp://${fog-ip}/os/centos7-1908-netinstall/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1908-netinstall/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1908-netinstall/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1908-netinstall inst.ks=http://172.16.0.45/0/ks.cfg splash quiet
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/centos7-1908/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1908/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1908/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1908 inst.ks=http://172.16.0.45/0/ks.cfg splash quiet
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/centos7-1908/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1908/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1908/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1908 inst.ks=http://j:xxx@172.16.0.45/0/centos7-1908/ks.cfg splash quiet
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/centos7-1406/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1406/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1406/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1406 inst.ks=http://j:xxx@172.16.0.45/0/centos7-1406/ks.cfg splash quiet
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/centos7-1406/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1406/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1406/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1406 locale=en_US.UTF-8 splash quiet
+boot || goto MENU
+
+UBUNTU START
+
+
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=live:http://172.16.0.45/images/os/ubuntu1804/casper/initrd inst.repo=http://172.16.0.45/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+
+
+BEETER THAN OTHERS
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz acpi=off root=/dev/nfs boot=casper netboot=nfs nfsroot=172.16.0.45:/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us mirror/country=US
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz acpi=off boot=casper root=live:http://${fog-ip}:/images/os/ubuntu1804/casper/initrd  inst.repo=http://${fog-ip}:/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us mirror/country=US
+boot || goto MENU
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=live:http://${fog-ip}:/images/os/ubuntu1804 quiet splash ip=dhcp rw
+boot || goto MENU
+
+
+
+
+USE PRESEED FILE
+
+kernel tftp://${fog-ip}/boot/ubuntu/trusty/amd64/linux
+initrd tftp://${fog-ip}/boot/ubuntu/trusty/amd64/initrd.gz
+imgargs linux auto=true console-setup/layoutcode=fr keyboard-configuration/xkb-keyboard=fr locale=fr_FR.UTF-8 hostname=master domain=maestria.fr url=http://${fog-ip}/preseed_path/preseed_name.cfg quiet initrd=initrd.gz root=/dev/nfs netboot=nfs nfsroot=${fog-ip}:/tftpboot/boot/ubuntu/trusty/amd64/
+boot
+
+##https://forums.fogproject.org/topic/11755/unattended-ubuntu-install-from-netboot-with-preseed-file/2
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 hostname=ubuntu domain=local url=http://j:pass@172.16.0.45/0/ubuntu1804/ks.cfg quiet initrd=initrd root=/dev/nfs netboot=nfs nfsroot=${fog-ip}:/images/os/ubuntu1804/
+boot
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=us keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 hostname=ubuntu domain=local url=http://j:pass@172.16.0.45/0/ubuntu1804/ks.cfg quiet initrd=initrd root=live:http://172.16.0.45/images/os/ubuntu1804/
+boot || goto MENU
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=live:http://:172.16.0.45/images/os/ubuntu1804/initrd ip=dhcp inst.repo=http://172.16.0.45:/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram rw
+boot || goto MENU
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper http://${fog-ip}/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper http://172.16.0.45/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux root=/dev/nfs boot=casper netboot=nfs nfsroot:${fog-ip}/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux root=/dev/nfs boot=casper netboot=nfs nfsroot:172.16.0.45/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux root=/dev/nfs boot=casper netboot=nfs nfsroot:172.16.0.45/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=/dev/nfs boot=casper netboot=nfs nfsroot:${fog-ip}/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd boot=casper http://:${fog-ip}/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd boot=casper netboot=apache http://:${fog-ip}/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd boot=casper netboot=pxe http://:${fog-ip}/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd boot=casper tftp://:${fog-ip}/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram ip=dhcp rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=live:tftp://${fog-ip}/os/ubuntu1804/initrd ip=dhcp inst.repo=http://${fog-ip}:/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram rw
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=live:http://:172.16.0.45/images/os/ubuntu1804/initrd ip=dhcp inst.repo=http://172.16.0.45:/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us quiet splash toram rw
+boot || goto MENU
+
+label server
+menu label ^Server
+menu default
+kernel ubuntu-installer/amd64/linux
+append auto=true url=http://172.16.0.45/os/ubuntu1804 locale=en_US keymap=us initrd=ubuntu-installer/amd64/initrd.gz vga=6 --- quiet
+boot || goto MENU
+
+
+
+
+
+
+=====
+
+======
+
+
+
+==============
+
+
+111420
+
+CENTOS 8, NOT WORKING
+
+sudo mount -o loop -t iso9660 /mnt/fp/iso/CentOS-8.2.2004-x86_64-minimal.iso /mnt/loop
+
+sudo mkdir -p /images/os/centos8-2004
+sudo cp -R /mnt/loop/* /images/os/centos8-2004
+
+sudo umount /mnt/loop
+
+sudo mkdir -p /tftpboot/os/centos8-2004
+sudo cp /images/os/centos8-2004/images/pxeboot/vmlinuz /tftpboot/os/centos8-2004
+sudo cp /images/os/centos8-2004/images/pxeboot/initrd.img /tftpboot/os/centos8-2004
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos8-2004/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos8-2004 inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg splash
+boot || goto MENU
+
+os.CentOS8-2004-KS
+CentOS8 2004 KS

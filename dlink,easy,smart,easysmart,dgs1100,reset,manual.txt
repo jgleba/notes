@@ -1,0 +1,29 @@
+=====================================
+DLINK DGS1100 EASYSMART SWITCH, RESET
+05-17-2019
+JGleba
+====================================
+
+==
+REBOOT AND RESET WITH RESET BUTTON
+==
+
+Press the Reset button for 1 to 5 seconds to reboot the Switch.
+Press the Reset button for 6 to 10 seconds to reset the Switch back to the default settings.
+
+Held for count of 15, saw orange lights, then was reset.
+
+==
+DEFAULT IP
+==
+
+10.90.90.90
+
+
+==
+MANUAL
+==
+
+\\172.16.0.107\j\jdat\1data\7,general\3,manuals\DGS-1100-08P_REVB_MANUAL_v2.20_WW_EN.pdf
+
+ftp://ftp2.dlink.com/PRODUCTS/DGS-1100-08P/REVB/DGS-1100-08P_REVB_MANUAL_v2.20_WW_EN.pdf

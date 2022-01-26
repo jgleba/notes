@@ -1,0 +1,54 @@
+CREATE EMAIL ALIAS IN iRedMail
+==============================
+
+in mysql:
+
+USE vmail;
+
+
+##create email alias in db
+INSERT INTO alias (address, domain, active) VALUES ('user@twosheeep.com', 'twosheeep.com', 1);
+
+##set forwarding within domain
+INSERT INTO forwardings (address, forwarding,
+                              domain, dest_domain,
+                              is_list, active)
+                      VALUES ('useralias@twosheeep.com', 'usertwosheeep.com',
+                              'twosheeep.com', 'twosheeep.com',
+                              1, 1);
+
+
+							 
+							 
+##set email forwarding outside of domain
+INSERT INTO forwardings (address, forwarding,
+                              domain, dest_domain,
+                              is_list, active)
+                      VALUES ('alias@mydomain.com', 'someone@gmail.com',
+                              'mydomain.com', 'gmail.com',
+                              1, 1);
+							  
+							  
+ALL WRONG
+
+MADE MYSELF
+
+JULY 3, 2017
+
+==
+
+insert into alias (address, goto, domain, is_alias, active) VALUES ('ex@ex.com', 'exorg@ex.com', 'ex.com', '1', '1');
+
+insert into alias (address, goto, domain, is_alias, active) VALUES ('useralias@twosheeep.com', 'user@twosheeep.com', 'twosheeep.com', '1', '1');
+
+
+JULY8 - new iredmail
+
+insert into forwardings (address, forwarding, domain, is_forwarding, is_alias, active ) VALUES ('useralias@jgleba.com', 'user@jgleba.com', 'jgleba.com', '1', '0', '1');
+
+
+01-28-18
+
+use vmail;
+
+insert into forwardings (address, forwarding, domain, is_forwarding, is_alias, active ) VALUES ('userailas@jgleba.com', 'user@jgleba.com', 'jgleba.com', '1', '0', '1');

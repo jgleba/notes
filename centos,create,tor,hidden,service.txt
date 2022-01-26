@@ -1,0 +1,59 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS INSTALL TOR HIDDEN SERVICE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-08[May-Sat]12-48PM 
+
+#==
+#INSTALL TOR
+#==
+
+sudo yum install epel-release -y
+sudo yum install tor -y
+
+#==
+#CONFIGURE TOR HIDDEN SERVICE
+#==
+
+sudo nano /etc/tor/torrc
+
+#UNCOMMENT
+
+HiddenServiceDir /var/lib/tor/hidden_service/
+HiddenServicePort 80 127.0.0.1:80
+
+#==
+#ENABLE AND START TOR
+#==
+
+sudo systemctl restart tor
+sudo systemctl enable tor
+
+#==
+#GET ONION URL
+#==
+
+sudo cat /var/lib/tor/hidden_service/hostname
+2xtikhpspz43dx2qubw37akbqjlrsufgjtwxw6yhkfwhihdzfsgtjayd.onion
+
+#==
+#TOR SERVICE IS RUNNING ON PORT 80, WAITING FOR WEB SERVER TO BE ON THAT PORT
+#INSTALL HTTPD
+#==
+
+sudo yum install httpd 
+
+#==
+#ENABLE AND START HTTPD
+#==
+
+sudo systemctl enable httpd
+sudo systemctl restart httpd
+
+#==
+#FIREWALL
+#==
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload

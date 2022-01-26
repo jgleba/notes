@@ -1,0 +1,34 @@
+Mikrotik block websites through mangle and firewall filter + layer 7
+==
+
+/ip firewall filter
+
+add action=drop chain=forward disabled=yes packet-mark=youtube_packet
+add action=drop chain=input disabled=yes packet-mark=youtube_packet
+
+/ip firewall mangle
+
+add action=mark-connection chain=prerouting connection-mark=no-mark dst-port=53 \
+    layer7-protocol=youtube new-connection-mark=youtube_conn protocol=udp
+add action=mark-packet chain=prerouting connection-mark=youtube_conn \
+    new-packet-mark=youtube_packet passthrough=no
+	
+/ip firewall layer7-protocol
+add name=youtube regexp="^.+(youtube.com).*\$"
+
+
+FOR FACEBOOK
+==
+
+/ip firewall filter
+add action=drop chain=forward disabled=yes packet-mark=facebook_packet
+add action=drop chain=input disabled=yes packet-mark=facebook_packet
+
+/ip firewall mangle
+add action=mark-connection chain=prerouting connection-mark=no-mark dst-port=53 \
+    layer7-protocol=facebook new-connection-mark=facebook_conn protocol=udp
+add action=mark-packet chain=prerouting connection-mark=facebook_conn \
+    new-packet-mark=facebook_packet passthrough=no
+	
+/ip firewall layer7-protocol
+add name=facebook regexp="^.+(facebook.com).*\$"

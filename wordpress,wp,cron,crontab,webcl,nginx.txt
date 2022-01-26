@@ -1,0 +1,28 @@
+======================================
+WORDPRESS CRON TO RUN IN LINUX CRONTAB
+073119
+======================================
+
+##https://anystack.xyz/making-wordpress-faster-running-wp-cron-linux/
+##https://kb.virtubox.net/knowledgebase/improve-wordpress-performance-by-running-wp-cron-with-a-linux-cronjob/
+##https://docs.bitnami.com/bch/apps/wordpress-pro/configuration/disable-wordpress-cron/
+##https://www.a2hosting.ca/kb/installable-applications/optimization-and-configuration/wordpress2/configuring-a-cron-job-for-wordpress
+
+sudo crontab -u nginx -e
+
+*/2 * * * * curl https://twosheeep.com/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+*/2 * * * * curl https://twothreeee.com/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+*/2 * * * * curl https://greeen.info/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+*/2 * * * * curl https://wp.jgleba.com/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+
+==
+
+*/2 * * * * curl https://twosheeep.com/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+*/3 * * * * curl https://twothreeee.com/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+*/2 * * * * curl https://greeen.info/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+*/60 * * * * curl https://wp.jgleba.com/wp-cron.php?doing_wp_cron > /dev/null 2>&1
+
+
+manual run
+
+sudo -u nginx curl https://greeen.info/wp-cron.php?doing_wp_cron

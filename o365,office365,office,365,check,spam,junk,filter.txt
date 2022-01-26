@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  O365 CHECK SPAM FILTER / WHITELIST SETTINGS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-20[Jan-Thu]12-27PM 
+
+get-MailboxJunkEmailConfiguration -identity user

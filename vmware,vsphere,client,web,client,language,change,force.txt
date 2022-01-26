@@ -1,0 +1,9 @@
+==============================
+VMWARE CLIENT LANGUAGE CHANGE
+WAS GETTING FRENCH ON SFA TS
+090319
+==============================
+
+##https://kb.vmware.com/s/article/1016403
+
+"C:\Program Files (x86)\VMware\Infrastructure\Virtual Infrastructure Client\Launcher\VpxClient.exe" -locale en_US

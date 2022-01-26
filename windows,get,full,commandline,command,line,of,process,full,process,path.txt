@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS, GET FULL COMMANDLINE OF PROCESS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-01[Sep-Tue]10-16AM 
+
+##https://serverfault.com/questions/696460/given-a-pid-on-windows-how-do-i-find-the-command-line-instruction-that-execute
+
+powershell
+
+get-wmiobject win32_process | select processid,commandline
+
+get-process
+
+get-wmiobject -query "select commandline from win32_process where processid = pid" | fl
+get-wmiobject -query "select commandline from win32_process where processid = 9720" | fl

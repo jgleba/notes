@@ -1,0 +1,36 @@
+=========================================================================
+Elasticsearch
+=========================================================================
+
+
+Elasticsearch is not running.
+
+Try starting it with:
+
+'sudo so-elastic-start'
+ OR
+'sudo docker start so-elasticsearch'
+
+
+If that does not work, try checking /var/log/elasticsearch/cossec.log for clues.
+
+==
+
+OUT OF MEMORY?
+
+==
+
+[2019-02-07T10:24:06,588][INFO ][org.elasticsearch.cluster.metadata.MetaDataDeleteIndexService] [logstash-ids-2019.01.06/VzOCh7qCT1mu7LP8WE7UMg] deleting index
+[2019-02-07T10:24:07,896][INFO ][org.elasticsearch.cluster.metadata.MetaDataDeleteIndexService] [logstash-ossec-2019.01.06/kbtrW5bZSNyg337u-7rNew] deleting index
+[2019-02-07T10:24:09,010][INFO ][org.elasticsearch.cluster.metadata.MetaDataDeleteIndexService] [logstash-syslog-2019.01.06/I_2PK9EcRaOiWspLCMPXWQ] deleting index
+[2019-02-07T10:24:09,696][INFO ][org.elasticsearch.cluster.metadata.MetaDataDeleteIndexService] [logstash-bro-2019.01.07/ks7YGbiRSBKMeqUkEabfDA] deleting index
+[2019-02-07T10:38:03,000][INFO ][org.elasticsearch.monitor.jvm.JvmGcMonitorService] [gc][65751] overhead, spent [322ms] collecting in the last [1s]
+[2019-02-07T14:30:03,887][INFO ][org.elasticsearch.monitor.jvm.JvmGcMonitorService] [gc][79667] overhead, spent [306ms] collecting in the last [1s]
+[2019-02-07T15:30:04,058][INFO ][org.elasticsearch.monitor.jvm.JvmGcMonitorService] [gc][83266] overhead, spent [289ms] collecting in the last [1s]
+[2019-02-07T15:53:10,904][INFO ][org.elasticsearch.cluster.metadata.MetaDataMappingService] [logstash-ossec-2019.02.07/AnvB9ckSS0ShoQZ4hlEMbw] update_mapping [doc]
+[2019-02-07T17:08:48,436][INFO ][org.elasticsearch.env.NodeEnvironment] using [1] data paths, mounts [[/usr/share/elasticsearch/data (/dev/sda1)]], net usable_space [18.7gb], net total_space [97.3gb], types [ext4]
+[2019-02-07T17:08:48,456][INFO ][org.elasticsearch.env.NodeEnvironment] heap size [1.9gb], compressed ordinary object pointers [true]
+[2019-02-07T17:08:48,847][INFO ][org.elasticsearch.node.Node] node name derived from node ID [Ifg-0DgrRn-0hqoTLD-UjA]; set [node.name] to override
+[2019-02-07T17:08:48,847][INFO ][org.elasticsearch.node.Node] version[6.5.2], pid[1], build[oss/tar/9434bed/2018-11-29T23:58:20.891072Z], OS[Linux/4.15.0-42-generic/amd64], JVM[Oracle Corporation/OpenJDK 64-Bit Server VM/1.8.0_191/25.191-b12]
+[2019-02-07T17:08:48,847][INFO ][org.elasticsearch.node.Node] JVM arguments [-Xms2042m, -Xmx2042m, -XX:+UseConcMarkSweepGC, -XX:CMSInitiatingOccupancyFraction=75, -XX:+UseCMSInitiatingOccupancyOnly, -XX:+AlwaysPreTouch, -Xss1m, -Djava.awt.headless=true, -Dfile.encoding=UTF-8, -Djna.nosys=true, -XX:-OmitStackTraceInFastThrow, -Dio.netty.noUnsafe=true, -Dio.netty.noKeySetOptimization=true, -Dio.netty.recycler.maxCapacityPerThread=0, -Dlog4j.shutdownHookEnabled=false, -Dlog4j2.disable.jmx=true, -Djava.io.tmpdir=/tmp/elasticsearch.fNmNhgSD, -XX:+HeapDumpOnOutOfMemoryError, -XX:+PrintGCDetails, -XX:+PrintGCDateStamps, -XX:+PrintTenuringDistribution, -XX:+PrintGCApplicationStoppedTime, -Xloggc:logs/gc.log, -XX:+UseGCLogFileRotation, -XX:NumberOfGCLogFiles=32, -XX:GCLogFileSize=64m, -Des.cgroups.hierarchy.override=/, -Des.path.home=/usr/share/elasticsearch, -Des.path.conf=/usr/share/elasticsearch/config, -Des.distribution.flavor=oss, -Des.distribution.type=tar]
+[2019-02-07T17:08:50,562][INFO ][org.elasticsearch.plugins.PluginsService] loaded module [aggs-matrix-stats]

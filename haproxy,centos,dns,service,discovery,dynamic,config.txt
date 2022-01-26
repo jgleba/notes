@@ -1,0 +1,53 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY DNS SERVICE DISCOVERY USING DNS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-27[Dec-Fri]15-07PM 
+
+##https://www.haproxy.com/blog/dns-service-discovery-haproxy/
+
+==
+FORMAT OF DNS ENTRY
+==
+
+_service._proto.name. TTL class SRV priority weight port target
+
+_service: standard network service name (taken from /etc/services) or a port number
+_proto: standard protocol name (“tcp” or “udp”)
+name: name of the service — the name used in the query
+TTL: validity period for the response (this field is ignored by HAProxy as HAProxy maintains its own expiry data which is defined in the configuration)
+class: DNS class (“IN”)
+SRV: DNS record type (“SRV”)
+priority: priority of the target host. Lower value = higher preference (this field is ignored by HAProxy, but may become used later for indicating active / backup state)
+weight: relative weight in case of records with the same priority. Higher number = higher preference
+port: port on which the service is configured
+target: canonical hostname of the machine providing the service, ending in a dot
+
+==
+HAPROXY CONF FILE
+==
+
+resolvers mydns
+    nameserver dns1 192.168.50.30:53
+    accepted_payload_size 8192 # allow larger DNS payloads
+
+backend webservers
+    balance roundrobin
+    server-template web 5 myservice.example.local:80 check resolvers mydns init-addr none
+	
+	
+==
+
+backend webclnginx
+    balance loadbalance
+    server-template webcl-nginx 3 nginx.webcl.web.local:80 check resolvers internaldns init-addr none
+	
+	
+	
+==
+backend for sw2
+==
+
+
+    server-template sw2 1 sw2.web.local:80 check resolvers internaldns init-addr none

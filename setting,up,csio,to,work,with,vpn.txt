@@ -1,0 +1,11 @@
+copy juniper networks folder from temp/broker software fix/juniper
+
+go into csionet settings
+
+go into connect using ssl vpn
+
+change parameter settings
+
+make sure path has x86 in it
+
+outgoing mail server is 10.254.254.10

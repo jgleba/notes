@@ -1,0 +1,3 @@
+openssl pkcs12 -inkey bob_key.pem -in bob_cert.cert -export -out bob_pfx.pfx
+
+openssl pkcs12 -inkey privkey.pem -in fullchain.pem -export -passout pass:password -out outfile.pfx

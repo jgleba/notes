@@ -1,0 +1,38 @@
+new mailbox
+
+log into hosted exchange client 1
+
+create mailbox with script in C:\scripts
+
+run createoneexchangeuser.ps1
+
+log into hosted exchange web console
+
+add new domain in mail flow
+
+then edit email address and go to 'email address'
+
+add aliases there
+
+in reflexion
+
+go to customers, select assessmed
+
+on side, expand enterprise
+
+go to enterprise domains
+
+add domain there
+
+then go to main page
+
+select desired company mailboxes (ex. assessmed)
+
+find email address
+
+select email address
+
+go to addresses-> add new alias
+
+add aliases for email there
+

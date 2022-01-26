@@ -1,0 +1,37 @@
+#!/bin/bash
+
+##===================
+##CENTOS START SCRIPT
+##121219
+##JGleba
+##===================
+
+##GET OTHER SCRIPTS
+cd /path/to/bin
+http://172.16.0.45/fog/0/jstart/upd.sh
+http://172.16.0.45/fog/0/jstart/netinfo.sh
+
+##PERMS
+sudo chmod +x /path/to/bin/*
+
+##SELINUX PERMISSIONS OFF
+#sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+
+##UPDATES
+#sudo yum -y update
+
+##UTIL MAIN
+#sudo yum -y install nano wget
+sudo yum -y install net-tools
+
+##UTIL EXTRA
+#sudo yum -y install iftop nload htop unzip iotop
+
+##EPEL RELEASE
+#sudo yum -y install epel-release -y
+
+##MAKE DIRS, PERMS
+#sudo mkdir -p /path/to/bin
+#sudo chown -R user:root /path
+#sudo chmod -R 770 /path
+

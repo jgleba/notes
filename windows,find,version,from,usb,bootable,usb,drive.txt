@@ -1,0 +1,39 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GET WINDOWS VERSION FROM BOOTABLE USB
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-09[Mar-Tue]09-52AM 
+
+##https://www.wintips.org/how-to-find-windows-10-version-edition-build-from-windows-iso-dvd-usb/
+
+dism /Get-WimInfo /WimFile:D:\sources\boot.wim /index:1
+
+Deployment Image Servicing and Management tool
+Version: 10.0.19041.746
+
+Details for image : D:\sources\boot.wim
+
+Index : 1
+Name : Microsoft Windows PE (x64)
+Description : Microsoft Windows PE (x64)
+Size : 1,501,424,837 bytes
+WIM Bootable : No
+Architecture : x64
+Hal : <undefined>
+Version : 10.0.14393
+ServicePack Build : 0
+ServicePack Level : 0
+Edition : WindowsPE
+Installation : WindowsPE
+ProductType : WinNT
+ProductSuite :
+System Root : WINDOWS
+Directories : 3313
+Files : 15074
+Created : 7/16/2016 - 7:56:51 AM
+Modified : 11/21/2016 - 4:37:43 AM
+Languages :
+        en-US (Default)
+
+The operation completed successfully.

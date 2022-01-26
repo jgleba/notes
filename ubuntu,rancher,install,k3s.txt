@@ -1,0 +1,41 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU RANCHER INSTALL, K3S
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-07-17[Jul-Sat]13-07PM 
+
+##MAKE DIRS
+
+sudo mkdir -p /etc/rancher/rke2
+cd /etc/rancher/rke2
+
+##MAKE CONFIG FILE
+
+sudo nano config.yaml
+
+token: wkjnkwnjnjk
+tls-san:
+  - 172.16.3.136
+
+##DOWNLOAD AND INSTALL RANCHER  
+
+sudo curl -sfL https://get.rancher.io | sudo sh - 
+
+curl -sfL https://get.rancher.io | sh - 
+
+##CHECK INSTALL
+
+rancherd --help
+
+##ENABLE AND START SERVICE
+
+sudo systemctl enable rancherd-server.service && sudo systemctl start rancherd-server.service
+
+##WATCH TO SEE THAT INSTALL COMPLETE
+
+watch sudo journalctl -eu rancherd-server -f
+
+##RESET ADMIN PASS
+
+rancherd reset-admin

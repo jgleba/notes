@@ -1,0 +1,3 @@
+freenas drive partition info
+
+gpart show <device>

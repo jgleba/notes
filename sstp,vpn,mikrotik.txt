@@ -1,0 +1,75 @@
+SSTP VPN on Mikrotik
+==
+
+in PPP
+
+1. make profile
+   - add local and remote ips
+   - change protocol to use encryption
+
+2. go to secrets
+   - name it - username
+   - add password
+   - service sstp
+   - choose profile created previously
+
+3. interface tab
+   - enable sstp server
+   - auth is mschap2
+   - leave cert as none, will make cert later
+
+4. make cert
+   - system, certificates
+   - make one for CA
+	- in key usage, only check crl sign and key cert. sign
+	- sign with self
+	- CA CRL Host is public ip
+	- make sure trusted is checked
+   - make one for server
+	- nothing checked in key usage
+	- sign with CA cert
+   - make one for client
+	- nothing checked in key usage
+	- sign with CA cert
+
+5. export certs
+   - ca and client cert
+   - move files out of router
+   - move to other router
+
+6. import into other router
+   - system, certs
+   - import
+   - import CA cert first
+   - should change name
+   - then import key
+   - can delete the files
+
+7. make profile on other router
+   - system, ppp
+   - add local and remote ip
+   - protocols, check encryption
+
+8. add vpn client
+   - sstp client interface, add interface
+   - dial out tab
+   - connect to: public ip
+   - cert: is client cert
+   - add the username and secret from server
+   - select profile
+   - use mschap2
+
+9. back to sstp server, select router1 server cert
+
+10. connection will show up in interfaces
+
+11. create static route to remote LANs
+    - ip, routes
+    - dst: is remote lan
+    - gateway is remote lan
+    - distance: 1
+    
+12. do same on other side
+    - ip, routes
+    - dst: is other remote lan
+    - gateway is the other side of vpn network

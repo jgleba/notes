@@ -1,0 +1,14 @@
+081519
+network architecture ideas
+
+
+lawrence systems - youtube - seems like has lots of experience
+ubnt on separate vlan? no, I usually all the servers on native vlan and then segment out all the other networks to other vlans
+rationale  - native when trunk to all they can be in there, helps with dumb switch to put a couple things in there
+
+j edit
+vlans for outter (user) networks, devices (servers) on native vlan
+
+j comments
+interesting, with my experience so far (plextec, offices and data center, sfa, my own stuff (jgdc1) and logic) have used lots of vlans, separate every network into its own vlan, nothing on native
+

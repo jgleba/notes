@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ENABLE PS/2 PERIPHERALS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-22[Dec-Tue]15-05PM 
+
+##https://hitech-us.com/articles/entry/303/PS/2-mouse-is-not-working-on-Windows-10
+
+Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\i8042prt
+
+CHANGE start HEX 3
+
+TO
+
+HEX 1
+
+RESTART PC
+
+==
+
+DIDNT WORK

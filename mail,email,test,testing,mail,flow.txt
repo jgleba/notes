@@ -1,0 +1,11 @@
+EMAIL TEST - EXTERNAL
+
+SEND EMAIL TO:
+
+echo@nic.fr
+
+OR
+
+ping@oleane.net
+
+IF RESPONSE RECEIVED, EMAIL IS WORKING

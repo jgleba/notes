@@ -1,0 +1,17 @@
+powerbroker suspended process gp setting amount of idle time required
+
+trying to fix suspended process issue, affects powerbroker, after time idle in application, process goes suspended, doesn't seem to resume correctly, active users in powerbroker are OK, new instances of application crash.
+
+oct 4, 2016
+
+==
+
+http://serverfault.com/questions/250384/how-to-prevent-windows-7-remote-desktop-time-outs
+
+Security settings > Security Options > Microsoft Network Server: Amount of idle time required before suspending session
+
+Computer Configuration -> Windows Settings -> Security Settings -> Security Options -> Microsoft network server: Amount of idle time required before suspending session
+
+Default value is 15 minutes
+
+Changing to 1 hour for BSMW 2012 TS. Making change on local server security policy.

@@ -1,0 +1,5 @@
+worked apr3, 2016
+deletes all files with ._ in front, mac
+made one of those files for every file in dropbox, messy, performed on apr3
+
+sudo find / -name "._*" -exec rm -rf {} \;

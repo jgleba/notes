@@ -1,0 +1,33 @@
+add chain=input comment="R\E9gle pour RB (INPUT)" in-interface=ether1 protocol=\
+    icmp
+add action=accept chain=input comment="R\E9gle pour RB (INPUT)" in-interface=\
+    pppoe-out1 protocol=icmp
+add action=accept chain=input comment="R\E9gle pour RB (INPUT)" in-interface=\
+    ether2 protocol=icmp
+add chain=input connection-state=established in-interface=ether1
+add action=accept chain=input connection-state=established in-interface=\
+    pppoe-out1
+add action=accept chain=input connection-state=established in-interface=ether2
+add chain=input connection-state=related in-interface=ether1
+add action=accept chain=input connection-state=related in-interface=pppoe-out1
+add action=accept chain=input connection-state=related in-interface=ether2
+add chain=input dst-port=8291 in-interface=ether1 protocol=tcp
+add action=accept chain=input dst-port=8291 in-interface=pppoe-out1 protocol=\
+    tcp
+add action=accept chain=input dst-port=8291 in-interface=ether2 protocol=tcp
+add chain=input comment="Accept broadcast" dst-address-type=broadcast \
+    in-interface=ether1
+add action=accept chain=input comment="Accept broadcast" dst-address-type=\
+    broadcast in-interface=pppoe-out1
+add action=accept chain=input comment="Accept broadcast" dst-address-type=\
+    broadcast in-interface=ether2
+add action=log chain=input in-interface=ether1 log-prefix=DENY:
+add action=log chain=input in-interface=pppoe-out1 log-prefix=DENY:
+add action=log chain=input in-interface=ether2 log-prefix=DENY:
+add action=drop chain=input in-interface=ether1
+add action=drop chain=input in-interface=pppoe-out1
+add action=drop chain=input in-interface=ether2
+/ip firewall nat
+add action=masquerade chain=srcnat comment=masquerade out-interface=ether1
+add action=masquerade chain=srcnat comment=masquerade out-interface=ether2
+add action=masquerade chain=srcnat comment=masquerade out-interface=pppoe-out1

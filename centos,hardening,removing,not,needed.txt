@@ -1,0 +1,7 @@
+===================================
+CENTOS HARDENING - REMOVING UNNEEDED THINGS
+SHOULD LOOK INTO
+071319
+===================================
+
+##https://www.linuxquestions.org/questions/linux-newbie-8/centos-hardening-removing-packages-879192/

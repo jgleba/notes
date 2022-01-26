@@ -1,0 +1,23 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS CLEAR PRINT SPOOLER - SCRIPT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-04-08[Apr-Thu]09-57AM 
+
+##FROM
+##\\172.16.0.107\j\softw\1win\0util\0scripts
+
+@echo off 
+echo Stopping print spooler. 
+echo. 
+net stop spooler
+echo Erasing Temporary Junk Printer Documents
+echo. 
+del /q "%SystemRoot%\system32\spool\PRINTERS\*.*"
+echo Spooler Files Deleted - Restarting Services 
+echo. 
+net start spooler
+echo
+echo Process Complete. 
+pause

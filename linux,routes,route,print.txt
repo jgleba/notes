@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX FIND DEFAULT GATEWAY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-27[Jan-Wed]14-06PM 
+
+[user@zxjprox ~]$ route -v
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         172.31.0.254    0.0.0.0         UG    103    0        0 ens160
+172.16.0.0      0.0.0.0         255.255.255.0   U     104    0        0 ens224
+172.16.3.0      0.0.0.0         255.255.255.0   U     101    0        0 ens192
+172.31.0.0      0.0.0.0         255.255.255.0   U     103    0        0 ens160

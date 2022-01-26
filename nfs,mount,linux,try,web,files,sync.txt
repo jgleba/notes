@@ -1,0 +1,6 @@
+mount nfs - try
+
+sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 EFS_DNS_NAME.efs.us-east-1.amazonaws.com:/ wp
+
+https://www.blog.labouardy.com/highly-available-wordpress-blog/
+

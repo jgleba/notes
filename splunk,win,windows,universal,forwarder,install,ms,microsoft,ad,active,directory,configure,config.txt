@@ -1,0 +1,205 @@
+==========================================================
+SPLUNK FORWARDER INSTALL ON WIN, AD LOGS FORWARD TO SPLUNK
+040419
+==========================================================
+
+REF:
+https://docs.splunk.com/Documentation/SA-LdapSearch/2.2.0/User/ConfiguretheSplunkSupportingAdd-onforActiveDirectory
+https://docs.splunk.com/Documentation/SA-LdapSearch/2.2.0/User/DeploytheSplunkSupportingAdd-onforActiveDirectory
+https://docs.splunk.com/Documentation/Forwarder/7.2.5/Forwarder/HowtoforwarddatatoSplunkEnterprise
+
+https://docs.splunk.com/Documentation/MSApp/1.5.1/MSInfra/InstallauniversalforwarderoneachWindowshost
+https://docs.splunk.com/Documentation/Splunk/7.2.4/AddMSADsingle/Installforwarderonhost
+https://answers.splunk.com/answers/439355/how-to-configure-a-splunk-universal-forwarder-on-m.html
+https://answers.splunk.com/answers/673449/cant-get-data-from-inputs-defined-under-ta-for-win.html
+https://docs.splunk.com/Documentation/ActiveDirectory/1.2.2/DeployAD/WhataSplunkAppforActiveDirectorydeploymentlookslike
+https://docs.splunk.com/Documentation/ActiveDirectory/1.2.2/DeployAD/ConfiguretheSA-ldapsearchsupportingaddon
+https://docs.splunk.com/Documentation/DCADAddon/1.0.0/DCADAddon/Installationsteps
+
+https://docs.splunk.com/Documentation/MSExchange/3.5.1/DeployMSX/InstalltheSplunkAppforMicrosoftExchangeonthesearchhead
+
+START
+
+SPLUNK RECEIVER
+
+make sure there is receiver in splunk main server
+
+if not, add, default port
+
+restart splunk server -  sudo /opt/splunk/bin/splunk restart
+
+SPLUNK APPS, ADDONS AND PLUGINS
+
+download add-ons / plugins
+
+install add-ons / plugins
+
+place in dir: /opt/splunk/etc/apps/
+
+CONFIGURE AD ADDON
+
+configure ad add on using:
+
+/opt/splunk/etc/apps/SA-ldapsearch/local/ldap.conf 
+
+[domain.local]
+server = 192.168.0.1
+port = 389
+ssl = 0
+basedn = dc=domain,dc=local
+binddn = cn=XXX,cn=Users,dc=domain,dc=local
+password =
+alternatedomain = MAIL
+
+INSTALL SPLUNK FORWARDER ON WINDOWS
+
+install win forwarder with defaults, but point at correct receiver
+
+go to:
+
+C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
+
+make sure files to monitor are there:
+
+# Windows platform specific input processor.
+[WinEventLog://Application]
+disabled = 0 
+
+[WinEventLog://Security]
+disabled = 0 
+
+[WinEventLog://System]
+disabled = 0 
+
+restart splunk service
+
+==
+
+WORKING, KIND OF, NOT WORKING FOR THE EXCHANGE PART
+
+==
+
+https://splunkbase.splunk.com/app/1680/
+https://docs.splunk.com/Documentation/MSApp/1.1.1/MSInfra/TroubleshoottheSplunkAppforWindowsInfrastructure
+https://docs.splunk.com/Documentation/MSApp/1.1.1/MSInfra/HowtodeploytheSplunkAppforWindowsInfrastructure
+https://docs.splunk.com/Documentation/MSApp/1.1.1/MSInfra/DeploytheSplunkAdd-onsforActiveDirectory
+
+==
+
+https://docs.splunk.com/Documentation/MSApp/1.1.1/MSInfra/DownloadandconfiguretheSplunkAdd-onsforActiveDirectory#More_information_about_the_Active_Directory_add-ons
+
+==
+
+The Splunk Add-ons for Active Directory come with the Splunk App for Windows Infrastructure installation package. You can download the Splunk App for Windows Infrastructure from Splunk Apps.
+
+Configure the Splunk Add-ons for Active Directory
+
+The Splunk Add-ons for Active Directory do not require any configuration edits by default. When you deploy them onto the Active Directory domain controllers, they immediately begin collecting data as long as you have configured audit policy. 
+
+NOT MAKING SENSE!
+
+SEEMS LIKE I NEED TO INSTALL AN APP ON THE WIN SPLUNK FORWARDER, NOBODY ACTUALLY SAYING THAT THOUGH
+
+MORE INFO
+
+NOT MAKING SENSE THOUGH
+
+==
+
+https://answers.splunk.com/answers/213585/why-am-i-getting-an-error-trying-to-configure-the.html
+
+ malmoore ♦ tsekali · Feb 10, 2015 at 04:24 PM
+
+If you do not have a search head in your topology, then your indexer is the search head by default. So there is no issue there.
+
+The data check for Active Directory is failing. This is because either:
+
+    The msad index does not exist on your indexer
+
+    The domain controllers are not sending data to the msad index - they only do this if you installed the correct Active Directory add-on in the universal forwarder on each DC.
+
+    The user has not been set up to search the msad index by default.
+
+More info at the Splunk App for Windows Infrastructure Troubleshooting Page.
+
+==
+
+https://answers.splunk.com/answers/225829/splunk-app-for-windows-infrastructure-why-does-sea.html
+
+Problem resolved by Install TA for DomainController to Windows Server that you need to monitor. I extract the TA for DomainController from Splunk app for microsoft exchange. 
+
+THIS IS NOT MAKING ANY SENSE
+
+==
+
+DIFFERENT ADD ON, TRYING, I GUESS
+
+https://splunkbase.splunk.com/app/742/
+
+https://docs.splunk.com/Documentation/WindowsAddOn/latest/User/Releasenotes
+https://docs.splunk.com/Documentation/WindowsAddOn/latest/User/AbouttheSplunkAdd-onforWindows
+https://docs.splunk.com/Documentation/WindowsAddOn/6.0.0/User/Installationoverview
+
+NEED TO READ THIS VERY CAREFULLY
+
+https://answers.splunk.com/answers/343081/splunk-app-for-windows-infrastructure-why-are-acti.html
+
+==
+DID NOT WRITE VERY GOOD NOTES LAST TIME, WAS FRUSTERATED
+INSTALLING SPLUNK FORWARDER ON JGDC1 PUBLIC DNS
+062419
+==
+
+installed splunk universal forwarder, used creds from kp, no deployment server, point at ip of main splunk reciever - 172.16.0.18
+
+FINISH SPLUNK FORWARDER INSTALL
+
+after installed go here:
+C:\Program Files\SplunkUniversalForwarder\etc\auth
+delete ca.pem
+
+edit splunk.secret
+put given secret from splunk machine
+
+cat /opt/splunk/etc/auth/splunk.secret
+
+notepad "C:\Program Files\SplunkUniversalForwarder\etc\auth\splunk.secret"
+
+go here:
+C:\Program Files\SplunkUniversalForwarder\etc\system\local
+delete server.conf
+
+THEN
+
+restart splunk forwarder
+
+THEN
+
+add same apps as on abc dns
+
+C:\Program Files\SplunkUniversalForwarder\etc\apps
+
+THEN
+
+C:\Program Files\SplunkUniversalForwarder\etc\system\local
+
+FIXED server.conf and inputs.conf
+
+NEEDS outputs.conf file - 090819
+
+C:\Program Files\SplunkUniversalForwarder\etc\system\local
+
+[tcpout]
+defaultGroup = default-autolb-group
+
+[tcpout:default-autolb-group]
+server = 172.16.0.8:9997
+
+[tcpout-server://172.16.0.8:9997]
+
+
+restarted splunk
+
+waiting a minute
+
+now working, shows up in splunk as separate host

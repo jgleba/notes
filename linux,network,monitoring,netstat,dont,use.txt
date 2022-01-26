@@ -1,0 +1,40 @@
+========================================
+LINUX SYSTEM MONITORING - NETSTAT - DONT
+NEED TO CHECK TO BE SURE
+072419
+========================================
+
+TLDR:
+DONT USE: netstat -a
+
+##https://stackoverflow.com/questions/20421705/high-number-of-time-waits-in-haproxy
+
+Note: The quotes in this answer are all from a mail by Willy Tarreau (the main author of HAProxy) to the HAProxy mailinglist.
+
+Connections in TIME_WAIT state are harmless and don't really consume any resources anymore. They are kept by the kernel on a server for some time for the rare event that it still receives a package after the connection was closed. The default time a closed connection is held in that state is typically 120 seconds (or 2 times the maximum segment lifetime)
+
+    TIME_WAIT are harmless on the server side. You can easily reach millions without any issues.
+
+If you still want to reduce that number to release connections earlier, you can instruct the kernel to do so. To e.g. set it to 30 seconds execute this:
+
+echo 30 > /proc/sys/net/ipv4/tcp_fin_timeout
+
+If you have many connections (either in TIME_WAIT or not), netstat, lsof, ipcs perform very poorly and actually slow the whole system down. To quote Willy again:
+
+    There are two commands that you must absolutely never use in a monitoring system :
+
+        netstat -a
+        ipcs -a
+
+    Both of them will saturate the system and considerably slow it down when something starts to go wrong. For the sockets you should use what's in /proc/net/sockstat. You have all the numbers you want. If you need more details, use ss -a instead of netstat -a, it uses the netlink interface and is several orders of magnitude faster.
+
+On Debian and Ubuntu systems, ss is available in the iproute or iproute2 package (depending on the version of your distribution).
+shareimprove this answer
+
+==
+FOUND THIS - SHOWS LISTENING PORTS WITHOUT NETSTAT - 082219
+==
+
+https://www.thegeekdiary.com/centos-rhel-how-to-find-if-a-network-port-is-open-or-not/
+
+ss -nutlp

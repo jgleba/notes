@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERSHELL INSTALL TELNET CLIENT 
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-05[Apr-Sun]18-31PM 
+
+##https://www.petri.com/enable-telnet-client-windows-server-2012-windows-8
+
+ 	
+Import-Module servermanager
+Add-WindowsFeature telnet-client

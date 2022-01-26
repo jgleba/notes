@@ -1,0 +1,277 @@
+=======================
+MIKROTIK DUAL WAN DHCP
+112319
+=======================
+
+##https://forum.mikrotik.com/viewtopic.php?t=49581#
+
+SAYS IT WORKS
+
+This is the real config used in my home router RB750G (5.0rc10) connected to two ISP over ethernet + vpn. There are 5 interfaces:
+Code: Select all
+
+lan         - ethernet connection to local (home) network
+local-isp1  - ethernet connection to ISP1, ip address is assigned via dhcp
+local-isp2  - ethernet connection to ISP2, ip address is assigned via dhcp
+inet1-isp1  - l2tp connection to ISP1 (10/10 Mbps)
+inet2-isp2  - pppoe connection to ISP2 (10/10 Mbps)
+
+So there are 1 internal and 4 external interfaces. We expect that there are some static routes obtained from dhcp.
+]We want to send an outgoing packet to the interface local-isp1 or local-isp2 if there is a specific static route for that packet in the main routing table.
+Otherwise we send the packet to the interface inet1-isp1 or inet2-isp2 using PCC load balancing and failover.
+Actually we do so called russian pppoe/l2tp. Srcnat is working on all 4 external interfaces.
+Incoming connections are allowed for some services (torrent client).
+All outgoing packets belonging to incoming connections are sent to the external interface from which the connection was initiated.
+
+We use queue trees to prioritize all incoming and outgoing traffic via inet1-isp1 and inet2-isp2 interfaces.
+The only reliable way to distinguish p2p traffic from other traffic is to bind all p2p applications to separate ip address.
+Note that we limit all queue trees to 9 Mbps despite we have 10 Mbps internet connections.
+This is required for correct work of incoming traffic prioritization.
+
+==
+
+/ip address
+add address=192.168.0.1/24 disabled=no interface=lan network=192.168.0.0
+
+/ip dhcp-client
+add add-default-route=yes default-route-distance=11 disabled=no interface=\
+    local-isp1
+add add-default-route=yes default-route-distance=12 disabled=no interface=\
+    local-isp2
+
+/ip dns
+set allow-remote-requests=yes cache-max-ttl=1w cache-size=2048KiB \
+    max-udp-packet-size=512 servers=8.8.8.8,8.8.4.4
+add address=10.10.10.10 disabled=no name=retracker.local ttl=1d
+
+/ppp profile
+add change-tcp-mss=no name=inet1 only-one=default remote-address=\
+    127.127.127.101 use-compression=default use-encryption=default use-mpls=\
+    default use-vj-compression=yes
+add change-tcp-mss=no name=inet2 only-one=default remote-address=\
+    127.127.127.102 use-compression=default use-encryption=default use-mpls=\
+    default use-vj-compression=yes
+
+/interface l2tp-client
+add add-default-route=no allow=chap,mschap1,mschap2 connect-to=10.10.0.70 \
+    dial-on-demand=no disabled=no max-mru=1460 max-mtu=1460 mrru=2048 name=\
+    inet1-isp1 password=XXXXXXXX profile=inet1 user=XXXXXXXX
+
+/interface pppoe-client
+add ac-name="" add-default-route=no allow=chap,mschap1,mschap2 \
+    dial-on-demand=no disabled=no interface=local-isp2 max-mru=1492 \
+    max-mtu=1492 mrru=2048 name=inet2-isp2 password=XXXXXXXX profile=\
+    inet2 service-name="" use-peer-dns=no user=XXXXXXXX
+
+/ip firewall filter
+add action=accept chain=input comment="Allow established connections" \
+    connection-state=established disabled=no
+add action=accept chain=input comment=\
+    "Allow all traffic from the local network" disabled=no in-interface=lan
+add action=accept chain=input comment="Allow ICMP packets" disabled=no \
+    protocol=icmp
+add action=drop chain=input comment="Deny all other traffic" disabled=no
+add action=accept chain=forward comment=\
+    "Allow all outgoing traffic received from the local network" disabled=no \
+    in-interface=lan
+add action=jump chain=forward comment=\
+    "Process incoming traffic going to the local network" disabled=no \
+    jump-target=forward-in out-interface=lan
+add action=drop chain=forward comment="Deny all other traffic" disabled=no
+add action=accept chain=forward-in comment="Allow established connections" \
+    connection-state=established disabled=no
+add action=accept chain=forward-in comment="Allow related connections" \
+    connection-state=related disabled=no
+add action=accept chain=forward-in comment=\
+    "Allow connections to torrent client" disabled=no dst-address=\
+    192.168.0.13 dst-port=12345 protocol=udp
+add action=accept chain=forward-in comment=\
+    "Allow connections to torrent client" disabled=no dst-address=\
+    192.168.0.13 dst-port=12345 protocol=tcp
+add action=drop chain=forward-in comment="Deny all other traffic" disabled=no
+
+/ip firewall mangle
+add action=jump chain=prerouting comment="Choose the outgoing interface for th\
+    e packets received from the local network" disabled=no in-interface=lan \
+    jump-target=choose-out-iface
+add action=mark-connection chain=prerouting comment="Bind the whole connection\
+    \_to the interface inet1 if at least one packet\
+    \nbelonging to the connection is received from the interface inet1" \
+    disabled=no in-interface=inet1-isp1 new-connection-mark=inet1 \
+    passthrough=no
+add action=mark-connection chain=prerouting comment="Bind the whole connection\
+    \_to the interface inet2 if at least one packet\
+    \nbelonging to the connection is received from the interface inet2" \
+    disabled=no in-interface=inet2-isp2 new-connection-mark=inet2 \
+    passthrough=no
+add action=jump chain=output comment="Choose the outgoing interface for the pa\
+    ckets originated from the router itself" disabled=no jump-target=\
+    choose-out-iface
+add action=mark-routing chain=choose-out-iface comment="Send the packets belon\
+    ging to the connection bound to the interface inet1\
+    \nto the interface inet1" connection-mark=inet1 disabled=no \
+    new-routing-mark=inet1 passthrough=no
+add action=mark-routing chain=choose-out-iface comment="Send the packets belon\
+    ging to the connection bound to the interface inet2\
+    \nto the interface inet2" connection-mark=inet2 disabled=no \
+    new-routing-mark=inet2 passthrough=no
+add action=mark-routing chain=choose-out-iface comment="Send some of the packe\
+    ts belonging to unbound connections to the interface inet2\
+    \naccording to PCC. All the remaining packets will be sent to the interfac\
+    e inet1." disabled=no new-routing-mark=inet2 passthrough=no \
+    per-connection-classifier=both-addresses:2/1
+add action=jump chain=forward comment="Adjust tcp mss on vpn connections" \
+    disabled=no jump-target=tcp-mss-adjust protocol=tcp tcp-flags=syn
+add action=jump chain=forward comment=\
+    "Mark the packets going to the interface inet1 for QoS" disabled=no \
+    jump-target=qos-inet-out out-interface=inet1-isp1
+add action=jump chain=forward comment=\
+    "Mark the packets received from the interface inet1 for QoS" disabled=no \
+    in-interface=inet1-isp1 jump-target=qos-inet1-in
+add action=jump chain=forward comment=\
+    "Mark the packets going to the interface inet2 for QoS" disabled=no \
+    jump-target=qos-inet-out out-interface=inet2-isp2
+add action=jump chain=forward comment=\
+    "Mark the packets received from the interface inet2 for QoS" disabled=no \
+    in-interface=inet2-isp2 jump-target=qos-inet2-in
+add action=change-mss chain=tcp-mss-adjust comment=\
+    "Adjust tcp mss on the interface inet1" disabled=no new-mss=1420 \
+    out-interface=inet1-isp1 protocol=tcp tcp-flags=syn tcp-mss=1421-65535
+add action=change-mss chain=tcp-mss-adjust comment=\
+    "Adjust tcp mss on the interface inet1" disabled=no in-interface=\
+    inet1-isp1 new-mss=1420 protocol=tcp tcp-flags=syn tcp-mss=1421-65535
+add action=return chain=tcp-mss-adjust comment=\
+    "Return to the chain \"forward\"" disabled=no
+add action=mark-packet chain=qos-inet-out comment="Mark p2p traffic" \
+    disabled=no new-packet-mark=inet-out-p2p passthrough=no src-address=\
+    192.168.0.13
+add action=mark-packet chain=qos-inet-out comment="Mark server traffic" \
+    disabled=no new-packet-mark=inet-out-server passthrough=no src-address=\
+    192.168.0.5
+add action=mark-packet chain=qos-inet1-in comment="Mark p2p traffic" \
+    disabled=no dst-address=192.168.0.13 new-packet-mark=inet1-in-p2p \
+    passthrough=no
+add action=mark-packet chain=qos-inet1-in comment="Mark server traffic" \
+    disabled=no dst-address=192.168.0.5 new-packet-mark=inet1-in-server \
+    passthrough=no
+add action=mark-packet chain=qos-inet1-in comment="Mark other traffic" \
+    disabled=no new-packet-mark=inet1-in-other passthrough=no
+add action=mark-packet chain=qos-inet2-in comment="Mark p2p traffic" \
+    disabled=no dst-address=192.168.0.13 new-packet-mark=inet2-in-p2p \
+    passthrough=no
+add action=mark-packet chain=qos-inet2-in comment="Mark server traffic" \
+    disabled=no dst-address=192.168.0.5 new-packet-mark=inet2-in-server \
+    passthrough=no
+add action=mark-packet chain=qos-inet2-in comment="Mark other traffic" \
+    disabled=no new-packet-mark=inet2-in-other passthrough=no
+
+/ip firewall nat
+add action=masquerade chain=srcnat comment="NAT on all external interfaces" \
+    disabled=no out-interface=!lan
+add action=dst-nat chain=dstnat comment="Port mapping for torrent client" \
+    disabled=no dst-port=12345 in-interface=!lan protocol=udp to-addresses=\
+    192.168.0.13
+add action=dst-nat chain=dstnat comment="Port mapping for torrent client" \
+    disabled=no dst-port=12345 in-interface=!lan protocol=tcp to-addresses=\
+    192.168.0.13
+
+/routing filter
+add action=discard chain=dynamic-in comment=\
+    "Discard all dynamic default routes" disabled=no invert-match=no prefix=\
+    0.0.0.0/0
+
+/ip route rule
+add action=lookup disabled=no table=main
+add action=lookup-only-in-table disabled=no routing-mark=inet2 table=inet2
+add action=lookup-only-in-table disabled=no table=inet1
+
+/ip route
+add disabled=no distance=1 dst-address=0.0.0.0/0 gateway=127.127.127.1 \
+    routing-mark=inet1 scope=30 target-scope=10
+add disabled=no distance=2 dst-address=0.0.0.0/0 gateway=127.127.127.2 \
+    routing-mark=inet1 scope=30 target-scope=10
+add disabled=no distance=1 dst-address=0.0.0.0/0 gateway=127.127.127.2 \
+    routing-mark=inet2 scope=30 target-scope=10
+add disabled=no distance=2 dst-address=0.0.0.0/0 gateway=127.127.127.1 \
+    routing-mark=inet2 scope=30 target-scope=10
+add comment="Remote host to monitor inet1" disabled=no distance=1 \
+    dst-address=81.19.66.61/32 gateway=127.127.127.101 scope=10 target-scope=\
+    10
+add comment="Remote host to monitor inet2" disabled=no distance=1 \
+    dst-address=81.19.67.89/32 gateway=127.127.127.102 scope=10 target-scope=\
+    10
+add comment="Remote host to monitor inet1" disabled=no distance=1 \
+    dst-address=213.180.193.1/32 gateway=127.127.127.101 scope=10 \
+    target-scope=10
+add comment="Remote host to monitor inet2" disabled=no distance=1 \
+    dst-address=213.180.199.34/32 gateway=127.127.127.102 scope=10 \
+    target-scope=10
+add comment="Remote host to monitor inet1" disabled=no distance=1 \
+    dst-address=216.239.32.10/32 gateway=127.127.127.101 scope=10 \
+    target-scope=10
+add comment="Remote host to monitor inet2" disabled=no distance=1 \
+    dst-address=216.239.34.10/32 gateway=127.127.127.102 scope=10 \
+    target-scope=10
+add check-gateway=ping disabled=no distance=1 dst-address=127.127.127.1/32 \
+    gateway=213.180.193.1 scope=10 target-scope=10
+add check-gateway=ping disabled=no distance=1 dst-address=127.127.127.1/32 \
+    gateway=81.19.66.61 scope=10 target-scope=10
+add check-gateway=ping disabled=no distance=1 dst-address=127.127.127.1/32 \
+    gateway=216.239.32.10 scope=10 target-scope=10
+add check-gateway=ping disabled=no distance=1 dst-address=127.127.127.2/32 \
+    gateway=81.19.67.89 scope=10 target-scope=10
+add check-gateway=ping disabled=no distance=1 dst-address=127.127.127.2/32 \
+    gateway=213.180.199.34 scope=10 target-scope=10
+add check-gateway=ping disabled=no distance=1 dst-address=127.127.127.2/32 \
+    gateway=216.239.34.10 scope=10 target-scope=10
+
+/queue type
+add kind=pfifo name=vpn pfifo-limit=500
+
+/queue tree
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet1-out parent=inet1-isp1 priority=8
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet2-out parent=inet2-isp2 priority=8
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet1-in packet-mark=\
+    inet1-in-server,inet1-in-p2p,inet1-in-other parent=lan priority=8
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet2-in packet-mark=\
+    inet2-in-server,inet2-in-p2p,inet2-in-other parent=lan priority=8
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=9M \
+    max-limit=9M name=inet1-out-server packet-mark=inet-out-server parent=\
+    inet1-out priority=1 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet1-out-p2p packet-mark=inet-out-p2p parent=inet1-out \
+    priority=8 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet1-out-other packet-mark=no-mark parent=inet1-out \
+    priority=4 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=9M \
+    max-limit=9M name=inet2-out-server packet-mark=inet-out-server parent=\
+    inet2-out priority=1 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet2-out-p2p packet-mark=inet-out-p2p parent=inet2-out \
+    priority=8 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet2-out-other packet-mark=no-mark parent=inet2-out \
+    priority=4 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=9M \
+    max-limit=9M name=inet1-in-server packet-mark=inet1-in-server parent=\
+    inet1-in priority=1 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet1-in-p2p packet-mark=inet1-in-p2p parent=inet1-in \
+    priority=8 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet1-in-other packet-mark=inet1-in-other parent=\
+    inet1-in priority=4 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=9M \
+    max-limit=9M name=inet2-in-server packet-mark=inet2-in-server parent=\
+    inet2-in priority=1 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet2-in-p2p packet-mark=inet2-in-p2p parent=inet2-in \
+    priority=8 queue=vpn
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=9M name=inet2-in-other packet-mark=inet2-in-other parent=\
+    inet2-in priority=4 queue=vpn

@@ -1,0 +1,39 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GITHUB BASIC USAGE, NEW REPO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-25[Jan-Tue]19-30PM 
+
+…or create a new repository on the command line
+
+echo "# notes" >> README.md
+git init
+git add README.md
+git commit -m "first commit $(date +"%m%d%y-%H%M")"
+git branch -M main
+git remote add origin https://github.com/jgleba/notes.git
+git push -u origin main
+
+…or push an existing repository from the command line
+
+git remote add origin https://github.com/jgleba/notes.git
+git branch -M main
+git push -u origin main
+
+==
+HOW TO ADD FILES
+==
+
+git add .
+git commit -m "$(date +"%m%d%y-%H%M")"
+git push -u origin main
+
+==
+GIT MORE
+==
+
+git status
+git diff
+git log
+

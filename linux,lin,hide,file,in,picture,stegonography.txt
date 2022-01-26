@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX HIDE FILE IN PICTURE - STEGONOGRAPHY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-14[Sep-Mon]20-12PM 
+
+##FROM NETWORKCHUCK YOUTUBE
+
+USING LINUX
+
+sudo apt install steghide -y
+
+nano secretfile.txt
+
+steghide embed -cf notsecretfile.jpg -ef secretfile.txt
+
+enter password
+
+rm secretfile.txt
+
+steghide extract -sf notsecretfile.jpg
+
+enter password
+
+file extracted

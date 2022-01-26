@@ -1,0 +1,24 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE CONVERT TO XCP-NG - CENTOS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-03-04[Mar-Wed]18-24PM 
+
+##https://superuser.com/questions/901162/regenerate-initramfs-after-moving-boot-partition
+
+WIN MACHINES WORK FINE, BUT CENTOS WAS ONLY ABLE TO BOOT IN RECOVERY MODE
+
+FOUND SOLUTION
+
+EXPORT OVF AND DISKS
+
+CREATE NEW SR IN XCP-NG
+
+IMPORT VMDK DISK (USING XEN ORCHESTRA)
+
+BOOT CENTOS VM UP IN RECOVERY MODE
+
+RUN:
+
+sudo dracut --regenerate-all --force

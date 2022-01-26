@@ -1,0 +1,35 @@
+new extension with endpoint manager
+
+make sure phone is hooked up to phone system (manual hook up, ip of phone add ip of pbx or option 66)
+
+create new extension
+
+go to endpoint manager in pbx, extension mapping
+
+select extension from bottom enter mac address of phone
+
+save and re-build
+
+save and reboot
+
+==
+
+adding to side car
+
+go to endpoint manager, brands, (aastra)
+
+select template under manage (default-aastra)
+
+at bottom
+
+select expansion module
+
+add desired extension and name
+
+back to endpoint manager, extension mapping
+
+select reception phone
+
+save and re-build
+
+save and reboot

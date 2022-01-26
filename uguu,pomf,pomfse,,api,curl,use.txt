@@ -1,0 +1,65 @@
+=======================================
+UGUU, FILE SHARING, USING API TO UPLOAD
+05-13-2019
+JGleba
+=======================================
+
+##https://github.com/nokonoko/Uguu
+
+##EXAMPLE
+
+Using the API
+
+    Leaving POST value 'name' empty will cause it to save using the original filename.
+
+    Leaving POST value 'randomname' empty will cause it to use original filename or custom name if 'name' is set to file.ext.
+
+    Putting anything into POST value 'randomname' will cause it to return a random filename + ext (xxxxxx.ext).
+
+    Putting a custom name into POST value 'name' will cause it to return a custom filename (yourpick.ext).
+
+E.g:
+
+    curl -i -F name=test.jpg -F file=@localfile.jpg http://path.to.uguu/api.php?d=upload (HTML Response)
+    curl -i -F name=test.jpg -F file=@localfile.jpg http://path.to.uguu/api.php?d=upload-tool (Plain text Response)
+
+##REAL EXAMPLE - TESTED - 05-13-2019
+
+##COMMAND TO USE
+curl -i -F name=dog.jpeg -F file=@dog.jpeg https://uguu.jgleba.com/api.php?d=upload-tool
+
+##RESPONSE
+HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Date: Tue, 14 May 2019 00:36:45 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Set-Cookie: __cfduid=d276f90770c023bdb1d363298b7d434c91557794204; expires=Wed, 13-May-20 00:36:44 GMT; path=/; domain=.jgleba.com; HttpOnly
+X-Powered-By: PHP/7.2.17
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: no-referrer-when-downgrade
+X-Content-Type-Options: nosniff
+Set-Cookie: SERVERID=A; path=/
+Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+Server: cloudflare
+CF-RAY: 4d68ccb0edc83c7b-CDG
+
+##LINK RECEIVED
+https://u.jgleba.com/UyutYmo8uR52ueQ_dog.jpeg
+
+
+FOUND - 061619
+
+[user@zxjprox uguu]$ cat tools.txt
+
+Tools
+
+ShareX: https://getsharex.com
+API
+
+To upload using curl or make a tool you can post using:
+curl -i -F name=test.jpg -F file=@localfile.jpg https://uguu.se/api.php?d=upload (HTML Response)
+curl -i -F name=test.jpg -F file=@localfile.jpg https://uguu.se/api.php?d=upload-tool (Plain text Response)

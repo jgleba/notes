@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU SET TIMEZONE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-19[Feb-Fri]10-24AM 
+
+##https://linuxize.com/post/how-to-set-or-change-timezone-on-ubuntu-18-04/
+
+sudo timedatectl set-timezone America/Toronto

@@ -1,0 +1,6 @@
+set all ips with 255.255 to assigned subnet
+default route - make sure correct
+enable wireless radio
+change sstp creds
+set dns
+CHECK admin pass!

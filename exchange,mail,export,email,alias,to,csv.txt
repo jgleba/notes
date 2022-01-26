@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EXCHANGE EXPORT NAME AND ALIAS TO CSV
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-28[Sep-Mon]11-10AM 
+
+EXPORT EMAIL AND ALIAS TO CSV FILE
+
+Get-Mailbox -ResultSize Unlimited | Select-Object DisplayName, SamAccountName, PrimarySmtpAddress, @{Name="EmailAddresses";Expression={$_.EmailAddresses | Where-Object {$_.PrefixString -ceq "smtp"} | ForEach-Object {$_.SmtpAddress}}} | Export-CSV c:\EmailAddresses.csv -NoTypeInformation -Encoding Unicode
+
+Get-Mailbox -ResultSize Unlimited | Select-Object DisplayName, SamAccountName, PrimarySmtpAddress, @{Name="EmailAddresses";Expression={$_.EmailAddresses | Where-Object {$_.PrefixString -ceq "smtp"} | ForEach-Object {$_.SmtpAddress}}} | Export-CSV c:\temp\EmailAddresses.csv -NoTypeInformation -Encoding Unicode
+
+get-mailbox j -ResultSize Unlimited | fl
+

@@ -1,0 +1,38 @@
+==========================
+RCLONE INSTALL ON SYNOLOGY
+070519
+==========================
+
+==
+GOOD INFO
+==
+
+#https://forum.rclone.org/t/installing-rclone-on-synology-ds414/4407
+
+==
+CHECK VERSION AND PROCESSOR
+==
+
+#https://www.synology.com/en-uk/knowledgebase/DSM/tutorial/Compatibility_Peripherals/What_kind_of_CPU_does_my_NAS_have
+
+==
+DOWNLOAD
+==
+
+#https://rclone.org/downloads/
+#https://downloads.rclone.org/v1.48.0/rclone-v1.48.0-linux-amd64.zip
+
+==
+INSTALL ON SYNOLOGY
+==
+
+cd
+curl -O https://downloads.rclone.org/v1.48.0/rclone-v1.48.0-linux-amd64.zip
+sudo 7z x rclone-v1.48.0-linux-amd64.zip
+cd rclone-v1.48.0-linux-amd64
+
+sudo cp rclone /usr/bin/
+sudo chown root:root /usr/bin/rclone
+sudo chmod 755 /usr/bin/rclone
+
+rclone config

@@ -1,0 +1,24 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EXCHANGE BLOCK SENDERS FROM SERVER SIDE, NORMAL JUNK NOT WORKING FOR J@JGLEBA BECAUSE NOT IN CACHED MODE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-26[Feb-Fri]08-38AM 
+
+##http://woshub.com/blacklist-sender-domain-address-exchange/
+
+CHECK IF ENABLED
+
+Get-SenderFilterConfig
+
+ENABLE
+
+Set-SenderFilterConfig -Enabled $true
+
+BLOCK SENDER
+
+Set-SenderFilterConfig -BlockedSenders contact@natmorlene.com,contact@ragalutier.com,contact@bevenisida.com
+
+BLOCK ENTIRE DOMAIN
+
+Set-SenderFilterConfig -BlockedDomainsAndSubdomains spammers.com,masssend.net

@@ -1,0 +1,30 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS UNRAR
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-08-05[Aug-Thu]08-40AM 
+
+https://centos.pkgs.org/7/forensics-x86_64/unrar-5.4.0-1.el7.x86_64.rpm.html
+
+
+
+    Download cert-forensics-tools-release-el7 rpm:
+
+    https://forensics.cert.org/cert-forensics-tools-release-el7.rpm
+
+    Install cert-forensics-tools-release-el7 rpm:
+
+    # rpm -Uvh cert-forensics-tools-release*rpm
+
+    Install unrar rpm package:
+
+    # yum --enablerepo=forensics install unrar
+
+==
+
+unrar e file.rar
+
+extracts into current dir
+
+unrar e tecmint.rar /home/

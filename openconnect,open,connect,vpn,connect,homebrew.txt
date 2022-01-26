@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OPEN CONNECT, ALTERNATIVE TO CISCO ANY CONNECT, INSTALL ON MAC WITH HOMEBREW
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-22[Jan-Fri]14-18PM 
+
+##https://gist.github.com/moklett/3170636
+
+sudo openconnect --user=<VPN username> <VPN host>
+
+sudo openconnect --user=user vpn.jgleba.com:4433
