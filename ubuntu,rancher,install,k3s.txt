@@ -39,3 +39,15 @@ watch sudo journalctl -eu rancherd-server -f
 ##RESET ADMIN PASS
 
 rancherd reset-admin
+
+#==
+#INSTALLING ON ROCKY LINUX, FAILED
+#020122
+#==
+
+sudo rancherd reset-admin
+FATA[0000] cluster and rancher are not ready. Please try later.: Get "https://127.0.0.1:6443/apis/management.cattle.io/v3/users?labelSelector=authz.management.cattle.io%2Fbootstrapping%3Dadmin-user": dial tcp 127.0.0.1:6443: connect: connection refused
+
+rancherd reset-admin
+FATA[0000] cluster and rancher are not ready. Please try later.: error loading config file "/etc/rancher/rke2/rke2.yaml": open /etc/rancher/rke2/rke2.yaml: permission denied
+
