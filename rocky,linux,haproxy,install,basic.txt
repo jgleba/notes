@@ -24,6 +24,7 @@ sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
 
 sudo firewall-cmd --zone=public --add-port=4433/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=9999/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9000/tcp --permanent
 
 sudo firewall-cmd --reload
 
