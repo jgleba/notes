@@ -1,0 +1,58 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NGINX LOAD BALANCE MULTIPLE DESTINATION / UPSTREAM SERVERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-04[Feb-Fri]14-22PM 
+
+##https://serverfault.com/questions/823234/use-nginx-upstream-group-with-multiple-ports
+##https://stackoverflow.com/questions/58331522/how-do-i-setup-nginx-for-multiple-upstream-and-load-balancing
+
+rdgwtest3.jgleba.com.conf
+upstream rdshostshttp {
+    server 172.16.3.16:80;
+    server 172.16.3.17:80;
+}
+
+upstream rdshostshttps {
+    server 172.16.3.16:443;
+    server 172.16.3.17:443;
+}
+
+server {
+listen 80;
+server_name rdgwtest3.jgleba.com;
+location / {
+proxy_pass http://rdshostshttp/;
+proxy_http_version 1.1;
+# Inform MeshCentral about the real host, port and protocol
+proxy_set_header X-Forwarded-Host $host:$server_port;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+}
+}
+
+server {
+listen 443 ssl;
+server_name rdgwtest3.jgleba.com;
+# MeshCentral uses long standing web socket connections, set longer timeouts.
+proxy_send_timeout 330s;
+proxy_read_timeout 330s;
+
+    ssl_certificate /etc/letsencrypt/live/jgleba.com/fullchain.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/jgleba.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/jgleba.com/privkey.pem;
+
+location / {
+proxy_pass http://rdshostshttps/;
+proxy_http_version 1.1;
+# Allows websockets over HTTPS.
+proxy_set_header Upgrade $http_upgrade;
+proxy_set_header Connection "upgrade";
+proxy_set_header Host $host;
+# Inform MeshCentral about the real host, port and protocol
+proxy_set_header X-Forwarded-Host $host:$server_port;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+}
+}
