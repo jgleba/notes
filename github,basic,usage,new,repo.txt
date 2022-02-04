@@ -21,17 +21,16 @@ git remote add origin https://github.com/jgleba/notes.git
 git branch -M main
 git push -u origin main
 
-==
-HOW TO ADD FILES
-==
+
+##HOW TO ADD FILES
 
 git add .
 git commit -m "$(date +"%m%d%y-%H%M")"
 git push -u origin main
 
-==
-GIT MORE
-==
+
+##GIT MORE
+
 
 git status
 git diff
