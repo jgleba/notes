@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX AUTOMATIC UPDATES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-04[Feb-Fri]14-59PM 
+
+##https://unixcop.com/schedule-system-updates-centos-rocky-linux/
+
+sudo dnf install dnf-automatic
+
