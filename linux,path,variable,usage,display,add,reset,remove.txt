@@ -17,6 +17,7 @@ ADD PATH
 ==
 
 export PATH=/tmp:$PATH
+export PATH=/sbin:$PATH
 
 ==
 RESET PATH
