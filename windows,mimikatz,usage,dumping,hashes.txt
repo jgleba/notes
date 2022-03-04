@@ -49,6 +49,7 @@ OPEN CMD AS NTAUTHORITY\SYSTEM
 ##http://woshub.com/runas-localsystem-account-windows/
 
 psexec -i -s cmd.exe
+c:\j\0\psexec -i -s cmd.exe
 
 RUN MIMIKATZ
 
