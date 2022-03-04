@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SAMDUMP2 KALI
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-03-04[Mar-Fri]12-40PM 
+
+##https://www.securitynewspaper.com/2018/11/27/crack-windows-password-with-john-the-ripper/
+
+samdump2 regdump/system.dump regdump/sam.dump
+ 
+Administrator:500:hash:hash:::
+*disabled* Guest:501:hash:hash:::
+*disabled* :503:hash:hash:::
