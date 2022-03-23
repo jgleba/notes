@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS RUN AS, ESCALATE TO ADMIN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-03-23[Mar-Wed]16-36PM 
+
+##https://www.microsoftpartnercommunity.com/t5/Modern-Workplace-Discussions/make-quick-assist-run-as-admin/m-p/20906#M128
+
+Run CMD at end-user's computer
+Type the below command:
+runas /user:domain\administrator cmd
+*domain will be any domain of your organization
+*administrator can be  any administrator login.
+If domain is not available type the below command in cmd.
+runas /user:local_user cmd
+Put the admin password.
