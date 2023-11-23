@@ -1,0 +1,19 @@
+==================================
+MYSQL CREATE USER, DB, GRANT ON DB
+==================================
+
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'pass';
+
+CREATE DATABASE dbname;
+
+GRANT ALL PRIVILEGES ON dbname.* TO 'user'@'localhost' IDENTIFIED BY 'pass';
+
+FLUSH PRIVILEGES;
+
+==
+
+centos 8
+121722
+
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON dbname.* TO 'user'@'localhost';

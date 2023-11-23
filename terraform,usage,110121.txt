@@ -1,0 +1,125 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  TERRAFORM USAGE, CREATE CENTOS VM FROM CENTOS TEMPLATE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-01[Nov-Mon]14-40PM 
+
+##https://sdorsett.github.io/post/2018-12-24-using-terraform-to-clone-a-virtual-machine-on-vsphere/
+##https://garyflynn.com/technology/hashicorp/create-your-first-vsphere-terraform-configuration/
+
+
+##VSPHERE INFO AND VARS SETUP
+
+[user@COSANS create_vm_2]$ cat variables.tf
+
+variable "vsphere_user" {
+  default = "vcenter@domain.local"
+}
+
+# vsphere account password. empty by default.
+variable "vsphere_password" {
+  default = "pass"
+}
+
+# vsphere server, defaults to localhost
+variable "vsphere_server" {
+  default = "vctr.domain.local"
+}
+
+# vsphere datacenter the virtual machine will be deployed to. empty by default.
+variable "vsphere_datacenter" {}
+
+# vsphere resource pool the virtual machine will be deployed to. empty by default.
+variable "vsphere_resource_pool" {}
+
+# vsphere datastore the virtual machine will be deployed to. empty by default.
+variable "vsphere_datastore" {}
+
+# vsphere network the virtual machine will be connected to. empty by default.
+variable "vsphere_network" {}
+
+# vsphere virtual machine template that the virtual machine will be cloned from. empty by default.
+variable "vsphere_virtual_machine_template" {}
+
+# the name of the vsphere virtual machine that is created. empty by default.
+variable "vsphere_virtual_machine_name" {}
+
+##VARS ANSWER FILE
+
+[user@COSANS create_vm_2]$ cat terraform.tfvars
+vsphere_datacenter = "vcenter dc"
+vsphere_datastore = "fnas"
+vsphere_resource_pool = "hv ip/Resources"
+vsphere_network = "VLAN"
+vsphere_virtual_machine_template = "COS1"
+vsphere_virtual_machine_name = "COS2"
+
+##TERRAFORM BASE SETUP
+
+[user@COSANS create_vm_2]$ sudo cat main.tf
+[sudo] password for user:
+provider "vsphere" {
+  user           = "${var.vsphere_user}"
+  password       = "${var.vsphere_password}"
+  vsphere_server = "${var.vsphere_server}"
+  allow_unverified_ssl = true
+}
+
+data "vsphere_datacenter" "dc" {
+  name = "${var.vsphere_datacenter}"
+}
+
+data "vsphere_datastore" "datastore" {
+  name          = "${var.vsphere_datastore}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+data "vsphere_resource_pool" "pool" {
+  name          = "${var.vsphere_resource_pool}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+data "vsphere_network" "network" {
+  name          = "${var.vsphere_network}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+data "vsphere_virtual_machine" "template" {
+  name          = "${var.vsphere_virtual_machine_template}"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+resource "vsphere_virtual_machine" "cloned_virtual_machine" {
+  name             = "${var.vsphere_virtual_machine_name}"
+  resource_pool_id = "${data.vsphere_resource_pool.pool.id}"
+  datastore_id     = "${data.vsphere_datastore.datastore.id}"
+
+  num_cpus = "${data.vsphere_virtual_machine.template.num_cpus}"
+  memory   = "${data.vsphere_virtual_machine.template.memory}"
+  guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
+
+  scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
+
+  network_interface {
+    network_id   = "${data.vsphere_network.network.id}"
+    adapter_type = "${data.vsphere_virtual_machine.template.network_interface_types[0]}"
+  }
+
+  disk {
+    label = "disk0"
+    size = "${data.vsphere_virtual_machine.template.disks.0.size}"
+  }
+
+  clone {
+    template_uuid = "${data.vsphere_virtual_machine.template.id}"
+  }
+}
+
+##RUN TERRAFORM CREATE VM
+
+sudo terraform apply --auto-approve
+
+##DELETE VM
+
+sudo terraform destroy --auto-approve

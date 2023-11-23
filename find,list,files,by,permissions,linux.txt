@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FIND FILES BY PERMiSSIONS IN LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-06-26[Jun-Fri]12-24PM 
+
+##https://www.ostechnix.com/find-files-based-permissions/
+
+find . -perm 777
+
+find . -perm 777 > fileperms777.txt

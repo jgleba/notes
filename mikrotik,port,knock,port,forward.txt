@@ -1,0 +1,31 @@
+/ip firewall filter
+add action=drop chain=input src-address-list=block
+add action=add-src-to-address-list address-list=knock_1 address-list-timeout=1m chain=input dst-port=666 protocol=tcp
+add action=add-src-to-address-list address-list=knock_2 address-list-timeout=1m chain=input dst-port=6666 protocol=tcp src-address-list=knock_1
+add action=add-src-to-address-list address-list=block address-list-timeout=1m chain=input dst-port=!66 protocol=tcp src-address-list=knock_2
+add action=add-src-to-address-list address-list=allowed_knock address-list-timeout=1h chain=input dst-port=66 protocol=tcp src-address-list=knock_2
+
+/ip firewall nat
+add action=dst-nat chain=dstnat dst-port=3389 in-interface=ether1-uplink log=yes protocol=tcp src-address-list=allowed_knock to-addresses=192.168.1.2 to-ports=3389
+
+
+=-==
+
+
+
+/ip firewall filter
+add action=add-src-to-address-list address-list=Port_Knock_1 address-list-timeout=3s chain=input comment="ICMP-Knock-1" packet-size=88 protocol=icmp
+add action=add-src-to-address-list address-list=Port_Knock_2 address-list-timeout=3s chain=input comment="ICMP-Kock-2" packet-size=66 protocol=icmp src-address-list=Port_Knock_1
+add action=add-src-to-address-list address-list=Port_Knock_3 address-list-timeout=3s chain=input comment="ICMP-Kock-3" packet-size=666 protocol=icmp src-address-list=Port_Knock_2
+add action=add-src-to-address-list address-list=block address-list-timeout=1m chain=input comment="ICMP-Kock-3-block" packet-size=!459 protocol=icmp src-address-list=Port_Knock_3
+add action=add-src-to-address-list address-list=outside_admin address-list-timeout=15m chain=input comment="ICMP-Kock-4" packet-size=459 protocol=icmp src-address-list=Port_Knock_3
+
+==
+
+packet size knock
+
+88
+66
+666
+459
+

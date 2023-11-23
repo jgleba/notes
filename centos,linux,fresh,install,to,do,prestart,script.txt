@@ -1,0 +1,23 @@
+#!/bin/bash
+
+##=======================
+##CENTOS PRE-START SCRIPT
+##121219
+##JGleba
+##=======================
+
+##PRE-PRE-START GET-PRESTART
+# sudo wget http://172.16.0.45/fog/0/jstart/1-j-cos-pre-start.sh
+
+##MAKE DIRS, PREMS
+sudo mkdir -p /path/to/bin
+sudo chown -R user:root /path
+sudo chmod -R 770 /path
+cd /path/to
+
+##GET START SCRIPT
+sudo wget http://172.16.0.45/fog/0/jstart/1-j-cos-start.sh
+
+##PERMS, RUN START SCRIPT
+sudo chmod +x 1-j-cos-start.sh
+sudo ./1-j-cos-start.sh

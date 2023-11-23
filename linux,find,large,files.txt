@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX FIND LARGE FILES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-01-12[Jan-Thu]10-38AM 
+
+#https://www.tomshardware.com/how-to/find-large-files-linux
+
+sudo du -h / | grep -P '^[0-9\.]+G'

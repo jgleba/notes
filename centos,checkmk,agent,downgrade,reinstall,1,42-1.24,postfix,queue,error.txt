@@ -1,0 +1,43 @@
+====================================================================================
+DOWNGRADING CENTOS CHECKMK ANENT FROM 1.4X INSTALLED FROM YUM TO 1.24 MANUAL INSTALL
+060419
+====================================================================================
+
+POSTFIX QUEUE ERROR
+UNKNOWN - Could not find summarizing line in output
+
+sudo cd
+
+cd
+sudo scp user@172.16.3.15:/home/x/dat/short/j/softw/1win/7checkmk/check_mk-agent-1.2.4p3-1.noarch.rpm ./
+
+sudo scp user@172.31.0.15:/home/x/dat/short/j/softw/1win/7checkmk/check_mk-agent-1.2.4p3-1.noarch.rpm ./
+
+sudo yum remove check-mk-agent -y
+sudo yum install check_mk-agent-1.2.4p3-1.noarch.rpm -y
+
+sudo nano /etc/xinetd.d/check_mk
+
+sudo systemctl enable xinetd.service
+sudo systemctl restart xinetd.service
+
+sudo rm check_mk-agent-1.2.4p3-1.noarch.rpm
+
+==
+
+FIXING A BUNCH OF MACHINES THAT HAD WRONG AGENT VERSION - DOWNGRADE FROM 1.4.X to 1.2.4
+061019
+
+cd
+sudo cd
+
+sudo yum remove check-mk-agent -y
+sudo scp user@172.16.3.15:/home/x/dat/short/j/softw/1win/7checkmk/check_mk-agent-1.2.4p3-1.noarch.rpm ./
+
+sudo yum install -y check_mk-agent-1.2.4p3-1.noarch.rpm
+
+sudo nano /etc/xinetd.d/check_mk
+
+sudo service xinetd restart
+
+sudo rm check_mk-agent-1.2.4p3-1.noarch.rpm

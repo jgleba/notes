@@ -1,0 +1,16 @@
+========================================================
+CENTOS (LINUX) USERMOD - CHANGE LINUX (UNIX) USER GROUPS
+060419
+========================================================
+
+==
+CHANGE PRIMARY GROUP
+==
+
+sudo usermod -g GROUP USER
+
+==
+ADD ANOTHER GROUP
+==
+
+sudo usermod -a -G GROUP USER

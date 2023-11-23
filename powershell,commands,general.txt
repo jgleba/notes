@@ -1,0 +1,58 @@
+POWERSHELL GENERAL STUFF
+========================
+11-30-2018
+========================
+
+WAIT FOR PRESS KEY
+==
+
+Write-Host "Press any key to continue ....."
+$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+
+REPLACE WITH - eg: replace space with ' + space
+==
+
+$path = 'C:\Windows Services\MyService.exe'
+$path -replace ' ', '` '
+invoke-expression $path
+
+CHECK TO SEE IF PROCESS RUNNING WITH IF/ELSE
+==
+
+if((get-process "rclone" -ea SilentlyContinue) -eq $Null){ 
+        C:\j\testemail.bat
+}
+else{ 
+    exit
+ }
+ 
+SEND EMAIL WITH SINGLE ATTACHMENT AND MULTIPLE ATTACHMENTS
+==
+
+powershell "Send-MailMessage -To a@a.com -Subject %MAILSUBJECT% -Body 'rclone backup finished' -Attachments %LOGFILEERROR% -SmtpServer 172.16.0.1 -From a@a.com"
+
+$file1="C:\path\to\file1"
+$file2="C:\path\to\file2"
+powershell "Send-MailMessage -To a@a.com -Subject test -Body 'test' -Attachments $file1,$file2 -SmtpServer 172.16.0.1 -From a@a.com"
+
+powershell "Send-MailMessage -To a@a.com -Subject test -Body 'test' -Attachments "C:\path\to\file1","C:\path\to\file2" -SmtpServer 172.16.0.1 -From a@a.com"
+
+BULK RENAME FILES
+==
+
+eg1: Get-ChildItem directory | Rename-Item -NewName { $_.Name -replace '^filename_+','' -replace '_+',' ' }
+eg2: Get-ChildItem directory | Rename-Item -NewName { $_.Name -replace '_+','-' }
+eg3: Get-ChildItem directory | Rename-Item -NewName { $_.Name -replace "_+","-" }
+eg4: Get-ChildItem directory | Rename-Item -NewName { $_.Name -replace "$([char]0x00AE)","" }
+eg5: Get-ChildItem directory -Recurse -File | Rename-Item -NewName { $_.Name -replace "$([char]0x00AE)","" }
+
+BETTER BULK RENAME FILES, ONLY FILES
+==
+
+$fileDirectory = "c:"
+Get-ChildItem $fileDirectory -recurse -file -filter "*.*" |
+%{
+$NewName=$_.Name.Replace("$([char]0x007f)", "")
+$NewName=Join-Path -Path $_.directory -ChildPath $NewName
+Rename-Item $_.FullName $NewName
+}

@@ -1,0 +1,587 @@
+##METASPLOIT NOTES
+##06-12-2018
+##JGleba
+
+READING FROM: https://www.offensive-security.com/metasploit-unleashed
+
+==
+INFO GATHERING
+==
+
+==
+Port Scanning
+==
+
+Information gathering with Metasploit
+Preparing Metapsloit for Port Scanning
+
+Scanners and most other auxiliary modules use the RHOSTS option instead of RHOST. RHOSTS can take IP ranges (192.168.1.20-192.168.1.30), CIDR ranges (192.168.1.0/24), multiple ranges separated by commas (192.168.1.0/24, 192.168.3.0/24), and line-separated host list files (file:/tmp/hostlist.txt). This is another use for a grepable Nmap output file.
+
+By default, all of the scanner modules will have the THREADS value set to ‘1’. The THREADS value sets the number of concurrent threads to use while scanning. Set this value to a higher number in order to speed up your scans or keep it lower in order to reduce network traffic but be sure to adhere to the following guidelines:
+
+        Keep the THREADS value under 16 on native Win32 systems
+        Keep THREADS under 200 when running MSF under Cygwin
+        On Unix-like operating systems, THREADS can be set as high as 256.
+
+Contents
+
+    1 Nmap & db_nmap
+    2 Port Scanning
+    3 SMB Version Scanning
+    4 Idle Scanning
+
+ 
+Nmap & db_nmap
+
+We can use the db_nmap command to run Nmap against our targets and our scan results would than be stored automatically in our database. However, if you also wish to import the scan results into another application or framework later on, you will likely want to export the scan results in XML format. It is always nice to have all three Nmap outputs (xml, grepable, and normal). So we can run the Nmap scan using the ‘-oA‘ flag followed by the desired filename to generate the three output files, then issue the db_import command to populate the Metasploit database.
+
+Run Nmap with the options you would normally use from the command line. If we wished for our scan to be saved to our database, we would omit the output flag and use db_nmap. The example below would then be “db_nmap -v -sV 192.168.1.0/24”.
+
+msf > nmap -v -sV 192.168.1.0/24 -oA subnet_1
+[*] exec: nmap -v -sV 192.168.1.0/24 -oA subnet_1
+
+Starting Nmap 5.00 ( http://nmap.org ) at 2009-08-13 19:29 MDT
+NSE: Loaded 3 scripts for scanning.
+Initiating ARP Ping Scan at 19:29
+Scanning 101 hosts [1 port/host]
+...
+Nmap done: 256 IP addresses (16 hosts up) scanned in 499.41 seconds
+Raw packets sent: 19973 (877.822KB) | Rcvd: 15125 (609.512KB)
+
+Port Scanning
+
+In addition to running Nmap, there are a variety of other port scanners that are available to us within the framework.
+
+msf > search portscan
+
+Matching Modules
+================
+
+   Name                                      Disclosure Date  Rank    Description
+   ----                                      ---------------  ----    -----------
+   auxiliary/scanner/natpmp/natpmp_portscan                   normal  NAT-PMP External Port Scanner
+   auxiliary/scanner/portscan/ack                             normal  TCP ACK Firewall Scanner
+   auxiliary/scanner/portscan/ftpbounce                       normal  FTP Bounce Port Scanner
+   auxiliary/scanner/portscan/syn                             normal  TCP SYN Port Scanner
+   auxiliary/scanner/portscan/tcp                             normal  TCP Port Scanner
+   auxiliary/scanner/portscan/xmas                            normal  TCP "XMas" Port Scanner
+
+For the sake of comparison, we’ll compare our Nmap scan results for port 80 with a Metasploit scanning module. First, let’s determine what hosts had port 80 open according to Nmap.
+
+msf > cat subnet_1.gnmap | grep 80/open | awk '{print $2}'
+[*] exec: cat subnet_1.gnmap | grep 80/open | awk '{print $2}'
+
+192.168.1.1
+192.168.1.2
+192.168.1.10
+192.168.1.109
+192.168.1.116
+192.168.1.150
+
+The Nmap scan we ran earlier was a SYN scan so we’ll run the same scan across the subnet looking for port 80 through our eth0 interface, using Metasploit.
+
+msf > use auxiliary/scanner/portscan/syn
+msf auxiliary(syn) > show options
+
+Module options (auxiliary/scanner/portscan/syn):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   BATCHSIZE  256              yes       The number of hosts to scan per set
+   DELAY      0                yes       The delay between connections, per thread, in milliseconds
+   INTERFACE                   no        The name of the interface
+   JITTER     0                yes       The delay jitter factor (maximum value by which to +/- DELAY) in milliseconds.
+   PORTS      1-10000          yes       Ports to scan (e.g. 22-25,80,110-900)
+   RHOSTS                      yes       The target address range or CIDR identifier
+   SNAPLEN    65535            yes       The number of bytes to capture
+   THREADS    1                yes       The number of concurrent threads
+   TIMEOUT    500              yes       The reply read timeout in milliseconds
+
+msf auxiliary(syn) > set INTERFACE eth0
+INTERFACE => eth0
+msf auxiliary(syn) > set PORTS 80
+PORTS => 80
+msf auxiliary(syn) > set RHOSTS 192.168.1.0/24
+RHOSTS => 192.168.1.0/24
+msf auxiliary(syn) > set THREADS 50
+THREADS => 50
+msf auxiliary(syn) > run
+
+[*] TCP OPEN 192.168.1.1:80
+[*] TCP OPEN 192.168.1.2:80
+[*] TCP OPEN 192.168.1.10:80
+[*] TCP OPEN 192.168.1.109:80
+[*] TCP OPEN 192.168.1.116:80
+[*] TCP OPEN 192.168.1.150:80
+[*] Scanned 256 of 256 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+Here we’ll load up the ‘tcp’ scanner and we’ll use it against another target. As with all the previously mentioned plugins, this uses the RHOSTS option. Remember we can issue the ‘hosts -R‘ command to automatically set this option with the hosts found in our database.
+
+msf > use auxiliary/scanner/portscan/tcp
+msf  auxiliary(tcp) > show options
+
+Module options (auxiliary/scanner/portscan/tcp):
+
+   Name         Current Setting  Required  Description
+   ----         ---------------  --------  -----------
+   CONCURRENCY  10               yes       The number of concurrent ports to check per host
+   DELAY        0                yes       The delay between connections, per thread, in milliseconds
+   JITTER       0                yes       The delay jitter factor (maximum value by which to +/- DELAY) in milliseconds.
+   PORTS        1-10000          yes       Ports to scan (e.g. 22-25,80,110-900)
+   RHOSTS                        yes       The target address range or CIDR identifier
+   THREADS      1                yes       The number of concurrent threads
+   TIMEOUT      1000             yes       The socket connect timeout in milliseconds
+
+msf  auxiliary(tcp) > hosts -R
+
+Hosts
+=====
+
+address         mac                name  os_name  os_flavor  os_sp  purpose  info  comments
+-------         ---                ----  -------  ---------  -----  -------  ----  --------
+172.16.194.172  00:0C:29:D1:62:80        Linux    Ubuntu            server         
+
+RHOSTS => 172.16.194.172
+
+msf  auxiliary(tcp) > show options
+
+Module options (auxiliary/scanner/portscan/tcp):
+
+   Name         Current Setting  Required  Description
+   ----         ---------------  --------  -----------
+   CONCURRENCY  10               yes       The number of concurrent ports to check per host
+   FILTER                        no        The filter string for capturing traffic
+   INTERFACE                     no        The name of the interface
+   PCAPFILE                      no        The name of the PCAP capture file to process
+   PORTS        1-1024           yes       Ports to scan (e.g. 22-25,80,110-900)
+   RHOSTS       172.16.194.172   yes       The target address range or CIDR identifier
+   SNAPLEN      65535            yes       The number of bytes to capture
+   THREADS      10                yes       The number of concurrent threads
+   TIMEOUT      1000             yes       The socket connect timeout in milliseconds
+
+msf  auxiliary(tcp) > run
+
+[*] 172.16.194.172:25 - TCP OPEN
+[*] 172.16.194.172:23 - TCP OPEN
+[*] 172.16.194.172:22 - TCP OPEN
+[*] 172.16.194.172:21 - TCP OPEN
+[*] 172.16.194.172:53 - TCP OPEN
+[*] 172.16.194.172:80 - TCP OPEN
+[*] 172.16.194.172:111 - TCP OPEN
+[*] 172.16.194.172:139 - TCP OPEN
+[*] 172.16.194.172:445 - TCP OPEN
+[*] 172.16.194.172:514 - TCP OPEN
+[*] 172.16.194.172:513 - TCP OPEN
+[*] 172.16.194.172:512 - TCP OPEN
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+msf  auxiliary(tcp) > 
+
+We can see that Metasploit’s built-in scanner modules are more than capable of finding systems and open ports for us. It’s just another excellent tool to have in your arsenal if you happen to be running Metasploit on a system without Nmap installed.
+SMB Version Scanning
+
+Now that we have determined which hosts are available on the network, we can attempt to determine the operating systems they are running. This will help us narrow down our attacks to target a specific system and will stop us from wasting time on those that aren’t vulnerable to a particular exploit.
+
+Since there are many systems in our scan that have port 445 open, we will use the scanner/smb/version module to determine which version of Windows is running on a target and which Samba version is on a Linux host.
+
+msf > use auxiliary/scanner/smb/smb_version
+msf auxiliary(smb_version) > set RHOSTS 192.168.1.200-210
+RHOSTS => 192.168.1.200-210
+msf auxiliary(smb_version) > set THREADS 11
+THREADS => 11
+msf auxiliary(smb_version) > run
+
+[*] 192.168.1.209:445 is running Windows 2003 R2 Service Pack 2 (language: Unknown) (name:XEN-2K3-FUZZ) (domain:WORKGROUP)
+[*] 192.168.1.201:445 is running Windows XP Service Pack 3 (language: English) (name:V-XP-EXPLOIT) (domain:WORKGROUP)
+[*] 192.168.1.202:445 is running Windows XP Service Pack 3 (language: English) (name:V-XP-DEBUG) (domain:WORKGROUP)
+[*] Scanned 04 of 11 hosts (036% complete)
+[*] Scanned 09 of 11 hosts (081% complete)
+[*] Scanned 11 of 11 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+Also notice that if we issue the hosts command now, the newly-acquired information is stored in Metasploit’s database.
+
+msf auxiliary(smb_version) > hosts
+
+Hosts
+=====
+
+address        mac  name  os_name            os_flavor  os_sp  purpose  info  comments
+-------        ---  ----  -------            ---------  -----  -------  ----  --------
+192.168.1.201             Microsoft Windows  XP         SP3    client         
+192.168.1.202             Microsoft Windows  XP         SP3    client         
+192.168.1.209             Microsoft Windows  2003 R2    SP2    server
+
+ 
+Idle Scanning
+
+Nmap’s IPID Idle scanning allows us to be a little stealthy scanning a target while spoofing the IP address of another host on the network. In order for this type of scan to work, we will need to locate a host that is idle on the network and uses IPID sequences of either Incremental or Broken Little-Endian Incremental. Metasploit contains the module scanner/ip/ipidseq to scan and look for a host that fits the requirements.
+
+In the free online Nmap book, you can find out more information on Nmap Idle Scanning.
+
+msf > use auxiliary/scanner/ip/ipidseq
+msf auxiliary(ipidseq) > show options
+
+Module options (auxiliary/scanner/ip/ipidseq):
+
+   Name       Current Setting  Required  Description
+   ----       ---------------  --------  -----------
+   INTERFACE                   no        The name of the interface
+   RHOSTS                      yes       The target address range or CIDR identifier
+   RPORT      80               yes       The target port
+   SNAPLEN    65535            yes       The number of bytes to capture
+   THREADS    1                yes       The number of concurrent threads
+   TIMEOUT    500              yes       The reply read timeout in milliseconds
+
+msf auxiliary(ipidseq) > set RHOSTS 192.168.1.0/24
+RHOSTS => 192.168.1.0/24
+msf auxiliary(ipidseq) > set THREADS 50
+THREADS => 50
+msf auxiliary(ipidseq) > run
+
+[*] 192.168.1.1's IPID sequence class: All zeros
+[*] 192.168.1.2's IPID sequence class: Incremental!
+[*] 192.168.1.10's IPID sequence class: Incremental!
+[*] 192.168.1.104's IPID sequence class: Randomized
+[*] 192.168.1.109's IPID sequence class: Incremental!
+[*] 192.168.1.111's IPID sequence class: Incremental!
+[*] 192.168.1.114's IPID sequence class: Incremental!
+[*] 192.168.1.116's IPID sequence class: All zeros
+[*] 192.168.1.124's IPID sequence class: Incremental!
+[*] 192.168.1.123's IPID sequence class: Incremental!
+[*] 192.168.1.137's IPID sequence class: All zeros
+[*] 192.168.1.150's IPID sequence class: All zeros
+[*] 192.168.1.151's IPID sequence class: Incremental!
+[*] Auxiliary module execution completed
+
+Judging by the results of our scan, we have a number of potential zombies we can use to perform idle scanning. We’ll try scanning a host using the zombie at 192.168.1.109 and see if we get the same results we had earlier.
+
+msf auxiliary(ipidseq) > nmap -Pn -sI 192.168.1.109 192.168.1.114
+[*] exec: nmap -Pn -sI 192.168.1.109 192.168.1.114
+
+Starting Nmap 5.00 ( http://nmap.org ) at 2009-08-14 05:51 MDT
+Idle scan using zombie 192.168.1.109 (192.168.1.109:80); Class: Incremental
+Interesting ports on 192.168.1.114:
+Not shown: 996 closed|filtered ports
+PORT STATE SERVICE
+135/tcp open msrpc
+139/tcp open netbios-ssn
+445/tcp open microsoft-ds
+3389/tcp open ms-term-serv
+MAC Address: 00:0C:29:41:F2:E8 (VMware)
+
+Nmap done: 1 IP address (1 host up) scanned in 5.56 seconds
+
+==
+SMB LOGIN CHECK
+==
+
+Vulnerability Scanning with Metasploit
+Scanning for Access with smb_login
+
+A common situation to find yourself in is being in possession of a valid username and password combination, and wondering where else you can use it. This is where the SMB Login Check Scanner can be very useful, as it will connect to a range of hosts and determine if the username/password combination can access the target.
+
+Keep in mind that this is very “loud” as it will show up as a failed login attempt in the event logs of every Windows box it touches. Be thoughtful on the network you are taking this action on. Any successful results can be plugged into the windows/smb/psexec exploit module (exactly like the standalone tool), which can be used to create Meterpreter Sessions.
+
+msf > use auxiliary/scanner/smb/smb_login
+msf auxiliary(smb_login) > show options
+
+Module options (auxiliary/scanner/smb/smb_login):
+
+   Name              Current Setting  Required  Description
+   ----              ---------------  --------  -----------
+   ABORT_ON_LOCKOUT  false            yes       Abort the run when an account lockout is detected
+   BLANK_PASSWORDS   false            no        Try blank passwords for all users
+   BRUTEFORCE_SPEED  5                yes       How fast to bruteforce, from 0 to 5
+   DB_ALL_CREDS      false            no        Try each user/password couple stored in the current database
+   DB_ALL_PASS       false            no        Add all passwords in the current database to the list
+   DB_ALL_USERS      false            no        Add all users in the current database to the list
+   DETECT_ANY_AUTH   true             no        Enable detection of systems accepting any authentication
+   PASS_FILE                          no        File containing passwords, one per line
+   PRESERVE_DOMAINS  true             no        Respect a username that contains a domain name.
+   Proxies                            no        A proxy chain of format type:host:port[,type:host:port][...]
+   RECORD_GUEST      false            no        Record guest-privileged random logins to the database
+   RHOSTS                             yes       The target address range or CIDR identifier
+   RPORT             445              yes       The SMB service port (TCP)
+   SMBDomain         .                no        The Windows domain to use for authentication
+   SMBPass                            no        The password for the specified username
+   SMBUser                            no        The username to authenticate as
+   STOP_ON_SUCCESS   false            yes       Stop guessing when a credential works for a host
+   THREADS           1                yes       The number of concurrent threads
+   USERPASS_FILE                      no        File containing users and passwords separated by space, one pair per line
+   USER_AS_PASS      false            no        Try the username as the password for all users
+   USER_FILE                          no        File containing usernames, one per line
+   VERBOSE           true             yes       Whether to print output for all attempts
+
+msf auxiliary(smb_login) > set RHOSTS 192.168.1.0/24
+RHOSTS => 192.168.1.0/24
+msf auxiliary(smb_login) > set SMBUser victim
+SMBUser => victim
+msf auxiliary(smb_login) > set SMBPass s3cr3t
+SMBPass => s3cr3t
+msf auxiliary(smb_login) > set THREADS 50
+THREADS => 50
+msf auxiliary(smb_login) > run
+
+[*] 192.168.1.100 - FAILED 0xc000006d - STATUS_LOGON_FAILURE
+[*] 192.168.1.111 - FAILED 0xc000006d - STATUS_LOGON_FAILURE
+[*] 192.168.1.114 - FAILED 0xc000006d - STATUS_LOGON_FAILURE
+[*] 192.168.1.125 - FAILED 0xc000006d - STATUS_LOGON_FAILURE
+[*] 192.168.1.116 - SUCCESSFUL LOGIN (Unix)
+[*] Auxiliary module execution completed
+
+msf auxiliary(smb_login) >
+
+
+==
+Service Identification
+==
+
+
+Information gathering with Metasploit
+Scanning Services Using Metasploit
+
+Again, other than using Nmap to perform scanning for services on our target network, Metasploit also includes a large variety of scanners for various services, often helping you determine potentially vulnerable running services on target machines.
+Contents
+
+    1 SSH Service
+    2 FTP Service
+
+SSH Service
+
+A previous scan shows us we have TCP port 22 open on two machines. SSH is very secure but vulnerabilities are not unheard of and it always pays to gather as much information as possible from your targets.
+
+msf > services -p 22 -c name,port,proto
+
+Services
+========
+
+host            name  port  proto
+----            ----  ----  -----
+172.16.194.163  ssh   22    tcp
+172.16.194.172  ssh   22    tcp
+
+We’ll load up the ‘ssh_version‘ auxiliary scanner and issue the ‘set‘ command to set the ‘RHOSTS‘ option. From there we can run the module by simple typing ‘run’
+
+msf > use auxiliary/scanner/ssh/ssh_version
+
+msf  auxiliary(ssh_version) > set RHOSTS 172.16.194.163 172.16.194.172
+RHOSTS => 172.16.194.163 172.16.194.172
+
+msf  auxiliary(ssh_version) > show options
+
+Module options (auxiliary/scanner/ssh/ssh_version):
+
+   Name     Current Setting                Required  Description
+   ----     ---------------                --------  -----------
+   RHOSTS   172.16.194.163 172.16.194.172  yes       The target address range or CIDR identifier
+   RPORT    22                             yes       The target port
+   THREADS  1                              yes       The number of concurrent threads
+   TIMEOUT  30                             yes       Timeout for the SSH probe
+
+
+msf  auxiliary(ssh_version) > run
+
+[*] 172.16.194.163:22, SSH server version: SSH-2.0-OpenSSH_5.3p1 Debian-3ubuntu7
+[*] Scanned 1 of 2 hosts (050% complete)
+[*] 172.16.194.172:22, SSH server version: SSH-2.0-OpenSSH_4.7p1 Debian-8ubuntu1
+[*] Scanned 2 of 2 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+FTP Service
+
+Poorly configured FTP servers can frequently be the foothold you need in order to gain access to an entire network so it always pays off to check to see if anonymous access is allowed whenever you encounter an open FTP port which is usually on TCP port 21. We’ll set the THREADS to 1 here as we’re only going to scan 1 host.
+
+msf > services -p 21 -c name,proto
+
+Services
+========
+
+host            name  proto
+----            ----  -----
+172.16.194.172  ftp   tcp
+
+msf > use auxiliary/scanner/ftp/ftp_version 
+
+msf  auxiliary(ftp_version) > set RHOSTS 172.16.194.172
+RHOSTS => 172.16.194.172
+
+msf  auxiliary(anonymous) > show options
+Module options (auxiliary/scanner/ftp/anonymous):
+
+   Name     Current Setting      Required  Description
+   ----     ---------------      --------  -----------
+   FTPPASS  mozilla@example.com  no        The password for the specified username
+   FTPUSER  anonymous            no        The username to authenticate as
+   RHOSTS   172.16.194.172       yes       The target address range or CIDR identifier
+   RPORT    21                   yes       The target port
+   THREADS  1                    yes       The number of concurrent threads
+
+msf  auxiliary(anonymous) > run
+
+[*] 172.16.194.172:21 Anonymous READ (220 (vsFTPd 2.3.4))
+[*] Scanned 1 of 1 hosts (100% complete)
+[*] Auxiliary module execution completed
+
+In a short amount of time and with very little work, we are able to acquire a great deal of information about the hosts residing on our network thus providing us with a much better picture of what we are facing when conducting our penetration test.
+
+There are obviously too many scanners for us to show case. It is clear however the Metasploit Framework is well suited for all your scanning and identification needs.
+
+msf > use auxiliary/scanner/
+Display all 485 possibilities? (y or n)
+
+...snip...
+
+
+==
+Nessus via MSFconsole
+==
+
+
+Vulnerability Scanning with Metasploit
+Nessus Vulnerability Scanning Directly in Metasploit
+
+For those situations where we choose to remain at the command line, there is also the option to connect to a Nessus version 4.4.x server directly from within msfconsole. The Nessus Bridge, written by Zate and covered in detail at http://blog.zate.org/2010/09/26/nessus-bridge-for-metasploit-intro/ uses xmlrpc to connect to a server instance of Nessus, allowing us to perform and import a vulnerability scan rather than doing a manual import.
+
+We begin by first loading the Nessus Bridge Plugin.
+
+msf > load nessus
+[*] Nessus Bridge for Metasploit 1.1
+[+] Type nessus_help for a command listing
+[*] Successfully loaded plugin: nessus
+
+Running ‘nessus_help‘ will display the msfconole commands now available to us. As you can see, it is quite full-featured.
+
+msf > nessus_help
+[+] Nessus Help
+[+] type nessus_help command for help with specific commands
+
+Command                    Help Text
+-------                    ---------
+Generic Commands          
+-----------------          -----------------
+nessus_connect             Connect to a nessus server
+nessus_logout              Logout from the nessus server
+nessus_help                Listing of available nessus commands
+nessus_server_status       Check the status of your Nessus Server
+nessus_admin               Checks if user is an admin
+nessus_server_feed         Nessus Feed Type
+nessus_find_targets        Try to find vulnerable targets from a report
+                          
+Reports Commands          
+-----------------          -----------------
+nessus_report_list         List all Nessus reports
+nessus_report_get          Import a report from the nessus server in Nessus v2 format
+nessus_report_hosts        Get list of hosts from a report
+nessus_report_host_ports   Get list of open ports from a host from a report
+nessus_report_host_detail  Detail from a report item on a host
+                          
+Scan Commands             
+-----------------          -----------------
+nessus_scan_new            Create new Nessus Scan
+nessus_scan_status         List all currently running Nessus scans
+...snip...
+
+Prior to beginning, we need to connect to the Nessus server on our network. Note that we need to add ‘ok‘ at the end of the connection string to acknowledge the risk of man-in-the-middle attacks being possible.
+
+msf > nessus_connect dook:s3cr3t@192.168.1.100
+[-] Warning: SSL connections are not verified in this release, it is possible for an attacker
+[-]          with the ability to man-in-the-middle the Nessus traffic to capture the Nessus
+[-]          credentials. If you are running this on a trusted network, please pass in 'ok'
+[-]          as an additional parameter to this command.
+msf > nessus_connect dook:s3cr3t@192.168.1.100 ok
+[*] Connecting to https://192.168.1.100:8834/ as dook
+[*] Authenticated
+msf >
+
+To see the scan policies that are available on the server, we issue the ‘nessus_policy_list‘ command. If there are not any policies available, this means that you will need to connect to the Nessus GUI and create one before being able to use it.
+
+msf > nessus_policy_list
+[+] Nessus Policy List
+
+ID  Name       Owner  visability
+--  ----       -----  ----------
+1   the_works  dook   private
+
+msf >
+
+To run a Nessus scan using our existing policy, use the command ‘nessus_scan_new‘ followed by the policy ID number, a name for your scan, and the target.
+
+msf > nessus_scan_new
+[*] Usage:
+[*]        nessus_scan_new policy id scan name targets
+[*]        use nessus_policy_list to list all available policies
+msf > nessus_scan_new 1 pwnage 192.168.1.161
+[*] Creating scan from policy number 1, called "pwnage" and scanning 192.168.1.161
+[*] Scan started.  uid is 9d337e9b-82c7-89a1-a194-4ef154b82f624de2444e6ad18a1f
+msf >
+
+To see the progress of our scan, we run ‘nessus_scan_status‘. Note that there is no progress indicator so we keep running the command until we see the message ‘No Scans Running‘.
+
+msf > nessus_scan_status
+[+] Running Scans
+
+Scan ID                                               Name    Owner  Started            Status   Current Hosts  Total Hosts
+-------                                               ----    -----  -------            ------   -------------  -----------
+9d337e9b-82c7-89a1-a194-4ef154b82f624de2444e6ad18a1f  pwnage  dook   19:39 Sep 27 2010  running  0              1
+
+
+[*] You can:
+[+]         Import Nessus report to database :     nessus_report_get reportid
+[+]         Pause a nessus scan :             nessus_scan_pause scanid
+msf > nessus_scan_status
+[*] No Scans Running.
+[*] You can:
+[*]         List of completed scans:         nessus_report_list
+[*]         Create a scan:                   nessus_scan_new policy id scan name target(s)
+msf >
+
+When Nessus completes the scan, it generates a report for us with the results. To view the list of available reports, we run the ‘nessus_report_list‘ command. To import a report, we run ‘nessus_report_get‘ followed by the report ID.
+
+msf > nessus_report_list
+[+] Nessus Report List
+
+ID                                                    Name    Status     Date
+--                                                    ----    ------     ----
+9d337e9b-82c7-89a1-a194-4ef154b82f624de2444e6ad18a1f  pwnage  completed  19:47 Sep 27 2010
+
+[*] You can:
+[*]         Get a list of hosts from the report:          nessus_report_hosts report id
+msf > nessus_report_get
+[*] Usage:
+[*]        nessus_report_get report id
+[*]        use nessus_report_list to list all available reports for importing
+msf > nessus_report_get 9d337e9b-82c7-89a1-a194-4ef154b82f624de2444e6ad18a1f
+[*] importing 9d337e9b-82c7-89a1-a194-4ef154b82f624de2444e6ad18a1f
+msf >
+
+With the report imported, we can list the hosts and vulnerabilities just as we could when importing a report manually.
+
+msf > hosts -c address,vulns
+
+Hosts
+=====
+
+address        vulns
+-------        -----
+192.168.1.161  33
+
+msf > vulns
+[*] Time: 2010-09-28 01:51:37 UTC Vuln: host=192.168.1.161 port=3389 proto=tcp name=NSS-10940 refs=
+[*] Time: 2010-09-28 01:51:37 UTC Vuln: host=192.168.1.161 port=1900 proto=udp name=NSS-35713 refs=
+[*] Time: 2010-09-28 01:51:37 UTC Vuln: host=192.168.1.161 port=1030 proto=tcp name=NSS-22319 refs=
+[*] Time: 2010-09-28 01:51:37 UTC Vuln: host=192.168.1.161 port=445 proto=tcp name=NSS-10396 refs=
+[*] Time: 2010-09-28 01:51:38 UTC Vuln: host=192.168.1.161 port=445 proto=tcp name=NSS-10860 refs=CVE-2000-1200,BID-959,OSVDB-714
+[*] Time: 2010-09-28 01:51:38 UTC Vuln: host=192.168.1.161 port=445 proto=tcp name=NSS-10859 refs=CVE-2000-1200,BID-959,OSVDB-715
+[*] Time: 2010-09-28 01:51:39 UTC Vuln: host=192.168.1.161 port=445 proto=tcp name=NSS-18502 refs=CVE-2005-1206,BID-13942,IAVA-2005-t-0019
+[*] Time: 2010-09-28 01:51:40 UTC Vuln: host=192.168.1.161 port=445 proto=tcp name=NSS-20928 refs=CVE-2006-0013,BID-16636,OSVDB-23134
+[*] Time: 2010-09-28 01:51:41 UTC Vuln: host=192.168.1.161 port=445 proto=tcp name=NSS-35362 refs=CVE-2008-4834,BID-31179,OSVDB-48153
+[*] Time: 2010-09-28 01:51:41 UTC Vuln: host=192.168.1.161
+...snip...
+
+Nessus plugin loaded in msfconsole | Metasploit Unleashed
+
+Nessus plugin loaded in msfconsole | Metasploit Unleashed
+
+You should now have an understanding of how to manually import Nessus scan results as well as use the Nessus Bridge plugin directly within the Metasploit Framework to scan for vulnerabilities.

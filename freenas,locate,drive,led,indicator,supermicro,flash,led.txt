@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FREENAS LOCATE DRIVE ON SUPERMICRO CHASSIS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-10-28[Oct-Sat]12-31PM 
+
+#https://serverfault.com/questions/480524/identify-disks-on-supermicro-server-running-freebsd
+
+sesutil locate da4 on
+sesutil locate da4 off

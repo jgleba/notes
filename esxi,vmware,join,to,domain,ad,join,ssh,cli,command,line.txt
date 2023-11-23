@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ESXI JOIN TO DOMAIN FROM SSH CLI
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-26[Jan-Sun]11-22AM 
+
+##https://kb.vmware.com/s/article/52984
+
+/usr/lib/vmware/likewise/bin/domainjoin-cli join AD_Domain_Name AD_Username
+
+/usr/lib/vmware/likewise/bin/domainjoin-cli join domain.local domain\user

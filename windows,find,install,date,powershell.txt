@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FIND WINDOWS INSTALL DATE, BETTER THAN SYSTEM INFO BECAUSE INSTALLING NEW BUILD CHANGES DATE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-09[Feb-Wed]08-52AM 
+
+POWERSHELl
+
+$OS=@(Get-ChildItem -Path HKLM:\System\Setup\Source* | ForEach-Object {Get-ItemProperty -Path Registry::$_}; Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion')
+$OS | Select-Object ProductName, ReleaseID, CurrentBuild, @{Name='InstallDate'; Expression={[timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($_.InstallDate))}} | Sort-Object "InstallDate"

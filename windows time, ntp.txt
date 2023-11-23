@@ -1,0 +1,23 @@
+WINDOWS TIME FIX
+================
+
+DID ON DC, WORKED TO SET SERVERS
+
+net stop w32time
+w32tm /config /manualpeerlist:"0.ca.pool.ntp.org 1.ca.pool.ntp.org 2.ca.pool.ntp.org" /syncfromflags:MANUAL /reliable:yes
+net start w32time
+w32tm /resync
+
+
+TRIED ON CLIENT, KIND OF WORKED
+
+w32tm /config /syncfromflags:DOMHIER
+w32tm /config /update /syncfromflags:DOMHIER
+w32tm /resync
+
+
+WORKED TO RESYNC TO DC
+
+net time \\dc /set /y
+net time \\pcname /set /y
+net time \\192.168.106.1 /set /y

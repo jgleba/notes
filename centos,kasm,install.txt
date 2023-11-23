@@ -1,0 +1,24 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KASM INSTALL CENTOS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-19[Jan-Wed]10-18AM 
+
+##https://kasmweb.com/docs/latest/install/single_server_install.html
+
+##DOWNLOAD KASM
+
+https://www.kasmweb.com/downloads.html
+
+sudo wget https://kasm-static-content.s3.amazonaws.com/kasm_release_1.10.0.238225.tar.gz
+sudo tar -xvf kasm_release_1.10.0.238225.tar.gz
+cd kasm_release
+
+##INSTALL KASM
+
+sudo bash install.sh
+
+ENABLE DOCKER ON BOOT, WASNT WORKING AFTER REBOOT
+
+sudo systemctl enable docker

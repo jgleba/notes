@@ -1,0 +1,8 @@
+=========================
+SCP WITH NON DEFAULT PORT
+091019
+=========================
+
+#https://stackoverflow.com/questions/10341032/scp-with-port-number-specified
+
+scp -P PORT SOURCEFILE USER@HOST

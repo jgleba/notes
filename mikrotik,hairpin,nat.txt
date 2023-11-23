@@ -1,0 +1,36 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK HAIRPIN NAT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-10-09[Oct-Sat]17-23PM 
+
+add action=dst-nat chain=dstnat comment="HTTP to FELB-TEST" dst-port=80 in-interface=ether1 protocol=tcp to-addresses=172.16.3.209 to-ports=80
+
+add action=masquerade chain=srcnat dst-address=172.16.3.209 dst-port=80 out-interface=bridge1 protocol=tcp src-address=172.19.0.0/24
+add action=dst-nat chain=dstnat dst-address-type=local dst-port=80 protocol=tcp to-addresses=172.16.3.209 to-ports=80
+
+add action=dst-nat chain=dstnat comment="HTTPS to FELB-TEST" dst-port=443 in-interface=ether1 protocol=tcp to-addresses=172.16.3.209 to-ports=443
+
+add action=masquerade chain=srcnat dst-address=172.16.3.209 dst-port=443 out-interface=bridge1 protocol=tcp src-address=172.19.0.0/24
+add action=dst-nat chain=dstnat dst-address-type=local dst-port=443 protocol=tcp to-addresses=172.16.3.209 to-ports=443
+
+
+==
+
+add action=dst-nat chain=dstnat comment="HTTP to FELB-TEST" dst-port=80 in-interface=ether1 protocol=tcp to-addresses=172.16.3.209 \
+    to-ports=80
+add action=dst-nat chain=dstnat dst-address-type=local dst-port=80 protocol=tcp to-addresses=172.16.3.209 to-ports=80
+
+add action=dst-nat chain=dstnat comment="HTTPS to FELB-TEST" dst-port=443 in-interface=ether1 protocol=tcp to-addresses=172.16.3.209 \
+    to-ports=443
+
+
+
+
+add action=dst-nat chain=dstnat dst-address-type=local dst-port=80 protocol=tcp to-addresses=172.16.3.190 to-ports=80
+add action=dst-nat chain=dstnat dst-address-type=local dst-port=443 protocol=tcp to-addresses=172.16.3.190 to-ports=443
+
+
+add action=dst-nat chain=dstnat dst-address-type=local dst-port=80 protocol=tcp to-addresses=172.16.3.190 to-ports=80
+

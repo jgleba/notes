@@ -1,0 +1,18 @@
+LINUX PROCESS COMMANDS
+======================
+
+sudo chkconfig --list
+ 
+sudo service --status-all
+ 
+sudo netstat -tulpn
+ 
+sudo systemctl list-unit-files
+ 
+systemd-cgtop
+
+==
+
+SHOWS FULL PS OUTPUT, NOT CUT OFF
+
+ps -auxww

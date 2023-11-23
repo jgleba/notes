@@ -1,0 +1,7 @@
+==================================
+DISK, PERFORMANCE, TROUBLESHOOTING
+071219
+GOOD IDEAS
+==================================
+
+#https://mjanja.ch/2013/03/troubleshooting-glusterfs-performance-issues/

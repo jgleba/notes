@@ -1,0 +1,111 @@
+##CENTOS7 KICKSTART INSTALL FILE
+##JGLEBA
+##111519
+##MOST TAKEN FROM
+##https://www.alteeve.com/w/File_c6_minimal.ks
+##https://docs.centos.org/en-US/centos/install-guide/adminoptions/
+##https://docs.centos.org/en-US/centos/install-guide/Kickstart2/
+##https://unix.stackexchange.com/questions/481990/kickstart-netinstall-ignores-kickstart-file-hosted-in-lan-and-proceeds-with-manu
+##https://github.com/joyent/mi-centos-7/blob/master/ks.cfg
+##https://github.com/archonik/centos-7-kickstart-example/blob/master/ks.cfg
+
+#version=RHEL7
+
+install
+
+# Use text install
+text
+
+# Use graphical install
+#graphical
+
+# Keyboard layouts
+keyboard 'us'
+#keyboard --vckeymap=us --xlayouts='us'
+
+# System language
+lang en_US.UTF-8
+
+# System timezone
+##timezone America/Toronto --isUtc --nontp
+timezone America/Toronto --isUtc --ntpservers=0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.centos.pool.ntp.org,3.centos.pool.ntp.org
+
+# Use network installation
+url --url="http://172.16.0.45/images/os/centos7-1908"
+
+# Set repo to mirror.centos.org
+repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+repo --name="Updates" --baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+
+# This sets the (first) ethernet device. There is currently no way to map
+# device names to physical interfaces. For this reason, I use DHCP for install
+# and configure the network manually post-install.
+network --device eth0 --bootproto dhcp --onboot yes --hostname centos.local
+
+# This is the root user's password, which is "initial". To change this, set the
+# password you want for a user on an existing system. Once set, look in
+# '/etc/shadow' for the line starting with the user name whom you set the
+# password for. Here is an example for the user 'digimer':
+# digimer:$6$YEoLNxHI$cu/673fGD/BPqfJ1RCd0F6ZRqHhkfbI6HPdy1YuKBoxA6AW7eyyWC2NmkQ/czP1dzXfBn5uJbdn/HR84i.WhO1:14896:0:99999:7:::
+# The part to copy below falls between the first and second ':' character.
+authconfig --enableshadow --passalgo=sha512 --enablefingerprint
+
+# Do not configure the X Window System
+skipx
+
+##SE Linux OFF
+selinux --disabled
+
+# Given how often I rebuild machines, I like to pre-define the initial user and
+# thus skip 'firstboot' to save time.
+firstboot --disable
+
+# Clear the Master Boot Record
+zerombr
+# Partition clearing information
+#clearpart --all
+clearpart --all --initlabel
+
+# System bootloader and partition configuration
+##WORKS BUT VERY AUTO, ADDS SWAP, LVM
+#bootloader --location=mbr
+#autopart --type=lvm
+##TRYING - 112219 - WORKS - NO SWAP, 500MB BOOT DRIVE, CREATES SDA2 AS MAIN HDD
+part /boot --fstype ext4 --size=512
+part /     --fstype ext4 --size=1 --grow
+#part swap  --asprimary   --size=8192
+
+# Accept EULA
+eula --agreed
+
+rootpw --iscrypted pass
+user --groups=wheel --name=user --password=pass --iscrypted --gecos="user"
+
+# These options allow me to disable and enable services. Given that we're
+# building servers, I particularly like to replace 'NetworkManager' with the
+# simpler, and more static, 'network' service. If you want to add additional
+# services, seperate the service names with commans. (ie: foo,bar,baz).
+services --disabled NetworkManager,iptables,iptables,ip6tables
+services --enabled network
+
+%packages
+@Base
+@Core
+nano
+wget
+#check-mk-agent
+xinetd
+#net-tools
+%end
+
+%post
+sudo su -c "bash <(curl -u user:pass http://172.16.0.45/0/jstart/1jc-pre-start.sh)" root
+%end
+
+# Restart after installation
+reboot
+
+#NOTWORKING
+# Post-installation
+#/usr/bin/yum -y update
+#/bin/yum -y update

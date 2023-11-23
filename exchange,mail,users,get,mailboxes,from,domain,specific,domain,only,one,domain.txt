@@ -1,0 +1,6 @@
+GET MAILBOXES FROM SPECIFIC DOMAIN
+060319
+
+http://blog.cloudbusiness.com/quick-tip-find-users-with-specific-email-domain-using-powershell
+
+Get-Mailbox -Filter { WindowsEmailAddress -like "*@example.com" }

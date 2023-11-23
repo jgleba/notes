@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS DISABLE LOCKING AND LOCK SCREEN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-19[Feb-Fri]09-11AM 
+
+##https://www.howtogeek.com/howto/windows-vista/disableenable-lock-workstation-functionality-windows-l/
+
+REG KEY
+
+HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\
+
+CREATE NEW KEY 'System'
+
+CREATE NEW 32BIT VALUE 'DisableLockWorkstation'
+
+VALUE 1
+

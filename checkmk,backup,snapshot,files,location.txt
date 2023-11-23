@@ -1,0 +1,6 @@
+CHECKMK BACKUP SNAPSHOT
+101819
+
+sudo find / | grep wato-snapshot-2019-10-18-19-47-48.tar
+/opt/omd/sites/jgleba/var/check_mk/wato/snapshots/wato-snapshot-2019-10-18-19-47-48.tar
+[user@coscmk version]$

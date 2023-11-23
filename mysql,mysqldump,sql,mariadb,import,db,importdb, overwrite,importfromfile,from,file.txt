@@ -1,0 +1,15 @@
+mysql import database contents from file
+
+mysql -u user -p database < database.sql
+
+mysql -f -u user -p database < database.sql
+
+mysql -h 172.16.3.30 --port 6116 -u root -p < wpgreeen_mysqldump.sql
+
+mysql -u dbuser -p wpgreeen < wpgreeen_mysqldump.sql
+
+
+mysql -u dbuser -p wpgreeen < wpgreeen_mysqldump.sql
+
+mysql -u dbuser -p wpshop < wpshop_mysqldump.sql
+mysql -u dbuser -p wpcl < wpcl_mysqldump.sql

@@ -1,0 +1,9 @@
+"C:\Program Files\VMware\vCenter Server\vmafdd\dir-cli.exe" trustedcert publish --chain --cert /etc/ssl/vctr-full.pem
+
+/usr/lib/vmware-vmafd/bin/dir-cli trustedcert publish --chain --cert /etc/ssl/vctr-full.pem
+
+sudo /usr/lib/vmware-vmca/bin/certificate-manager
+
+==
+
+cat /var/log/vmware/vmcad/certificate-manager.log

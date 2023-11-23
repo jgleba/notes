@@ -1,0 +1,22 @@
+RDS CERT CHANGE
+111022
+
+https://www.reddit.com/r/sysadmin/comments/xvm6k9/a_small_win_set_up_automatic_certificate_cycling/
+
+==
+
+Set-RDActiveManagementServer -ManagementServer "cb1.corp.redacted.com"
+    
+$Password = ConvertTo-SecureString -String "redacted" -AsPlainText 
+
+-Force
+Set-RDCertificate -Role RDRedirector -ImportPath "\\fs1\it\certificates\redacted.pfx" -Password $Password -ConnectionBroker "cb1.corp.redacted.com" 
+
+-Force
+Set-RDCertificate -Role RDGateway -ImportPath "\\fs1\it\certificates\redacted.pfx" -Password $Password -ConnectionBroker "cb1.corp.redacted.com"
+
+-Force
+Set-RDCertificate -Role RDWebAccess -ImportPath "\\fs1\it\certificates\redacted.pfx" -Password $Password -ConnectionBroker "cb1.corp.redacted.com" 
+
+-Force
+Set-RDCertificate -Role RDPublishing -ImportPath "\\fs1\it\certificates\redacted.pfx" -Password $Password -ConnectionBroker "cb1.corp.redacted.com" -Force

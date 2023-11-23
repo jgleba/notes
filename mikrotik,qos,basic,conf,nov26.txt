@@ -1,0 +1,40 @@
+/ip firewall mangle
+add action=mark-packet chain=prerouting comment="Ignore tunnel" disabled=yes \
+    new-packet-mark=p1_in- passthrough=no protocol=tcp src-address=69.58.104.4
+    src-port=8443
+add action=mark-packet chain=postrouting disabled=yes dst-address=69.58.104.4 
+    dst-port=8443 new-packet-mark=p1_out- passthrough=no protocol=tcp
+add action=mark-packet chain=prerouting comment="Voip PR1" disabled=yes \
+    new-packet-mark=p1_in passthrough=no src-address=172.16.25.240
+add action=mark-packet chain=postrouting disabled=yes dst-address=172.16.25.24
+    new-packet-mark=p1_out passthrough=no
+add action=mark-packet chain=prerouting comment="OPENVPN P1" dst-port=1194 \
+    new-packet-mark=p1_in passthrough=no protocol=udp
+add action=mark-packet chain=forward dst-port=1194 new-packet-mark=p1_in \
+    passthrough=no protocol=udp
+add action=mark-packet chain=postrouting dst-port=1194 new-packet-mark=p1_out 
+    passthrough=no protocol=udp
+add action=mark-packet chain=prerouting dst-port=1194 new-packet-mark=p1_in \
+    passthrough=no protocol=tcp
+add action=mark-packet chain=postrouting dst-port=1194 new-packet-mark=p1_out 
+    passthrough=no protocol=tcp
+add action=mark-packet chain=prerouting comment="EVERYTHING ELSE P8" \
+    in-interface=ether1 new-packet-mark=other_in passthrough=no
+add action=mark-packet chain=postrouting new-packet-mark=other_out \
+    out-interface=ether1 passthrough=no
+
+	
+	
+
+	
+queue tree
+add max-limit=25M name=upload parent=global queue=default
+add name=p1_out packet-mark=p1_out parent=upload priority=1 queue=upload
+add name=p2_out packet-mark=p2_out parent=upload priority=2 queue=upload
+add max-limit=10M name=p8_out packet-mark=other_out parent=upload queue=upload
+add max-limit=125M name=download parent=global queue=default
+add name=p1_in packet-mark=p1_in parent=download priority=1 queue=download
+add name=p2_in packet-mark=p2_in parent=download priority=2 queue=download
+add max-limit=75M name=p8_in packet-mark=other_in parent=download queue=download
+
+

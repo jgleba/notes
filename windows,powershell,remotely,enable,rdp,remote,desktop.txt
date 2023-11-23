@@ -1,0 +1,44 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  REMOTELY ENABLE REMOTE DESKTOP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-18[May-Tue]20-14PM 
+
+##https://4sysops.com/archives/enable-remote-desktop-remotely-on-windows-10/
+
+NEITHER WORKS
+
+==
+WMIC
+==
+
+wmic /node:<computer name> process call create 'cmd.exe /c reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f'
+
+wmic /node:rdgw3.domain.local process call create 'cmd.exe /c reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f'
+
+==
+PSEXEC
+==
+
+	
+psexec.exe \\<computer name> reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+
+psexec.exe \\<computer name> netsh firewall set service RemoteDesktop enable
+
+psexec.exe \\rdgw3.domain.local reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+
+
+USING PSDRIVE
+
+cd "HKLM:SYSTEM\CurrentControlSet\Control\Terminal Server"
+
+==
+ANOTHER WAY - HAVENT TRIED - 052821
+==
+
+Enter-PSSession -ComputerName server.domain.local -Credential domainadministrator
+
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"

@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ESXI TUI (TEXT INTERFACE) CONSOLE FROM SSH
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-05-04[May-Mon]14-12PM 
+
+##https://kb.vmware.com/s/article/2039638
+
+enable ssh
+
+dcui
+

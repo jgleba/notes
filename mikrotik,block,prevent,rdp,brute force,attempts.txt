@@ -1,0 +1,12 @@
+Mikrotik Block RDP Brute Force Attempts
+
+/ip firewall filter
+add action=reject chain=forward log-prefix="Blocked – " reject-with=icmp-network-unreachable src-address-list=Blocked
+
+add action=add-src-to-address-list address-list=Blocked address-list-timeout=1w3d chain=forward connection-state=new dst-port=3389 log=yes log-prefix="RDP BRUTEFORCE – " protocol=tcp src-address-list=rdp_stage3
+
+add action=add-src-to-address-list address-list=rdp_stage3 address-list-timeout=5m chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage2
+
+add action=add-src-to-address-list address-list=rdp_stage2 address-list-timeout=5m chain=forward connection-state=new dst-port=3389 protocol=tcp src-address-list=rdp_stage1
+
+add action=add-src-to-address-list address-list=rdp_stage1 address-list-timeout=5m chain=forward connection-state=new dst-port=3389 protocol=tcp

@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POSTFIX FLUSH ALL MESSAGES IN QUEUE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-25[Feb-Tue]10-50AM 
+
+##https://serverfault.com/questions/279803/postfix-how-to-retry-delivery-of-mail-in-queue
+
+postqueue -f

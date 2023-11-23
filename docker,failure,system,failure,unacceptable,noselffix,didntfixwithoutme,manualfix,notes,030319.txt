@@ -1,0 +1,623 @@
+docker, failure, failure - not acceptable failure - 03-03-19
+============================================================
+
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+
+
+
+
+
+
+
+
+
+======
+=====
+======
+
+
+START TO FIX
+
+
+
+
+
+
+======
+=====
+======
+
+
+
+
+
+
+
+
+
+
+[user@webcld1 wallabag1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          0/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          0/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 wallabag1]$ sudo docker pull mariadb
+Using default tag: latest
+latest: Pulling from library/mariadb
+6cf436f81810: Already exists
+987088a85b96: Already exists
+b4624b3efe06: Already exists
+d42beb8ded59: Already exists
+5badffea4c42: Already exists
+6107652a946b: Already exists
+1b31669dbe65: Already exists
+4d884b22dc63: Already exists
+cee72f2b293c: Already exists
+33323ef67397: Already exists
+1b364bf6e762: Already exists
+eda57ae34af9: Already exists
+1858d4218800: Pull complete
+bcf4f917fabf: Pull complete
+Digest: sha256:8260e7e5f4a4eed2f7e4683f409d04fc3ab046f60d2fdb1071b62be679405dd3
+Status: Downloaded newer image for mariadb:latest
+[user@webcld1 wallabag1]$ sudo docker tag mariadb 127.0.0.1:5000/mariadbofficial
+[user@webcld1 wallabag1]$ sudo docker push 127.0.0.1:5000/mariadbofficial
+The push refers to repository [127.0.0.1:5000/mariadbofficial]
+7e3944de42c7: Pushed
+14b11df382a0: Pushed
+40d3e1b3d6b8: Pushed
+b9241d7750f0: Pushed
+485b98d9f143: Pushed
+c4ffbd4d9738: Pushed
+1daa8b28cc39: Pushed
+3e11ee88dc26: Pushed
+da56250be694: Pushed
+c891a91d9209: Pushed
+4b7d93055d87: Pushed
+663e8522d78b: Pushed
+283fb404ea94: Pushed
+bebe7ce6215a: Pushed
+latest: digest: sha256:6d9b8d92e9b73328e36cbdad93396f0d09e33f88a36cbf64a64764a9b14089e4 size: 3240
+[user@webcld1 wallabag1]$ cat docker-compose.yml
+version: '3'
+services:
+  db:
+    image: 127.0.0.1:5000/mariadbofficial
+    volumes:
+      - ./../../appdata/wallabag1/db/data:/var/lib/mysql
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=pass
+
+  redis:
+    image: 127.0.0.1:5000/redisalpineofficial
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+
+  wallabag:
+    image: 127.0.0.1:5000/wallabagofficial
+    #image: 127.0.0.1:5000/wallabag-cust1
+    ports:
+      - "9000:80"
+    volumes:
+      - ./../../appdata/wallabag1/images:/var/www/wallabag/web/assets/images
+#    links:
+#      - db
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+      - SYMFONY__ENV__DATABASE_DRIVER=pdo_mysql
+      - SYMFONY__ENV__DATABASE_HOST=db
+      - SYMFONY__ENV__DATABASE_PORT=3306
+      - SYMFONY__ENV__DATABASE_NAME=wallabag1
+      - SYMFONY__ENV__DATABASE_USER=dbuser
+      - SYMFONY__ENV__DATABASE_PASSWORD=pass
+      - SYMFONY__ENV__DATABASE_CHARSET=utf8mb4
+      #- SYMFONY__ENV__MAILER_HOST=192.168.0.1
+      #- SYMFONY__ENV__MAILER_USER=~
+      #- SYMFONY__ENV__MAILER_PASSWORD=~
+      #- SYMFONY__ENV__FROM_EMAIL=wallabag1@jgleba.com
+      - SYMFONY__ENV__DOMAIN_NAME=https://walla1.jgleba.com
+networks:
+  default:
+    external:
+      name: webcldock10100
+[user@webcld1 wallabag1]$ sudo docker pull redis:alpine
+alpine: Pulling from library/redis
+6c40cc604d8e: Already exists
+e42672a2ca6a: Pull complete
+823e4275fef6: Pull complete
+c2ad7a3b6c3f: Pull complete
+327e62bcfef7: Pull complete
+be5997a801f5: Pull complete
+Digest: sha256:3fa51e0b90b42ed2dd9bd87620fe7c45c43eb4e1f81c83813a78474cbe2f7457
+Status: Downloaded newer image for redis:alpine
+[user@webcld1 wallabag1]$ sudo docker tag redis:alpine 127.0.0.1:5000/redisalpineofficial
+[user@webcld1 wallabag1]$ sudo docker push 127.0.0.1:5000/redisalpineofficial
+The push refers to repository [127.0.0.1:5000/redisalpineofficial]
+a1bac936b595: Pushed
+037789dfbb8e: Pushed
+6746ca29513b: Pushed
+65eb56d27d7e: Pushed
+15d66580d1b2: Pushed
+503e53e365f3: Pushed
+latest: digest: sha256:49c68b2ddb87cb21336d5e14a5b0874e539c6a5c1d5f51fb4b025513acc3316d size: 1571
+[user@webcld1 wallabag1]$
+[user@webcld1 wallabag1]$ sudo docker pull wallabag/wallabag
+Using default tag: latest
+latest: Pulling from wallabag/wallabag
+6c40cc604d8e: Already exists
+1c2f3da0851e: Pull complete
+fff657c1bc37: Pull complete
+63ed883b3486: Pull complete
+Digest: sha256:e461a0d0fa203f2b4169e8f01acd93f63fbb16fe9704779e6f70c591044a0288
+Status: Downloaded newer image for wallabag/wallabag:latest
+[user@webcld1 wallabag1]$ sudo docker tag wallabag/wallabag 127.0.0.1:5000/wallabagofficial
+[user@webcld1 wallabag1]$ sudo docker push 127.0.0.1:5000/wallabagofficial
+The push refers to repository [127.0.0.1:5000/wallabagofficial]
+95b86851de99: Pushed
+6bfe2194b1fa: Pushed
+00b6e78645bc: Pushed
+503e53e365f3: Mounted from redisalpineofficial
+latest: digest: sha256:e461a0d0fa203f2b4169e8f01acd93f63fbb16fe9704779e6f70c591044a0288 size: 1162
+[user@webcld1 wallabag1]$ sudo docker stack deploy -c docker-compose.yml wallabag1
+Updating service wallabag1_wallabag (id: d785d8ecosfowu41movxinxyj)
+Updating service wallabag1_db (id: g2adb7laeojmojhmzx7jy2mvf)
+Updating service wallabag1_redis (id: jkcn7jeptv0efzthli0hrpk9h)
+[user@webcld1 wallabag1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 wallabag1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 wallabag1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 wallabag1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          0/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 wallabag1]$ cd ..
+[user@webcld1 appconfig]$ cd mysql1/
+[user@webcld1 mysql1]$ cat docker-compose.yml
+version: "3.6"
+services:
+  mysql1:
+    image: 127.0.0.1:5000/mariadbofficial
+    volumes:
+       - ./../../appdata/mysql1:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+      - MYSQL_USER=dbuser
+      - MYSQL_PASSWORD=pass
+networks:
+  default:
+    external:
+      name: webcldock10100
+[user@webcld1 mysql1]$ sudo docker stack deploy -c docker-compose.yml mysql1
+WARN[0000] network default: network.external.name is deprecated in favor of network.name
+Updating service mysql1_mysql1 (id: sogteh2fudithq8rnsjodef7v)
+[user@webcld1 mysql1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+6wkeioqu8l47        apache-php56-orange_apache-php56-orange   replicated          0/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+seanhitgqgq9        apache-php56-wiki_apache-php56-wiki       replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-wiki1:latest     *:8087->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+
+
+
+
+
+======
+=====
+======
+
+
+MOSTLY FIXED
+
+
+
+======
+=====
+======
+
+
+
+
+
+
+======
+=====
+======
+
+
+
+
+
+NOT GOOD
+
+
+======
+=====
+======
+
+
+
+
+
+
+
+
+
+[sudo] password for user:
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xusderyvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 appdata]$ cd ..
+[user@webcld1 data]$ ls
+appconfig  appdata
+[user@webcld1 data]$ cd ..
+[user@webcld1 mnt]$ cd data/app
+appconfig/ appdata/
+[user@webcld1 mnt]$ cd data/app
+appconfig/ appdata/
+[user@webcld1 mnt]$ cd data/appconfig/apache-php1
+[user@webcld1 apache-php1]$ ls
+docker-compose.yml  Dockerfile  minimal_021619_Dockerfile
+[user@webcld1 apache-php1]$ cat docker-compose.yml
+version: "3.6"
+services:
+  apache-php1:
+    #image: 127.0.0.1:5000/apache-php-72-cust1
+    image: 127.0.0.1:5000/apache-php-72-cust2
+    #image: 127.0.0.1:5000/apache-php-56-cust2
+    ports:
+      - 8081:80
+    volumes:
+      #- /home/mnt/data/appdata/apache-php1/apachemainconfig/apache2.conf:/etc/apache2/apache2.conf
+      #- ./../../appdata/apache-php1/apachemainconfig:/etc/apache2/apache2.conf
+      - ./../../appdata/apache-php1/config:/etc/apache2/sites-enabled
+      - ./../../appdata/apache-php1/sites:/var/www/html
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+networks:
+  default:
+    external:
+      name: webcldock10100
+[user@webcld1 apache-php1]$ sudo docker build --tag=apache-php-72-cust2 .
+Sending build context to Docker daemon  4.608kB
+Step 1/6 : FROM php:7.2-apache
+
+7.2-apache: Pulling from library/php
+Digest: sha256:40cbc05f865d72daa3dda7359feb8e3a9c79f9551da0aa2a34fe7d30d8454907
+Status: Downloaded newer image for php:7.2-apache
+ ---> f62b4870680c
+Step 2/6 : RUN apt-get update -y && apt-get install -y libpng-dev
+ ---> Using cache
+ ---> e3b355cee1f1
+Step 3/6 : RUN docker-php-ext-install pdo pdo_mysql gd mysqli bcmath
+ ---> Using cache
+ ---> 00bf2f17a143
+Step 4/6 : RUN a2enmod rewrite
+ ---> Using cache
+ ---> d781853c41e6
+Step 5/6 : RUN a2enmod autoindex
+ ---> Using cache
+ ---> 29ab3ad8c9d5
+Step 6/6 : RUN service apache2 restart
+ ---> Using cache
+ ---> 59a732d046c3
+Successfully built 59a732d046c3
+Successfully tagged apache-php-72-cust2:latest
+[user@webcld1 apache-php1]$ sudo docker tag apache-php-72-cust2:latest 127.0.0.1:5000/apache-php-72-cust2
+[user@webcld1 apache-php1]$ sudo docker push 127.0.0.1:5000/apache-php-72-cust2
+The push refers to repository [127.0.0.1:5000/apache-php-72-cust2]
+766a25821e92: Pushed
+8203fe2e32dd: Pushed
+dcdf004dccc0: Pushed
+cd0162692685: Pushed
+7c992b7dcd99: Pushed
+2e9c0f909e90: Pushed
+61475e20b56d: Pushed
+ee268a99f0ee: Pushed
+005a87a63ac9: Pushed
+66fd43b3ea3b: Pushed
+20d941ba3638: Pushed
+eb3e3e0ec224: Pushed
+3843f6b0eab9: Pushed
+63fc1837f67c: Pushed
+c68025fbc229: Pushed
+ec6f4f0a90dc: Pushed
+0a07e81f5da3: Pushed
+latest: digest: sha256:6ed2352bbabb7de7b8d5bce1bc5bdcdebe1d529f1b23be4b6ff914896531bee4 size: 3871
+(reverse-i-search)`t': sudo docker push 127.0.0.1:5000/apache-php-72-cus^C
+[user@webcld1 apache-php1]$ sudo docker stack deploy -c docker-compose.yml apache-php1
+WARN[0000] network default: network.external.name is deprecated in favor of network.name
+Creating service apache-php1_apache-php1
+failed to create service apache-php1_apache-php1: Error response from daemon: rpc error: code = InvalidArgument des                                                                                                                          c = port '8081' is already in use by service 'apache-php72_apache-php1' (xuseryvl211j80cv932bk7skpz3) as an ingress p                                                                                                                          ort
+[user@webcld1 apache-php1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                                                                                                                                                   PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust4:latest     *:8086->80/tcp
+xuseryvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:500                                                                                                                          0/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:500                                                                                                                          0/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:500                                                                                                                          0/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                                                                                                                                              *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:500                                                                                                                          0/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:500                                                                                                                          0/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:500                                                                                                                          0/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:500                                                                                                                          0/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 apache-php1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                         PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:5000/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:5000/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:5000/apache-php-72-cust4:latest     *:8086->80/tcp
+xuseryvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:5000/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:5000/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:5000/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:5000/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                    *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:5000/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:5000/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:5000/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 apache-php1]$ sudo docker stack deploy -c docker-compose.yml apache-php72
+WARN[0000] network default: network.external.name is deprecated in favor of network.name
+Updating service apache-php72_apache-php1 (id: xuseryvl211j80cv932bk7skpz3)
+[user@webcld1 apache-php1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                         PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:5000/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:5000/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:5000/apache-php-72-cust4:latest     *:8086->80/tcp
+xuseryvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:5000/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:5000/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:5000/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:5000/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                    *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:5000/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:5000/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:5000/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 apache-php1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                         PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:5000/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:5000/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:5000/apache-php-72-cust4:latest     *:8086->80/tcp
+xuseryvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:5000/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:5000/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:5000/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:5000/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                    *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:5000/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:5000/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:5000/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 apache-php1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                         PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:5000/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:5000/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:5000/apache-php-72-cust4:latest     *:8086->80/tcp
+xuseryvl211j80        apache-php72_apache-php1                  replicated          1/2                 127.0.0.1:5000/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:5000/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:5000/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:5000/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                    *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:5000/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:5000/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:5000/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 apache-php1]$ watch sudo docker service ls
+[user@webcld1 apache-php1]$ watch sudo docker service ls
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                             IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                ERROR                              PORTS
+lel8m7nrkt0r        apache-php72_apache-php1.1       127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+8laidpv5ty1d         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+qp8agpe5pplo         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+om06ddlb1yoj         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Failed about an hour ago     "task: non-zero exit (255)"
+zio1cyjpdmr2        apache-php72_apache-php1.2       127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running about an hour ago
+[user@webcld1 apache-php1]$ sudo docker stack deploy -c docker-compose.yml apache-php72
+WARN[0000] network default: network.external.name is deprecated in favor of network.name
+Updating service apache-php72_apache-php1 (id: xuseryvl211j80cv932bk7skpz3)
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                             IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                ERROR                              PORTS
+lel8m7nrkt0r        apache-php72_apache-php1.1       127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+8laidpv5ty1d         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+qp8agpe5pplo         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+om06ddlb1yoj         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Failed about an hour ago     "task: non-zero exit (255)"
+zio1cyjpdmr2        apache-php72_apache-php1.2       127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running about an hour ago
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                             IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                ERROR                              PORTS
+lel8m7nrkt0r        apache-php72_apache-php1.1       127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+8laidpv5ty1d         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+qp8agpe5pplo         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+om06ddlb1yoj         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Failed about an hour ago     "task: non-zero exit (255)"
+zio1cyjpdmr2        apache-php72_apache-php1.2       127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running about an hour ago
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                             IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                ERROR                              PORTS
+lel8m7nrkt0r        apache-php72_apache-php1.1       127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+8laidpv5ty1d         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+qp8agpe5pplo         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+om06ddlb1yoj         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Failed about an hour ago     "task: non-zero exit (255)"
+zio1cyjpdmr2        apache-php72_apache-php1.2       127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running about an hour ago
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                             IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                ERROR                              PORTS
+lel8m7nrkt0r        apache-php72_apache-php1.1       127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+8laidpv5ty1d         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+qp8agpe5pplo         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+om06ddlb1yoj         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Failed about an hour ago     "task: non-zero exit (255)"
+zio1cyjpdmr2        apache-php72_apache-php1.2       127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running about an hour ago
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                             IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                ERROR                              PORTS
+lel8m7nrkt0r        apache-php72_apache-php1.1       127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+8laidpv5ty1d         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+qp8agpe5pplo         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Rejected about an hour ago   "No such image: 127.0.0.1:5000…"
+om06ddlb1yoj         \_ apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld1             Shutdown            Failed about an hour ago     "task: non-zero exit (255)"
+zio1cyjpdmr2        apache-php72_apache-php1.2       127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running about an hour ago
+[user@webcld1 apache-php1]$ sudo docker service rm apache-php72_apache-php1
+apache-php72_apache-php1
+[user@webcld1 apache-php1]$ sudo docker stack deploy -c docker-compose.yml apache-php72
+WARN[0000] network default: network.external.name is deprecated in favor of network.name
+Creating service apache-php72_apache-php1
+[user@webcld1 apache-php1]$ sudo docker service ps apache-php72_apache-php1
+ID                  NAME                         IMAGE                                       NODE                DESIRED STATE       CURRENT STATE                    ERROR               PORTS
+u7qtzo8mv7mf        apache-php72_apache-php1.1   127.0.0.1:5000/apache-php-72-cust2:latest   webcld2             Running             Running less than a second ago
+ufg5zjto9ouj        apache-php72_apache-php1.2   127.0.0.1:5000/apache-php-72-cust2:latest   webcld4             Running             Running 4 seconds ago
+[user@webcld1 apache-php1]$ watch sudo docker service ls
+[user@webcld1 apache-php1]$ sudo docker service ls
+ID                  NAME                                      MODE                REPLICAS            IMAGE                                         PORTS
+vctxfy8atljr        apache-php56-orange_apache-php56-orange   replicated          1/1                 127.0.0.1:5000/apache-php-56-orange:latest    *:9010->80/tcp
+tj5fhnas63ng        apache-php56_apache-php3                  replicated          2/2                 127.0.0.1:5000/apache-php-56-cust2:latest     *:8085->80/tcp
+nfvt4z1qh9ae        apache-php56_apache-php4                  replicated          1/1                 127.0.0.1:5000/apache-php-72-cust4:latest     *:8086->80/tcp
+laoy6a2stwis        apache-php72_apache-php1                  replicated          2/2                 127.0.0.1:5000/apache-php-72-cust2:latest     *:8081->80/tcp
+1urxffogpvxr        apache-php72_apache-php2                  replicated          2/2                 127.0.0.1:5000/apache-php-72-cust3:latest     *:8084->80/tcp
+32f813y1qiaa        apache-php72_apache-php6-alpine-test      replicated          1/1                 127.0.0.1:5000/apache-php-72-alpine1:latest   *:8088->80/tcp
+sogteh2fudit        mysql1_mysql1                             replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest         *:3306->3306/tcp
+lht1r7sbtet4        presta1_presta1                           replicated          2/2                 127.0.0.1:5000/prestashopofficial:latest      *:8082->80/tcp
+rdp0xeqv0plz        registry                                  replicated          1/1                 registry:2                                    *:5000->5000/tcp
+s5f1fyjsd78f        visualizer1_visualizer1                   replicated          1/1                 127.0.0.1:5000/visualizerofficial:latest      *:8080->8080/tcp
+g2adb7laeojm        wallabag1_db                              replicated          1/1                 127.0.0.1:5000/mariadbofficial:latest
+jkcn7jeptv0e        wallabag1_redis                           replicated          1/1                 127.0.0.1:5000/redisalpineofficial:latest
+d785d8ecosfo        wallabag1_wallabag                        replicated          1/1                 127.0.0.1:5000/wallabagofficial:latest        *:9000->80/tcp
+[user@webcld1 apache-php1]$

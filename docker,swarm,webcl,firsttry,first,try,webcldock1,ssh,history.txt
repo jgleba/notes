@@ -1,0 +1,1000 @@
+[user@webcldock1 home]$ history
+  229  cd /home/docker/docker-app-config/
+  230  ls
+  231  sudo cp docker-app5-test docker-app6-test
+  232  sudo cp -r docker-app5-test docker-app6-test
+  233  cd docker-app6-test/
+  234  ls
+  235  cd ..
+  236  ls
+  237  sudo cp -r docker-app4-test/* docker-app6-test/
+  238  cd docker-app6-test/
+  239  ls
+  240  sudo rm Dockerfile
+  241  sudo nano docker-compose.yml
+  242  cat docker-compose.yml
+  243  sudo mkdir -p ./../../docker-app-data/docker-app6-test
+  244  cat docker-compose.yml
+  245  sudo nano docker-compose.yml
+  246  sudo cp ./../../docker-app-data/docker-app4-test/index.html ./../../docker-app-data/docker-app6-test/
+  247  cd ..
+  248  cd /home/docker/
+  249  ls -al
+  250  sudo ./docker,scp,files,to,all,nodes.sh
+  251  sudo nano docker-app-config/docker-app6-test/docker-compose.yml
+  252  sudo sysctl -w net.ipv4.neigh.default.gc_thresh1=8096
+  253  sudo sysctl -w net.ipv4.neigh.default.gc_thresh2=12288
+  254  sudo sysctl -w net.ipv4.neigh.default.gc_thresh3=16384
+  255  cd docker-app-config/docker-app6-test/
+  256  ls
+  257  sudo docker stack deploy -c docker-compose.yml
+  258  sudo docker stack deploy -c docker-compose.yml httpd1
+  259  top
+  260  sudo docker service ls
+  261  sudo docker service rm ych6jv94wqzg
+  262  sudo docker stop $(docker ps -aq)
+  263  sudo docker stop $(sudo docker ps -aq)
+  264  sudo docker rm $(sudo docker ps -aq)
+  265  sudo reboot
+  266  sudo docker service ls
+  267  sudo docker service ps
+  268  sudo docker service ps nginx1
+  269  sudo docker service ps nginx
+  270  sudo docker service ps nginx1_nginx
+  271  sudo docker service ls
+  272  sudo docker service rm rixsvs94dl3f
+  273  sudo docker service ls
+  274  sudo docker ps -a
+  275  ls
+  276  cd /home/docker/docker-app-config/
+  277  ls
+  278  cd docker-app2-test/
+  279  ls
+  280  cat docker-compose.yml
+  281  sudo nano docker-compose.yml
+  282  sudo docker stack deploy -c docker-compose.yml apache1
+  283  sudo docker ps -a
+  284  sudo docker service ls
+  285  sudo docker ps -a
+  286  sudo docker service ls
+  287  sudo docker service rm vbpp9jfpcmfg
+  288  ls
+  289  cd ..
+  290  ls
+  291  sudo cp docker-app3-test docker-app4-test
+  292  sudo cp -r docker-app3-test docker-app4-test
+  293  ls -al
+  294  sudo nano docker-app4-test/
+  295  cd sudo nano docker-app4-test/
+  296  ls
+  297  cd docker-app4-test/
+  298  ls
+  299  sudo nano docker-compose.yml
+  300  sudo docker stack deploy -c docker-compose.yml apache1
+  301  docker service scale apache1_nginx=1
+  302  sudo docker service scale apache1_nginx=1
+  303  sudo docker service scale apache1_nginx=100
+  304  sudo docker service scale apache1_nginx=1
+  305  sudo docker service scale apache1_nginx=1000
+  306  sudo docker service scale apache1_nginx=2
+  307  sudo docker service scale apache1_nginx=1
+  308  ls
+  309  cd ..
+  310  ls
+  311  sudo cat docker-app3-test/docker-compose.yml
+  312  sudo cat docker-app2-test/docker-compose.yml
+  313  sudo nano docker-app4-test/docker-compose.yml
+  314  sudo mkdir -p /home/docker/docker-app-data/docker-app4-test
+  315  cd /home/docker/docker-app-data/docker-app4-test
+  316  sudo nano index.html
+  317  ls
+  318  pwd
+  319  cd ..
+  320  cd docker-app-config/
+  321  ls
+  322  cd docker-app4-test/
+  323  ls
+  324  sudo docker stack deploy -c docker-compose.yml apache1
+  325  sudo docker service ls
+  326  sudo nano docker-compose.yml
+  327  sudo docker service rm ze0ykxcvf6zu
+  328  sudo docker stack deploy -c docker-compose.yml apache1
+  329  sudo docker service ls
+  330  sudo nano docker-compose.yml
+  331  top
+  332  sudo watch docker ps -a
+  333  top
+  334  history
+  335  cd /home/docker/docker-app-config/docker-app4-test/
+  336  ls
+  337  cat docker-compose.yml
+  338  cd ..
+  339  sudo cat ./docker-app3-test/docker-compose.yml
+  340  sudo cat ./docker-app2-test/docker-compose.yml
+  341  sudo docker service ls
+  342  sudo docker service rm 5ic5i9snsla4
+  343  sudo docker service ls
+  344  sudo nano docker-app4-test/docker-compose.yml
+  345  sudo docker stack deploy -c docker-compose.yml apache2
+  346  sudo docker stack deploy -c ./docker-app4-test/docker-compose.yml apache2
+  347  sudo docker service ls
+  348  sudo docker service rm 2pa9ri4d2p8c
+  349  pwd
+  350  ls
+  351  ls -al
+  352  cd docker-app4-test/
+  353  ls
+  354  sudo nano docker-compose.yml
+  355  pwd
+  356  sudo scp -rv /home/docker user@172.16.3.216:/home/
+  357  sudo scp -rv /home/docker toor@172.16.3.216:/home/
+  358  sudo scp -rv /home/docker root@172.16.3.216:/home/
+  359  sudo scp -rv /home/docker root@172.16.3.217:/home/
+  360  pwd
+  361  ls
+  362  cd ..
+  363  ls
+  364  cd ..
+  365  ls
+  366  cd docker-app-config/
+  367  ls
+  368  cd ..
+  369  ls
+  370  sudo nano docker,scp,files,to,all,nodes.sh
+  371  sudo chmod +x docker,scp,files,to,all,nodes.sh
+  372  ls a-l
+  373  ls -al
+  374  sudo ./docker,scp,files,to,all,nodes.sh
+  375  ls
+  376  cd docker-app-config/docker-app4-test/
+  377  ls
+  378  sudo nano docker-compose.yml
+  379  sudo cat ./../../docker-app-data/docker-app4-test/index.html
+  380  ls -al
+  381  cat docker-compose.yml
+  382  sudo docker stack deploy -c docker-compose.yml apache2
+  383  sudo docker service ls
+  384  sudo docker ps -a
+  385  sudo docker exec -it e17f74252b0b bash
+  386  sudo docker service ls
+  387  sudo docker service rm zcsbax832x0n
+  388  sudo docker service ls
+  389  sudo nano docker-compose.yml
+  390  sudo docker stack deploy -c docker-compose.yml apache2
+  391  cat docker-compose.yml
+  392  sudo docker service ls
+  393  sudo docker service rm *
+  394  sudo docker service ls
+  395  sudo docker service rm 74sd3eue9r3b
+  396  ls
+  397  sudo docker ps -a
+  398  sudo docker rm 30760d929009
+  399  sudo docker rm f55cc124f098
+  400  sudo docker rm e17f74252b0b
+  401  sudo docker rm fddebd311cf6
+  402  cd ..
+  403  ls
+  404  sudo cp docker-app4-test docker-app5-test
+  405  sudo cp -r docker-app4-test docker-app5-test
+  406  cd docker-app5-test/
+  407  ls
+  408  sudo nano docker-compose.yml
+  409  sudo cat ./../docker-app1-test/docker-compose.yml
+  410  sudo cat ./../docker-app1-test/Dockerfile
+  411  sudo nano docker-compose.yml
+  412  sudo nano Dockerfile
+  413  cd ..
+  414  ls
+  415  cd ..
+  416  ls
+  417  cd docker-app-data/
+  418  ls
+  419  sudo cp -r docker-app4-test docker-app5-test
+  420  ls
+  421  cd docker-app
+  422  cd docker-app5-test
+  423  ls
+  424  cd ..
+  425  ls
+  426  cd ..
+  427  ls
+  428  sudo ./docker,scp,files,to,all,nodes.sh
+  429  ls
+  430  cd docker-app-config/docker-app4-test/
+  431  sudo docker stack deploy -c docker-compose.yml apache1
+  432  sudo docker ps -a
+  433  sudo docker exec -it c4a843b15cf1 bash
+  434  sudo docker service ls
+  435  sudo docker service rm vszg5uh72wto
+  436  ls a-l
+  437  ls
+  438  cd ..
+  439  ls
+  440  cd docker-app5-test/
+  441  ls
+  442  sudo nano docker-compose.yml
+  443  sudo cat Dockerfile
+  444  history
+  445  sudo docker build --tag=flask1 .
+  446  cat docker-compose.yml
+  447  cat Dockerfile
+  448  sudo docker build --tag=httpdcust1 .
+  449  history
+  450  history | grep build
+  451  sudo docker image ls
+  452  sudo nano docker-compose.yml
+  453  sudo docker service ls
+  454  sudo docker stack deploy -c docker-compose.yml apachecust1
+  455  sudo docker service ls
+  456  sudo docker ls -la
+  457  sudo docker ls -a
+  458  sudo docker ps -a
+  459  sudo docker exec -it c4a843b15cf1 bash
+  460  sudo docker ps -a
+  461  sudo docker exec -it d38b1053c7cd bash
+  462  sudo docker service ls
+  463  sudo docker service rm oulrht726u6o
+  464  sudo docker rm $(docker ps -aq)
+  465  sudo docker ps -a
+  466  sudo docker rm $(sudo docker ps -aq)
+  467  sudo docker ps -a
+  468  sudo watch docker service ls
+  469  cd /home/docker/docker-app-config/docker-app6-test/
+  470  sudo nano docker-compose.yml
+  471  sudo docker stack deploy -c docker-compose.yml httpd1
+  472  sudo watch docker service ls
+  473  sudo docker service ls
+  474  sudo docker service rm faovgyjojout
+  475  sudo nano docker-compose.yml
+  476  sudo docker stack deploy -c docker-compose.yml httpd1
+  477  sudo nano docker-compose.yml
+  478  sudo docker stack deploy -c docker-compose.yml httpd1
+  479  sudo docker service ls
+  480  sudo docker service rm p26yyes0t2pv
+  481  sudo docker ps -a
+  482  df -h
+  483  sudo shutdown -h now
+  484  sudo docker service ls
+  485  sudo docker ps -a
+  486  sudo docker service ls
+  487  sudo docker service rm 208cx16cg5b9
+  488  sudo docker service ls
+  489  sudo shutdown -h now
+  490  sudo cd
+  491  sudo docker rm $(sudo docker ps -aq)
+  492  lsa
+  493  ls
+  494  pwd
+  495  ls
+  496  ls -al
+  497  cd ..
+  498  ls -al
+  499  sudo yum install -y centos-release-gluster
+  500  sudo yum install -y glusterfs-server
+  501  sudo systemctl restart glusterd && sudo systemctl enable glusterd
+  502  sudo mkdir -p /home/gl/data /home/mnt/vol1
+  503  sudo firewall-cmd --zone=public --add-port=24007/tcp --permanent
+  504  sudo firewall-cmd --zone=public --add-port=24008/tcp --permanent
+  505  sudo firewall-cmd --zone=public --add-port=49152/tcp --permanent
+  506  sudo firewall-cmd --zone=public --add-port=49153/tcp --permanent
+  507  sudo firewall-cmd --zone=public --add-port=49154/tcp --permanent
+  508  sudo firewall-cmd --zone=public --add-port=24007/udp --permanent
+  509  sudo firewall-cmd --zone=public --add-port=24008/udp --permanent
+  510  sudo firewall-cmd --zone=public --add-port=49152/udp --permanent
+  511  sudo firewall-cmd --zone=public --add-port=49153/udp --permanent
+  512  sudo firewall-cmd --zone=public --add-port=49154/udp --permanent
+  513  sudo firewall-cmd --reload
+  514  sudo gluster peer probe webcldock2
+  515  sudo gluster peer probe webcldock3
+  516  sudo gluster peer status
+  517  sudo gluster volume create swarm-vol1 replica 3 webcldock1:/home/gl/data webcldock2:/home/gl/data webcldock3:/home/gl/data force
+  518  sudo gluster volume set swarm-vol1 auth.allow 127.0.0.1
+  519  sudo gluster volume start swarm-vol1
+  520  sudo nano /etc/fstab
+  521  sudo mount -a
+  522  ls -al
+  523  cd mnt/
+  524  ls
+  525  cd vol1/
+  526  ls
+  527  ls -al
+  528  sudo mount -a
+  529  sudo nano /etc/fstab
+  530  sudo mount -a
+  531  sudo mv /home/docker ./
+  532  ls -al
+  533  ls
+  534  pwd
+  535  sudo mv docker /home
+  536  ls -al
+  537  sudo reboot
+  538  cd /home/mnt/vol1/vovv
+  539  cd /home/mnt/vol1/
+  540  ls -al
+  541  ls a-l
+  542  ls -al
+  543  sudo rm test1.txt
+  544  sudo mv /home/docker ./
+  545  ls -la
+  546  cd /home/
+  547  ls
+  548  sudo ln -s /home/mnt/vol1/docker docker
+  549  ls -al
+  550  cd docker/
+  551  ls
+  552  sudo docker service create --name registry --publish published=5000,target=5000 registry:2
+  553  sudo docker service ls
+  554  sudo docker images ls
+  555  ls
+  556  cd docker-app-config/
+  557  ls
+  558  sudo nano docker-app6-test/docker-compose.yml
+  559  cd ..
+  560  cd docker-app-config/
+  561  ls
+  562*
+  563  ls
+  564  sudo nano docker-compose.yml
+  565  sudo docker build --tag=httpdcust1 .
+  566  sudo docker images ls
+  567*
+  568  docker-compose push
+  569  sudo docker images ls
+  570  sudo firewall-cmd --zone=public --add-port=5000/tcp --permanent
+  571  sudo firewall-cmd --reload
+  572  docker-compose push
+  573  sudo docker stack deploy -c docker-compose.yml httpd1
+  574  sudo docker service ls
+  575  sudo docker images ls
+  576  sudo  docker service ps
+  577  sudo  docker service ps registry
+  578  sudo docker service ls
+  579  sudo docker service rm sdb6p740m6u9
+  580  sudo docker service ls
+  581  sudo docker service ps
+  582  sudo docker service ls
+  583  sudo docker service ps registry
+  584  curl http://localhost:5000/v2/
+  585  sudo docker service ls
+  586  sudo docker node promote webcldock2
+  587  sudo docker node ls
+  588  sudo docker images ls
+  589  sudo docker pull ubuntu:16.04
+  590  sudo docker images ls
+  591  sudo docker tag ubuntu:16.04 localhost:5000/jubuntu
+  592  sudo docker images ls
+  593  sudo docker push localhost:5000/jubuntu
+  594  sudo service l
+  595  sudo service ls
+  596  sudo docker service ls
+  597  sudo nano /etc/hosts
+  598  sudo docker push localhost:5000/jubuntu
+  599  sudo docker push webcldock1:5000/jubuntu
+  600  curl http://localhost:5000/v2/
+  601  curl http://webcldock1:5000/v2/
+  602  curl http://webcldock2:5000/v2/
+  603  curl http://webcldock2:5000
+  604  curl http://localhost:5000/v2/
+  605  sudo service docker resart
+  606  sudo service docker restart
+  607  sudo service docker ls
+  608  sudo docker service ls
+  609  watch sudo docker service ls
+  610  curl http://localhost:5000/v2/
+  611  sudo docker push localhost:5000/jubuntu
+  612  sudo docker images ls
+  613  sudo nano docker-compose.yml
+  614  cat Dockerfile
+  615  sudo docker build --tag=httpdcust1 .
+  616  sudo docker tag httpdcust1:latest localhost:5000/httpdcust1
+  617  sudo docker push localhost:5000/httpdcust1
+  618  sudo nano docker-compose.yml
+  619  sudo docker stack deploy -c docker-compose.yml httpd1
+  620  sudo docker service ls
+  621  sudo docker images ls
+  622  curl -X GET https://localhost:5000/v2/_catalog
+  623  curl -X GET http://localhost:5000/v2/_catalog
+  624  cat docker-compose.yml
+  625  sudo docker ps -a
+  626  sudo docker service ls
+  627  sudo docker service rm ogsdtkurj9mg
+  628  sudo docker service ls
+  629  pwd
+  630  cd ..
+  631  ls
+  632*
+  633  ls
+  634  sudo mkdir docker-wp1-test
+  635  cd docker-wp1-test/
+  636  ls
+  637  sudo cp -r ./../docker-app5-test/* ./
+  638  ls
+  639  sudo nano docker-compose.yml
+  640  ls
+  641  sudo rm Dockerfile
+  642  ls
+  643  sudo nano docker-compose.yml
+  644  sudo docker stack deploy -c docker-compose.yml wp1-test
+  645  sudo docker service ls
+  646  history
+  647  sudo nano docker-compose.yml
+  648  sudo cat ./../docker-app3-test/docker-compose.yml
+  649  sudo cat docker-compose.yml
+  650  cd ..
+  651  ls
+  652  sudo mkdir docker-web-test
+  653  cd docker-web-test/
+  654  ls
+  655  sudo nano docker-compose.yml
+  656  sudo nano Dockerfile
+  657  cat docker-compose.yml
+  658  sudo nano docker-compose.yml
+  659  sudo mkdir -p /home/docker/docker-app-data/docker-web-test/
+  660  sudo nano docker-compose.yml
+  661  sudo cat Dockerfile
+  662  ls
+  663  pw
+  664  pwd
+  665  cat docker-compose.yml
+  666  cat ./../docker-appjglebaY6?(x&SaF`mFW8'v
+  667  cat Dockerfile
+  668  sudo nano docker-compose.yml
+  669  sudo docker build --tag=apache-php-56-cust1 .
+  670  sudo cat ./../docker-app5-test/docker-compose.yml
+  671  sudo nano docker-compose.yml
+  672  history
+  673  sudo docker tag apache-php-56-cust1:latest localhost:5000/apache-php-56-cust1
+  674  sudo docker push localhost:5000/apache-php-56-cust1
+  675  ls
+  676  cd /home/docker/docker-app-data/docker-web-test
+  677  sudo unzip wordpress-4.9.7-en_CA.zip
+  678  sudo yum install unzip
+  679  sudo unzip wordpress-4.9.7-en_CA.zip
+  680  sudo cp ./../docker-app5-test/index.html ./
+  681  sudo nano index.html
+  682  cd /home/docker/docker-app-config/docker-web-test/
+  683  ls
+  684  sudo nano docker-compose.yml
+  685  sudo docker service ls
+  686  sudo docker service rm iim1k0lm9rw4
+  687  sudo docker service ls
+  688  sudo cat ./../docker-app5-test/docker-compose.yml
+  689  sudo cat ./../docker-app4-test/docker-compose.yml
+  690  sudo cat ./../docker-app3-test/docker-compose.yml
+  691  sudo cat ./../docker-app6-test/docker-compose.yml
+  692  sudo nano docker-compose.yml
+  693  sudo docker stack deploy -c docker-compose.yml web-test
+  694  ls
+  695  cat docker-compose.yml
+  696  sudo nano docker-compose.yml
+  697  sudo docker service ls
+  698  sudo nano docker-compose.yml
+  699  sudo docker stack deploy -c docker-compose.yml web-test
+  700  sudo nano docker-compose.yml
+  701  sudo cat ./../docker-app6-test/docker-compose.yml
+  702  sudo nano docker-compose.yml
+  703  sudo docker stack deploy -c docker-compose.yml web-test
+  704  sudo nano docker-compose.yml
+  705  sudo docker stack deploy -c docker-compose.yml web-test
+  706  sudo docker service ls
+  707  sudo docker ls
+  708  sudo docker ps -a
+  709  sudo docker service ls
+  710  sudo nano docker-compose.yml
+  711  cd /home/docker/docker-app-data/docker-
+  712  cd /home/docker/docker-app-data/
+  713  ls
+  714  ls -la
+  715  cd docker-web-test/
+  716  ls
+  717  ls -al
+  718  sudo mkdir config
+  719  ls -al
+  720  sudo mkdir sites
+  721  ls
+  722  sudo mv wordpress ./sites/
+  723  sudo mv wordpress-4.9.7-en_CA.zip ./sites/
+  724  ls
+  725  cd sites/
+  726  ls
+  727  sudo mv wordpress wp
+  728  ls -al
+  729  sudo docker service ls
+  730  sudo docker service rm pbzpc5znnwou
+  731  sudo docker stack deploy -c docker-compose.yml web-test
+  732  cd /home/docker/docker-app-config/docker-web-test/
+  733  ls
+  734  cd /home/docker/docker-app-data/docker-web-test/config/
+  735  ls
+  736  sudo nano wp.webcldocker.jgleba.com.conf
+  737  wpd
+  738  pwd
+  739  cd /home/docker/docker-app-config/docker-web-test/
+  740  ls
+  741  sudo docker stack deploy -c docker-compose.yml web-test
+  742  sudo docker service ls
+  743  ls
+  744  pwd
+  745  cd ..
+  746  cd docker-app-data/docker-
+  747  cd docker-app-data/
+  748  ls
+  749  cd docker-web-test/
+  750  ls
+  751  ls a-l
+  752  ls -al
+  753  sudo chmod -R 775 sites
+  754  ls -al
+  755  cd sites/
+  756  ls
+  757  ls -al
+  758  cd wp/
+  759  ls
+  760  pwd
+  761  sudo docker ps -a
+  762  sudo docker exec -it 7e39e2181ba8 bash
+  763  pwd
+  764  cd ..
+  765  ls
+  766  cd /home/docker/docker-app-config/docker-web-test/docker-compose.yml
+  767  sudo nano /home/docker/docker-app-config/docker-web-test/docker-compose.yml
+  768  sudo docker service ls
+  769  sudo docker service rm yv60h2m3gjqp
+  770  pwd
+  771  sudo docker stack deploy -c /home/docker/docker-app-config/docker-web-test/docker-compose.yml web-test
+  772  sudo docker ps -a
+  773  sudo docker exec -it d1bb309c8ab3 bash
+  774  pwd
+  775  cd ..
+  776  ls
+  777  cd config/
+  778  ls
+  779  sudo nano 000_default.conf
+  780  sudo nano /home/docker/docker-app-config/docker-web-test/docker-compose.yml
+  781  sudo docker service ls
+  782  sudo docker service rm ut52zwxvxgi7
+  783  sudo docker stack deploy -c /home/docker/docker-app-config/docker-web-test/docker-compose.yml web-test
+  784  sudo docker ps -a
+  785  sudo docker exec -it 575dee8a53bb bash
+  786  sudo docker service ls
+  787  sudo docker service rm oy253fajjkp6
+  788  sudo nano /home/docker/docker-app-config/docker-web-test/docker-compose.yml
+  789  sudo nano /home/docker/docker-app-data/docker-web-test/config/wp.webcldocker.jgleba.com.conf
+  790  sudo docker service ls
+  791  sudo docker stack deploy -c /home/docker/docker-app-config/docker-web-test/docker-compose.yml web-test
+  792  ls
+  793  cd ..
+  794  ls
+  795  cd sites/
+  796  ls
+  797  sudo nano wp/wp-config.php
+  798  ls
+  799  sudo unzip wordpress-4.9.7-en_CA.zip
+  800  ls
+  801  sudo mv wordpress wp2
+  802  ls -al
+  803  sudo chmod -R 750 wp
+  804  sudo chmod -R 755 wp
+  805  sudo chmod -R 755 wp2
+  806  cd ..
+  807  ls
+  808  cd config/
+  809  ls
+  810  sudo cp wp.webcldocker.jgleba.com.conf wp2.webcldocker.jgleba.com.conf
+  811  sudo nano wp2.webcldocker.jgleba.com.conf
+  812  sudo docker service ls
+  813  sudo docker service rm grxanlydotl8
+  814  sudo docker stack deploy -c /home/docker/docker-app-config/docker-web-test/docker-compose.yml web-test
+  815  ls
+  816  cd ..
+  817  ls
+  818  cd sites/
+  819  ls
+  820  cd wp2
+  821  sudo nano wp-config.php
+  822  ls
+  823  cd ..
+  824  ls
+  825  cd ..
+  826  ls
+  827  sudo cp index.html ./sites/
+  828  sudo docker service ls
+  829  sudo docker service scale web-test_apache-php1=1
+  830  sudo docker service ls
+  831  sudo docker ls
+  832  sudo docker ps -a
+  833  sudo docker service ps web-test_apache-php1
+  834  sudo docker service scale web-test_apache-php1=10
+  835  sudo docker service scale web-test_apache-php1=1
+  836  sudo docker service ps web-test_apache-php1
+  837  cd ..
+  838  ls
+  839  sudo mkdir docker-presta-test1
+  840  pwd
+  841  ls
+  842  sudo cp -r docker-presta-test1 ./../docker-app-config/
+  843  cd ./../docker-app-config/
+  844  cd docker-presta-test1/
+  845  ls
+  846  sudo cp -r ./../docker-web-test/* ./
+  847  ls
+  848  sudo nano docker-compose.yml
+  849  sudo nano Dockerfile
+  850  cd /home/docker/docker-app-data/docker-presta-test1/
+  851  ls
+  852  sudo mkdir config
+  853  sudo mkdir sites
+  854  cd ..
+  855  cd docker-web-test/
+  856  ls
+  857  cd config/
+  858  ls
+  859  sudo cp ./* ./../../docker-presta-test1/config/
+  860  cd ..
+  861  cd sites/
+  862  ls
+  863  sudo cp index.html ./../../docker-presta-test1/sites/
+  864  ls
+  865  cd ..
+  866  cd docker-presta-test1/
+  867  ls
+  868  cd sites/
+  869  ls
+  870  cat index.html
+  871  ls
+  872  sudo wget https://github.com/PrestaShop/PrestaShop/archive/develop.zip
+  873  sudo unzip develop.zip
+  874  ls -al
+  875  sudo mv PrestaShop-develop presta
+  876  ls
+  877  ls -al
+  878  sudo chmod -R 775 presta
+  879  ls -al
+  880  cd ..
+  881  ls
+  882  cd config/
+  883  ls
+  884  sudo rm wp2.webcldocker.jgleba.com.conf
+  885  sudo mv wp.webcldocker.jgleba.com.conf presta.webcldocker.jgleba.com
+  886  sudo nano presta.webcldocker.jgleba.com
+  887  ls
+  888  cat presta.webcldocker.jgleba.com
+  889  cd ..
+  890  ls
+  891  cd sites/
+  892  ls
+  893  ls -al
+  894  cd ..
+  895  cd .
+  896  cd ..
+  897  cd docker/docker-app-config/
+  898  ls
+  899  cd docker-presta-test1/
+  900  ls
+  901  sudo nano Dockerfile
+  902  cat docker-compose.yml
+  903  sudo nano docker-compose.yml
+  904  sudo docker build --tag=apache-php56-presta .
+  905  sudo nano docker-compose.yml
+  906  sudo nano Dockerfile
+  907  sudo docker build --tag=apache-php56-presta .
+  908  sudo nano Dockerfile
+  909  sudo docker build --tag=apache-php56-presta .
+  910  sudo nano Dockerfile
+  911  sudo docker build --tag=apache-php56-presta .
+  912  sudo cat ./../docker-web-test/Dockerfile
+  913  cat docker-compose.yml
+  914  ls -al /home/docker/docker-app-data/docker-presta-test1/sites/presta/
+  915  ls
+  916  cat docker-compose.yml
+  917  sudo docker service ls
+  918  cat Dockerfile
+  919  sudo nano Dockerfile
+  920  sudo docker build --tag=apache-php56-presta .
+  921  sudo nano Dockerfile
+  922  df -h
+  923  top
+  924  ls
+  925  cat docker-compose.yml
+  926  cat Dockerfile
+  927  pwd
+  928  cd ..
+  929  ls
+  930  cd docker-app1-test/
+  931  ls
+  932  cat Dockerfile
+  933  cd ..
+  934  cd docker-web-test/
+  935  ls
+  936  cat Dockerfile
+  937  cat docker-compose.yml
+  938  sudo docker service ls
+  939  sudo docker exec -it ildwe7fsvah4 bash
+  940  sudo docker ps a
+  941  sudo docker -ps a
+  942  sudo docker ps -a
+  943  sudo docker service ps web-test_apache-php1
+  944  cd ..
+  945  cd docker-presta-test1/
+  946  ls
+  947  cat docker-compose.yml
+  948  cat Dockerfile
+  949  sudo nano Dockerfile
+  950  sudo nano docker-compose.yml
+  951  cd /home/docker/docker-app-data/docker-presta-test1/
+  952  ls
+  953  cd sites/
+  954  ls
+  955  sudo rm develop.zip
+  956  cd presta/
+  957  ls
+  958  sudo rm -r ./*
+  959  sudo nano /home/docker/docker-app-config/docker-presta-test1/docker-compose.yml
+  960  sudo docker stack deploy -c docker-compose.yml presta-test
+  961  cd /home/docker/docker-app-config/docker-presta-test1/
+  962  sudo docker stack deploy -c docker-compose.yml presta-test
+  963  sudo nano docker-compose.yml
+  964  sudo docker stack deploy -c docker-compose.yml presta-test
+  965  sudo docker service ls
+  966  sudo docker logs
+  967  sudo docker ps -a
+  968  docker-compose up
+  969  sudo docker-compose up
+  970  sudo docker service ls
+  971  sudo docker logs presta-test_presta1
+  972  sudo docker service logs presta-test_presta1
+  973  sudo docker pull prestashop/prestashop
+  974  sudo docker push localhost:5000/prestashopofficial
+  975  sudo docker images ls
+  976  sudo docker images
+  977  sudo docker tag prestashop/prestashop localhost:5000/prestashopofficial
+  978  sudo docker push localhost:5000/prestashopofficial
+  979  curl -X GET http://localhost:5000/v2/_catalog
+  980  sudo nano docker-compose.yml
+  981  cat ./../docker-web-test/docker-compose.yml
+  982  sudo nano docker-compose.yml
+  983  sudo docker service ls
+  984  sudo docker service rm presta-test_presta1
+  985  sudo docker stack deploy -c docker-compose.yml presta-test
+  986  sudo docker service ls
+  987  sudo docker service ps presta-test_presta1
+  988  sudo nano docker-compose.yml
+  989  sudo nano .env
+  990  sudo nano /home/docker/docker-app-data/docker-presta-test1/config/presta.webcldocker.jgleba.com
+  991  sudo nano docker-compose.yml
+  992  sudo nano Dockerfile
+  993  sudo nano docker-compose.yml
+  994  sudo mv Dockerfile notusedDockerfile
+  995  sudo docker service ls
+  996  sudo docker service rm presta-test_presta1
+  997  sudo docker service ls
+  998  sudo docker ps -a
+  999  sudo docker stack deploy -c docker-compose.yml presta-test
+ 1000  sudo nano docker-compose.yml
+ 1001  sudo docker stack deploy -c docker-compose.yml presta-test
+ 1002  sudo docker service ls
+ 1003  sudo nano docker-compose.yml
+ 1004  sudo docker service ls
+ 1005  sudo docker service rm presta-test_presta1
+ 1006  sudo docker stack deploy -c docker-compose.yml presta-test
+ 1007  cat docker-compose.yml
+ 1008  sudo docker service ls
+ 1009  sudo docker service logs presta-test_presta1
+ 1010  sudo nano .env
+ 1011  sudo docker service rm presta-test_presta1
+ 1012  sudo docker stack deploy -c docker-compose.yml presta-test
+ 1013  sudo docker service logs presta-test_presta1
+ 1014  sudo watch docker service logs presta-test_presta1
+ 1015  ls
+ 1016  ls -al
+ 1017  sudo nanod
+ 1018  sudo nano docker-compose.yml
+ 1019  sudo cat .env
+ 1020  sudo docker service ls
+ 1021  sudo docker service rm cdc8ta16c1zx
+ 1022  sudo docker ps -a
+ 1023  sudo docker rm 79a567bf5f67
+ 1024  sudo docker rm 6fe384cbba5a
+ 1025  sudo docker rm 195c0b84e436
+ 1026  sudo docker rm d4a69f319078
+ 1027*
+ 1028  sudo docker rm $$(docker ps -qa --no-trunc --filter "status=exited")
+ 1029  sudo docker rm $(docker ps -qa --no-trunc --filter "status=exited")
+ 1030  sudo docker rm $(sudo docker ps -qa --no-trunc --filter "status=exited")
+ 1031  sudo nano docker-compose.yml
+ 1032  sudo nano .env
+ 1033  sudo docker stack deploy -c docker-compose.yml presta-test
+ 1034  sudo watch docker service logs presta-test_presta1
+ 1035  sudo watch docker service ps presta-test_presta1
+ 1036  sudo nano docker-compose.yml
+ 1037  cat .enc
+ 1038  cat .env
+ 1039  sudo nano .env
+ 1040  sudo docker service rm presta-test_presta1
+ 1041  cd ..
+ 1042  sudo cp docker-presta-test1 docker-presta-test2
+ 1043  sudo cp -r docker-presta-test1 docker-presta-test2
+ 1044  cd /home/docker/docker-app-data/docker-
+ 1045  cd /home/docker/docker-app-data/
+ 1046  ls -al
+ 1047  sudo cp docker-presta-test1 docker-presta-test2
+ 1048  sudo cp -r docker-presta-test1 docker-presta-test2
+ 1049  sudo docker service ls
+ 1050  sudo docker serv ls
+ 1051  ls
+ 1052  sudo nano docker-presta-test1
+ 1053  cd docker-presta-test1
+ 1054  ls
+ 1055  cd config/
+ 1056  ls
+ 1057  cd ..
+ 1058  ls
+ 1059  cd ..
+ 1060  ls
+ 1061  cd docker-app-config/
+ 1062  ls
+ 1063  cd docker-web-test/
+ 1064  ls
+ 1065  cat Dockerfile
+ 1066  sudo nano docker-compose.yml
+ 1067  cd ..
+ 1068  cd docker-presta-test1
+ 1069*
+ 1070  sudo nano docker-compose.yml
+ 1071  sudo docker stack deploy -c docker-compose.yml presta-test
+ 1072  sudo docker service ls
+ 1073  sudo nano /home/docker/docker-app-data/docker-presta-test1/config/presta.webcldocker.jgleba.com
+ 1074  sudo docker service ls
+ 1075  sudo docker service rm presta-test_presta1
+ 1076*
+ 1077  cd docker-compose.yml
+ 1078  sudo nano docker-compose.yml
+ 1079  sudo nano .env
+ 1080  sudo docker stack deploy -c docker-compose.yml presta1
+ 1081  sudo docker service ls
+ 1082  sudo watch docker service logs presta1_presta1
+ 1083  sudo docker service rm presta1_presta1
+ 1084  sudo nano .env
+ 1085  sudo docker stack deploy -c docker-compose.yml presta
+ 1086  sudo docker service rm presta_presta1
+ 1087  sudo docker stack deploy -c docker-compose.yml presta1
+ 1088  sudo watch docker service logs presta1_presta1
+ 1089  sudo docker service scale presta1_presta1=15
+ 1090  sudo docker service ls
+ 1091  sudo docker service ps presta1_presta1
+ 1092  sudo docker service scale presta1_presta1=1
+ 1093  cat /home/docker/docker-app-data/docker-presta-test1/config/presta.webcldocker.jgleba.com
+ 1094  top
+ 1095  sudo docker service scale presta1_presta1=2
+ 1096  ls
+ 1097  cd ..
+ 1098  ls
+ 1099  sudo cp docker-wp1-test docker-twothree-copy
+ 1100  sudo cp -r docker-wp1-test docker-twothree-copy
+ 1101  cd docker-twothree-copy/
+ 1102  ls
+ 1103  sudo nano docker-compose.yml
+ 1104  sudo mkdir -p ./../../docker-app-data/docker-twothree-copy
+ 1105  sudo nano docker-compose.yml
+ 1106  cd ..
+ 1107  ls
+ 1108  sudo mkdir docker-mysql1
+ 1109  cd docker-mysql1/
+ 1110  sudo cp ./../docker-wp1-test/docker-compose.yml ./
+ 1111  sudo nano docker-compose.yml
+ 1112  sudo cat ./../docker-presta-test1/docker-compose.yml
+ 1113  sudo nano docker-compose.yml
+ 1114  sudo mkdir -p ./../../docker-app-data/docker-mysql1
+ 1115  sudo nano docker-compose.yml
+ 1116  cd ..
+ 1117  ls
+ 1118  cd docker-twothree-copy/
+ 1119  ls
+ 1120  sudo nano docker-compose.yml
+ 1121  sudo cat ./../docker-presta-test1/docker-compose.yml
+ 1122  sudo nano docker-compose.yml
+ 1123  cd /home/docker/docker-app-data/
+ 1124  ls
+ 1125  cd docker-twothree-copy/
+ 1126  ls
+ 1127  sudo mkdir config
+ 1128  sudo mkdir sites
+ 1129  cd sites/
+ 1130  ls
+ 1131  cd ..
+ 1132  sl
+ 1133  cd config/
+ 1134  ls
+ 1135  sudo nano twothreeee.webcldocker.jgleba.com.conf
+ 1136  cd ..
+ 1137  ls
+ 1138  cd sites/
+ 1139  sl
+ 1140*
+ 1142  ls -al
+ 1143  cd wptwothree/
+ 1144  ls -al
+ 1145  cd ..
+ 1146  ls
+ 1147  cd config/
+ 1148  ls
+ 1149  ls -la
+ 1150  cd ..
+ 1151  ls
+ 1152  cd sites/
+ 1153  ls -al
+ 1154  sudo chmod -R 755 wptwothree/
+ 1155  ls -al
+ 1156  cd wo
+ 1157  ls -al
+ 1158  cd wptwothree/
+ 1159  ls -al
+ 1160  cat wp-config.php
+ 1161  sudo nano wp-config.php
+ 1162  sudo cat /home/docker/docker-app-config/docker-twothree-copy/docker-compose.yml
+ 1163  sudo cat /home/docker/docker-app-config/docker-mysql1/docker-compose.yml
+ 1164  sudo nano wp-config.php
+ 1165  cd /home/docker/docker-app-config/docker-mysql1/
+ 1166  ls
+ 1167  cat docker-compose.yml
+ 1168  sudo docker stack deploy -c docker-compose.yml mysql1
+ 1169  sudo nano  docker-compose.yml
+ 1170  sudo docker stack deploy -c docker-compose.yml mysql1
+ 1171  sudo docker service ls
+ 1172  sudo nano  docker-compose.yml
+ 1173  sudo docker service rm mysql1_mysql1
+ 1174  sudo nano  docker-compose.yml
+ 1175  sudo docker pull mysql:5.7
+ 1176  sudo docker tag mysql:5.7 localhost:5000/jmysql5.7
+ 1177  sudo docker push localhost:5000/jmysql5.7
+ 1178  sudo docker stack deploy -c docker-compose.yml mysql1
+ 1179  sudo docker service ls
+ 1180  sudo docker service rm mysql1_mysql1
+ 1181  sudo nano  docker-compose.yml
+ 1182  sudo docker stack deploy -c docker-compose.yml mysql1
+ 1183  sudo docker service ls
+ 1184  sudo docker service ps mysql1_mysql1
+ 1185  top
+ 1186  ls
+ 1187  cd ..
+ 1188  ls
+ 1189  pwd
+ 1190  cd ..
+ 1191  cd docker/docker-app-data/docker-twothree-copy/sites/wptwothree/wp-config.php
+ 1192  sudo nano docker/docker-app-data/docker-twothree-copy/sites/wptwothree/wp-config.php
+ 1193  ping mysql1
+ 1194  cd /home/docker/docker-app-config/docker-mysql1/
+ 1195  sudo nano docker-compose.yml
+ 1196  cat ./../docker-web-test/docker-compose.yml
+ 1197  sudo nano docker-compose.yml
+ 1198  sudo docker service ls
+ 1199  sudo docker service rm mysql1_mysql1
+ 1200  sudo docker stack deploy -c docker-compose.yml mysql1
+ 1201  sudo docker service ls
+ 1202  df -h
+ 1203  sudo docker service ps mysql1_mysql1
+ 1204  cd ..
+ 1205  sudo cat /home/docker/docker-app-data/docker-twothree-copy/sites/wptwothree/wp-config.php
+ 1206  cat ./../docker-app-data/docker-twothree-copy/config/twothreeee.webcldocker.jgleba.com.conf
+ 1207  cat docker-
+ 1208  cat docker-twothree-copy/docker-compose.yml
+ 1209  sudo docker service ls
+ 1210  cd docker-twothree-copy/
+ 1211  ls
+ 1212  cat docker-compose.yml
+ 1213  cat ./../docker-web-test/docker-compose.yml
+ 1214  sudo nano docker-compose.yml
+ 1215  sudo docker stack deploy -c docker-compose.yml twothreeee
+ 1216  sudo docker service ls
+ 1217  sudo docker service rm twothreeee_twothreeee-copy
+ 1218  sudo docker rm $(sudo docker ps -qa --no-trunc --filter "status=exited")
+ 1219  sudo docker ps -a
+ 1220  sudo docker service ls
+ 1221  cd /home
+ 1222  ls
+ 1223  ls -la
+ 1224  sudo zip -r webcldocker.zip docker
+ 1225  sudo yum install zip
+ 1226  sudo zip -r webcldocker.zip docker
+ 1227  ls -la
+ 1228  history

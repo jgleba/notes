@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CURL POST TO API
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-07-14[Jul-Thu]09-27AM 
+
+curl -X POST http://192.168.1.163/j/connect5.php  -H "Content-Type: application/x-www-form-urlencoded" -d "reader_name=value2"
+
+curl -i  -v --url http://127.0.0.1/connect4_jmod.php --header 'content-type: application/json' --data '{"reader_name":"1234a","mac_address":"5678a"}' 
+curl -i  -v --url http://127.0.0.1/connect4_jmod.php -F 'reader_name=abc123' -F 'mac_address=abc'

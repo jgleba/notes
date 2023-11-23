@@ -1,0 +1,7 @@
+MANUAL SET UP OF OFFICE 365 IN OUTLOOK
+
+DID WORK BUT WAS STILL PROMPTING FOR PASSWORD
+
+050719
+
+https://www.nucleustechnologies.com/blog/steps-to-configure-office-365-in-outlook-manually/

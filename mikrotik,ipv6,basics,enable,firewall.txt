@@ -1,0 +1,108 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK ENABLE IPV6
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-07-25[Jul-Sat]14-44PM 
+
+##https://kb.pentanet.com.au/faq/how-to-configure-a-mikrotik-routerboard-router-to-accept-ipv6
+
+/system package enable ipv6
+
+reboot
+
+==
+
+Configuring your MikroTik (RouterBoard) router to accept IPv6
+
+Note: This guide assumes you already have working internet service via IPv4 and that you’re using the default interface names.
+
+    First we’ll tell the router to accept IPv6 advertisements, set up our IPv6 DHCP client/server and enable neighbour discovery for our local network:
+
+/ipv6 settings
+set accept-router-advertisements=yes
+/ipv6 dhcp-client
+add add-default-route=yes interface=pppoe-out1 pool-name=delegation \
+    pool-prefix-length=56 request=address,prefix
+/ipv6 dhcp-server
+add address-pool=delegation interface=bridge1 name=dhcp1
+/ipv6 nd
+set [ find default=yes ] interface=bridge ra-interval=20s-1m
+
+    Depending on the routerOS version you’re using, you may also need to adjust some of the automatic address assignment the router created after step 1. If the IPv6 address assigned to your router via IPv6 DHCP client appears in your IPv6 Address list as a /64 prefix, we’ll need to delete the assignment and reassign it as an individual IP (/128):
+
+/ipv6 address
+add address=<your IPv6 address>/128 advertise=no interface=pppoe-out1
+
+    If your router hasn’t automatically assigned your primary LAN interface the first IPv6 address in your delegation (the /56), we’ll now also need to assign this ourselves (remember to substitute your own address below):
+
+/ipv6 address
+add address=::e68d:8cff:fecb:9377 eui-64=yes from-pool=delegation interface=bridge1
+
+    Next you may wish to add an IPv6 MSS clamping rule:
+
+/ipv6 firewall mangle
+add action=change-mss chain=forward new-mss=clamp-to-pmtu out-interface=pppoe-out1 passthrough=yes protocol=tcp tcp-flags=syn
+
+    Finally, you should now set up some IPv6 firewall rules - though not strictly required, it’s good practice and will help protect your network from attacks. If you’re not sure which rules you’ll need, here’s the default set of firewall rules provided by MikroTik:
+
+/ipv6 firewall address-list
+add address=::/128 comment="defconf: unspecified address" list=bad_ipv6
+add address=::1/128 comment="defconf: lo" list=bad_ipv6
+add address=fec0::/10 comment="defconf: site-local" list=bad_ipv6
+add address=::ffff:0.0.0.0/96 comment="defconf: ipv4-mapped" list=bad_ipv6
+add address=::/96 comment="defconf: ipv4 compat" list=bad_ipv6
+add address=100::/64 comment="defconf: discard only " list=bad_ipv6
+add address=2001:db8::/32 comment="defconf: documentation" list=bad_ipv6
+add address=2001:10::/28 comment="defconf: ORCHID" list=bad_ipv6
+add address=3ffe::/16 comment="defconf: 6bone" list=bad_ipv6
+add address=::224.0.0.0/100 comment="defconf: other" list=bad_ipv6
+add address=::127.0.0.0/104 comment="defconf: other" list=bad_ipv6
+add address=::/104 comment="defconf: other" list=bad_ipv6
+add address=::255.0.0.0/104 comment="defconf: other" list=bad_ipv6
+/ipv6 firewall filter
+add action=accept chain=input comment=\
+    "defconf: accept established,related,untracked" connection-state=\
+    established,related,untracked
+add action=drop chain=input comment="defconf: drop invalid" connection-state=\
+    invalid
+add action=accept chain=input comment="defconf: accept ICMPv6" protocol=icmpv6
+add action=accept chain=input comment="defconf: accept UDP traceroute" port=\
+    33434-33534 protocol=udp
+add action=accept chain=input comment=\
+    "defconf: accept DHCPv6-Client prefix delegation." dst-port=546 protocol=\
+    udp src-address=fe80::/10
+add action=accept chain=input comment="defconf: accept IKE" dst-port=500,4500 \
+    protocol=udp
+add action=accept chain=input comment="defconf: accept ipsec AH" protocol=\
+    ipsec-ah
+add action=accept chain=input comment="defconf: accept ipsec ESP" protocol=\
+    ipsec-esp
+add action=accept chain=input comment=\
+    "defconf: accept all that matches ipsec policy" ipsec-policy=in,ipsec
+add action=drop chain=input comment=\
+    "defconf: drop everything else not coming from LAN" in-interface-list=!LAN
+add action=accept chain=forward comment=\
+    "defconf: accept established,related,untracked" connection-state=\
+    established,related,untracked
+add action=drop chain=forward comment="defconf: drop invalid" connection-state=\
+    invalid
+add action=drop chain=forward comment="defconf: drop packets with bad src ipv6" \
+    src-address-list=bad_ipv6
+add action=drop chain=forward comment="defconf: drop packets with bad dst ipv6" \
+    dst-address-list=bad_ipv6
+add action=drop chain=forward comment="defconf: rfc4890 drop hop-limit=1" \
+    hop-limit=equal:1 protocol=icmpv6
+add action=accept chain=forward comment="defconf: accept ICMPv6" protocol=\
+    icmpv6
+add action=accept chain=forward comment="defconf: accept HIP" protocol=139
+add action=accept chain=forward comment="defconf: accept IKE" dst-port=500,4500 \
+    protocol=udp
+add action=accept chain=forward comment="defconf: accept ipsec AH" protocol=\
+    ipsec-ah
+add action=accept chain=forward comment="defconf: accept ipsec ESP" protocol=\
+    ipsec-esp
+add action=accept chain=forward comment=\
+    "defconf: accept all that matches ipsec policy" ipsec-policy=in,ipsec
+add action=drop chain=forward comment=\
+    "defconf: drop everything else not coming from LAN" in-interface-list=!LAN

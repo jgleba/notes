@@ -1,0 +1,153 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MINIKUBE SETUP CENTOS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-30[Dec-Mon]18-42PM 
+
+##https://www.server-world.info/en/note?os=CentOS_7&p=kubernetes&f=1
+
+==
+INSTALL LIBVERT, START, ENABLE
+==
+
+sudo yum -y install qemu-kvm libvirt libvirt-daemon-kvm
+sudo systemctl start libvirtd && sudo systemctl enable libvirtd 
+
+sudo systemctl status libvirtd
+##sudo yum group install "Virtualization Host"
+
+==
+INSTALL DOCKER
+==
+
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install -y yum-utils
+sudo yum install -y docker-ce
+
+sudo systemctl start docker.service && sudo systemctl enable docker.service
+
+==
+ADD KUBE REPO
+==
+
+echo '[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg' | sudo tee /etc/yum.repos.d/kubernetes.repo
+
+#su root
+#cat <<'EOF' > /etc/yum.repos.d/kubernetes.repo
+#[kubernetes]
+#name=Kubernetes
+#baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-$basearch
+#enabled=1
+#gpgcheck=1
+#repo_gpgcheck=1
+#gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+#EOF
+
+==
+INSTALL KUBECTL AND MINIKUBE
+==
+
+sudo yum -y install kubectl
+sudo wget https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 -O minikube
+sudo wget https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2
+sudo chmod 755 minikube docker-machine-driver-kvm2
+sudo cp minikube docker-machine-driver-kvm2 /usr/bin/
+sudo mv minikube docker-machine-driver-kvm2 /usr/local/bin/
+
+==
+CHECK VERSION
+
+[root@MINIKUBE1 user]# minikube version
+minikube version: v1.6.2
+commit: 54f28ac5d3a815d1196cd5d57d707439ee4bb392
+
+[root@MINIKUBE1 user]# kubectl version -o json
+{
+  "clientVersion": {
+    "major": "1",
+    "minor": "17",
+    "gitVersion": "v1.17.0",
+    "gitCommit": "70132b0f130acc0bed193d9ba59dd186f0e634cf",
+    "gitTreeState": "clean",
+    "buildDate": "2019-12-07T21:20:10Z",
+    "goVersion": "go1.13.4",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+  }
+}
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+==
+START MINIKUBE
+==
+
+su user
+
+##minikube start --vm-driver kvm2
+sudo minikube start --vm-driver=none
+
+sudo cp -r /root/.kube /root/.minikube $HOME
+
+==
+VERIFY MINIKUBE
+==
+
+sudo minikube status
+
+host: Running
+kubelet: Running
+apiserver: Running
+kubeconfig: Configured
+
+==
+DELETE
+==
+
+minikube delete
+
+==
+KUBE STATUS
+==
+
+[user@MINIKUBE1 ~]$ sudo kubectl get all -A
+NAMESPACE     NAME                                   READY   STATUS    RESTARTS   AGE
+kube-system   pod/coredns-6955765f44-slzdk           0/1     Running   0          28s
+kube-system   pod/coredns-6955765f44-xpgwc           0/1     Running   0          28s
+kube-system   pod/etcd-minikube                      1/1     Running   0          33s
+kube-system   pod/kube-addon-manager-minikube        1/1     Running   0          33s
+kube-system   pod/kube-apiserver-minikube            1/1     Running   0          33s
+kube-system   pod/kube-controller-manager-minikube   1/1     Running   0          33s
+kube-system   pod/kube-proxy-mp4hv                   1/1     Running   0          28s
+kube-system   pod/kube-scheduler-minikube            1/1     Running   0          33s
+kube-system   pod/storage-provisioner                1/1     Running   0          27s
+
+NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  38s
+kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   37s
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system   daemonset.apps/kube-proxy   1         1         1       1            1           beta.kubernetes.io/os=linux   37s
+
+NAMESPACE     NAME                      READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system   deployment.apps/coredns   0/2     2            0           37s
+
+NAMESPACE     NAME                                 DESIRED   CURRENT   READY   AGE
+kube-system   replicaset.apps/coredns-6955765f44   2         2         0       28s
+
+NAMESPACE     NAME                                 DESIRED   CURRENT   READY   AGE
+kube-system   replicaset.apps/coredns-6955765f44   2         2         0       4m1s
+kube-system   replicaset.apps/coredns-7f85fdfc6b   1         1         0       3m15s
+
+
+==
+ADD WEAVE OVERLAY NETWORKING
+==
+
+sudo kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(sudo kubectl version | base64 | tr -d '\n')"

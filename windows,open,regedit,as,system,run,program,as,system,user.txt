@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  RUN REGEDIT AS SYSTEM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-07[Jan-Fri]16-23PM 
+
+##https://www.winhelponline.com/blog/run-program-as-system-localsystem-account-windows/
+
+C:\j\softw\psexec.exe -sid c:\windows\regedit.exe

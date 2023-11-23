@@ -1,0 +1,41 @@
+===============================================
+ACTIVE DIRECTORY EXPORT GROUPS FROM SPECIFIC OU
+062819
+JGleba
+===============================================
+
+DIDNT WORK
+
+#https://gallery.technet.microsoft.com/scriptcenter/List-all-groups-or-users-784f2f4e
+
+Get-ADGroupMember -Filter * -SearchBase "ou=Groups,ou=SET,ou=LOCATIONS,dc=corp,dc=sfagroup,dc=com"  | export-csv "c:\tmp\export-groups-set-corp.csv"
+
+==
+
+DIDNT WORK
+
+#https://www.experts-exchange.com/questions/28911746/powershell-distribution-groups-by-OU.html
+
+$Log = "c:\tmp\jusers-groups.csv"
+$Groups = Get-DistributionGroup -OrganizationalUnit "domain.local/JGroups"
+ForEach ($Group in $Groups)
+    {
+        Get-DistributionGroupMember -Identity $Group.Name |
+        Select @{n='Group Name';e={$Group.Name}}, Name |
+        Out-File $Log -Append
+
+}
+
+DANGEROUS, DELETES, EDITING
+
+#https://stackoverflow.com/questions/19861373/powershell-get-adorganizationalunit-groups
+
+Get-ADGroup -SearchBase "OU=AsiaPacific,OU=Sales,OU=UserAccounts,DC=FABRIKAM,DC=COM" -filter {GroupCategory -eq "Security"} | Get-ADGroupMember | Remove-ADGroupMember -WhatIf
+
+JEDIT, WORKS FOR SECURITY GROUPS
+
+Get-ADGroup -SearchBase "ou=JGroups,dc=domain,dc=local" -filter {GroupCategory -eq "Security"} | export-csv "c:\tmp\jusers-groups.csv"
+
+JEDIT, TRYING FOR DISTRIBUTION GROUP - WORKS
+
+Get-ADGroup -SearchBase "ou=Groups,ou=jgleba.com,ou=MailDomains,dc=domain,dc=local" -filter {GroupCategory -eq "Distribution"} | export-csv "c:\tmp\jglebacom-groups.csv"

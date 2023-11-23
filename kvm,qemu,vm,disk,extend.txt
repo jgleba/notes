@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KVM QEMU EXTEND VM DISK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-03-17[Mar-Fri]14-01PM 
+
+sudo qemu-img resize /var/lib/libvirt/images/W10.qcow2 +10G
+
+sudo qemu-img info /var/lib/libvirt/images/W10.qcow2

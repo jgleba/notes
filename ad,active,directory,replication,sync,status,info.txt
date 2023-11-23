@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ACTIVE DIRECTORY AD SYNC / REPLICATION STATUS INFO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-03[Jan-Fri]20-21PM 
+
+##https://www.manageengine.com/products/active-directory-audit/kb/how-to/how-to-check-if-domain-controllers-are-in-sync-with-each-other.html
+
+Repadmin /replsummary
+
+Repadmin /Showrepl
+

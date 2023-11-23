@@ -1,0 +1,174 @@
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install apache2 mysql-server libapache2-mod-php5 php5-mysql php5-gd php-pear php-apc php5-curl curl supervisor
+
+
+sw2 php installed
+
+ 635  sudo yum -y install php71w php-cli php-session php-sockets php-gmp php-mcrypt php-simplexml php-json php-gettext php-filter php-pcntl php-mbstring php-gd php-common php-ldap php-pdo php-pear php-snmp php-xml php-mysql
+  636  sudo yum install php56w-common
+  637  sudo yum -y install php71w php56w-cli php56w-session php56w-sockets php56w-gmp php56w-mcrypt php56w-simplexml php56w-json php56w-gettext php56w-filter php56w-pcntl php56w-mbstring php56w-gd php56w-common php56w-ldap php56w-pdo php56w-pear php56w-snmp php56w-xml php56w-mysql
+  640  sudo yum install php-pear
+  641  sudo yum install php56w-ldap
+  642  sudo yum install php56w-snmp
+  643  sudo yum -y install php71w php56w-cli php56w-session php56w-sockets php56w-gmp php56w-mcrypt php56w-simplexml php56w-json php56w-gettext php56w-filter php56w-pcntl php56w-mbstring php56w-gd php56w-common php56w-ldap php56w-pdo php56w-pear php56w-snmp php56w-xml php56w-mysql
+  644  sudo yum install mod_php56w
+  645  sudo yum -y install php56w-cli php56w-session php56w-sockets php56w-gmp php56w-mcrypt php56w-simplexml php56w-json php56w-gettext php56w-filter php56w-pcntl php56w-mbstring php56w-gd php56w-common php56w-ldap php56w-pdo php56w-pear php56w-snmp php56w-xml php56w-mysql
+  655  cd phpipam/
+  658  sudo chmod -R 750 phpipam
+  659  sudo yum install php-mailer
+  660  sudo yum install php56w-mailer
+  661  sudo yum install php-PHPMailer
+
+php                  x86_64         5.4.16-46.el7          @base         4.4 M
+ php-cli              x86_64         5.4.16-46.el7          @base         8.8 M
+ php-common           x86_64         5.4.16-46.el7          @base         3.8 M
+ php-fpm              x86_64         5.4.16-46.el7          @base         4.5 M
+ php-gd               x86_64         5.4.16-46.el7          @base         343 k
+ php-mbstring         x86_64         5.4.16-46.el7          @base         1.3 M
+ php-mysql            x86_64         5.4.16-46.el7          @base         232 k
+ php-pdo              x86_64         5.4.16-46.el7          @base         193 k
+ php-pear             noarch         1:1.9.4-21.el7         @base         2.2 M
+ php-process          x86_64         5.4.16-46.el7          @base          79 k
+ php-xml              x86_64         5.4.16-46.el7          @base         325 k
+
+sudo yum install php72-php-cli php72-php-common php72-php-fpm php72-php-gd php72-php-mbstring php72-php-mysql php72-php-pdo php72-php-pear php72-php-process php72-php-xml
+
+https://www.tecmint.com/install-php-5-6-on-centos-7/
+
+sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+sudo yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+
+sudo yum install yum-utils
+
+# yum-config-manager --enable remi-php55   [Install PHP 5.5]
+sudo yum-config-manager --enable remi-php56   [Install PHP 5.6]
+# yum-config-manager --enable remi-php72   [Install PHP 7.2]
+
+sudo yum-config-manager --enable remi-php73
+
+sudo yum remove yum-utils
+
+sudo yum-config-manager --enable remi-php56
+
+sudo yum install php72-php-cli php72-php-common php72-php-fpm php72-php-gd php72-php-mbstring php72-php-mysql php72-php-pdo php72-php-pear php72-php-process php72-php-xml
+
+[user@zxjprox sites-enabled]$ sudo service php72-php-fpm status
+Redirecting to /bin/systemctl status php72-php-fpm.service
+● php72-php-fpm.service - The PHP FastCGI Process Manager
+   Loaded: loaded (/usr/lib/systemd/system/php72-php-fpm.service; disabled; vend                                                                                        or preset: disabled)
+   Active: inactive (dead)
+[user@zxjprox sites-enabled]$ sudo service php72-php-fpm start
+Redirecting to /bin/systemctl start php72-php-fpm.service
+[user@zxjprox sites-enabled]$ sudo service php72-php-fpm status
+Redirecting to /bin/systemctl status php72-php-fpm.service
+● php72-php-fpm.service - The PHP FastCGI Process Manager
+   Loaded: loaded (/usr/lib/systemd/system/php72-php-fpm.service; disabled; vend                                                                                        or preset: disabled)
+   Active: active (running) since Mon 2019-02-25 11:14:30 EST; 1s ago
+ Main PID: 20181 (php-fpm)
+   Status: "Ready to handle connections"
+   CGroup: /system.slice/php72-php-fpm.service
+           ├─20181 php-fpm: master process (/etc/opt/remi/php72/php-fpm.conf)...
+           ├─20182 php-fpm: pool www
+           ├─20183 php-fpm: pool www
+           ├─20184 php-fpm: pool www
+           ├─20185 php-fpm: pool www
+           └─20186 php-fpm: pool www
+
+Feb 25 11:14:30 zxjprox systemd[1]: Starting The PHP FastCGI Process Manager...
+Feb 25 11:14:30 zxjprox systemd[1]: Started The PHP FastCGI Process Manager.
+Hint: Some lines were ellipsized, use -l to show in full.
+[user@zxjprox sites-enabled]$ sudo systemctl enable php72-php-fpm
+Created symlink from /etc/systemd/system/multi-user.target.wants/php72-php-fpm.s                                                                                        ervice to /usr/lib/systemd/system/php72-php-fpm.service.
+[user@zxjprox sites-enabled]$
+
+==
+
+switching to php 56
+
+==
+# yum-config-manager --enable remi-php55   [Install PHP 5.5]
+sudo yum-config-manager --enable remi-php56   [Install PHP 5.6]
+# yum-config-manager --enable remi-php72   [Install PHP 7.2]
+
+sudo yum-config-manager --enable remi-php56
+
+sudo yum install php56-php-cli php56-php-common php56-php-fpm php56-php-gd php56-php-mbstring php56-php-mysql php56-php-pdo php56-php-pear php56-php-process php56-php-xml
+
+sudo service php56-php-fpm start
+sudo systemctl enable php56-php-fpm
+
+https://phpipam.net/news/phpipam-installation-on-centos-7/
+
+sudo yum install httpd mariadb-server php php-cli php-gd php-common php-ldap php-pdo php-pear php-snmp php-xml php-mysql php-mbstring
+
+sudo yum install php56-php-mcrypt php56-php-ldap php56-php-snmp
+
+
+
+==
+MANY PHP MODULES INSTALLED DOCKER, WORKING
+==
+
+https://github.com/docker-library/php/issues/75
+
+
+===
+docker possible php modules
+===
+
+
+Step 3/6 : RUN docker-php-ext-install pdo_mysql pdo gd mysqli bcmath soap zip phar intl xml curl mbstring apcu
+ ---> Running in 23038b32cf83
+error: /usr/src/php/ext/apcu does not exist
+
+usage: /usr/local/bin/docker-php-ext-install [-jN] ext-name [ext-name ...]
+   ie: /usr/local/bin/docker-php-ext-install gd mysqli
+       /usr/local/bin/docker-php-ext-install pdo pdo_mysql
+       /usr/local/bin/docker-php-ext-install -j5 gd mbstring mysqli pdo pdo_mysql shmop
+
+if custom ./configure arguments are necessary, see docker-php-ext-configure
+
+Possible values for ext-name:
+bcmath bz2 calendar ctype curl dba dom enchant exif fileinfo filter ftp gd gettext gmp hash iconv imap interbase intl json ldap mbstring mysqli oci8 odbc opcache pcntl pdo pdo_dblib pdo_firebird pdo_mysql pdo_oci pdo_odbc pdo_pgsql pdo_sqlite pgsql phar posix pspell readline recode reflection session shmop simplexml snmp soap sockets sodium spl standard sysvmsg sysvsem sysvshm tidy tokenizer wddx xml xmlreader xmlrpc xmlwriter xsl zend_test zip
+
+Some of the above modules are already compiled into PHP; please check
+the output of "php -i" to see which modules are already loaded.
+The command '/bin/sh -c docker-php-ext-install pdo_mysql pdo gd mysqli bcmath soap zip phar intl xml curl mbstring apcu' returned a non-zero code: 1
+
+
+
+
+
+eading state information...
+Package libpng12-dev is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Package 'libpng12-dev' has no installation candidate
+The command '/bin/sh -c apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng12-dev' returned a non-zero code: 100
+[user@webcld1 apache-php4]$ sudo nano Dockerfile
+
+
+
+
+
+
+==
+121019
+NGINX, PHP-FPM, DOWNGRADE FROM PHP 7.3 TO 7.0
+==
+
+sudo yum remove -y php*
+
+sudo yum install yum-utils -y
+
+sudo yum-config-manager --disable remi-php73
+sudo yum-config-manager --enable remi-php70
+
+sudo yum install php php-bcmath php-cli php-common php-gd php-mbstring php-mysqlnd php-pdo php-fpm -y
+sudo yum install php-pear -y
+sudo yum install php-devel -y
+
+sudo yum remove yum-utils -y
+
+sudo systemctl restart php-fpm
+sudo systemctl restart nginx

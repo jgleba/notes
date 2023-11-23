@@ -1,0 +1,17 @@
+# Import the Remote Desktop PowerShell module
+Import-Module RemoteDesktop
+
+# Store the current Remote Desktop certificate thumbprint
+$currentCertThumbprint = (Get-Item -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp\CertificateThumbprint').'GetValue'('CertificateThumbprint')
+
+# Delete the current Remote Desktop certificate
+Remove-Item -Path "Cert:\LocalMachine\My\$currentCertThumbprint"
+
+# Import the new Remote Desktop certificate
+$newCert = Import-PfxCertificate -FilePath 'C:\path\to\new\certificate.pfx' -CertStoreLocation Cert:\LocalMachine\My
+
+# Set the new Remote Desktop certificate thumbprint in the registry
+New-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name 'CertificateThumbprint' -Value $newCert.Thumbprint -PropertyType String
+
+# Restart the Remote Desktop service
+Restart-Service -Name 'TermService'

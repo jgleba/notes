@@ -1,0 +1,79 @@
+xen-tools, centos 7, done dec 2, 2015
+worked mar22, 2016 - copied and pasted on pbx
+=============
+
+worked with:
+
+mount /dev/cdrom /mnt
+cd /mnt/Linux
+
+sudo 
+
+rpm -ivh xe-guest-utilities-xenstore-6.5.0-1423.x86_64.rpm
+
+reboot machine, now tools installed
+
+
+=============
+
+worked on pbx, cent - sept 11, 2015
+
+mount /dev/xvdd /mnt
+ 
+umount /mnt
+
+cd /mnt/Linux
+ 
+rpm -ivh --nodeps xe-guest-utilities-6.2.0-1137.x86_64.rpm
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:xe-guest-utilities-6.2.0-1137    ################################# [100%]
+ 
+rpm -ivh xe-guest-utilities-xenstore-6.2.0-1137.x86_64.rpm
+Preparing...                          ################################# [100%]
+Updating / installing...
+   1:xe-guest-utilities-xenstore-6.2.0################################# [100%]
+
+==
+didn't work on pbx, cent
+
+ How to install xen-tools
+reboot
+On Debian, it is all just a matter of:
+
+apt-get install xen-tools
+
+As a xen-tools package is included in the Debian project. Alternatively, a .deb package can be downloaded and installed (with dpkg -i ...) from here.
+
+On a recent Fedora (this has been tested on Fedora 18), although there is no official xen-tools RPM package, it is enough to install the following packages:
+
+yum install debootstrap perl-Text-Templateh \
+             perl-Config-IniFiles perl-File-Slurp \
+             perl-File-Which perl-Data-Dumper
+
+And then download and install xen-tools itself from the sources:
+
+wget http://xen-tools.org/software/xen-tools/xen-tools-4.3.1.tar.gz
+[...]
+tar zxvf xen-tools-4.3.1.tar.gz
+cd xen-tools-4.3.1
+make install
+
+
+sept 15, 2016
+==
+
+installed on ubuntu 1604
+
+mount /dev/cdrom /mnt
+cd /media/plextec/XenTools/Linux
+
+sudo ./install.sh
+
+LATEST
+07-26-2018
+ubuntu 18.04
+
+sudo apt-get install xe-guest-utilities
+
+worked.

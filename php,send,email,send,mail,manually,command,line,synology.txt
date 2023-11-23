@@ -1,0 +1,21 @@
+=====================================
+SEND EMAIL WITH PHP, USED ON SYNOLOGY
+070519
+=====================================
+
+==
+PHP EMAIL - SYNOLOGY - ONE LINER
+==
+
+/usr/bin/php -r "mail('example@example.com','test2','test2','"From:"example@example.com');"
+
+==
+PHP EMAIL - SYNOLOGY - WITH VARIABLES
+==
+
+from="example@example.com"
+to="example@example.com"
+subject="test123"
+body="test123"
+headers=""From:"$from"
+/usr/bin/php -r "mail('$to', '$subject', '$body', '$headers');";

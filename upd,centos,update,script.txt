@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#JGleba
+#10-04-2018 - UPDATED - 06-24-2019
+#CentOS Update Script
+#SCHEDULE THROUGH CRON
+#ex. 42 02 30 * * /path/to/bin/upd.sh>/dev/null 2>&1
+#ex2. 42 02 */7 * * /path/to/bin/upd.sh>/dev/null 2>&1
+#LOGROTATE
+#/etc/logrotate.d/upd
+#/var/log/upd-*.log {
+#    daily
+#    rotate 1
+#    missingok
+#    notifempty
+#    compress
+#    sharedscripts
+#    size 1M
+#    postrotate
+#        /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+#        /bin/kill -HUP `cat /var/run/rsyslogd.pid 2> /dev/null` 2> /dev/null || true
+#    endscript
+#}
+
+yum update -y > /var/log/upd-$(date +"%m-%d-%y").log

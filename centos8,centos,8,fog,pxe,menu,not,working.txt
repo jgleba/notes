@@ -1,0 +1,43 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS 8 PXE SETUP, NOT WORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-11-14[Nov-Sat]19-27PM 
+
+
+
+
+
+
+sudo mount -o loop -t iso9660 /mnt/fp/iso/CentOS-8.2.2004-x86_64-minimal.iso /mnt/loop
+
+sudo mkdir -p /images/os/centos/8
+sudo cp -R /mnt/loop/* /images/os/centos/8
+
+sudo umount /mnt/loop
+
+sudo mkdir -p /tftpboot/os/centos/8
+sudo cp /images/os/centos/8/images/pxeboot/vmlinuz /tftpboot/os/centos8-2004
+sudo cp /images/os/centos/8/images/pxeboot/initrd.img /tftpboot/os/centos8-2004
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos8-2004/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos8-2004 inst.ks=172.16.0.45/0/centos8-2004/ks.cfg locale=en_US.UTF-8 splash quiet
+boot || goto MENU
+
+os.CentOS8-2004-KS
+CentOS8 2004 KS
+
+==
+
+GOT WORKING
+WORKING - NETWORK INSTALL NOT FOUND, SOFTWARE REPOS NOT WORKING - 121720
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://172.16.0.45/images/os/centos8-2004/ inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg
+boot || goto MENU
+
+ERRORS ON END OF INSTALL
+CENTOS 8 CANCELLED 

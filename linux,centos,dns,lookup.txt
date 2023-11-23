@@ -1,0 +1,7 @@
+centos dns lookup
+
+sudo yum install dnsutils
+
+dig domain.com
+
+dig domain.com type (NS)

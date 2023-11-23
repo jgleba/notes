@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY KEEPALIVED MONITOR PROCESS SCRIPT NOT WORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-02-02[Feb-Thu]19-37PM 
+
+was missing package
+
+sudo yum install psmisc

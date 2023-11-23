@@ -1,0 +1,45 @@
+add action=drop chain=forward disabled=yes dst-port=3389 protocol=tcp src-address-list=RDP3389-BLOCK
+add action=jump chain=forward comment="START OF DDOS PROTECT" connection-state=new jump-target=detect-ddos
+add action=return chain=detect-ddos dst-limit=32,32,src-and-dst-addresses/10s
+add action=return chain=detect-ddos src-address=192.168.3.1
+add action=return chain=detect-ddos src-address=10.0.0.0/8
+add action=add-dst-to-address-list address-list=ddosed address-list-timeout=10m chain=detect-ddos
+add action=add-src-to-address-list address-list=ddoser address-list-timeout=10m chain=detect-ddos
+add action=tarpit chain=forward comment="TARPIT DDOS TEST" connection-state=new dst-address-list=ddosed protocol=tcp src-address-list=ddoser
+add action=drop chain=forward comment="END OF DDOS PROTECT" connection-state=new dst-address-list=ddosed src-address-list=ddoser
+add action=add-src-to-address-list address-list=RDP3389-ACCESSED address-list-timeout=4w2d chain=forward dst-port=3389 in-interface=ether10 protocol=tcp
+add chain=forward dst-address=192.168.252.0/24
+add action=drop chain=forward disabled=yes dst-address=192.168.3.10 in-interface=ether10 src-address-list="!j allowed"
+add chain=input comment="default configuration" dst-port=500 protocol=udp
+add chain=input dst-address=192.168.3.251 dst-port=53 protocol=tcp
+add chain=input dst-address=192.168.3.251 dst-port=53 protocol=udp
+add chain=forward dst-address=192.168.3.251 dst-port=53 protocol=udp
+add chain=forward dst-address=192.168.3.251 dst-port=53 protocol=tcp
+add chain=input dst-port=8291 in-interface=ether10 protocol=tcp src-address=108.168.14.80
+add chain=input comment="MAIN WAN ACCEPT RULE" connection-state=established,related in-interface=ether10
+add chain=forward comment="Allow connections that originated from LAN" connection-state=established,related
+add chain=input comment="Allow connections that originated from LAN" connection-state=established,related
+add chain=input comment="Accept broadcast" dst-address-type=broadcast in-interface=ether10
+add action=drop chain=input disabled=yes in-interface=ether10 src-address-list="!j allowed"
+add chain=input comment="default configuration" in-interface=ether10 protocol=icmp
+add chain=input comment="default configuration" connection-state=established,related in-interface=ether10
+add action=fasttrack-connection chain=forward comment="default configuration" connection-state=established,related in-interface=ether10
+add chain=forward comment="default configuration" connection-state=established,related in-interface=ether10
+add action=add-src-to-address-list address-list=Syn_Flooder address-list-timeout=30m chain=input comment="Add Syn Flood IP to the list" connection-limit=30,32 in-interface=ether10 protocol=tcp tcp-flags=syn
+add action=add-src-to-address-list address-list=Syn_Flooder address-list-timeout=30m chain=forward comment="Add Syn Flood IP to the list" connection-limit=30,32 in-interface=ether10 protocol=tcp tcp-flags=syn
+add action=add-src-to-address-list address-list=Port_Scanner address-list-timeout=4w2d chain=input comment="Port Scanner Detect" in-interface=ether10 protocol=tcp psd=21,3s,3,1
+add action=add-src-to-address-list address-list=WEBSITE-ACCESSED address-list-timeout=4w2d chain=forward comment="MARK WEB ACCESS" dst-port=80 in-interface=ether10 protocol=tcp
+add action=add-src-to-address-list address-list=RDP3389-ACCESSED address-list-timeout=4w2d chain=forward comment="MARK RDP ATTEMPTS" dst-port=3389 in-interface=ether10 protocol=tcp
+add chain=forward comment="ALLOW SOME VPN SUBNET" dst-address=192.168.234.0/24
+add chain=input comment="ALLOW IPSEC SSL UDP" dst-port=500 protocol=udp
+add action=drop chain=input comment="DROP INVALID" connection-state=invalid in-interface=ether10
+add action=drop chain=input comment="DROP EVERYTHING ELSE ON WAN" in-interface=ether10
+add action=tarpit chain=input comment="Drop to port scan list" in-interface=ether10 protocol=tcp src-address-list=Port_Scanner
+add action=drop chain=input comment="Drop to port scan list" src-address-list=Port_Scanner
+add action=drop chain=input comment="Drop to syn flood list" src-address-list=Syn_Flooder
+add action=drop chain=forward comment="Avoid spammers action" dst-port=25,587 protocol=tcp src-address-list=spammers
+add action=drop chain=input comment="Disallow weird packets" connection-state=invalid
+add action=drop chain=forward comment="Disallow weird packets" connection-state=invalid
+add action=drop chain=forward comment="default configuration" connection-state=invalid
+add action=drop chain=forward comment="default configuration" connection-nat-state=!dstnat connection-state=new in-interface=ether10
+add action=drop chain=input comment="default configuration" in-interface=ether10

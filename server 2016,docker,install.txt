@@ -1,0 +1,10 @@
+##WINDOWS SERVER 2016 DOCKER INSTALL
+##07-24-18
+##JGleba
+
+#RUN IN POWERSHELL
+Install-Module DockerProvider -Force
+Install-Package Docker -ProviderName DockerProvider -Force
+
+#REBOOT
+

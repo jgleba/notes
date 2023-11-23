@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL ADD PC TO DOMAIN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-08-12[Aug-Thu]12-23PM 
+
+elevated powershell
+
+Add-Computer -NewName "<computer-name>" -DomainName "<your.domain.com> -Restart

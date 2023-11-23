@@ -1,0 +1,34 @@
+create new fax stuff, public folder, mail enabled, for hosted exchange
+==
+
+public folder shell, should be created, if not, on Hosted EX client 1 run script, fix public folder assignments for tenant
+
+when done
+
+log into customer outlook
+
+public folders should be on side
+
+create folder under public folders
+
+log into hosted exchange management console
+
+go to public folders on side
+
+find cust.
+
+copy path of public folder in top bar
+
+go to hosted exchange client 1 and run mail enable public folder
+
+reflexion
+create new user
+go into user
+in properties
+change to distribution list
+
+in hosted exhchange run script to allow Anonymous users to send
+
+==
+
+if public folders not showing in outlook, log into outlook web access, right click on favourites, click add public folders

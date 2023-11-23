@@ -1,0 +1,84 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL NEXTCLOUD ROCKY LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-10-05[Oct-Thu]15-28PM 
+
+#https://wiki.crowncloud.net/?How_to_Install_NextCloud_on_Rocky_Linux_8
+
+==
+PHP
+==
+
+INITALLY VERSION 7.2 WAS INSTALLED, NEED VERSION 8
+
+sudo dnf install epel-release
+sudo dnf install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm
+
+sudo dnf module reset php
+sudo dnf module enable php:remi-8.0
+
+sudo yum install php-curl php-gd php-intl php-json php-ldap php-mbstring php-mysqlnd php-xml php-zip php-opcache php
+
+==
+MARIADB / MYSQL
+==
+
+sudo yum install mariadb-server
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+
+==
+DB CONFIG
+==
+
+sudo mysql_secure_installation
+
+sudo mysql -u root -p
+
+create database nextcloud;
+GRANT ALL PRIVILEGES ON db.* TO 'user'@'localhost' IDENTIFIED BY 'pass';
+FLUSH PRIVILEGES;
+
+==
+HTTPD
+==
+
+sudo yum install httpd
+sudo systemctl enable httpd
+sudo systemctl start httpd
+
+sudo yum install mod_ssl
+
+==
+HTTPD CONFIG
+==
+
+sudo nano /etc/httpd/conf/httpd.conf
+
+sudo nano /etc/httpd/sites-enabled/nextcloud.conf
+ 
+==
+INSTALL NEXTCLOUD
+==
+
+https://download.nextcloud.com/server/releases/
+
+sudo wget https://download.nextcloud.com/server/releases/nextcloud-27.1.2.zip
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+CIFS
+==
+
+sudo yum install cifs-utils
+sudo yum install samba-client

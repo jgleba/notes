@@ -1,0 +1,12 @@
+to allow nested in vmware
+add:
+
+vmx.allowNested = TRUE
+
+to .vmx file
+
+==
+020322
+==
+
+vhv.enable = "TRUE"

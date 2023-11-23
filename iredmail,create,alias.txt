@@ -1,0 +1,12 @@
+#!/bin/bash
+
+use vmail;
+
+INSERT INTO alias (address, goto, domain, islist) \
+VALUES ('j@twosheeep.com', \
+'jgleba@twosheeep.com,jg@twosheeep.com', \
+'twosheeep.com', \
+ 1);
+
+
+INSERT INTO alias (address, goto, domain) values ('j@twosheeep.com', 'jgleba@twosheeep.com,jg@twosheeep.com', 'twosheeep.com');

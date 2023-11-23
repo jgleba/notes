@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  IREDMAIL SEND AS ALIAS SETTING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-27[Nov-Sat]16-16PM 
+
+NOT WORKING
+
+https://docs.iredmail.org/allow.member.to.send.email.as.mail.list.html
+

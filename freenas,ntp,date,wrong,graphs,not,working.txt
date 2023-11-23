@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FREENAS GRAPHS STOP WORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-03-02[Mar-Wed]15-13PM 
+
+##https://www.truenas.com/community/threads/rrdcached-could-not-read-rrd-file.74785/
+
+NTP NOT WORKING, DATE WRONG
+
+service collectd stop
+service rrdcached stop
+rm -rf /var/db/collectd/rrd/*
+cd /var/db/collectd/rrd/
+mkdir localhost
+ln -s localhost freenas.local
+ln -s localhost [FQDN]
+service rrdcached start
+service collectd start

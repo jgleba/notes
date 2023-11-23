@@ -1,0 +1,67 @@
+=======================================================
+MULTIOTP, INSTALL, WINDOWS, FOR RDS, 2FA, 2 FACTOR AUTH
+061419
+HAVENT TRIED
+=======================================================
+
+#https://servilon.com/two-factor-authentication/
+#https://forum.multiotp.net/index.php?p=/discussion/31/multiotp-sync-users-from-ad
+#https://download.multiotp.net/credential-provider/
+
+#https://www.youtube.com/watch?v=zTIq8DxIaZU
+#https://github.com/multiOTP/multiotp/wiki
+#https://github.com/multiOTP/multiOTPCredentialProvider
+
+multiOTP sync users from AD
+evgenyte
+evgenyte
+May 2017 edited May 2017 in General
+Hello All,
+
+The task of checking whether it is possible to use multiopt for additional authorization in a forest consisting of about dozens of domains for authorization on RDS servers and for additional authorization of users on a PC, who has the rights of a domain admin.
+
+My first step is simply to configure MultiOTP in the test domain on the server with AD DS role and the client PC for the Test User from the AD.
+
+My test environment:
+1) Windows Server 2012R2 with All Updates, Has AD DS role, DNS role. (Primary Domain Controller )
+AV-VDC1.test.com ip 10.0.0.11
+
+2) Windows 10 with All Updates join to domain test.com
+AV-PC.test.com ip 10.0.0.12
+
+3)On server I create about 11 domain users in the OU=@otp and build-in Users. Also I created user MFA with domain admin rights.
+
+On the server 10.0.0.11, I run the webservice_install.bat as administrator and get GUI on http://localhost:8112 works fine.
+
+1Step:
+Downloaded multiotp_5.0.3.7.zip, extracted to c:\multiotp on both machines.
+
+On server 10.0.0.11 i run the following commands for configuration:
+
+multiotp -config default-request-prefix-pin=1
+multiotp -config default-request-ldap-pwd=1
+multiotp -config ldap-server-type=1
+multiotp -config ldap-cn-identifier="sAMAccountName"
+multiotp -config ldap-group-cn-identifier="sAMAccountName"
+multiotp -config ldap-group-attribute="memberOf"
+multiotp -config ldap-ssl=0
+multiotp -config ldap-port=389
+multiotp -config ldap-domain-controllers=test.com,ldaps://10.0.0.11:389
+multiotp -config ldap-base-dn="DC=test,DC=com"
+multiotp -config ldap-bind-dn="CN=mfa,OU=@otp,DC=test,DC=com"
+multiotp -config ldap-server-password="PWD"
+multiotp -config ldap-in-group="@otp,users"
+multiotp -config ldap-network-timeout=10
+multiotp -config ldap-time-limit=30
+multiotp -config ldap-activated=1
+
+Then I run:
+multiotp -debug -display-log -ldap-users-sync
+Requested operation successfully done
+11 users were added.
+
+In Web GUI i got List of users (11 users)...
+Then click print on user and scan the QRcode printed below, User was added to the Google Authenticator.
+Then I try Check a user
+And got: Test result: failed (99 ERROR: Authentication failed (and other possible unknown errors))
+Further I could not find the information, what to check next!

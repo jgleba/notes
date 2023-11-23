@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PYTHON3 INSTALL CENTOS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-04[Feb-Tue]13-31PM 
+
+
+##https://linuxize.com/post/how-to-install-python-3-on-centos-7/
+
+
+sudo yum install centos-release-scl
+sudo yum install rh-python36

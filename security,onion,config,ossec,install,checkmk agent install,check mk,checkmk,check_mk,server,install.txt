@@ -1,0 +1,281 @@
+##SECURITY ONION CONFIG FILES, OSSEC, CHECK MK AGENT ADD
+##JGLEBA
+##02-02-2017, updated 12-30-2017
+
+OSSEC INSTALL USED FOR AGENT AND SERVER
+========================================
+
+#INSTALL STUFF (SERVER)
+sudo yum install mysql-devel postgresql-devel gcc inotify-tools
+
+#AGENT
+sudo yum install gcc -y
+
+#FIREWALL
+sudo iptables -A INPUT -p udp --dport 1514 -j ACCEPT
+sudo /usr/sbin/iptables-save
+
+#OSSEC PACKAGE DOWNLOAD
+#sudo wget https://bintray.com/artifact/download/ossec/ossec-hids/ossec-hids-2.8.3.tar.gz
+sudo wget https://github.com/ossec/ossec-hids/archive/2.9.4.tar.gz
+
+#UNPACK, INSTALL
+==
+sudo tar -xvf 2.9.4.tar.gz
+cd ossec-hids-2.9.4
+sudo ./install.sh
+
+#ADD KEY FROM SERVER TO CLIENT, DO THIS ON CLIENT
+sudo /var/ossec/bin/manage_agents
+
+#START AND RESTART OSSEC
+sudo /var/ossec/bin/ossec-control start
+sudo /var/ossec/bin/ossec-control restart
+
+#FIREWALL ON CENTOS AGENT
+sudo firewall-cmd --zone=public --add-port=1514/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=1514/udp --permanent
+sudo firewall-cmd --reload
+
+#FIREWALL ON SECURITY ONION SERVER RUNNING OSSEC
+sudo ufw allow 1514
+
+#OSSEC WINDOWS INSTALL 
+https://bintray.com/artifact/download/ossec/ossec-hids/ossec-agent-win32-2.8.3.exe
+vm
+http://ossec.wazuh.com/vm/ossec-vm-2.8.3.ova
+
+===========================
+SECURITY ONION CONFIG FILES
+===========================
+
+INITAL NOTIFICATION SETUP
+==
+sudo cp /usr/share/securityonion/so-email.conf /home/
+cd /home/
+sudo nano so-email.conf
+sudo so-email -f so-email.conf
+sudo so-email -f ~/so-email.conf
+
+NOTIFYADDRESS="example@jgleba.com"
+MAILSERVER="10.0.0.10"
+SOSTATEMAIL="YES"
+BROEMAIL="YES"
+OSSECEMAIL="YES"
+SGUILEMAIL="YES"
+ELSAEMAIL="YES"
+ELSAUSER="user"
+ELSASERVER="localhost"
+
+IMPORTANT CONFIG FILES
+==
+OSSEC
+==
+sudo nano /var/ossec/etc/ossec.conf
+
+SGUIL
+==
+sudo nano /etc/sguil/sguil.conf
+sudo nano /etc/nsm/securityonion/sguild.email
+BRO
+==
+sudo nano /opt/bro/etc/broctl.cfg
+THRESHOLDS
+==
+sudo nano /etc/nsm/rules/threshold.conf
+
+SNORT
+==
+used for splunk
+sudo nano /etc/nsm/cossec-ens192/snort.conf
+
+KIBANA URL:
+https://onion.jgleba.com/app/kibana
+
+======================
+INSTALL CHECK MK AGENT
+======================
+
+UBUNTU
+==
+sudo wget http://mathias-kettner.de/download/check-mk-agent_1.2.5i5p3-2_all.deb
+sudo dpkg -i check* 
+
+sudo wget http://mathias-kettner.com/download/check-mk-agent_1.2.4p3-2_all.deb
+sudo dpkg -i check* 
+
+sudo apt-get install -y xinetd check-mk-agent
+sudo nano /etc/xinetd.d/check_mk
+sudo /lib/systemd/systemd-sysv-install enable xinetd
+
+CENTOS
+==
+sudo wget http://mathias-kettner.com/download/check_mk-agent-1.2.4p3-1.noarch.rpm
+sudo wget http://mathias-kettner.com/download/check_mk-agent-1.2.4.noarch.rpm
+sudo yum install check_mk-agent-1.2.4p3-1.noarch.rpm
+
+##MOST CURRENT, WORKS BEST
+
+sudo yum install -y epel-release
+sudo yum install -y xinetd check-mk-agent
+sudo nano /etc/xinetd.d/check-mk-agent
+sudo service xinetd start; sudo chkconfig xinetd on
+
+sudo wget http://mathias-kettner.de/download/check_mk-1.1.12p7.tar.gz
+
+sudo wget http://mathias-kettner.com/download/check_mk-agent-1.2.2p3-1.noarch.rpm
+
+sudo tar -xvzf check_mk-1.1.12p7.tar.gz
+
+sudo nano /etc/xinetd.d/check_mk
+
+FIREWALL TO ALLOW CHECKMK
+==
+sudo iptables -A INPUT -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 6556 -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport 6556 -j ACCEPT
+sudo /usr/sbin/iptables-save
+su root
+iptables-save > /etc/network/iptables.rules
+iptables-save > /etc/iptables/rules.v4
+
+**WORKED FOR iREDMAIL CHECKMK - DEC26, 2017
+sudo iptables -A IN_iredmail_allow -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 6556 -j ACCEPT
+sudo iptables-save
+
+**WORKED FOR CLOUDRON CHECKMK - DEC26, 2017 - KIND OF  - CREATED SCRIPT IN /j/bin AND USED CRON TO FORCE ON BOOT - WONT WORK ANYMORE DEC 31 2017
+sudo iptables -D CLOUDRON -p all -j DROP
+sudo iptables -A CLOUDRON -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A CLOUDRON -p udp --dport 6556 -j ACCEPT
+sudo iptables -A CLOUDRON -p all -j DROP
+sudo iptables-save
+
+sudo firewall-cmd --zone=public --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+sudo ufw allow 6556
+
+SAVING RULES IN CENTOS - 02-20-2019
+==
+sudo iptables-save
+
+
+STOP EMAIL
+==
+sudo service postfix stop
+sudo systemctl disable postfix
+
+REF
+==
+https://gsuartana.wordpress.com/2014/06/06/how-to-install-monitoring-agent-on-linux/
+
+
+CHECK_MK SERVER INSTALL
+=======================
+
+sudo yum install xinetd openssl wget -y
+sudo yum install python -y
+sudo yum install epel-release -y
+sudo yum install cyrus-sasl-plain -y
+sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+sudo firewall-cmd --reload
+
+sudo wget https://mathias-kettner.de/support/1.4.0p24/check-mk-raw-1.4.0p24-el7-71.x86_64.rpm
+
+sudo yum install -y check-mk-raw-1.4.0p24-el7-71.x86_64.rpm
+
+sudo omd create jgleba
+sudo omd start
+
+sudo htpasswd -m ~/etc/htpasswd cmkadmin
+
+
+
+
+ 
+==
+101819
+REINSTALLING
+==
+
+sudo yum install xinetd openssl wget -y
+sudo yum install python -y
+sudo yum install epel-release -y
+sudo yum install cyrus-sasl-plain -y
+sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+sudo firewall-cmd --reload
+
+sudo wget https://checkmk.com/support/1.6.0p5/check-mk-raw-1.6.0p5-el7-38.x86_64.rpm 
+sudo yum install -y check-mk-raw-1.6.0p5-el7-38.x86_64.rpm 
+
+sudo omd create jgdc2
+sudo omd start jgdc2
+
+Created new site jgdc with version 1.6.0p5.cre.
+
+  The site can be started with omd start jgdc.
+  The default web UI is available at http://zxcmk2/jgdc/
+
+  The admin user for the web applications is cmkadmin with password: 
+  (It can be changed with 'htpasswd -m ~/etc/htpasswd cmkadmin' as site user.
+)
+  Please do a su - jgdc for administration of this site.
+
+[user@zxcmk2 ~]$ sudo omd start
+Doing 'start' on site jgdc:
+Starting mkeventd...OK
+Starting rrdcached...OK
+Starting npcd...OK
+Starting nagios...OK
+Starting apache...OK
+Initializing Crontab...OK
+
+
+ http://172.16.0.9/jgdc/check_mk
+ 
+
+==
+REINSTALLING - 031820
+==
+
+sudo scp -rv user@172.16.0.15:/home/x/dat/short/j/softw/7checkmk/server,install/check-mk-raw-1.2.8p27-el7-50.x86_64.rpm ./
+sudo yum install -y check-mk-raw-1.2.8p27-el7-50.x86_64.rpm
+
+sudo omd create jgdc
+sudo omd start
+ 
+==
+AGENTS LOCATION
+==
+ 
+ /opt/omd/sites/jgleba/share/check_mk/agents
+ 
+ ==
+ SNAPSHOT / BACKUP LOCATION
+ ==
+ 
+ /opt/omd/sites/jgleba/var/check_mk/wato/snapshots/workdir
+ 
+ ==
+ NEWEST INSTALL CHECKMK RAW 
+ 071322
+ ==
+ 
+wget https://download.checkmk.com/checkmk/2.1.0p6/check-mk-raw-2.1.0p6_0.bullseye_amd64.deb 
+
+sudo dpkg -i check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+
+ERROR
+
+sudo apt-get -f install
+
+ERROR
+
+sudo apt-get update
+sudo apt-get -f install
+
+sudo omd create jgdc
+sudo omd start jgdc
+

@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PYTHON SIMPLE WEB SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]17-38PM 
+
+RUNS WEBSERVER IN CURRENT DIRECTORY ON PORT 8000
+
+python3 -m http.server
+
+python3 -m http.server port

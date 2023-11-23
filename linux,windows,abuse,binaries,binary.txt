@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ABUSE BINARIES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-07[Aug-Fri]12-02PM 
+
+FOR LINUX
+
+https://gtfobins.github.io/
+
+FOR WINDOWS
+
+https://lolbas-project.github.io/#

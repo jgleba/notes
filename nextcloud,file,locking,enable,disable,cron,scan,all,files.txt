@@ -1,0 +1,7 @@
+'filelocking.enabled' => 'false',
+
+php occ files:cleanup and php occ files:scan --all
+
+sudo -u apache php /var/www/html/nextcloud/occ files:scan --all > /path/to/log/ncrescanfiles.log
+
+sudo -u apache php /var/www/html/nextcloud/occ files:cleanup --all > /path/to/log/nccleanupfiles.log

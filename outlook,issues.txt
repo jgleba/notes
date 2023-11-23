@@ -1,0 +1,27 @@
+ask these questions
+
+for everyone?
+just the application?
+how does the server feel?
+just outlook slow?
+
+
+things to check to troubleshoot
+==
+
+checked memory - small amounts of use
+checked cpu - small amounts of use
+
+checked server - looks okay
+
+looked at exchange server - not much going on
+
+could have been replication going on, slowing things down
+
+still going on 
+
+reboot mail server
+
+close outlook
+
+take about 5 minutes to reboot

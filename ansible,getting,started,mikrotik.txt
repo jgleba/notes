@@ -1,0 +1,6 @@
+ansible centos -m yum -a "name=* state=latest" -b
+
+ansible-playbook -b -K -vvvv mtik,test,pb.yml
+
+ssh ansible@172.16.0.254 'system resource pci print'
+

@@ -1,0 +1,11 @@
+42 - WINS
+80 - web
+903 - netdevil backdoor
+1025 - microsoft remote procedure call (rpc)
+1433 - mssql
+2745 backdoor of bagel worm - mass mail
+3127 - backdoor for mydoom
+3306 - mysql udf weakness
+3410 - vulnerability in optix pro - remote access trojan
+5000 - upnp
+6129 - dameware

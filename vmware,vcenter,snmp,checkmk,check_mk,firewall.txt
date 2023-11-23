@@ -1,0 +1,24 @@
+================================
+VCENTER FIREWALL - SMNP, CHECKMK
+STILL NOT WORKING
+111319
+================================
+
+  "sshd": {
+    "firewall": {
+      "enable": true,
+      "rules": [
+        {
+           "direction": "inbound",
+           "protocol": "tcp",
+           "porttype": "dst",
+           "port": "22",
+           "portoffset": 0
+        },
+        {
+           "direction": "inbound",
+           "protocol": "tcp",
+           "porttype": dst",
+           "port": "6556",
+           "portoffset": 0
+        }

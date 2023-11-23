@@ -1,0 +1,87 @@
+========================================
+CENTOS WITH NGINX AND NGINX UNIT FOR PHP
+111919
+========================================
+
+##https://www.nginx.com/blog/installing-wordpress-with-nginx-unit/
+
+==
+INSTALL PHP
+==
+
+#sudo yum install -y php7.0 php7.0-common php7.0-mbstring php7.0-gd php7.0-intl php7.0-xml php7.0-mysql php7.0-mcrypt
+#sudo yum install -y php7.3 php7.3-common php7.3-mbstring php7.3-gd php7.3-intl php7.3-xml php7.3-mysql php7.3-mcrypt
+
+##https://linoxide.com/webserver/nginx-unit-open-source-application-server/
+
+sudo nano /etc/yum.repos.d/unit.repo
+
+echo "[unit]
+name=unit repo
+baseurl=http://nginx.org/packages/mainline/centos/7/$basearch/
+gpgcheck=0
+enabled=1" | sudo tee /etc/yum.repos.d/unit.repo
+
+sudo yum install unit unit-php -y
+
+sudo yum install nginx -y
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+ADD REMI PHP REPO
+
+sudo yum install -y php73-php php73-php-common php73-php-mbstring php73-php-gd php73-php-intl php73-php-xml php73-php-mysql php73-php-mcrypt
+
+sudo yum install unit-php
+
+sudo service unit restart
+sudo systemctl enable unit
+
+sudo curl -X PUT --data-binary @/usr/share/doc/unit-php/examples/unit.config --unix-socket /run/control.unit.sock http://localhost/config
+
+FIREWALL
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+
+cd /var/www/wordpress
+
+sudo nano wordpress.config
+
+{
+    "listeners": {
+        "127.0.0.1:8090": {
+            "application": "script_index_php"
+        },
+        "127.0.0.1:8091": {
+            "application": "direct_php"
+        }
+    },
+
+    "applications": {
+        "script_index_php": {
+            "type": "php",
+            "processes": {
+                "max": 20,
+                "spare": 5
+            },
+            "user": "www-data",
+            "group": "www-data",
+            "root": "/var/www/wordpress",
+            "script": "index.php"
+        },
+        "direct_php": {
+            "type": "php",
+            "processes": {
+                "max": 5,
+                "spare": 0
+            },
+            "user": "www-data",
+            "group": "www-data",
+            "root": "/var/www/wordpress",
+            "index": "index.php"
+        }
+    }
+}
+
+NOT WORKING, GIVING UP, CHANGING MIND, IS A WASTE

@@ -1,0 +1,26 @@
+IPHONE TURN OFF GOVERNMENT ANNOYING INTRUSIVE TEXT MESSAGES
+
+051419
+
+https://support.apple.com/en-us/HT202743
+
+TRIED, SAYS DISABLED, NEED TO WAIT FOR ANOTHER TO SEE IF WORKED
+
+Turn Government Alerts on or off
+
+By default, Government Alerts are turned on for your device.* When you receive a government alert, you hear a special sound that's similar to an alarm. If you want to turn these alerts on or off, follow these steps:
+
+    Go to Settings > Notifications.
+    Scroll to the very bottom of the screen.
+    Under Government Alerts, turn the type of alert on or off.*
+
+*Government Alerts are supported when using a SIM card from a supported carrier. Your Apple Watch can receive these alerts if your iPhone can receive them and is nearby, or your Apple Watch is on a Wi-Fi network. With a cellular plan from a supported carrier, your Apple Watch Series 3 (GPS + cellular) can receive these alerts without your iPhone nearby. For more information, contact your carrier. 
+
+*In some countries, you may not be able to disable Government Alerts.
+Choose to receive Test Emergency Alerts in the United States
+
+When your iPhone is connected to a carrier in the United States — using a U.S. SIM or while roaming in the U.S. — you can enable Test Emergency Alerts. By default, this is turned off. When you receive this type of alert, you'll hear a sound that's similar to an alarm, and the alert will mention that it's a test. To turn these alerts on or off, follow these steps:
+
+    Open the Phone app and tap Keypad.
+        To turn it on: Enter *5005*25371# and tap . You'll get an alert that says "Test alerts enabled." 
+        To turn it off: Enter *5005*25370# and tap . You'll get an alert that says "Test alerts disabled."

@@ -1,0 +1,72 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX IREDMAIL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-21[Jan-Fri]13-02PM 
+
+##https://docs.iredmail.org/install.iredmail.on.debian.ubuntu.html
+
+##SET HOSTNAME
+
+sudo nano /etc/hosts
+sudo nano /etc/hostname
+
+##DOWNLOAD
+
+sudo wget https://github.com/iredmail/iRedMail/archive/refs/tags/1.5.1.tar.gz
+
+##UNPACK
+
+sudo tar -xvf 1.5.1.tar.gz
+
+##INSTALL
+
+cd  iRedMail-1.5.1
+sudo chmod +x iRedMail.sh
+sudo ./iRedMail.sh
+
+##FIREWALL CHECKMK
+
+sudo firewall-cmd --zone=iredmail --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=iredmail --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+
+##WHEN USING MAILRELAY, EXAMPLE USING AMAZON SES, NEED
+
+yum install cyrus-sasl cyrus-sasl-plain -y
+
+##GETTING ERROR WHEN SENDING
+
+(TLS is required, but was not offered by host 127.0.0.1[127.0.0.1])
+
+ADD 
+
+-o smtp_tls_security_level=none
+
+TO
+
+# Amavisd integration.
+smtp-amavis unix -  -   n   -   4  smtp
+    -o syslog_name=postfix/amavis
+    -o smtp_data_done_timeout=1200
+    -o smtp_send_xforward_command=yes
+    -o disable_dns_lookups=yes
+    -o max_use=20
+    -o smtp_tls_security_level=none
+
+##ANOTHER ERROR WHEN RECEIVING EMAIL FROM GMAIL
+
+##https://ixnfo.com/en/troubleshooting-recipient-address-rejected-intentional-policy-rejection-please-try-again-later.html
+##https://forum.iredmail.org/topic14517-recipient-address-rejected-intentional-policy-rejection-please-try-a.html
+
+Recipient address rejected: Intentional policy rejection, please try again later
+ 
+sudo nano /opt/iredapd/settings.py
+
+REMOVE GREYLISTING
+
+#plugins = ["reject_null_sender", "wblist_rdns", "reject_sender_login_mismatch", "greylisting", "throttle", "amavisd_wblist", "sql_alias_access_policy"]
+plugins = ["reject_null_sender", "wblist_rdns", "reject_sender_login_mismatch", "throttle", "amavisd_wblist", "sql_alias_access_policy"]
+
+sudo service iredapd restart

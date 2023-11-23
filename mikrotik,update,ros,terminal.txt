@@ -1,0 +1,3 @@
+/system package update check-for-updates
+/system package update download
+/system reboot y

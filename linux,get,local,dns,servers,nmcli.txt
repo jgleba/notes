@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU GET LOCAL DNS SERVERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-04[May-Tue]16-16PM 
+
+##https://askubuntu.com/questions/152593/command-line-to-list-dns-servers-used-by-my-system
+
+nmcli device show <interfacename> | grep IP4.DNS

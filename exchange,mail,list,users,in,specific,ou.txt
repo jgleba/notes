@@ -1,0 +1,16 @@
+===============================================================================================
+EXCHANGE LIST / DISPLAY / EXPORT TO CSV LIST OF MAIL USERS AND EMAIL ADDRESSES IN A SPECIFIC OU
+101719
+===============================================================================================
+
+==
+DISPLAY IN CONSOLE
+==
+
+Get-recipient -ResultSize unlimited -OrganizationalUnit "OU=Users,OU=myvdesktop.com,OU=MailDomains,DC=domain,DC=local" | select name,samaccountname,RecipientType,EmailAddresses | ft -autosize -wrap
+
+==
+EXPORT TO CSV
+==
+
+Get-recipient -ResultSize unlimited -OrganizationalUnit "OU=Users,OU=myvdesktop.com,OU=MailDomains,DC=domain,DC=local" | select name,samaccountname,RecipientType,@{Name='Emails'; Expression={$_.EmailAddresses -join ";"}} | export-csv -path c:/tmp/DE-USERS-ALL.csv

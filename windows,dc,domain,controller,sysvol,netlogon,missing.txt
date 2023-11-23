@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SYSVOL AND NETLOGON SHARES MISSING AFTER DCPROMO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-18[Dec-Fri]14-38PM 
+
+##https://social.technet.microsoft.com/Forums/en-US/3d76a999-cfdc-4eff-b2ab-2fb697e8d7ee/2016-sysvol-and-netlogon-shares-missing-from-new-domain-controllers-added-to-2012-and-below?forum=ws2016
+
+Type regedt32 in Powershell and edit the following registry entry
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters
+
+Change sysvolready=0   <<<< Turns off sysvol and netlogon shares.
+
+Change sysvolready=1   <<<< Creates and shares sysvol and netlogon automatically.

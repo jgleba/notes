@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  XCP-NG JOIN TO DOMAIN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-28[Feb-Fri]16-58PM 
+
+##https://docs.citrix.com/en-us/xencenter/7-1/rbac-join-domain.html
+
+IN XCP CENTER WINDOWS APPLICATION GO TO USERS
+
+THEN JOIN DOMAIN

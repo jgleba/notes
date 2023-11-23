@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS CHECK STATUS AND LIST SERVICES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-20[Sep-Sun]19-53PM 
+
+##https://www.cyberciti.biz/faq/check-running-services-in-rhel-redhat-fedora-centoslinux/
+
+systemctl list-unit-files

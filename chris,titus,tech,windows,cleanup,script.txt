@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CHRIS TITUS WINDOWS MODIFY CLEAN UP SCRIPT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-09-09[Sep-Sat]12-31PM 
+
+https://christitus.com/debloat-windows-10-2020/
+
+
+iwr -useb https://christitus.com/win | iex

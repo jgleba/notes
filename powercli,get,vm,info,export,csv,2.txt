@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LIST VMS TO CSV FILE IN POWERCLI
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-05-31[May-Tue]11-29AM 
+
+
+
+Get-VM | Where-Object {$_.PowerState -eq "PoweredOff"} | Export-Csv -Path c:\poweredoff-vms.csv -NoTypeInformation
+Get-VM | Export-Csv -Path c:\j\0\vms.csv -NoTypeInformation

@@ -1,0 +1,463 @@
+==========================================
+CENTOS OPENVPN SERVER SETUP
+USING DIGITAL OCEAN 5 USD CENTOS DROPLET
+090519
+==========================================
+
+##https://www.digitalocean.com/community/tutorials/how-to-set-up-and-configure-an-openvpn-server-on-centos-7
+
+==
+INSTALL STUFF
+==
+
+sudo yum install epel-release -y
+sudo yum update -y
+sudo yum install -y openvpn wget nano
+
+==
+START CONFIGURE
+==
+
+wget -O /tmp/easyrsa https://github.com/OpenVPN/easy-rsa-old/archive/2.3.3.tar.gz
+tar xfz /tmp/easyrsa
+
+sudo mkdir /etc/openvpn/easy-rsa
+sudo cp -rf easy-rsa-old-2.3.3/easy-rsa/2.0/* /etc/openvpn/easy-rsa
+
+#sudo chown -R root /etc/openvpn/easy-rsa/
+
+sudo cp /usr/share/doc/openvpn-2.4.7/sample/sample-config-files/server.conf /etc/openvpn
+
+sudo nano /etc/openvpn/server.conf
+
+UNCOMMENT
+
+#push "redirect-gateway def1 bypass-dhcp"
+
+#push "dhcp-option DNS 208.67.222.222"
+#push "dhcp-option DNS 208.67.220.220"
+
+user nobody
+group nobody
+
+topology subnet
+
+ADD TO BOTTOM
+
+remote-cert-eku "TLS Web Client Authentication"
+
+CHANGE
+
+;tls-auth ta.key 0
+tls-crypt ovpn1.tlsauth
+
+==
+WAS HAVING ISSUES GETTING CONNECTED - BELOW IS WORKING SERVER CONFIG FROM CENTOS MACHINE RUNNING IN STRATFORD - 091019
+==
+
+[user@zxcj ~]$ cat server.conf
+local 192.168.88.41
+port 1194
+proto udp
+dev tun
+ca ca.crt
+cert server.crt
+key server.key  # This file should be kept secret
+dh dh2048.pem
+topology subnet
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+#push "route 192.168.88.0 255.255.255.0 10.8.0.1 1"
+push "redirect-gateway"
+#push "dhcp-option DNS 208.67.222.222"
+#push "dhcp-option DNS 208.67.220.220"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
+#push "dhcp-option DNS 10.8.0.254"
+#push "dhcp-option DNS 192.168.88.1"
+keepalive 10 120
+tls-auth ovpn1.tlsauth
+cipher AES-256-CBC
+user nobody
+group nobody
+persist-key
+persist-tun
+status openvpn-status.log
+log openvpn.log
+verb 3
+explicit-exit-notify 1
+remote-cert-eku "TLS Web Client Authentication"
+
+CONTINUE
+
+sudo openvpn --genkey --secret /etc/openvpn/ovpn1.tlsauth
+
+==
+CERTS AND KEYS
+==
+
+sudo mkdir /etc/openvpn/easy-rsa/keys
+sudo nano /etc/openvpn/easy-rsa/vars
+
+export KEY_COUNTRY="CA"
+export KEY_PROVINCE="ON"
+export KEY_CITY="Toronto"
+export KEY_ORG="N/A"
+export KEY_EMAIL="example@jgleba.com"
+export KEY_CN=vpndo1.jgleba.com
+export KEY_NAME=ovpnserver
+export KEY_OU=N/A
+export PKCS11_MODULE_PATH=N/A
+export PKCS11_PIN=N/A
+
+export KEY_COUNTRY="CA"
+export KEY_PROVINCE="ON"
+export KEY_CITY="Toronto"
+export KEY_ORG="N/A"
+export KEY_EMAIL="example@jgleba.com"
+export KEY_CN=vpnstrat.jgleba.com
+export KEY_NAME=ovpnserver
+export KEY_OU=N/A
+export PKCS11_MODULE_PATH=N/A
+export PKCS11_PIN=N/A
+
+cd /etc/openvpn/easy-rsa
+
+su root
+
+source ./vars
+
+./clean-all
+./build-ca
+./build-key-server server
+./build-dh
+
+cd /etc/openvpn/easy-rsa/keys
+sudo cp dh2048.pem ca.crt server.crt server.key /etc/openvpn
+
+cd /etc/openvpn/easy-rsa
+./build-key client
+
+cp /etc/openvpn/easy-rsa/openssl-1.0.0.cnf /etc/openvpn/easy-rsa/openssl.cnf
+
+==
+ROUTING
+==
+
+sudo nano /etc/sysctl.conf
+
+ADD
+
+net.ipv4.ip_forward = 1
+
+##sudo systemctl restart network.service
+sudo sysctl -p
+
+==
+START AND ENABLE OPENVPN
+==
+
+sudo systemctl -f enable openvpn@server.service
+sudo systemctl start openvpn@server.service
+
+==
+CHECK
+==
+
+sudo systemctl status openvpn@server.service
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=1194/udp --permanent
+sudo firewall-cmd --zone=public --add-port=1194/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --get-active-zones
+
+[root@zxovpn1 keys]# sudo firewall-cmd --get-active-zones
+public
+  interfaces: eno16777984
+
+sudo firewall-cmd --zone=trusted --add-service openvpn
+sudo firewall-cmd --zone=trusted --add-service openvpn --permanent
+
+sudo firewall-cmd --list-services --zone=trusted
+
+sudo firewall-cmd --add-masquerade
+sudo firewall-cmd --permanent --add-masquerade
+
+sudo firewall-cmd --query-masquerade
+
+SHARK=$(ip route get 172.31.0.10 | awk 'NR==1 {print $(NF-2)}')
+sudo firewall-cmd --permanent --direct --passthrough ipv4 -t nat -A POSTROUTING -s 10.8.0.0/24 -o $SHARK -j MASQUERADE
+
+USED WITH STRATFORD TEST - WORKED - NOT WORKING WITH DIGITAL OCEAN
+
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+TRYING FOR DIGIAL OCEAN
+
+sudo iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+
+sudo iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o enp0s3 -j MASQUERADE
+
+DIDNT WORK, BUT AFTER RUNNING:
+
+[root@dojc3 keys]# sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+
+RULE DIDNT ADD, FIREWALL NOT RUNNING, INSTALL
+
+yum install firewalld -y
+sudo systemctl enable firewalld
+sudo systemctl start firewalld
+sudo systemctl status firewalld
+
+sudo firewall-cmd --zone=public --add-port=1194/udp --permanent
+sudo firewall-cmd --zone=public --add-port=1194/tcp --permanent
+sudo firewall-cmd --reload
+iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+
+==
+CONNECT FROM CLIENT
+==
+
+COPY FILES TO CLIENT
+
+client.crt
+client.key
+ca.crt
+ovpn1.tlsauth
+
+ZIP UP AND COPY CERTS AND KEYS TO CLIENT
+
+yum install zip -y
+zip -r doovpntest.zip client.key client.crt ca.crt ovpn1.tlsauth
+scp -r doovpntest.zip -p 65011 user@jgleba.com:/home/user/
+
+CREATE client.ovpn FILE ON CLIENT
+
+client
+tls-client
+ca ca.crt
+cert client.crt
+key client.key
+tls-crypt myvpn.tlsauth
+remote-cert-eku "TLS Web Client Authentication"
+proto udp
+vpndo1.jgleba.com 1194 udp
+dev tun
+topology subnet
+pull
+user nobody
+group nobody
+
+==
+WINDOWS CLIENT NOT CONNECTING, NO CLIENT/SERVER LOGS, APPEARS TO NOT EVEN ATTEMPT TO CONNECT - WAS BAD CLIENT CONFIG, BELOW CLIENT CONFIG CONNECTS, NETWORK CONFIG IS STILL WRONG
+WORKING CLIENT CONFIG - 091019
+==
+
+client
+dev tun                             
+proto udp            #only if you use udp protocol
+remote vpnstrat.jgleba.com 1194    
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+ca ca.crt
+cert client.crt
+key client.key
+#tls-crypt myvpn.tlsauth ##WAS PREVENTING MY CONFIG FROM DOING ANYTHING, COPIED DIRECTLY FROM MANY SETS OF INSTRUCTIONS, ALL WRONG. HAD TO CHANGE SERVER SIDE CONFIG AS WELL.
+tls-auth ovpn1.tlsauth
+#auth-user-pass      #uncomment this row if you want to use two factor authentication
+verb 4
+#comp-lzo
+ns-cert-type server
+#log openvpn.log
+
+
+==
+ANOTHER WAY - NEED TO TRY - 090719
+OpenVPN Access Server On CentOs Quick Start
+==
+
+##https://openvpn.net/vpn-software-packages/centos/
+
+Download the package (Rpm) from this icon:centos
+yum install net-tools wget
+
+sudo wget https://openvpn.net/downloads/openvpn-as-latest-CentOS7.x86_64.rpm
+
+rpm -Uvh openvpn-as-xxx.rpm
+
+passwd openvpn (to set password for bootstrapped user)
+
+Continue setup in browser at: https://ip.ad.dr.ess:943/admin
+(browser setup found here)
+
+https://openvpn.net/vpn-software-packages/centos/#setupGuide
+
+
+==
+WAS HAVING LOTS OF ISSUES GETTING CONNECTED, SOME RESOURCES - DOING AFTER GETTING WORKING - 091019
+==
+
+https://forums.openvpn.net/viewtopic.php?t=18032
+https://forums.openvpn.net/viewtopic.php?t=24258
+https://serverfault.com/questions/398951/openvpn-connection-works-but-no-gateway-is-assigned
+https://forums.openvpn.net/viewtopic.php?t=13017
+https://github.com/schwabe/ics-openvpn/issues/716
+https://forums.openvpn.net/viewtopic.php?t=23864
+http://matthewcasperson.blogspot.com/2015/03/fixing-openvpn-authenticatedecrypt.html
+https://github.com/graysky2/ovpngen/issues/4
+https://www.cs.put.poznan.pl/csobaniec/examples/openvpn/
+
+==
+TROUBLESHOOTING
+==
+
+USED THIS METHOD TO CONNECT IN WINDOWS, SHOWED CONFIG WAS WRONG WHEN NO LOG ANYWHERE
+
+C:\Users\Administrator>openvpn "C:\Program Files\OpenVPN\config\client.ovpn"
+
+ALSO USED MY EXCHANGE CONFIG TO CHECK, SEEING WHICH OPTIONS MATCHED AND WHICH ONES A WORKING EXAMPLE WASNT USING
+
+==
+DNS SERVER FOR VPN SERVER
+==
+
+##https://r.je/openvpn-nat
+
+sudo yum install dnsmasq -y
+sudo systemctl enable dnsmasq
+sudo systemctl start dnsmasq
+sudo firewall-cmd --zone=public --add-service=dns --permanent
+sudo firewall-cmd --reload
+
+==
+MAYBE GOOD FIREWALL RULES, SERVER
+==
+
+##https://www.linode.com/docs/networking/vpn/tunnel-your-internet-traffic-through-an-openvpn-server/
+
+*filter
+
+enp0s3
+
+# Allow all loopback (lo) traffic and reject traffic
+# to localhost that does not originate from lo.
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
+sudo iptables -A OUTPUT -o lo -j ACCEPT
+
+# Allow ping and ICMP error returns.
+sudo iptables -A INPUT -p icmp -m state --state NEW --icmp-type 8 -j ACCEPT
+sudo iptables -A INPUT -p icmp -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A OUTPUT -p icmp -j ACCEPT
+
+# Allow SSH.
+sudo iptables -A INPUT -i enp0s3 -p tcp -m state --state NEW,ESTABLISHED --dport 22 -j ACCEPT
+sudo iptables -A OUTPUT -o enp0s3 -p tcp -m state --state ESTABLISHED --sport 22 -j ACCEPT
+
+# Allow UDP traffic on port 1194.
+sudo iptables -A INPUT -i enp0s3 -p udp -m state --state NEW,ESTABLISHED --dport 1194 -j ACCEPT
+sudo iptables -A OUTPUT -o enp0s3 -p udp -m state --state ESTABLISHED --sport 1194 -j ACCEPT
+
+# Allow DNS resolution and limited HTTP/S on eth0.
+# Necessary for updating the server and keeping time.
+sudo iptables -A INPUT -i enp0s3 -p udp -m state --state ESTABLISHED --sport 53 -j ACCEPT
+sudo iptables -A OUTPUT -o enp0s3 -p udp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
+sudo iptables -A INPUT -i enp0s3 -p tcp -m state --state ESTABLISHED --sport 53 -j ACCEPT
+sudo iptables -A OUTPUT -o enp0s3 -p tcp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
+
+sudo iptables -A INPUT -i enp0s3 -p tcp -m state --state ESTABLISHED --sport 80 -j ACCEPT
+sudo iptables -A OUTPUT -o enp0s3 -p tcp -m state --state NEW,ESTABLISHED --dport 80 -j ACCEPT
+sudo iptables -A INPUT -i enp0s3 -p tcp -m state --state ESTABLISHED --sport 443 -j ACCEPT
+sudo iptables -A OUTPUT -o enp0s3 -p tcp -m state --state NEW,ESTABLISHED --dport 443 -j ACCEPT
+
+# Allow traffic on the TUN interface.
+sudo iptables -A INPUT -i tun0 -j ACCEPT
+sudo iptables -A FORWARD -i tun0 -j ACCEPT
+sudo iptables -A OUTPUT -o tun0 -j ACCEPT
+
+# Allow forwarding traffic only from the VPN.
+sudo iptables -A FORWARD -i tun0 -o eth0 -s 10.8.0.0/24 -j ACCEPT
+sudo iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Log any packets which don't fit the rules above...
+# (optional but useful)
+sudo iptables -A INPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_INPUT_denied: " --log-level 4
+sudo iptables -A FORWARD -m limit --limit 3/min -j LOG --log-prefix "iptables_FORWARD_denied: " --log-level 4
+sudo iptables -A OUTPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_OUTPUT_denied: " --log-level 4
+
+# then reject them.
+sudo iptables -A INPUT -j REJECT
+sudo iptables -A FORWARD -j REJECT
+sudo iptables -A OUTPUT -j REJECT
+
+COMMIT
+
+eth0
+
+# Allow all loopback (lo) traffic and reject traffic
+# to localhost that does not originate from lo.
+sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
+sudo iptables -A OUTPUT -o lo -j ACCEPT
+
+# Allow ping and ICMP error returns.
+sudo iptables -A INPUT -p icmp -m state --state NEW --icmp-type 8 -j ACCEPT
+sudo iptables -A INPUT -p icmp -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -A OUTPUT -p icmp -j ACCEPT
+
+# Allow SSH.
+sudo iptables -A INPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 22 -j ACCEPT
+sudo iptables -A OUTPUT -o eth0 -p tcp -m state --state ESTABLISHED --sport 22 -j ACCEPT
+
+# Allow UDP traffic on port 1194.
+sudo iptables -A INPUT -i eth0 -p udp -m state --state NEW,ESTABLISHED --dport 1194 -j ACCEPT
+sudo iptables -A OUTPUT -o eth0 -p udp -m state --state ESTABLISHED --sport 1194 -j ACCEPT
+
+# Allow DNS resolution and limited HTTP/S on eth0.
+# Necessary for updating the server and keeping time.
+sudo iptables -A INPUT -i eth0 -p udp -m state --state ESTABLISHED --sport 53 -j ACCEPT
+sudo iptables -A OUTPUT -o eth0 -p udp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
+sudo iptables -A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 53 -j ACCEPT
+sudo iptables -A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
+
+sudo iptables -A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 80 -j ACCEPT
+sudo iptables -A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 80 -j ACCEPT
+sudo iptables -A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 443 -j ACCEPT
+sudo iptables -A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 443 -j ACCEPT
+
+# Allow traffic on the TUN interface.
+sudo iptables -A INPUT -i tun0 -j ACCEPT
+sudo iptables -A FORWARD -i tun0 -j ACCEPT
+sudo iptables -A OUTPUT -o tun0 -j ACCEPT
+
+# Allow forwarding traffic only from the VPN.
+sudo iptables -A FORWARD -i tun0 -o eth0 -s 10.8.0.0/24 -j ACCEPT
+sudo iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Log any packets which don't fit the rules above...
+# (optional but useful)
+sudo iptables -A INPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_INPUT_denied: " --log-level 4
+sudo iptables -A FORWARD -m limit --limit 3/min -j LOG --log-prefix "iptables_FORWARD_denied: " --log-level 4
+sudo iptables -A OUTPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_OUTPUT_denied: " --log-level 4
+
+# then reject them.
+sudo iptables -A INPUT -j REJECT
+sudo iptables -A FORWARD -j REJECT
+sudo iptables -A OUTPUT -j REJECT
+
+COMMIT

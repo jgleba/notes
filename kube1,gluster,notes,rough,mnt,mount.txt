@@ -1,0 +1,32 @@
+sudo mkdir -p /home/glustervol1
+
+gluster volume create glustervol1 replica 3 kubelgluster1:/home/glustervol1 kubelgluster2:/home/glustervol1 kubelgluster3:/home/glustervol1
+
+gluster volume create glustervol1 replica 3 localhost:/home/glustervol1 kubelgluster2:/home/glustervol1 kubelgluster3:/home/glustervol1
+
+gluster volume create glustervol1 replica 3 kube1gluster1:/home/glustervol1 kube1gluster2:/home/glustervol1 kube1gluster3:/home/glustervol1 force
+
+
+sudo gluster vol start glustervol1
+
+sudo nano /etc/fstab
+
+kube1gluster1:glustervol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=kube1gluster2,backupvolfile-server=kube1gluster3,direct-io-mode=disable,_netdev  0       0
+
+kube1gluster2:glustervol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=kube1gluster3,backupvolfile-server=kube1gluster1,direct-io-mode=disable,_netdev  0       0
+
+kube1gluster3:glustervol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=kube1gluster1,backupvolfile-server=kube1gluster2,direct-io-mode=disable,_netdev  0       0
+
+==
+
+040320
+
+WEBCL2
+
+sudo nano /etc/fstab
+
+WEBCL-FE-N1:webcl2-vol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=WEBCL-FE-N2,backupvolfile-server=WEBCL-FE-N3,direct-io-mode=disable,_netdev  0       0
+
+WEBCL-FE-N2:webcl2-vol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=WEBCL-FE-N1,backupvolfile-server=WEBCL-FE-N3,direct-io-mode=disable,_netdev  0       0
+
+WEBCL-FE-N3:webcl2-vol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=WEBCL-FE-N2,backupvolfile-server=WEBCL-FE-N1,direct-io-mode=disable,_netdev  0       0

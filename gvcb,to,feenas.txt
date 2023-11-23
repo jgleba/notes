@@ -1,0 +1,1 @@
+/vmfs/volumes/jfnas/fnasutil/gvcb/localstoretofnas/ghettoVCB-localfnasback.sh -f /vmfs/volumes/jfnas/fnasutil/gvcb/localstoretofnas/localfnasbackvm > /vmfs/volumes/jfnas/fnasutil/gvcb/log/ghettoVCB-localtofnas-$(date +%m-%d-%y--%H-%M).log&

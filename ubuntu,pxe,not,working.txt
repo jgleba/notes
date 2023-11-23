@@ -1,0 +1,78 @@
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+url=http://j:pass@172.16.0.45/0/ubuntu1804/preseed.cfg debian-installer/locale=en_US keyboard-configuration/layoutcode=us
+
+
+append preseed/url=http://172.16.0.45/0/ubuntu1804/preseed.cfg debian-installer/locale=en_US keyboard-configuration/layoutcode=us netcfg/disable_dhcp=false  netcfg/get_hostname=ubuntu
+
+
+==
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 url=http://j:pass@172.16.0.45/0/ubuntu1804/ubuntu-18.04.4-live-server-amd64.iso
+==
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 hostname=ubuntu domain=local url=http://j:pass@172.16.0.45/0/ubuntu1804/preseed.cfg quiet initrd=initrd root=/dev/ram0 netboot=nfs nfsroot=${fog-ip}:/images/os/ubuntu1804/
+boot
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 hostname=ubuntu domain=local url=http://j:pass@172.16.0.45/0/ubuntu1804/preseed.cfg quiet initrd=initrd root=/dev/sda netboot=nfs nfsroot=${fog-ip}:/images/os/ubuntu1804/
+boot
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 hostname=ubuntu domain=local url=http://j:pass@172.16.0.45/0/ubuntu1804/preseed.cfg quiet initrd=initrd root=/dev/nfs netboot=nfs nfsroot=${fog-ip}:/images/os/ubuntu1804/
+boot
+
+
+
+
+kernel tftp://172.16.0.45/os/ubuntu1804/vmlinuz
+initrd tftp://172.16.0.45/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=/dev/nfs netboot=nfs nfsroot=172.16.0.45:/images/os/ubuntu1804/ locale=en_GB.UTF-8 keyboard-configuration/layoutcode=us
+boot || goto MENU
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+netboot=nfs nfsroot=172.16.0.45:/images/os/ubuntu1804/ debian-installer/locale=en_US keyboard-configuration/layoutcode=us
+
+
+==
+
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 url=http://j:pass@172.16.0.45/0/ubuntu1804/preseed.cfg quiet initrd=initrd netboot=nfs nfsroot=${fog-ip}:/images/os/ubuntu1804/
+boot
+
+==
+
+
+linux /vmlinuz ip=dhcp url=http://${pxe_default_server}/tftp/ubuntu-20.04-live-server-amd64.iso autoinstall ds="nocloud-net;s=http://${pxe_default_server}/tftp/" root=/dev/ram0 cloud-config-url=/dev/null
+
+
+$VMNAME = "UBUJUNK"
+$DISK = "5"
+$CPUCOUNT = "2"
+$MEMORYGB = "1"
+$DATASTORE = "jfnas1-prod"
+$VMNETWORK = "VMVLAN1720"
+$ESXHOST = "172.16.2.30"
+
+New-VM –Name $VMNAME -vmhost $ESXHOST –DiskGB $DISK –DiskStorageFormat Thin –DataStore $DATASTORE –MemoryGB $MEMORYGB -NumCpu $CPUCOUNT –NetworkName $VMNETWORK
+Get-VM -Name $VMNAME | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name $VMNAME | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false

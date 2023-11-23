@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MULTISITE AD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-04-10[Apr-Sat]13-51PM 
+
+##https://rdr-it.com/en/active-directory-multi-site-subnet-and-replication-configuration/

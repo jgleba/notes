@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SHOW SSL CERTIFICATE EXPIRATION DATES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-08-28[Aug-Sun]09-42AM 
+
+echo | openssl s_client -connect domain.com:443 | openssl x509 -noout -dates

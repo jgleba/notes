@@ -1,0 +1,79 @@
+#!/bin/bash
+
+##PUBLIC IP CLOUDFLARE CHECK AND UPDATE IF IP CHANGE
+##011521
+
+PUBLICIPNEW=$(curl https://ipinfo.io | sed '2q;d' | awk '{print $2}' | sed s:,:: | sed s:\"::g )
+#echo "${PUBLICIPNEW}"
+
+PUBLICIPCURRENT=$(curl -X GET "https://api.cloudflare.com/client/v4/zones/9cef5f67e7f5034db973ea6dfbf47d79/dns_records/5b7404c45588c8973262fc4de4cd67d6" \
+     -H "Content-Type:application/json" \
+     -H "X-Auth-Key:abc" \
+     -H "X-Auth-Email:example@jgleba.com"\
+     --data '{"type":"A","content":"jgleba.com","proxied":"true"}' |  python -m json.tool |sed '5q;d' | awk '{print $2}' | sed s:,:: | sed s:\"::g)
+#echo "${PUBLICIPCURRENT}"
+
+if [ $PUBLICIPNEW != $PUBLICIPCURRENT ]
+then
+        EMAIL="example@jgleba.com";
+        KEY="abc";
+        ZONE_ID="9cef5f67e7f5034db973ea6dfbf47d79";
+        DNS_ID="5b7404c45588c8973262fc4de4cd67d6";
+        TYPE="A";
+        NAME="jgleba.com";
+        CONTENT="${PUBLICIPNEW}";
+        PROXIED=true;
+        TTL="120";
+generate_post_data()
+{
+  cat <<EOF
+{
+  "Type": "$TYPE",
+  "Name": "$NAME",
+  "Content": "$CONTENT",
+  "proxied": $PROXIED,
+  "ttl": "$TTL"
+}
+EOF
+}
+generate_post_data
+
+        curl -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$DNS_ID" \
+                -H "X-Auth-Email: ${EMAIL}" \
+                -H "X-Auth-Key: ${KEY}" \
+                -H "Content-Type: application/json" \
+                --data "$(generate_post_data)"
+
+        EMAIL="example@jgleba.com";
+        KEY="abc";
+        ZONE_ID="9cef5f67e7f5034db973ea6dfbf47d79";
+        DNS_ID="859332f8d74ff143ebe5a3892065be49";
+        TYPE="A";
+        NAME="mailaddr.jgleba.com";
+        CONTENT="${PUBLICIPNEW}";
+        PROXIED=false;
+        TTL="120";
+generate_post_data()
+{
+  cat <<EOF
+{
+  "Type": "$TYPE",
+  "Name": "$NAME",
+  "Content": "$CONTENT",
+  "proxied": $PROXIED,
+  "ttl": "$TTL"
+}
+EOF
+}
+generate_post_data
+
+        curl -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$DNS_ID" \
+                -H "X-Auth-Email: ${EMAIL}" \
+                -H "X-Auth-Key: ${KEY}" \
+                -H "Content-Type: application/json" \
+                --data "$(generate_post_data)"
+
+
+(echo "Subject: NEW PUBLIC IP"; echo $PUBLICIPNEW) | sendmail alerts@jgleba.com
+
+fi

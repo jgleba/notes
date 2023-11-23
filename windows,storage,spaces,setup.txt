@@ -1,0 +1,74 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  2016 STORAGE SPACES SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-06[Jan-Wed]14-38PM 
+
+##https://docs.microsoft.com/en-us/windows-server/storage/storage-spaces/deploy-storage-spaces-direct
+
+==
+ADD COMPUTER TO DOMAIN
+==
+
+Add-Computer -NewName "Server01" -DomainName "contoso.com" -Credential "CONTOSO\User" -Restart -Force
+
+==
+ADD TO LOCAL ADMIN
+==
+
+Net localgroup Administrators <Domain\Account> /add
+
+==
+INSTALL STUFF
+==
+
+Install-WindowsFeature -Name "Hyper-V", "Failover-Clustering", "Data-Center-Bridging", "RSAT-Clustering-PowerShell", "Hyper-V-PowerShell", "FS-FileServer"
+
+==
+TEST CLUSTER
+==
+
+Test-Cluster –Node <MachineName1, MachineName2, MachineName3, MachineName4> –Include "Storage Spaces Direct", "Inventory", "Network", "System Configuration"
+
+Test-Cluster –Node ss1 –Include "Storage Spaces Direct", "Inventory", "Network", "System Configuration"
+
+==
+CREATE CLUSTER
+==
+
+New-Cluster –Name <ClusterName> –Node <MachineName1,MachineName2,MachineName3,MachineName4> –NoStorage
+
+New-Cluster –Name sscluster1 –Node ss1 –NoStorage
+
+==
+ENABLE STORAGE SPACES DIRECT
+==
+
+Enable-ClusterStorageSpacesDirect -SkipEligibilityChecks
+
+Enable-ClusterStorageSpacesDirect –CimSession <ClusterName>
+
+Enable-ClusterStorageSpacesDirect –CimSession sscluster1
+
+==
+
+PS C:\Windows\system32> Enable-ClusterStorageSpacesDirect
+Enable-ClusterStorageSpacesDirect : Feature S2D is not supported on node ss1
+At line:1 char:1
++ Enable-ClusterStorageSpacesDirect
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (MSCluster_StorageSpacesDirect:root/MSCLUSTER/...ageSpacesDirect) [Ena
+   ble-ClusterStorageSpacesDirect], CimException
+    + FullyQualifiedErrorId : HRESULT 0x80070032,Enable-ClusterStorageSpacesDirect
+
+Enable-ClusterStorageSpacesDirect : Failed to run CIM method EnableStorageSpacesDirect on the
+root/MSCLUSTER/MSCluster_StorageSpacesDirect CIM object.  The CIM method returned the following error code: 50
+At line:1 char:1
++ Enable-ClusterStorageSpacesDirect
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidResult: (MSCluster_StorageSpacesDirect:String) [Enable-ClusterStorageSpacesDirect
+   ], CimJobException
+    + FullyQualifiedErrorId : CimJob_EnableStorageSpacesDirect_50,Enable-ClusterStorageSpacesDirect
+
+PS C:\Windows\system32>

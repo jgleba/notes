@@ -1,0 +1,91 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS NTP CLIENT SETUP, SYNC TIME FROM INTERNAL NTP SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-22[Sep-Tue]14-55PM 
+
+##https://thebackroomtech.com/2019/01/17/configure-centos-to-sync-with-ntp-time-servers/
+
+==
+INSTALL
+==
+
+sudo yum -y install ntp
+
+==
+CONFIGURE
+==
+
+sudo nano /etc/ntp.conf
+
+CHANGE SERVERS LIST TO
+
+server 172.16.0.18
+
+==
+START AND ENABLE
+==
+
+sudo systemctl start ntpd.service && sudo systemctl enable ntpd.service
+
+==
+CHECK IF NTP ACTIVE
+==
+
+timedatectl
+
+==
+GET UPDATE FROM NTP
+==
+
+sudo ntpdate 172.16.0.18
+
+ntpdate[21399]: no server suitable for synchronization found
+
+==
+CHANGE HW CLOCK
+==
+
+sudo hwclock -w
+
+
+===============================================
+NOT WORKING, TRYING ANOTHER WAY
+===============================================
+
+##https://www.rootusers.com/how-to-synchronize-time-in-linux-with-ntp-peers/
+
+sudo yum install chrony -y
+
+sudo nano /etc/chrony.conf
+
+ADD
+
+server 172.16.0.18 iburst
+
+START
+
+sudo systemctl enable chronyd && sudo systemctl start chronyd
+
+
+ALL SEEM TO DO SAME THING, STILL NOT WORKING
+
+#timedatectl set-ntp 1
+#sudo timedatectl set-ntp true
+
+sudo timedatectl set-ntp on
+
+
+
+===
+===
+===
+
+##https://askubuntu.com/questions/429306/ntpdate-no-server-suitable-for-synchronization-found
+
+WORKED TO UPDATE TIME ON FS WITHOUT INTERNET
+
+sudo ntpdate -u 172.16.0.18
+
+sudo ntpdate -u 172.16.0.30

@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  RDS GRACE PERIOD RESET, REMOTE DESKTOP GRACE RESET
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-22[Sep-Tue]21-03PM 
+
+==
+TAKE OWNERSHIP, THEN DELETE
+==
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server\RCM\GracePeriod
+
+L$RTM...
+
+==
+RESTART TERM SERVICE
+==
+
+powershell
+
+Restart-Service TermService -force

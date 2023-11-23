@@ -1,0 +1,9 @@
+================================
+CENTOS SSH CONFIG, DISALLOW ROOT
+SED, ONE LINER
+112019
+================================
+
+sudo sed -i '/#PermitRootLogin*/c\PermitRootLogin no' /etc/ssh/sshd_config
+
+sudo service sshd restart

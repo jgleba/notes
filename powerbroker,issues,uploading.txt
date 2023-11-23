@@ -1,0 +1,1 @@
+in trout folder give the .bad file to user. move file out of trout folder. uploads shoudl work again

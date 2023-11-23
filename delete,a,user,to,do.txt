@@ -1,0 +1,11 @@
+what to do when delete user?
+
+does client need access to account? if so, change pass, give pass. Advise of still being billed for user.
+
+if not:
+
+export all email
+attach mailbox to other user if desired
+forward email to other user - delete mailbox, create alias in exchange and reflexion
+alias in exchange is just adding another email address in exchange management
+

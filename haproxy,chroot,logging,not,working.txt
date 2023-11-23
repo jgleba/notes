@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY CHROOT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-07[Jan-Thu]11-20AM 
+
+##https://serverfault.com/questions/392883/haproxy-running-in-chroot-jail-is-only-logging-started-messages
+##https://stackoverflow.com/questions/26616092/haproxy-not-logging-with-rsyslog
+

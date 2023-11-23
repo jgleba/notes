@@ -1,0 +1,11 @@
+/ip firewall filter
+add action=drop chain=input comment="Drop to bogon list on INPUT" dst-address-list=BOGONS in-interface=ether4
+add action=drop chain=input comment="INVALID CONNECTIONS DROP on INPUT" connection-state=invalid
+add action=drop chain=forward comment="INVALID CONNECTIONS DROP on FORWARD" connection-state=invalid
+add action=accept chain=input comment="ALLOW ICMP" in-interface=ether4 protocol=icmp
+add action=accept chain=input comment=WINBOX dst-port=8291 protocol=tcp
+add action=accept chain=input comment="Accept broadcast" dst-address-type=broadcast
+add action=accept chain=input comment="ACCEPT EST AND RELATED" connection-state=established,related
+add action=accept chain=forward connection-state=established,related
+add action=drop chain=input comment="DROP EVERYTHING ELSE ON INPUT"
+add action=drop chain=forward comment="DROP EVERYTHING ELSE ON FORWARD" disabled=yes

@@ -1,0 +1,15 @@
+======================================
+OSX 10.5 NEWSYSLOG / NEWSYSLOGD USAGE
+070819
+JGleba
+======================================
+
+LIVE FILE FOR LOG ROTATE
+
+ sudo cat /etc/newsyslog.d/rclone.conf
+# logfilename                      [owner:group]    mode count size when  flags [/pid_file] [sig_num]
+/Users/admin/rclone-logs/*.log      admin:staff     644  3     3072 *     JG
+
+FORCE RUN
+
+newsyslog -F

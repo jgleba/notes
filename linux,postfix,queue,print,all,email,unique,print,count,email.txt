@@ -1,0 +1,8 @@
+SORT AND LIST ALL EMAILS IN POSTFIX QUEUE
+
+sudo /usr/sbin/postqueue -p | awk '/^[0-9,A-F]/ {print $7}' | sort | uniq -c | sort -n
+
+USEFUL, LOOK AT
+
+https://udaygade.wordpress.com/2015/04/01/412/
+

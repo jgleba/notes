@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL VS CODE SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-12-23[Dec-Fri]13-03PM 
+
+##https://medium.com/geekculture/3-steps-to-code-from-anywhere-45401247f479
+
+sudo curl -fsSL https://code-server.dev/install.sh | sh
+
+PASSWORD=eCek0nuithaijaeB
+sudo code-server --auth password --bind-addr 0.0.0.0:80

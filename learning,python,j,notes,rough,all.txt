@@ -1,0 +1,263 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LEARNING PYTHON
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-11-30[Nov-Sat]16-59PM 
+
+==
+081421
+==
+
+==
+MULTILINE STRING
+==
+
+print("""a
+b
+c""")
+
+==
+PRINT MULTPLE
+==
+
+print("ABC" * 100)
+
+==
+110218
+==
+
+[user@zxcj ~]$ cat jhello.py
+#!/usr/bin/python
+
+#print "hello world"
+print "hello world1"
+
+[user@zxcj ~]$ ./jhello.py
+hello world1
+
+[user@zxcj ~]$ cat jtest.py
+#!/usr/bin/python
+
+texttest = raw_input("Enter text to print: ")
+print(texttest)
+
+[user@zxcj ~]$ ./jtest.py
+Enter text to print: abc
+abc
+
+[user@zxcj ~]$ cat jmath.py
+#!/usr/bin/python
+
+#print "I will now count my chickens"
+#print "Hens", 25 + 30 / 6
+
+mathtest=6 + 7
+print (mathtest)
+
+print 6 + 7
+
+[user@zxcj ~]$ ./jmath.py
+13
+13
+
+==
+113019
+==
+
+[user@zxcj ~]$ cat jmath.py
+#!/usr/bin/python
+
+mathtest=6 + 7 + 4 * 8
+mathtest2=6 + (7 + 4) * 8
+print (mathtest)
+print (mathtest2)
+[user@zxcj ~]$ ./jmath.py
+45
+94
+
+[user@zxcj ~]$ cat jmath.py
+#!/usr/bin/python
+
+mathtest = 6 + 7 + 4 * 8
+mathtest2 = 6 + (7 + 4) * 8
+print (mathtest)
+print (mathtest2)
+[user@zxcj ~]$ ./jmath.py
+45
+94
+
+##https://docs.python.org/3/tutorial/introduction.html#using-python-as-a-calculator
+
+==
+QUOTING, ESCAPING
+==
+
+>>> 'spam eggs'  # single quotes
+'spam eggs'
+>>> 'doesn\'t'  # use \' to escape the single quote...
+"doesn't"
+>>> "doesn't"  # ...or use double quotes instead
+"doesn't"
+
+==
+POSITION IN STRING
+==
+
+>>> word = 'Python'
+>>> word[0]  # character in position 0
+'P'
+>>> word[5]  # character in position 5
+'n'
+>>> word[-1]  # last character
+'n'
+>>> word[-2]  # second-last character
+'o'
+>>> word[-6]
+'P'
+
+https://docs.python.org/3/tutorial/introduction.html#first-steps-towards-programming
+
+==
+LENGTH OF STRING
+==
+
+'P'>>> s = 'supercalifragilisticexpialidocious'
+>>> len(s)
+34
+
+==
+LIST
+==
+
+>>> squares = [1, 4, 9, 16, 25]
+>>> squares
+[1, 4, 9, 16, 25]
+
+==
+CONCATINAION
+==
+
+>>> squares + [36, 49, 64, 81, 100]
+[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+==
+APPEND TO LIST
+==
+
+>>> cubes.append(216)  # add the cube of 6
+>>> cubes.append(7 ** 3)  # and the cube of 7
+>>> cubes
+[1, 8, 27, 64, 125, 216, 343]
+
+==
+PRINTING VAR
+==
+
+>>> i = 256*256
+>>> print('The value of i is', i)
+The value of i is 65536
+
+##https://docs.python.org/3/tutorial/controlflow.html#if-statements
+
+==
+IF / ELSE STATEMENT
+==
+
+>>> x = int(input("Please enter an integer: "))
+Please enter an integer: 42
+>>> if x < 0:
+...     x = 0
+...     print('Negative changed to zero')
+... elif x == 0:
+...     print('Zero')
+... elif x == 1:
+...     print('Single')
+... else:
+...     print('More')
+...
+More
+
+==
+RANGE, WITH STEP
+==
+
+>>> for i in range(5):
+...     print(i)
+...
+0
+1
+2
+3
+4
+
+range(5, 10)
+   5, 6, 7, 8, 9
+
+range(0, 10, 3)
+   0, 3, 6, 9
+
+range(-10, -100, -30)
+  -10, -40, -70
+  
+FUNCTION AND CALL, WHILE
+
+>>> def fib(n):    # write Fibonacci series up to n
+...     """Print a Fibonacci series up to n."""
+...     a, b = 0, 1
+...     while a < n:
+...         print(a, end=' ')
+...         a, b = b, a+b
+...     print()
+...
+>>> # Now call the function we just defined:
+... fib(2000)
+0 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597
+
+==
+FUNCTION WITH ARGUMENT
+==
+
+def ask_ok(prompt, retries=4, reminder='Please try again!'):
+    while True:
+        ok = input(prompt)
+        if ok in ('y', 'ye', 'yes'):
+            return True
+        if ok in ('n', 'no', 'nop', 'nope'):
+            return False
+        retries = retries - 1
+        if retries < 0:
+            raise ValueError('invalid user response')
+        print(reminder)
+		
+This function can be called in several ways:
+    giving only the mandatory argument: ask_ok('Do you really want to quit?')
+    giving one of the optional arguments: ask_ok('OK to overwrite the file?', 2)
+    or even giving all arguments: ask_ok('OK to overwrite the file?', 2, 'Come on, only yes or no!')
+
+
+
+==
+041720
+from sys admin interview, Xelerance, passed on interview
+create python script to generate 100000 random characters and output to file
+==
+
+##https://stackoverflow.com/questions/2823316/generate-a-random-letter-in-python
+##random char function
+def randomchar():
+        import string
+        string.ascii_letters
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        import random
+        print(random.choice(string.ascii_letters))
+
+##loop
+i = 0
+while i < 1000000:
+  randomchar()
+  i += 1
+
+CHEAT OUTPUT TO FILE 
+[user@zxcj ~]$ python randomchar.py > file.txt
+

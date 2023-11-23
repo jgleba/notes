@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE TOOLS UBUNTU INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-10[Dec-Thu]11-30AM 
+
+##https://kb.vmware.com/s/article/1022525
+
+CLICK install tools on vm from vcenter
+
+==
+
+IN VM
+
+sudo mount /dev/cdrom /mnt
+
+==
+
+cd /mnt
+
+EXTACT AND COPY TO TEMP LOCATION
+
+tar xzvf /mnt/VMwareTools-10.0.6-3560309.tar.gz -C /tmp/
+
+cd /tmp/vmware-tools-distrib/
+
+INSTALL TOOLS
+
+sudo bash vmware-install.pl
+
+defaults on all options when installing tools

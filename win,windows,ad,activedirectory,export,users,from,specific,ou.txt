@@ -1,0 +1,32 @@
+==============================================
+ACTIVE DIRECTORY EXPORT USERS FROM SPECIFIC OU
+062819
+JGleba
+==============================================
+
+DIDNT WORK
+
+#https://social.technet.microsoft.com/Forums/lync/en-US/bfb08794-d27e-44ef-91c3-1412fe116e64/list-all-of-the-users-in-ou-then-export-to-csv?forum=ITCG
+
+import-module ac*
+Get-ADUser -SearchBase "ou=JUsers,dc=domain,dc=local" -Properties * | Export-Csv -NoType "c:\tmp\jusers-users.csv"
+
+==
+
+
+DIDNT WORK
+
+#https://www.netwrix.com/how_to_get_all_users_from_a_specific_ou.html
+
+$OUpath = 'ou=JUsers,dc=domain,dc=local'
+$ExportPath = 'c:\tmp\jusers_out.csv'
+Get-ADUser -Filter * -SearchBase $OUpath | Select-object
+DistinguishedName,Name,UserPrincipalName | Export-Csv -NoType $ExportPath
+
+
+WORKED
+
+#https://community.spiceworks.com/topic/2018771-export-ad-info-for-a-specific-ou
+
+Import-Module ActiveDirectory
+Get-ADUser -Filter * -Properties *  -SearchBase "ou=JUsers,dc=domain,dc=local"  | export-csv "c:\tmp\jusers-users2.csv"

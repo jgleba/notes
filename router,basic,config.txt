@@ -1,0 +1,14 @@
+set interface ips
+
+routes!
+
+set dhcp server
+
+set dns server
+
+create nat rule
+
+create address lists
+
+create basic firewall rules
+

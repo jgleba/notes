@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NGINX DB LOAD BALANCE STREAM CONFIG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-05[Feb-Sat]14-37PM 
+
+sudo yum install nginx-mod-stream.x86_64
+
+stream {
+upstream rds {
+    zone tcp_mem 64k;
+    server ip:3306;
+    server ip:3306;
+}
+server {
+    listen 3306;
+    proxy_pass rds;
+}
+}

@@ -1,0 +1,14 @@
+=========================================
+VMWARE POWERCLI CHANGE MEMORY RESERVATION
+USED TO DISABLE SWAP FROM VMWARE LEVEL
+MAKES SWAP FILE ON VM 0 OUT
+112419
+=========================================
+
+$spec = New-Object VMware.Vim.VirtualMachineConfigSpec
+$spec.memoryReservationLockedToMax = $true
+
+foreach ($vm in (Get-VM))
+{
+  $VM.ExtensionData.ReconfigVM_Task($spec)
+}

@@ -1,0 +1,128 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SEAFILE SETUP INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-21[Oct-Wed]13-53PM 
+
+==
+INSTALL APACHE
+==
+
+sudo yum install -y httpd
+
+#==
+#ENABLE AND START APACHE
+#==
+
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+#==
+#FIREWALL FOR HTTPD
+#==
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+#==
+#INSTALL MYSQL
+#==
+
+sudo yum install -y mariadb-server
+
+#==
+#START AND ENABLE MYSQL
+#==
+
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+#==
+#FIREWALL MYSQL
+#==
+
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --reload
+
+#==
+#SECURE MYSQL SETUP
+#==
+
+sudo mysql_secure_installation
+
+#=
+#CREATE DBS
+#=
+
+mysql -u root -p
+
+CREATE DATABASE ccnetdb;
+CREATE DATABASE seafiledb;
+CREATE DATABASE seahubdb;
+CREATE USER 'sfuser'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL ON seafiledb.* TO 'sfuser'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL ON ccnetdb.* TO 'sfuser'@'localhost' IDENTIFIED BY 'pass';
+GRANT ALL ON seahubdb.* TO 'sfuser'@'localhost' IDENTIFIED BY 'pass';
+FLUSH PRIVILEGES;
+EXIT;
+
+#=
+#INSTALL SEAFILE
+#=
+
+cd /var/www/
+sudo wget https://s3.eu-central-1.amazonaws.com/download.seadrive.org/seafile-server_7.1.5_x86-64.tar.gz
+sudo tar -xvf seafile-server_7.1.5_x86-64.tar.gz
+sudo mv seafile-server-7.1.5 seafile
+cd seafile
+
+#==
+#PYTHON DEPS
+#=
+
+sudo yum install epel-release -y
+#sudo yum install -y python-imaging MySQL-python python-memcached python-ldap python-urllib3
+sudo yum install -y python3-imaging MySQL-python3 python3-memcached python3-ldap python3-urllib3
+#sudo yum install -y python3
+
+#sudo yum -y install centos-release-scl
+#sudo yum -y install rh-python36
+#scl enable rh-python36 bash
+
+#GETTING PYTHON ERRROR
+
+##[user@COSSF seafile]$ sudo ./setup-seafile-mysql.sh
+#Checking python on this machine ...
+#The current version of python is not 3.x.x, please use Python 3.x.x .
+#Error occured during setup.
+#Please fix possible problems and run the script again.
+
+==
+
+#sudo /opt/rh/rh-python36/root/usr/bin/pip3 install pymysql
+
+==
+
+#sudo yum install python3
+
+#SEEMS TO HAVE INSTALLED, STILL NOT WORKING CORRECTLY THOUGH
+
+#==
+#SEAFILE FIREWALL
+#==
+
+sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=8082/tcp --permanent
+sudo firewall-cmd --reload
+
+#==
+#INSTALL SEAFILE AND START
+#==
+
+sudo ./setup-seafile-mysql.sh
+
+sudo ./seahub.sh start
+
+sudo ./seafile.sh start

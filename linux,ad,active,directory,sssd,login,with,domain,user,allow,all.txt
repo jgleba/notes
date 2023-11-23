@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SSSD ACTIVE DIRECTORY LOG IN WITH DOMAIN USER, ALLOW ALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-04-22[Apr-Thu]13-13PM 
+
+##https://serverfault.com/questions/624425/how-can-i-log-on-my-linux-machine-with-my-active-directory-credentials
+
+sudo realm permit --all
+
+sudo realm permit --user user

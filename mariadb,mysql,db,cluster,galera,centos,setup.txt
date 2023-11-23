@@ -1,0 +1,406 @@
+CENTOS 7 + MARIADB GALERA CLUSTER (3 NODES)
+===========================================
+Justin Gleba
+OCT 22, 2017 - tested again
+WEBCL2 - CREATED 050519 - worked fine.
+============
+
+INSTALL STUFF
+==
+sudo yum update -y
+sudo yum install nano -y
+
+HOSTS FILE
+==
+sudo nano /etc/hosts
+
+172.16.3.201 webcllb1
+172.16.3.210 webclnode1
+172.16.3.211 webclnode2
+172.16.3.212 webclnode3
+172.16.3.213 webclnode4
+172.16.3.230 webcldblb1
+172.16.3.220 webcldb1
+172.16.3.221 webcldb2
+172.16.3.222 webcldb3
+
+172.16.3.223 webcl2db1
+172.16.3.224 webcl2db2
+172.16.3.225 webcl2db3
+172.16.3.234 webcl2dblb1
+172.16.3.235 webcl2dblb2
+
+172.16.3.218 webcldb1
+172.16.3.219 webcldb2
+172.16.3.220 webcldb3
+172.16.3.221 webcldb4
+172.16.3.222 webcldb5
+
+
+DATABASE CLUSTER SETUP
+======================
+GET REPO
+==
+sudo nano /etc/yum.repos.d/MariaDB10.1.repo
+
+# MariaDB 10.1 CentOS repository list - created 2017-08-10 00:39 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+### TRYING 10.3 - 05-05-2019
+
+USING
+
+#https://ahmermansoor.blogspot.com/2019/02/install-mariadb-galera-cluster-on-centos-7.html
+
+sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+
+==
+
+sudo nano /etc/yum.repos.d/MariaDB10.1.repo
+
+# MariaDB 10.1 CentOS repository list - created 2017-08-10 00:39 UTC
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.1/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+INSTALL
+==
+sudo yum -y install MariaDB-server MariaDB-client MariaDB-common
+sudo yum update -y
+sudo yum install nano rsync lsof -y
+
+==
+062020
+==
+
+sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+sudo yum -y install MariaDB-server MariaDB-client MariaDB-common
+
+
+==
+050720
+ANOTHER WAY TO INSTALL
+==
+
+sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+sudo yum -y install MariaDB-server MariaDB-client MariaDB-common
+
+
+sudo yum install mariadb-server -y
+
+START TO SET UP DB
+==
+sudo service mariadb start
+sudo mysql_secure_installation
+
+sudo mysql -u root -p
+
+GRANT ALL PRIVILEGES ON *.* TO 'cluster_user'@'%' IDENTIFIED BY 'pass1' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* to 'cluster_user'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'user2'@'%' IDENTIFIED BY 'pass2' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* to 'user2'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'user3'@'%' IDENTIFIED BY 'pass3' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* to 'user3'@'%';
+FLUSH PRIVILEGES;
+
+
+FIREWALL
+=========
+sudo systemctl disable firewalld
+sudo service firewalld stop
+
+sudo iptables -A INPUT -p tcp --dport 3306 -j ACCEPT
+sudo iptables -A INPUT -p tcp --dport 4567 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 4567 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 4444 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 873 -j ACCEPT
+sudo /usr/sbin/iptables-save
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4567/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4567/udp --permanent
+sudo firewall-cmd --zone=public --add-port=4568/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4444/udp --permanent
+sudo firewall-cmd --zone=public --add-port=4444/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9200/udp --permanent
+sudo firewall-cmd --zone=public --add-port=9200/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=873/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=873/udp --permanent
+sudo firewall-cmd --reload
+
+3306 = Used for MySQL/MariaDB client connections.
+4567 = Galera Cluster replication traffic.
+873     = Rsync ports.
+4444 = For all other State Snapshot Transfer (SST).
+9200 = xinetd - clustercheck.
+
+
+CHECKING - 05-05-2019
+
+#http://galeracluster.com/documentation-webpages/firewallsettings.html
+    3306 For MySQL client connections and State Snapshot Transfer that use the mysqldump method.
+    4567 For Galera Cluster replication traffic, multicast replication uses both UDP transport and TCP on this port.
+    4568 For Incremental State Transfer.
+    4444 For all other State Snapshot Transfer.
+
+-USING THIS ONE - 05-05-2019
+
+#http://galeracluster.com/documentation-webpages/firewalld.html
+Open the TCP ports for Galera Cluster:
+
+# firewall-cmd --zone=public --add-port=3306/tcp
+# firewall-cmd --zone=public --add-port=4567/tcp
+# firewall-cmd --zone=public --add-port=4568/tcp
+# firewall-cmd --zone=public --add-port=4444/tcp
+
+Optionally, in the event that you would like to use multicast replication, run this command as well to open UDP transport on 4567:
+
+# firewall-cmd --zone=public --add-port=4567/udp
+
+USING -  05-05-2019
+
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4567/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4568/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4444/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=4567/udp --permanent
+sudo firewall-cmd --reload
+
+
+
+=======================
+CONTINUE CLUSTER SETUP
+=======================
+
+STOP DB
+==
+sudo service mariadb stop
+
+SET UP CLUSTER ON ALL NODES
+==
+sudo nano /etc/my.cnf.d/server.cnf
+
+[mysqld]
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+wsrep_cluster_name="dbcl1"
+wsrep_cluster_address="gcomm://172.16.3.220,172.16.3.221,172.16.3.222"
+wsrep_sst_method=rsync
+wsrep_node_address="172.16.3.220:4567"
+wsrep_node_name="webcldb1"
+wsrep_sst_auth=cluster_user:pass
+
+==
+
+[mysqld]
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+max_connections=100000
+
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+wsrep_cluster_name="mailcldbcl"
+wsrep_cluster_address="gcomm://172.16.3.120,172.16.3.121,172.16.3.122"
+wsrep_sst_method=rsync
+wsrep_node_address="172.16.3.120"
+wsrep_node_name="mailcldb1"
+wsrep_sst_auth=cluster_user:pass
+
+==
+LATEST FILE 041120
+==
+
+#
+# These groups are read by MariaDB server.
+# Use it for options that only the server (but not clients) should see
+#
+# See the examples of server my.cnf files in /usr/share/mysql/
+#
+
+# this is read by the standalone daemon and embedded servers
+[server]
+
+# this is only for the mysqld standalone daemon
+[mysqld]
+max_connections=1500
+binlog_format=row
+default_storage_engine=InnoDB
+bind-address=0.0.0.0
+max_allowed_packet = 16M
+# This changes how InnoDB autoincrement locks are managed and is a requirement for Galera
+innodb_autoinc_lock_mode=2
+##LOGS GOING INTO MESSAGES, STOPPED LOGGING WHEN ADDED - 071019
+#log-error =/var/log/mysqld-error.log
+##NEW SECURITY, TEST, SQL INJECT PROTECT - 071219 - NOT LIVE
+##https://www.cyberciti.biz/tips/howto-avoid-mysql-injection-vulnerabilities-in-php.html
+##local-infile=0
+##TRYING SOME NEW OPTIONS - 102719
+##https://serverfault.com/questions/914296/high-traffic-mysql-server
+#query_cache_type=1
+#key_buffer_size=128M
+#query_cache_size=64M
+#sort_buffer_size=16M
+#read_buffer_size=2M
+#read_rnd_buffer_size=4M
+#key_cache_age_threshold=3000
+#key_cache_division_limit=50
+#memlock=1
+#max_connect_errors=999999
+#max_allowed_packet=1M
+
+#
+# * Galera-related settings
+
+[galera]
+wsrep_on=ON
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+wsrep_cluster_name="dbcl1"
+wsrep_cluster_address="gcomm://172.16.3.223,172.16.3.224,172.16.3.225"
+wsrep_sst_method=rsync
+wsrep_node_address="172.16.3.223:4567"
+wsrep_node_name="webcldb1"
+wsrep_sst_auth=cluster_user:pass
+
+# Optional setting
+##PERFORMANCE TUNING, TESTING
+##TURNED ON, CHANGED FROM 1 TO 2, NOT ACTIVE YET, 04022019 - NOT CHANGING
+##ACTIVE,LIVE,TURNED ON, 070319
+wsrep_slave_threads=16
+innodb_flush_log_at_trx_commit=0
+
+##TRYING NEW OPTIONS - 070419 - NOT LIVE YET, NEVER TESTED - CHECKED 082819 - IS LIVE - COMMENT IS WRONG
+##https://community.icinga.com/t/galera-mysql-cluster-with-vips-and-haproxy-for-ido-mysql-and-more/407
+query_cache_size=16M
+query_cache_type=0
+innodb_buffer_pool_size=256M
+
+# this is only for embedded server
+[embedded]
+
+# This group is only read by MariaDB servers, not by MySQL.
+# If you use the same .cnf file for MySQL and MariaDB,
+# you can put MariaDB-only options here
+[mariadb]
+
+# This group is only read by MariaDB-10.1 servers.
+# If you use the same .cnf file for MariaDB of different versions,
+# use this group for options that older servers don't understand
+[mariadb-10.1]
+
+CLUSTER START
+=============
+on node 1:
+sudo galera_new_cluster
+
+logged into mysql:
+show status like 'wsrep%';
+show status like 'wsrep_cluster%';
+
+start mysql normally on other nodes
+==
+sudo service mariadb start
+
+enable on all nodes
+==
+sudo systemctl enable mariadb
+
+
+WEB FOLDERS SYNC WITH DROPBOX
+=============================
+cd /
+sudo mkdir -p /j/bin
+cd /j/bin
+
+sudo chmod 755 dropstart.sh
+
+cd /home
+sudo chmod -R 775 user
+
+sudo mkdir -p /opt/dropbox
+cd /opt/dropbox
+
+crontab -e
+@reboot /bin/sh /path/to/dropstart.sh
+
+sudo wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | sudo tar xzf -
+
+sudo chown -R apache:root /opt/dropbox
+sudo chmod -R 775 /opt/dropbox
+
+cd /home/user
+sudo chmod -R 777 Dropbox
+
+sudo chown -R apache:root /var/www/html
+sudo chmod -R 775 /var/www/html 
+
+sudo rm -r /var/www/html/
+cd /var/www/
+sudo ln -s /home/user/Dropbox/internetroot internet
+sudo chown -R apache:root internet
+sudo chmod -R 775 internet
+
+cd /var/www
+sudo chmod -R 777 internet
+cd /home/user/Dropbox/
+sudo chmod -R 777 ./*
+
+sudo yum install php-mysql -y
+sudo service php restart
+
+sudo usermod -a -G apache user
+
+sudo chown -R user:apache /var/www
+sudo chown -R user:apache /home/user/Dropbox
+sudo chmod -R 770 /var/www
+sudo chmod -R 770 /home/user/Dropbox
+
+sudo chown -R user:apache /home/user/Dropbox/config
+sudo chmod -R 770 /home/user/Dropbox/config
+sudo chown -R user:apache /etc/httpd/sites-enabled
+sudo chmod -R 770 /etc/httpd/sites-enabled
+
+sudo chown -R user:root /etc/httpd/
+sudo chmod -R 770 /etc/httpd/
+
+sudo chown -R user:root /j/
+sudo chmod -R 770 /j/
+
+sudo service httpd restart
+
+sudo rm -r conf
+sudo rm -r sites-enabled
+sudo ln -s /home/user/Dropbox/config/conf conf
+sudo ln -s /home/user/Dropbox/config/sites-enabled sites-enabled
+
+sudo service httpd restart
+
+sudo chown -R user:root /opt/dropbox
+sudo chmod -R 770 /opt/dropbox
+
+WEB FOLDERS
+===========
+cd /var/www
+sudo mkdir internet
+sudo chown -R apache:apache internet
+sudo chmod -R 755 internet
+sudo mv /var/www/html/oldcluster /var/www/html
+
+sudo nano /etc/httpd/conf/httpd.conf
+sudo scp /etc/httpd/conf/httpd.conf root@172.16.3.211:/etc/httpd/conf/
+sudo rsync -htuvr /var/www/html 

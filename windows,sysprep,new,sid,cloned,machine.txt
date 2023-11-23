@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SYSPREP - USED TO GET NEW SID FOR CLONED WINDOWS MACHINE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-11-25[Nov-Wed]10-38AM 
+
+##https://thesolving.com/server-room/when-and-how-to-use-sysprep/
+##https://www.nakivo.com/blog/using-vm-templates-to-clone-hyper-v-vms/
+
+C:\windows\system32\sysprep\sysprep.exe
+
+sysprep /generalize /oobe /shutdown /mode:vm
+
+sysprep -generalise -oobe -shutdown

@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KEEPALIVED MONITOR HAPROXY PROCESS - USING KILLALL STATUS 0 WASN'T WORKING - THIS NOT WORKING EITHER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-05-16[May-Mon]11-55AM 
+
+##https://www.reddit.com/r/sysadmin/comments/uqcosi/keepalived_service_running_but_does_not_executes/?sort=new
+
+vrrp_track_process track_haproxy {
+  process haproxy
+  weight 10
+}
+
+
+
+track_process {
+     track_haproxy
+  }
+

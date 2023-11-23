@@ -1,0 +1,1 @@
+docker run --name wallabag --network="wp_default" --link wp_db_1:wp_db_1 -e "MYSQL_ROOT_PASSWORD=1234" -e "SYMFONY__ENV__DATABASE_DRIVER=pdo_mysql" -e "SYMFONY__ENV__DATABASE_HOST=wp_db_1" -e "SYMFONY__ENV__DATABASE_PORT=3306" -e "SYMFONY__ENV__DATABASE_NAME=wallabag" -e "SYMFONY__ENV__DATABASE_USER=root" -e "SYMFONY__ENV__DATABASE_PASSWORD=1234" -p 80:80 wallabag/wallabag

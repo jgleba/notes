@@ -1,0 +1,36 @@
+====================
+MIKROTIK LAYER 2 VPN
+02-11-19
+JGleba
+====================
+
+==
+REFERENCES
+==
+
+https://forum.mikrotik.com/viewtopic.php?t=110093
+https://forum.mikrotik.com/viewtopic.php?t=104667
+https://forum.mikrotik.com/viewtopic.php?t=125405
+https://www.reddit.com/r/networking/comments/274t2g/layer_2_across_a_vpn/
+https://forum.mikrotik.com/viewtopic.php?t=30217
+https://forum.mikrotik.com/viewtopic.php?t=98794
+
+==
+TRYING EOIP
+==
+
+TRIED WITH EOIP, CAN GET VPN, CAN GET IP FROM REMOTE DHCP, DNS NOT RIGHT, INTERNET NOT RIGHT, NOT SURE HOW GATEWAYS WORK / SHOULD WORK - CANT PING INTERNET EITHER
+PROXY-ARP SEEMS TO BE KEY
+
+R1
+
+/interface eoip
+add arp=proxy-arp disabled=yes local-address=108.168.19.29 mac-address=02:5F:B5:56:7A:AB mtu=1500 name=eoip_jgdc1_jgdc2fr remote-address=62.210.157.153 tunnel-id=5
+
+R2
+
+/interface eoip
+add arp=proxy-arp disabled=yes local-address=172.16.4.253 mac-address=02:3F:37:26:EF:06 mtu=1500 name=eoip-tunnel1 remote-address=172.16.0.64 tunnel-id=25
+
+NEEDED TO OPEN FIREWALL WIDE OPEN BETWEEN "PUBLIC IPs"
+

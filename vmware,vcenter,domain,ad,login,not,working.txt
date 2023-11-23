@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE AD NOT WORKING, CAN USE WIN AUTH BUT CANNOT LOG IN WITH DOMAIN CREDS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-01-26[Jan-Thu]10-35AM 
+
+#https://communities.vmware.com/t5/VMware-vCenter-Discussions/Can-t-sign-into-VCSA-with-AD-credentials/td-p/2230629
+
+LEAVE DOMAIN
+
+sudo /opt/likewise/bin/domainjoin-cli leave
+
+UPDATED HOSTNAME
+
+/opt/vmware/share/vami/vami_set_hostname vCenter-Appliance-FQDN
+
+READD TO DOMAIN
+
+/opt/likewise/bin/domainjoin-cli join domain user

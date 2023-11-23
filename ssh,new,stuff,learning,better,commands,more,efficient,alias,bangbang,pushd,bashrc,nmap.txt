@@ -1,0 +1,48 @@
+nmap -sV -P0
+
+nmap -sT -sV -Pn -n -vvv --min-rate=5000 --min-hostgroup=256 --min-parallelism=256 ** 256 is very high
+
+grep -v <string> means everything except
+
+massscan
+
+ipcalc
+
+byobu
+
+https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Leaked-Databases/alleged-gmail-passwords.txt
+
+dirs
+
+pushd path/to/dir
+
+dirs -v
+
+popd
+
+~1
+
+alias dirs="dirs -v"
+
+history
+
+!cmd#
+
+!willruncommandwiththisfromhistory
+
+!willruncommandwiththisfromhistory:p
+
+!! the last command you ran
+
+!111:1 will take first argument
+
+echo a b c
+
+!:1:3
+
+echo a c
+
+ALIAS IS LOST ON LOGOUT
+
+.bashrc
+

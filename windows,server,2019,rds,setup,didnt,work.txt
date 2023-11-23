@@ -1,0 +1,42 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS SERVER 2019 RDS FARM SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-02[Oct-Fri]19-36PM 
+
+##https://www.tech-coffee.net/deploy-a-windows-server-2019-rds-farm-with-html5-client/
+
+
+
+New-RDSessionDeployment -ConnectionBroker rdgw3.domain.local `
+                        -SessionHost rdgw3.domain.local `
+                        -WebAccessServer rdgw3.domain.local
+						
+New-RDSessionDeployment -ConnectionBroker rdgw4.domain.local `
+                        -SessionHost rdgw4.domain.local `
+                        -WebAccessServer rdgw4.domain.local
+					    -Role RDS-Gateway
+						
+						
+DIDNT WORK
+
+JUST USING GUI INSTALL
+
+==
+
+##https://msfreaks.wordpress.com/2018/10/06/remote-desktop-html5-client-on-windows-server-2019/
+
+Install-Module -Name PowerShellGet -Force
+Install-Module -Name RDWebClientManagement
+Install-RDWebClientPackage
+
+Import-RDWebClientBrokerCert <.cer file path>
+
+Publish-RDWebClientPackage -Type Production -Latest
+
+STILL DIDNT WORK
+
+==
+
+TRIED RD GATEWAY WITH 2016 AND 2019, NOT WORKING

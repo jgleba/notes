@@ -1,0 +1,3 @@
+ * base: centos.mirror.rafal.ca
+ * extras: mirror2.evolution-host.com
+ * updates: centos.mirror.rafal.ca

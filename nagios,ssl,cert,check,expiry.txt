@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NAGIOS CHECK CERTIFICATE EXPIRY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-05-31[May-Tue]10-42AM 
+
+https://www.reddit.com/r/sysadmin/comments/v0i2ht/ssl_certificate_monitoring/
+
+/opt/omd/versions/1.2.8p27.cre/lib/nagios/plugins/check_http --sni --ssl  --hostname=www.google.com --certificate=7
+
+OK - Certificate 'www.google.com' will expire on Wed 27 Jul 2022 05:40:04 PM GMT +0000

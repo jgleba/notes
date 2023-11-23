@@ -1,0 +1,64 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS NTP SERVER SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-22[Sep-Tue]10-10AM 
+
+##https://www.tecmint.com/install-ntp-server-in-centos/
+##https://www.thegeekdiary.com/centos-rhel-how-to-configure-ntp-server-and-client/
+
+==
+INSTALL
+==
+
+sudo yum install -y ntp
+
+==
+SET TIME SERVERS
+==
+
+sudo nano /etc/ntp.conf
+
+ADD SERVERS
+
+server 0.ca.pool.ntp.org
+server 1.ca.pool.ntp.org
+server 2.ca.pool.ntp.org
+server 3.ca.pool.ntp.org
+
+ALLOW LAN ACCESS
+
+restrict 192.168.1.0 netmask 255.255.255.0 nomodify notrap
+
+==
+START AND ENABLE
+==
+
+sudo systemctl start ntpd.service
+sudo systemctl enable ntpd.service
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --add-service=ntp --permanent
+
+sudo firewall-cmd --zone=public --add-port=123/udp --permanent
+sudo firewall-cmd --zone=public --add-port=123/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+TEST/INFO
+==
+
+ntpq -p
+
+[user@COSNTP bin]$ ntpstat
+synchronised to NTP server (206.108.0.132) at stratum 2
+   time correct to within 4 ms
+   polling server every 1024 s
+
+date -R
+
+timedatectl status

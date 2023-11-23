@@ -1,0 +1,80 @@
+webcl ideas, 02032019
+=====================
+
+
+      EXISTING SQL
+           |
+
+CENTOS DOCKER1            CENTOS DOCKER2
+     |                         |
+GLUSTER1                  GLUSTER1
+ - PHP, APACHE             - PHP, APACHE
+GLUSTER2                  GLUSTER2
+ - PHP, APACHE             - PHP, APACHE
+
+           |
+	EXISTING HAPROXY
+	
+	
+
+
+
+     EXISTING SQL
+          |
+
+CENTOS DOCKER1            CENTOS DOCKER2
+     |                         |
+APACHEPHP1   -bg-sync-    APACHEPHP3
+ - PHP, APACHE            - PHP, APACHE
+APACHEPHP2   -bg-sync-    APACHEPHP4
+ - PHP, APACHE             - PHP, APACHE
+
+          |
+	EXISTING HAPROXY	
+	
+	
+	
+	
+	
+	
+
+	
+	 EXISTING SQL
+          |
+
+CENTOS DOCKER1            CENTOS DOCKER2
+     |                         |
+APACHEPHP1   -bg-sync-    APACHEPHP3
+ - PHP, APACHE            - PHP, APACHE
+APACHEPHP2   -bg-sync-    APACHEPHP4
+ - PHP, APACHE             - PHP, APACHE
+
+          |
+ HAPROXY1   HAPROXY2	
+ 
+        -VIP-
+		
+		
+	
+	
+	
+	
+	
+	 GALERA CONTAINERS?
+	 
+          |
+
+CENTOS DOCKER1            CENTOS DOCKER2
+     |                         |
+APACHEPHP1   -bg-sync-    APACHEPHP3
+ - PHP, APACHE            - PHP, APACHE
+APACHEPHP2   -bg-sync-    APACHEPHP4
+ - PHP, APACHE             - PHP, APACHE
+
+          |
+ HAPROXY1   HAPROXY2	
+ 
+        -VIP-
+		
+		
+	

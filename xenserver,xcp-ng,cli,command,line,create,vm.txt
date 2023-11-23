@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  XCP-NG / XENSERVER CLI CREATE VM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-29[Feb-Sat]15-59PM 
+
+##https://linuxconfig.org/how-to-create-a-new-virtual-machine-on-xenserver-using-command-line
+
+THERE MUST BE A DEFAULT SR SELECTED
+ADDS JUNK DISK STILL
+CREATES VM SHELL, GIVING 2 CORES AND 2GB OF RAM
+
+xe vm-install template="Ubuntu Xenial Xerus 16.04" new-name-label="UBU16"
+
+xe vm-install template="Ubuntu Bionic Beaver 18.04" new-name-label="UBU18-1"
+
+xe vm-install template="CentOS 7" new-name-label="COS1"
+
+xe vm-install template="Windows Server 2012 R2 (64-bit)" new-name-label="WS2012-1"

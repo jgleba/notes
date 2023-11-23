@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SSH PORT FORWARD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-07[Jan-Thu]14-11PM 
+
+##https://phoenixnap.com/kb/ssh-port-forwarding
+
+ssh –L 5901:188.17.0.5:4492 pnap@ssh.server.com
+
+ssh -L source port:ip:dest port user@dest server
+
+sudo ssh -L 2000:172.19.0.10:80 user@172.19.0.10
+

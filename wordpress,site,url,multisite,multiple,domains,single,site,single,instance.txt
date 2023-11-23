@@ -1,0 +1,35 @@
+=============================================
+WORDPRESS URL, MULTIPLE DOMAINS SAME INSTANCE
+070219
+NEED TO TRY
+=============================================
+
+#https://wordpress.org/support/topic/multi-domain-plugin-not-working/
+
+We then also updated wp-config.php with the following info:
+/*
+* Handle multi domain into single instance of wordpress installation
+*/
+define(‘WP_SITEURL’, ‘http://’ . $_SERVER[‘HTTP_HOST’]);
+define(‘WP_HOME’, ‘http://’ . $_SERVER[‘HTTP_HOST’]);
+
+==
+
+#https://myjeeva.com/mapping-multiple-domains-into-single-instance-of-wordpress.html
+
+    Go to WordPress installed root directory and look for wp-config.php file
+    Place below lines after the table_prefix line; order is very important in wp-config.php , more info
+
+/*
+ * Handle multi domain into single instance of wordpress installation
+ */
+define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
+define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
+	
+/*
+ * Handle multi domain into single instance of wordpress installation
+ */
+define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
+define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
+
+    Go to wordpress admin page and take a look at Settings -> General. You will have WordPress Address (URL) and Site Address (URL) will be in disabled state.  It means your wordpress installation dynamic enoungh to accomadate both domain address

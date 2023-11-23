@@ -1,0 +1,23 @@
+force detach storage from xen when forced shut down or vdi operation failed
+
+xe vdi-list
+
+xe pbd-unplug uuid=8f53fc06-af10-4cbc-5bdf-5dafcd0d1fbf
+This operation cannot be performed because this VDI is in use by some other operation
+vdi: 28633477-7b98-4779-be6f-d95147c86a43 ()
+operation: <unknown>
+
+use vdi number
+
+xe vbd-list vdi-uuid=28633477-7b98-4779-be6f-d95147c86a43
+
+get uuid for vbd
+
+xe vbd-unplug uuid=5a4afc2b-de8f-5447-efb0-415ebdb2aed7
+
+xe vbd-destroy uuid=5a4afc2b-de8f-5447-efb0-415ebdb2aed7
+
+then do normal detach/forget or pbd-unplug...
+
+
+https://mauriziosiagri.wordpress.com/2012/12/30/xenserver-detach-and-re-attach-a-local-storage-repository-separate-disk/

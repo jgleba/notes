@@ -1,0 +1,164 @@
+=====================
+MYSQL
+TOO MANY CONNECTIONS + WP / DB CRASHING / OVERLOADING ISSUES 062419-062519
+062419
+=====================
+
+##https://tableplus.io/blog/2018/11/error-1040-too-many-connection-increase-max-connections-mysql.html
+##https://www.ionos.com/community/hosting/mysql/solve-a-mysqlmariadb-too-many-connections-error/
+
+==
+HINT - ONLY WORKS FOR SESSION THOUGH, SETTING WILL REVERT BACK
+==
+
+SET GLOBAL max_connections = 500;
+
+==
+DEFAULT VALUE
+==
+
+MariaDB [(none)]> SHOW VARIABLES LIKE "max_connections";
++-----------------+-------+
+| Variable_name   | Value |
++-----------------+-------+
+| max_connections | 151   |
++-----------------+-------+
+1 row in set (0.00 sec)
+
+==
+HAD ISSUE WITH WP - 062419 - 4pm
+APACHE NODE CPU / RAM VERY HIGH, SITES UNRESPONSIVE, ALL, DB AND NON DB
+LOTS OF CONNECTIONS BETWEEN DB LB AND DB, ALL DBS TAXED
+APACHE NODES AND DB NODES UP AND DOWN
+==
+
+==
+Server webcl_mysql/mysql1 is DOWN, reason: Layer7 wrong status, code: 0, info: "Too many connections", check duration: 2ms. 2 active and 0 backup servers left. 0 sessions active, 0 requeued, 0 remaining in queue
+==
+
+INCREASING ON ALL WEBCL DB NODES
+
+SET GLOBAL max_connections = 1000;
+
+ALSO UPDATED IN my.cnf
+
+sudo nano /etc/my.cnf.d/server.cnf
+
+[mysqld]
+
+max_connections=1000
+
+==
+STILL HAPPENING - 062419 - 622pm
+==
+
+TRIED
+
+SET GLOBAL max_connections = 2000;
+
+TRIED
+
+SET GLOBAL max_connections = 5000;
+
+TRIED
+
+SET GLOBAL max_connections = 25000;
+
+TRIED
+
+SET GLOBAL max_connections = 100000;
+
+STILL HAPPENING - 062419 - 648pm - DOESNT MATTER HOW HIGH THE VALUE, SERVER LOAD JUST GETS HIGHER, APACHE NODES, SQL NODES, UP AND DOWN - ALL - EVERYTHING DB RELATED UNRESPONSIVE - CANNOT FIX - CANNOT LOAD DB SITES
+
+SAMPLE LOAD AVERAGE, SAW 250 IN FIRST SLOT WITH 100000 MAX CONNS
+
+ load average: 8.35, 118.14, 99.10
+
+WAITING IT OUT - STARTED AROUND 430PM - IS NOW 649PM.
+
+HV LOADS ARE CRAZY - CPU ON BOTH 30-75%
+
+EMAILS ARE CRAZY > 1300 SO FAR
+
+DB CLUSTER FAILED
+
+SHUT OFF INTERNET, SHUT OFF DB LB
+
+REBOOTED DB NODES
+
+MARIADB DEAD
+
+##https://dba.stackexchange.com/questions/157500/how-to-recover-mariadb-galera-cluster-after-full-crash
+
+ON ALL THREE NODES
+
+sudo cat /var/lib/mysql/grastate.dat
+
+sudo /usr/sbin/mysqld --wsrep-recover
+
+/usr/sbin/mysqld: Please consult the Knowledge Base to find out how to run mysqld as root!
+
+CANT UNDERSTAND WHAT THAT MEANS
+
+TRIED TO BOOSTRAP FROM NODE 1 WITHOUT CHANING grastate.dat OK to boostrap, FAILED. TRIED TO BOOSTRAP ON NODE 2, CHANGING grastate.dat OK to boostrap from 0 to 1. FAILED
+
+CANT FIND ANSWERS, NOT REALLY SURE WHAT ELSE TO DO
+
+#https://forum.manjaro.org/t/mysql-mariadb-cant-start-in-workbench/63425
+#https://severalnines.com/blog/updated-how-bootstrap-mysql-or-mariadb-galera-cluster
+#http://galeracluster.com/library/training/tutorials/starting-cluster.html
+#http://galeracluster.com/library/documentation/quorum-reset.html
+#http://galeracluster.com/2016/11/introducing-the-safe-to-bootstrap-feature-in-galera-cluster/
+#http://galeracluster.com/library/training/tutorials/restarting-cluster.html
+
+#CLOSEST
+#https://dba.stackexchange.com/questions/157500/how-to-recover-mariadb-galera-cluster-after-full-crash/192627
+#https://serverfault.com/questions/817171/mariadb-galera-cluster-node-cannot-start-after-going-down
+
+GIVING UP
+
+RESTORING TO 3PM.
+
+RUNNING AGAIN, CHANGING CONNECTION LIMITS FROM DEFAULT 500 to 2500
+
+SET GLOBAL max_connections = 2500;
+
+sudo nano /etc/my.cnf.d/server.cnf
+max_connections=2500
+
+==
+062419
+CONTINUED HAPPENING, WHEN GREEEN.INFO WP ENABLED, EVEN ONLY ON 1 APACHE, 2 DB, BOTH DB HIT VERY HARD, ALL SITES UNRESPONSIVE
+LEFT OVERNIGHT WITH GREEEN.INFO ONLY ON APACHE NODE4, EVERYTHING ONLY TALKING TO DB2, DB3
+==
+
+==
+062519
+MORNING
+40K+ EMAILS
+SITES NOT WORKING, THOUGH DB HADNT CRASHED, APACHE NODES STILL UP
+TURNED GREEEN OFF AGAIN
+==
+
+==
+062519
+EVENING
+CHECKED DB INTEGRITY WITH DG
+CHECKED QUERIES, SEEM NORMAL, JUST HEAVY READS AND SORTS AND PLACING ARTICLES IN DB
+==
+
+==
+062519
+AROUND 10PM
+DECIDED TO TRY SWITCHING BACK TO NGINX FOR DB LB
+WORKED
+THINGS MUCH BETTER
+AMOUNT OF THREADS/CONNECTIONS OPEN TO DB IS MUCH LESS WITH NGINX
+SITES ARE A BIT SLOWER THAN THEY WERE
+==
+
+==
+062619
+CREATED SMALL SQL MACHINE
+MIGRATING SOME THINGS TO SINGLE INSTANCE
+==

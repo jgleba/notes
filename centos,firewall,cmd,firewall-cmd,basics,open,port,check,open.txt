@@ -1,0 +1,31 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FIREWALL-CMD BASICS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-09[Oct-Fri]09-06AM 
+
+==
+OPEN PORT
+==
+
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+
+==
+SEE ALL OPEN PORTS AND MAIN ACTIVE CHAIN
+==
+
+sudo firewall-cmd --list-all
+
+==
+RELOAD
+==
+
+sudo firewall-cmd --reload
+
+==
+REMOVE
+==
+
+sudo firewall-cmd --zone=public --remove-port=3306/tcp --permanent
+sudo firewall-cmd --reload

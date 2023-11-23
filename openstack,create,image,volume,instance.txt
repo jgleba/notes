@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OPENSTACK CREATE IMAGE, VOLUME, INSTANCE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-04-10[Apr-Sat]17-24PM 
+
+##https://www.tecmint.com/create-deploy-and-launch-virtual-machines-in-openstack/
+
+##https://docs.openstack.org/image-guide/centos-image.html
+
+##http://cloud.centos.org/centos/7/images/?C=M;O=D

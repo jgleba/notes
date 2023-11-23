@@ -1,0 +1,49 @@
+##HAPROXY L4 CONFIG
+##JGLEBA
+##CREATED-- 020322
+
+global
+    ##MULTITHREADING 042719
+    ##https://www.haproxy.com/blog/multithreading-in-haproxy/
+    nbproc 2
+    nbthread 1
+    cpu-map 1 0
+    cpu-map 2 1
+
+    mode        tcp	
+    log         /dev/log local0
+    pidfile     /var/run/haproxy.pid
+    maxconn     250000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    timeout connect 20s
+    timeout check 20s
+    timeout client 24h ##500000 ##14400000 ##working, but too long ##30000 - rds was disconnecting with short timeouts - 061419
+    timeout server 24h ##500000 ##30000 ##DEFAULT UNIT SEEMS TO BE MS
+    #timeout client 3s ##TRYING NEW TIMEOUTS, WAS WORKING ON RDP FOR TEST FELB - 093020
+    #timeout server 3s
+    #timeout tunnel 3s
+    #timeout connect 3s
+
+##CHECK BETWEEN HAPROXY SERVERS
+peers mypeer
+    peer l4felb1 172.16.3.185:9999
+    peer l4felb2 172.16.3.186:9999
+
+frontend http
+    bind *:80
+    default_backend             httpback
+
+backend httpback
+    balance     leastconn
+    server      static 172.16.3.209:80 check
+
+frontend https
+    bind *:443
+    default_backend             httpsback
+
+backend httpsback
+    balance     leastconn
+    server      static 172.16.3.209:443 check

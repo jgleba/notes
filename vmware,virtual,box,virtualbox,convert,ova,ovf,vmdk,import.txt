@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE CONVERT VM FROM VIRTUAL BOX TO VMWARE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-15[Feb-Sat]13-38PM 
+
+##https://felixcentmerino.wordpress.com/virtualization/migrate-virtual-machine-from-oracle-virtualbox-to-esxi-5-5/
+
+use vmware ovftool
+
+C:\Program Files\VMware\VMware OVF Tool>ovftool.exe "c:\crib\ubu398e.0128.ova" "c:\crib\ubu398e.ovf"
+
+ovftool.exe "c:\0\debsml.vdi" "c:\0\debsml.vmdk"
+Opening OVA source: c:\crib\ubu398e.0128.ova
+Opening OVF target: c:\crib\ubu398e.ovf
+Writing OVF package: c:\crib\ubu398e.ovf
+Disk progress: 2%
+

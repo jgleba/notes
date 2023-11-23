@@ -1,0 +1,18 @@
+=======================================
+ESXI UPTIME FROM WINDOWS VSPHERE CLIENT
+=======================================
+
+https://communities.vmware.com/thread/420821
+
+Hi,
+
+On the GUI click on the host server (top left corner), then go to performance tab. (about middle of the screen)
+Here chose from the scroll down menu the system. / Switch to: System /  (top right side of the screen)
+And then on the bottom of the page: / Performance Chart Legend /
+
+Find the host(server) name: this is the Object on the left side. / Key | Object /
+The middle is called Measurement: and this is the Uptime of the server.
+It shows the Uptime in days exactly just like in the ssh console.
+
+
+VSPHERE CLIENT -> PERFORMANCE TAB -> SWITCH TO: SYSTEM -> FIND HOSTNAME OF ESXI -> VALUES ON RIGHT ARE UPTIME IN DAYS

@@ -1,0 +1,18 @@
+info about open source self deployed xen orchestra
+==
+june 10, 2016
+==
+
+install scripts from:
+http://mangolassi.it/topic/7349/xen-orchestra-on-ubuntu-15-10-complete-installation-instructions
+https://gist.github.com/hoerup/73d02600cafee855eeb5
+
+https://raw.githubusercontent.com/scottalanmiller/xenorchestra_installer/master/xo_install.sh
+
+
+https://github.com/vatesfr/xo-web - updates
+
+https://xen-orchestra.com/forum/topic/229/can-t-delete-logs-from-backup/3
+
+https://npm.mirrors.ustc.edu.cn/package/xo-web
+

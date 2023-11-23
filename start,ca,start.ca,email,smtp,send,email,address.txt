@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  START.CA EMAIL ADDRESS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-05-28[May-Thu]16-47PM 
+
+
+jgleba12@start.ca
+
+mail.start.ca
+
+25 no auth, no ssl
+outbound with auth port 587
+port 995 incoming
+
+webmail?
+

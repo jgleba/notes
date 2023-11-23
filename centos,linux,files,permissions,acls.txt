@@ -1,0 +1,91 @@
+=============================================================
+CENTOS MULTIPLE GROUPS OR SEPARATIONS ON FILES/FOLDERS - ACLS
+110719
+=============================================================
+
+##https://unix.stackexchange.com/questions/195466/setting-multiple-groups-as-directory-owners
+
+FIRST ANSWER SEEMS GOOD FOR ENTERPRISE, NOT QUITE RIGHT FOR ME, ACLS SEEM TO FIT BETTER
+
+
+
+This is an extremely common problem, if I understand it accurately, and I encounter it constantly. If I used ACLs for every trivial grouping problem, I would have tons of unmanageable systems.
+They are using the best practice when you cannot do it any other way, not for this situation. This is the method I very strongly recommend.
+First you need to set your umask to 002, this is so a group can share with itself. I usually create a file like /etc/profile.d/firm.sh, and then add a test command with the umask.
+
+[ $UID -gt 10000 ] && umask 002
+
+Next you need to set the directories to their respective groups,
+
+chgrp -R FirmA /srv/svn/FirmA 
+chgrp -R FirmB /srv/svn/FirmB
+chgrp -R FirmC /srv/svn/FirmC
+
+Finally you need to set the SGID bit properly, so the group will always stay to the one you set. This will prevent a written file from being set to the writer's GID.
+
+find /srv/svn/FirmA -type d -print0 | xargs -0 chmod 2775
+find /srv/svn/FirmB -type d -print0 | xargs -0 chmod 2775
+find /srv/svn/FirmC -type d -print0 | xargs -0 chmod 2775
+
+find /srv/svn/FirmA -type f -print0 | xargs -0 chmod 664
+find /srv/svn/FirmB -type f -print0 | xargs -0 chmod 664
+find /srv/svn/FirmC -type f -print0 | xargs -0 chmod 664
+
+Now finally if you want to prevent the directories from being accessed by other users.
+
+chmod 2770 /srv/svn/FirmA
+chmod 2770 /srv/svn/FirmB
+chmod 2770 /srv/svn/FirmC
+
+**************************
+**************************
+Warning: this should work but removes execution permission bit on all files. This is okay if your directory tree only holds documents. If it contains executable files this will prevent execution, which may ruin your setup. – Stéphane Gourichon Sep 8 '16 at 8:43
+1
+This might be also a nice idea, but does not answer the question at all. – ceving Sep 13 '17 at 11:16
+This as described only partitions the three folders so that only members of each firm can modify only their respective files - it does not give 'svn' the access it needs. – rich p Oct 23 at 13:33
+This is very close though. What's missing is to give you access to all the groups. Add this step, assuming your login is svnadmin: sudo usermod -a -G FirmA,FirmB,FirmC svnadmin This will add svnadmin to all of these groups.
+Since the files in all these groups have 'group write' enabled (chmod 664 did this), you, plus firmX, will be the only writers of files owned by firmX. – rich p Oct 23 at 13:49
+1
+Better - change the permissions to add/subtract what you want to add/subtract - e.g. do find /srv/svn/FirmA -type f -print0 | xargs -0 chmod ug+rw,o+r,o-wx – rich p Oct 23 at 14:18
+**************************
+**************************
+
+==
+ACLS
+==
+
+You can only have one group as owner.
+However using access control lists you can define permissions for other groups.
+Check if you have ACL installed issuing the command getfacl. If your system hasn't ACL installed, install the command line tools which are in the acl package with: sudo apt-get install acl
+With getfacl you can read the ACL information of a directory or other file, and with setfacl you can add groups to a file.
+
+For example:
+
+setfacl -m g:devFirmB:rwx /srv/svn/  
+
+Adds the group devFirmB with read, write, execute permissions to directory /srv/svn.
+
+If you also want files created in that directory to be owned by multiple groups, set the ACL as the default ACL. The X in the default group entry means “allow execution if executable by the owner (or anyone else)”.
+
+setfacl -m g:devFirmB:rwx /srv/svn/  
+setfacl -d -m g:devFirmB:rwX /srv/svn/  
+
+==
+
+sudo chown -R user:group /mnt/disk2/x/dat/p/j/iso
+sudo chown -R user:group /mnt/disk2/x/dat/p/j/softw
+
+sudo setfacl -d -m g:smbsoftw:rwx /mnt/disk2/x/dat/p/j/iso
+sudo setfacl -d -m g:smbsoftw:rwx /mnt/disk2/x/dat/p/j/softw
+
+sudo setfacl -d -m g:smbj:rwx /mnt/disk2/x/dat/Media
+sudo setfacl -d -m g:smbj:rwx /mnt/disk4/x/dat/Torr
+sudo setfacl -d -m g:smbj:rwx /mnt/disk5/x/dat/Movies
+
+sudo setfacl -d -m g:smbgrp:rwx /mnt/disk2/x/dat/Media
+
+==
+LIST ACLS
+==
+
+getfacl filename.ext

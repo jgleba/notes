@@ -1,0 +1,35 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GLUSTER PERFORMANCE - NEED TO TRY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-13[Jan-Mon]17-27PM 
+
+##https://forum.proxmox.com/threads/horribly-slow-gluster-performance.26319/
+
+Jun 2, 2016
+Are you using latest GlusterFS 3.7?
+
+I have good enough performance with GlusterFS on ZFS RAID10 with 3-way replication. I get around 150-250MBps on average for read and write throughput.
+
+Pretty much I left all GlusterFS and kernel parameters to their default settings and only tweaked some parameters as follows:
+> GlusterFS 3.7 parameters:
+nfs.trusted-sync: on
+performance.cache-size: 1GB
+performance.io-thread-count: 16
+performance.write-behind-window-size: 8MB
+performance.readdir-ahead: on
+client.event-threads: 8
+server.event-threads: 8
+cluster.quorum-type: auto
+cluster.server-quorum-type: server
+cluster.server-quorum-ratio: 51%
+
+> Kernel parameters:
+net.ipv4.tcp_slow_start_after_idle = 0
+net.ipv4.tcp_fin_timeout = 15
+net.core.somaxconn = 65535
+vm.swappiness = 1
+vm.dirty_ratio = 5
+vm.dirty_background_ratio = 2
+vm.min_free_kbytes = 524288 # this is on 128GB RAM

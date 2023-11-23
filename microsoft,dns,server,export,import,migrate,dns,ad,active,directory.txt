@@ -1,0 +1,54 @@
+export
+dnscmd /zoneexport MYDOMAIN.com MYDOMAIN.com.txt
+
+import
+dnscmd localhost /zoneadd somedomain.com /primary /file somedomain.com.dns /load
+
+==
+TRYING AGAIN - 090519
+==
+
+##https://www.leeejeffries.com/migrating-ad-integrated-dns-zones-between-dns-servers/
+
+Export-DNSServerZone -Name jgleba.com -Filename jgleba.com.dns
+Export-DNSServerZone -Name jgleba.tk -Filename jgleba.tk.dns
+Export-DNSServerZone -Name twosheeep.com -Filename twosheeep.com.dns
+Export-DNSServerZone -Name twothreeee.com -Filename twothreeee.com.dns
+Export-DNSServerZone -Name myvdesktop.com -Filename myvdesktop.com.dns
+Export-DNSServerZone -Name greeen.info -Filename greeen.info.dns
+Export-DNSServerZone -Name ab3w.com -Filename ab3w.com.dns
+
+ADD NEW ZONE
+PRIMARY, NOT ADZONE, CAN IMPORT FROM FILE
+
+DOESNT SYNC THOUGH
+
+TRYING SECONDARY ZONE ON NON AD DNS SERVER
+
+==
+MORE INFO
+==
+
+##https://social.technet.microsoft.com/Forums/windowsserver/en-US/ce20f2af-c77f-47a6-985c-51b0c9f25838/how-to-replicate-dns-record-to-a-second-dns-server?forum=winserverNIS
+
+Is the first DNS server a domain controller? If so, and the new server is also a domain controller, you can use AD integrated zones. This will *automatically* replicate to all DCs within their replication scope settings.
+
+Active Directory-Integrated Zones: Domain Name System (DNS ...Mar 28, 2003 ... DNS servers running on domain controllers can store their zones in Active Directory. In this way, it is not necessary to configure a ...
+http://technet.microsoft.com/en-us/library/cc772746(WS.10).aspx
+
+Active Directory-Integrated DNSTo use DNS integration within Active Directory, assign the zone type Active Directory-integrated when you create the zone. (For more information about how ...
+http://technet.microsoft.com/en-us/library/cc978010.aspx
+
+.
+
+If they are not domain controllers, or if the first one is and the second server is not, then you can create a Secondary zone on the new server, which will use zone transfers from the first DNS server, which is the "Master" for the zones, whichi holds the Primary copy of the zone.
+
+Zone transfers allow you to put a read only copy (Secondary zone) elsewhere from a read/write copy (Primary zone). Primary and Secondary zones store their data as text files. On a Windows machine, the files can be found in the \system32\dns folder with a file name such as "domain.com.dns". You can have numerous read only copies, but there can only be one read/write of that zone.
+
+If they were domain contrrollers, you can use AD integrated zones, which work as and are similar to Primary zones, however their data is stored as binary data in the actual AD database and not as a text file. The specific place in the AD database depends on the type of operating system and replication scope which is AD based.
+
+Create a secondary zone: Domain Name System (DNS);
+http://technet.microsoft.com/en-us/library/cc775491(v=ws.10).aspx
+
+Add a secondary server for an existing zone: Domain Name System
+http://technet.microsoft.com/en-us/library/cc757524(v=ws.10).aspx 

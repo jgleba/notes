@@ -1,0 +1,14 @@
+NORDVPN + OPENVPN STOPS WORKING AFTER SOME TIME
+==
+
+SPECIFIED SERVER MAY BE DOWN
+
+GRAB NEW CONFIGS
+
+OPENVPN SERVICE RUNS AS:
+
+sudo systemctl status openvpn@nl352_nord.service
+
+sudo systemctl status openvpn@nl351_nord.service
+
+BASED ON CONFIG FILE NAME

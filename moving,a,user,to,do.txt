@@ -1,0 +1,17 @@
+moving user?
+things to do...
+
+outlook setup
+archives?
+import auto-complete
+ - in run outlook.exe /importnk2
+ - 2010/2013? roamcache! located at:
+   C:\Users\$USERNAME\AppData\Local\Microsoft\Outlook\RoamCache
+signature, located: C:\Users\$USERNAME\AppData\Roaming\Microsoft\Signatures
+favourites
+desktop contents
+printers -> default printer?
+powerbroker? paths to word/pdf
+public calendar?
+change home page, browser to google
+change documents home folder

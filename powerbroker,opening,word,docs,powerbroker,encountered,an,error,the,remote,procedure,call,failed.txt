@@ -1,0 +1,5 @@
+powerbroker opening word docs, powerbroker encountered an error, the remote procedure call failed
+
+C:\Users\%username%\AppData\Local\Microsoft\Office\15.0
+
+Delete OfficeFileCache folder

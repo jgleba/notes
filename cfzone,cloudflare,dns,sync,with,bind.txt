@@ -1,0 +1,48 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CFZONE, SYNC BIND TO CLOUDFLARE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-06[Feb-Thu]18-39PM 
+
+##https://github.com/cego/cfzone
+##https://github.com/cego/cfzone/archive/master.zip
+
+Only A, AAAA, CNAME, MX, and TXT records are supported.
+
+Cloudflare supported record types LOC, NS, SRV, SPF and CAA are not currently supported.
+
+Flags exist to skip SRV and SPF types.
+
+Cloudflare supports (at least) two modes not easily representable in a BIND zone. To support these features a few magic TTL values are used.
+TTL 	Status
+-autottl (0) 	Automatic TTL, DNS only
+-cachettl (1) 	Automatic TTL, DNS and HTTP proxy (CDN)
+Other values 	Set as TTL, DNS only
+
+cfzone need two environment variables:
+
+    CF_API_KEY - Your API key from Cloudflare
+    CF_API_EMAIL - Your Cloudflare email address.
+
+Run cfzone as with the following command: cfzone [-leaveunknown] [-yes] <zonefile>
+
+Available optional flags:
+Flag 	Description
+-leaveunknown 	Don't delete unknown records
+-yes 	will cause cfzone to continue syncing without confirmation.
+-autottl <int> 	Specify the TTL to interpret as 'Auto' for Cloudflare (default 0)
+-cachettl <int> 	Specify the TTL to interpret as 'Cache' for Cloufdlare (default 1)
+-ignorespf 	Skip SPF records in the BIND zone file rather than erroring
+-ignoresrv 	Skip SRV records in the BIND zone file rather than erroring
+-origin 	Specify zone origin to resolve @ at the top level
+
+
+CF_API_KEY=
+CF_API_EMAIL=example@jgleba.com
+cfzone -leaveunknown  /var/named/
+
+OOPS, I'M USING NAMED
+
+##KUBE SYNC, SHOULD LOOK INTO
+##https://github.com/calebdoxsey/kubernetes-cloudflare-sync

@@ -1,0 +1,18 @@
+C:\j\softw\netcat>nc -z -v 172.16.3.201 80
+172.16.3.201: inverse host lookup failed: h_errno 11004: NO_DATA
+(UNKNOWN) [172.16.3.201] 80 (http) open
+
+C:\j\softw\netcat>nc -z -v 172.16.3.201 443
+172.16.3.201: inverse host lookup failed: h_errno 11004: NO_DATA
+(UNKNOWN) [172.16.3.201] 443 (https) open
+
+C:\j\softw\netcat>nc -z -v 172.16.0.14 514
+172.16.0.14: inverse host lookup failed: h_errno 11004: NO_DATA
+(UNKNOWN) [172.16.0.14] 514 (cmd) open
+
+C:\j\softw\netcat>nc -z -v -n 172.16.0.14 514
+(UNKNOWN) [172.16.0.14] 514 (?) open
+
+C:\j\softw\netcat>nc -z -v -u 172.16.0.14 514
+172.16.0.14: inverse host lookup failed: h_errno 11004: NO_DATA
+(UNKNOWN) [172.16.0.14] 514 (syslog) open

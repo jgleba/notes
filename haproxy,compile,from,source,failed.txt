@@ -1,0 +1,36 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY COMPILE FROM SOURCE - DIDNT WORK - HAPROXY WONT START
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-03[Mar-Wed]09-04AM 
+
+##https://gist.github.com/meanevo/742b61031fdf9ce01e50d4b196a3f31e
+
+# Make sure you have these installed
+yum install -y make gcc perl pcre-devel zlib-devel
+# Download/Extract source
+wget -O /tmp/haproxy.tgz https://www.haproxy.org/download/2.3/src/haproxy-2.3.4.tar.gz
+tar -zxvf /tmp/haproxy.tgz -C /tmp
+cd /tmp/haproxy-*
+# Compile HAProxy
+# https://github.com/haproxy/haproxy/blob/master/README
+make \
+    TARGET=linux2628 USE_LINUX_TPROXY=1 USE_ZLIB=1 USE_REGPARM=1 USE_PCRE=1 USE_PCRE_JIT=1 \
+    USE_OPENSSL=1 SSL_INC=/usr/include SSL_LIB=/usr/lib ADDLIB=-ldl \
+    CFLAGS="-O2 -g -fno-strict-aliasing -DTCP_USER_TIMEOUT=18"
+make install
+# Check your sbin path at /usr/local/sbin, consider copying these two to it
+cp haproxy /usr/local/sbin/haproxy
+cp haproxy-systemd-wrapper /usr/local/sbin/haproxy-systemd-wrapper
+
+==
+
+# Make sure you have these installed
+yum install -y make gcc perl pcre-devel zlib-devel
+# Download/Extract source
+wget -O /tmp/haproxy.tgz https://www.haproxy.org/download/2.3/src/haproxy-2.3.4.tar.gz
+tar -zxvf /tmp/haproxy.tgz -C /tmp
+cd /tmp/haproxy-*
+##COMPILE
+sudo make TARGET=linux-glibc

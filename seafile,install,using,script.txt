@@ -1,0 +1,94 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SEAFILE INSTALL, USING INSTALL SCRIPT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-24[Oct-Sat]18-19PM 
+
+
+
+using blank vm
+
+##https://download.seafile.com/published/seafile-manual/deploy/README.md
+
+We provide three ways to deploy Seafile services:
+
+    Using installation script﻿
+	
+	
+https://github.com/haiwen/seafile-server-installer
+
+==
+
+For Seafile 6.x.x/7.0.x
+
+For CentOS 7 (64bit)
+
+cd /root
+wget --no-check-certificate https://raw.githubusercontent.com/haiwen/seafile-server-installer/master/seafile_centos
+bash seafile_centos 7.0.5
+
+Your Seafile server is installed
+  -----------------------------------------------------------------
+
+  Server Address:      http://127.0.0.1
+
+  Seafile Admin:       admin@seafile.local
+  Admin Password:      pass
+
+  Seafile Data Dir:    /opt/seafile/seafile-data
+
+  Seafile DB Credentials:  Check /opt/seafile.my.cnf
+  Root DB Credentials:     Check /root/.my.cnf
+
+  Switch to Seafile system account with: su - seafile -s /bin/bash
+
+  This report is also saved to /opt/seafile/aio_seafile-server.log
+
+
+
+  Next you should manually complete the following steps
+  -----------------------------------------------------------------
+
+  1) Log in to Seafile and configure your server domain via the system
+     admin area if applicable.
+
+  2) If this server is behind a firewall, you need to ensure that
+     tcp port 80 is open.
+
+  3) Seahub tries to send emails via the local server. Install and
+     configure Postfix for this to work or
+     check https://manual.seafile.com/config/sending_email.html
+     for instructions on how to use an existing email account via SMTP.
+
+
+
+
+  Optional steps
+  -----------------------------------------------------------------
+
+  1) Check seahub_settings.py and customize it to fit your needs. Consult
+     http://manual.seafile.com/config/seahub_settings_py.html for possible switches.
+
+  2) Setup NGINX with official SSL certificate, we suggest you use Let’s Encrypt. Check
+     https://manual.seafile.com/deploy/https_with_nginx.html
+
+  3) Secure server with iptables based firewall. For instance: UFW or shorewall
+
+  4) Harden system with port knocking, fail2ban, etc.
+
+  5) Enable unattended installation of security updates. Check
+     https://wiki.Ubuntu.org/UnattendedUpgrades for details.
+
+  6) Implement a backup routine for your Seafile server.
+
+  7) Update NGINX worker processes to reflect the number of CPU cores.
+
+
+
+
+  Seafile support options
+  -----------------------------------------------------------------
+
+  For free community support visit:   https://bbs.seafile.com
+  For paid commercial support visit:  https://seafile.com

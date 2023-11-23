@@ -1,0 +1,27 @@
+===================================================================
+LINUX BASH DELETE FILES IN A FOLDER OLDER THAN X DAYS
+VERY USEFUL FOR FILES THAT HAVE DATE ON THEM, LOG ROTATE DOESNT FIT
+112319
+===================================================================
+
+#from dgleba
+#email subject: delete 30 day old
+#111419
+# remove files older than n days
+#
+# settings..
+source=/home/user/urlcheck
+#tmpdir=~/0/0/rmt2 ; mkdir $tmpdir
+# Do it..
+timea=$(date "+%k%M")
+echo $timea
+# Do this only if time is greater than 2350 hrs so it only does it in the last 10 minutes of the day...
+if ((${timea} > 2350)) ; then
+  echo  its greater. its time to remove files.
+  find $source -type f -mtime +5  -print | while read filename; do
+      # do whatever you want with the file
+      echo "${filename}"  ; rm "${filename}";
+  done
+else
+  echo its not time now, do nothing
+fi

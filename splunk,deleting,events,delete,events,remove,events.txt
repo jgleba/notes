@@ -1,0 +1,11 @@
+SPLUNK DELETING EVENTS
+
+REF:
+https://docs.splunk.com/Documentation/Splunk/latest/SearchReference/Delete
+
+index=fbus_summary latest=1417356000 earliest=1417273200 | eval index = "fbus_summary" | delete
+
+host="zxsw2" |  delete
+
+sourcetype="fe-lb-test" 
+|  delete

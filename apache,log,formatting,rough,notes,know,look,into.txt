@@ -1,0 +1,14 @@
+
+apache log format, look into
+
+LogFormat "%h %v %l %u %{local}p %t \"%r\" \"%q\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" %I %O %D" combined
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+LogFormat "%h %l %u %t \"%r\" %>s %b" common
+
+
+
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" proxy
+SetEnvIf X-Forwarded-For "^.*\..*\..*\..*" forwarded
+CustomLog "logs/access_log" combined env=!forwarded
+CustomLog "logs/access_log" proxy env=forwarded
+

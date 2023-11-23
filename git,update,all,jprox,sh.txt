@@ -1,0 +1,34 @@
+#!/bin/bash
+
+##GIT UPDATE ALL
+##040520
+
+git config --global credential.helper 'cache --timeout 9999999'
+
+cd /home/x/dat/short/j/jdat/1data/5,sfa/0/TimeTrack/
+git add .
+git commit -m "$(date +"%m%d%y")"
+git push -u origin master
+
+sleep 3
+
+cd /home/x/dat/short/j/jdat/1data/3,notes
+git add .
+git commit -m "$(date +"%m%d%y")"
+git push -u origin master
+
+sleep 3
+
+cd /home/x/dat/short/j/jdat/1data/bin/jstart
+git add .
+git commit -m "$(date +"%m%d%y")"
+git push -u origin master
+
+sleep 3
+
+cd /mnt/sw2/webroot/sites/user/pages
+git add .
+git commit -m "$(date +"%m%d%y")"
+git push -u origin master
+
+sleep 3

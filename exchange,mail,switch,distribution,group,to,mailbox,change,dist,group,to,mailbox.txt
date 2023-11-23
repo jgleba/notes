@@ -1,0 +1,37 @@
+http://techgenix.com/how-convert-distribution-list-mailbox/
+
+MAKES SENSE - TRYING - 060619
+
+
+How to Convert a Distribution List into a Mailbox
+Nuno Mota Posted On February 27, 2015
+0
+14 Views
+
+    Share On Facebook
+    Tweet It
+
+
+Sometimes, an organization/administrator might have the need to convert a Distribution Group (DG) into a normal mailbox or a shared mailbox. Reasons for this vary, but the most common one is when an organization has the need to start sending emails as that DG.
+
+Unfortunately, there is no native way of achieving this. But it is completely achievable and straightforward. The best way is to:
+
+    Write down the DG’s LegacyExchangeDN. To do so, you can run the cmdlet: Get-DistributionGroup “DG_name” | Select LegacyExchangeDN;
+
+    Delete the DG;
+
+    Create a (shared) mailbox with the same SMTP address;
+
+    Add the DG’s legacyExchangeDN as an X500 address to the new mailbox.
+
+I am not going into detail of what the legacyExchangeDN is and how or why it is used as this is already well documented all over the Internet. As a quick overview, the auto-complete cache in Outlook and in OWA uses the value of the legacyExchangeDN attribute to route email messages internally. If the value changes, the delivery of email messages may fail with a 5.1.1 NDR.
+
+If you already deleted the DG and have no way of retrieving its legacyExchangeDN, you have two options:
+
+    Clear the auto-complete cache (straightforward but most of the times not the best approach);
+
+    Manually create an X500 proxy address for the old legacyExchangeDN attribute for the DG.
+
+To create an X500 proxy address, you need to use an NDR you have received when emailing the DG, which should contain the recipient’s address such as:
+
+IMCEAEX-_O=LetsExchange_OU=EXCHANGE+20ADMINISTRATIVE+20GROUP+20+28FYDIBOHF23SPDLT+29_CN=RECIPIENTS

@@ -1,0 +1,66 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS VARNISH INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-03-29[Mar-Sun]11-51AM 
+
+##https://www.snel.com/support/how-to-configure-use-varnish-cache-server-on-centos-7/
+##https://www.journaldev.com/29833/install-varnish-cache-centos-7
+
+==
+INSTALL
+==
+
+sudo yum install -y varnish
+
+==
+CONFIGURE
+==
+
+sudo nano /etc/varnish/default.vcl
+
+CHANGE 
+
+    .port = "8080";
+
+TO 
+
+    .port = "80";
+	
+==
+
+sudo nano /etc/varnish/varnish.params
+
+CHANGE
+
+VARNISH_LISTEN_PORT=6081
+
+TO
+
+VARNISH_LISTEN_PORT=8080
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=8080/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+START AND ENABLE
+==
+
+sudo systemctl enable varnish && sudo systemctl start varnish
+
+==
+STATUS
+==
+
+sudo systemctl status varnish
+
+==
+LOGS
+==
+
+varnishncsa

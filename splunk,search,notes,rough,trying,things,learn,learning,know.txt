@@ -1,0 +1,23 @@
+status=200 | stats count as "Total HTTP Status 200"
+
+status=200 sourcetype="access_combined_wcookie" | stats count(action)
+
+status=200 sourcetype="access_combined_wcookie" | stats count(action) as ActionEvents, count as TotalEvents
+
+index=* | stats avg(Duration)
+
+index="nginx" "haproxy-access:" "POST" "200" "doing_wp_cron!=*" - no results, didn't work
+
+index="nginx" "haproxy-access:" "POST" "200" NOT "doing_wp_cron=*" - worked
+
+index="nginx" "haproxy-access:" "POST" "200" NOT "doing_wp_cron=*" NOT "Microsoft-Server-ActiveSync" NOT "auction" NOT "auction2" NOT "autodiscover" NOT "wordfence"
+
+"POST" AND "jsspwned.php"
+
+"POST" AND "200" AND "jsspwned.php"
+
+"POST" AND "200"
+
+index=* "uncorrectable sectors" "changed" jfnas2-repl
+
+index=* "uncorrectable" "jfnas1-prod"

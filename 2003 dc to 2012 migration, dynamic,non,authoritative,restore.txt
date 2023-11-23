@@ -1,0 +1,59 @@
+dc migration
+==
+copied contents of sysvol share back in into sysvol share on old dc
+added group policy creator owner to permissions of Policies folder in sysvol/%domain%/Policies changed permissions to all but modify
+##net stop ntfrs
+##regedit
+##HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\NtFrs\Parameters\Backup/Restore\Process at Startup\
+##change burflags hex value to D4 - authoritative restore
+##net start ntfrs
+##wait few minutes
+in ad sites and services click old server, expand NTDS, click NTDS, right click on entry in right, replicate now
+reboot both
+dcdiag on 2012 dc
+repadmin /showrepl
+now replicated
+no errors execept for log errors
+netdom query fsmo - check which dc has roles
+transfer fsmo roles in powershell to new dc
+Move-ADDirectoryServerOperationMasterRole -Identity “dfsi2012dc” –OperationMasterRole DomainNamingMaster,PDCEmulator,RIDMaster,SchemaMaster,InfrastructureMaster –Force
+power on old dc
+dc promo
+failed
+change dns server to new dc **
+dcpromo
+https://support.microsoft.com/en-ca/help/2958414/dfs-replication-how-to-troubleshoot-missing-sysvol-and-netlogon-shares
+==
+still getting some errors about ntp
+w32tm.exe /config /manualpeerlist:”0.us.pool.ntp.org 1.us.pool.ntp.org 2.us.pool.ntp.org 3.us.pool.ntp.org” /syncfromflags:manual /reliable:YES /update
+w32tm /query /status /verbose /computer:dcname
+w32tm.exe /config /update
+Restart-Service w32time
+==
+dcdiag - now just warnings
+ADREPLSTATUS similar to repadmin /showrepl
+ntfrsutl ds
+==
+net stop ntfrs on both
+copy policies folder, add group policy creator rights
+net start ntfrs on both
+force replication through ad sites and services
+==
+
+LATEST
+remove 127.0.0.1 from 2012 dc dns
+service stop ntfrs
+stop ntfrs on 2012
+stop ntfrs on 2003
+copied scripts from preexisting on 2012
+D4 on 03
+D2 on 2012
+start ntfrs on 2012
+restart ntfrs on 2003
+rebooted box 2003
+waited
+now sysvol and netlogon working
+copied policies folder on 03 back into sysvol root
+waited
+dcdiag clean
+

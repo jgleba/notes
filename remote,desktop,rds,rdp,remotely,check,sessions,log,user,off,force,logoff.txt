@@ -1,0 +1,21 @@
+===============================================
+REMOTELY CHECK AND LOG OF USER FROM RDP SESSION
+081619
+===============================================
+
+##https://itstillworks.com/install-desktop-ubuntu-server-6780086.html
+##https://www.nextofwindows.com/windows-tip-how-to-remotely-logoff-users-via-command-line-tools
+
+==
+IF NOT ALREADY AUTHENTICATED BY BEING LOGGED INTO ANOTHER MACHINE - TRY THIS
+==
+
+net use \\server_ip /USER:your_name password
+
+==
+IF ALREADY AUTHENTICATED
+==
+
+query session /server:nameORip
+
+logoff 1 /server:nameORip

@@ -1,0 +1,28 @@
+
+https://github.com/severalnines/galera-docker-mariadb
+
+
+docker service create \
+--name mariadb-galera \
+--replicas 3 \
+-p 3306:3306 \
+--network galera-net \
+--mount type=volume,source=galera-vol,destination=/var/lib/mysql \
+--env MYSQL_ROOT_PASSWORD=mypassword \
+--env DISCOVERY_SERVICE=192.168.55.111:2379,192.168.55.112:2379,192.168.55.113:2379 \
+--env XTRABACKUP_PASSWORD=mypassword \
+--env CLUSTER_NAME=my_wsrep_cluster \
+severalnines/mariadb
+
+
+sudo docker service create \
+--name mariadb-galera1 \
+--replicas 3 \
+-p 3310:3306 \
+--network webcldock10100 \
+--mount type=volume,source=galera-vol,destination=/var/lib/mysql \
+--env MYSQL_ROOT_PASSWORD=pass \
+--env DISCOVERY_SERVICE=10.1.254.1:2379,10.1.254.2:2379,10.1.254.3:2379 \
+--env XTRABACKUP_PASSWORD=pass \
+--env CLUSTER_NAME=my_wsrep_cluster \
+127.0.0.1:5000/mariadbgalera

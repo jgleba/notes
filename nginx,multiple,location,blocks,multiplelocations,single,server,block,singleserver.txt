@@ -1,0 +1,100 @@
+##Nginx config for a single server block and multiple location blocks
+##Very tough to get working
+##12/9/2018
+##JGleba
+
+Got working with nginx on jprox
+
+cat /etc/nginx/sites-enabled/test1.jgleba.com.conf
+
+    server {
+        listen 80;
+        server_name test1.jgleba.com;
+
+        location ^~ /a {
+            alias /var/www/html/jtest/site1;
+            index index.html;
+        }
+
+        location ^~ /b {
+            alias /var/www/html/jtest/site2;
+            index index.html;
+        }
+
+
+Now going back to proxy pass to get working in the same way, seems to work:
+
+    server {
+        listen 80;
+        server_name test1.jgleba.com;
+
+        location ^~ /a/ {
+                proxy_pass http://172.16.3.19:8080/guacamole/;
+                proxy_buffering off;
+                proxy_http_version 1.1;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $http_connection;
+                #proxy_cookie_path /guacamole/ /;
+        }
+
+        location ^~ /b/ {
+                proxy_pass http://172.16.3.2:80;
+                proxy_buffering off;
+                proxy_http_version 1.1;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $http_connection;
+                #proxy_cookie_path /guacamole/ /;
+        }
+
+}
+
+
+working with docker:
+
+    server {
+        listen 80;
+        server_name david462.tk;
+
+        location ^~ /a/ {
+                rewrite ^/a(/.*)$ $1 break;
+                proxy_pass http://listo429c;
+                proxy_buffering off;
+                #proxy_http_version 1.1;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $http_connection;
+                #proxy_cookie_path /guacamole/ /;
+        }
+
+        location ^~ /b/ {
+                proxy_pass http://couchdblisto:5984;
+                proxy_buffering off;
+                #proxy_http_version 1.1;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection $http_connection;
+                #proxy_cookie_path /guacamole/ /;
+        }
+
+}
+
+  server {
+    listen 80 default_server;
+    server_name _; # This is just an invalid value which will never trigger on a real hostname.
+    access_log /var/log/nginx/access.log main;
+
+    server_name_in_redirect off;
+
+        location / {
+        }
+    root  /usr/share/nginx/html;
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+  }
+
+}

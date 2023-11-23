@@ -1,0 +1,22 @@
+MULTIPLE HAPROXY CONFIG FILES
+05-05-2019
+
+TESTED A BIT, NOW STATS ARE WEIRD
+
+DOESNT WORK WHEN ADDING NEW FRONTEND AND BACKEND IN NEW FILE AND RELOAD
+
+
+https://stackoverflow.com/questions/25775682/can-i-split-a-large-haproxy-config-file-into-multiple-smaller-files
+
+Configuration files can't be linked together from a configuration directive.
+
+However HAProxy can load multiple configuration files from its command line, using the -f switch multiple times:
+
+haproxy -f conf/http-defaults -f conf/http-listeners -f conf/tcp-defaults -f conf/tcp-listeners 
+
+If you want to be flexible with the amount of config files you can even specify a directory like this: -f /etc/haproxy. The files will then be used in their lexical order, newer files overriding older files. See the mailing list for an example, if provides links to the documentation. This information can be found in the management guide, not the regular docs.
+
+
+sudo /opt/rh/rh-haproxy18/root/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg
+
+sudo /opt/rh/rh-haproxy18/root/usr/sbin/haproxy -f /etc/haproxy

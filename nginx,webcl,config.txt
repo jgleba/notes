@@ -1,0 +1,201 @@
+NGINX LOAD BALANCER WITH 3 WEB NODES
+====================================
+Justin Gleba
+9/3/2017
+============
+
+INSTALL STUFF
+==
+sudo yum install epel-release nginx -y
+
+sudo systemctl enable nginx
+sudo service nginx start
+
+HOST FILES
+==
+sudo nano /etc/hosts
+
+172.16.3.200 webcl1lb1
+172.16.3.210 webcl1node1
+172.16.3.211 webcl1node2
+172.16.3.212 webcl1node3
+
+INITAL CONFIG
+==
+sudo nano /etc/nginx/nginx.conf
+
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 4096;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   120;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+    include /etc/nginx/load-balancer.conf;
+
+}
+
+
+LOAD BALANCE CONFIG
+==
+sudo nano /etc/nginx/load-balancer.conf
+
+upstream webcl1 {
+   least_conn;
+   
+   server 172.16.3.210;
+   server 172.16.3.211;
+   server 172.16.3.212;
+}
+server {
+   listen 80;
+
+   location / {
+      proxy_pass http://webcl1;
+   }
+}
+
+
+FIREWALL
+==
+sudo firewall-cmd --zone=public --add-service=http --permanent
+sudo firewall-cmd --reload
+
+
+CONFIG TEST
+==
+cd /usr/share/nginx/html
+sudo rm index.html
+
+sudo nano index.html
+
+<html>
+<body>
+WEBCL NODE1
+</body>
+</html>
+
+<html>
+<body>
+WEBCL NODE2
+</body>
+</html>
+
+<html>
+<body>
+WEBCL NODE3
+</body>
+</html>
+
+RESTART SERVICE ONE MORE TIME
+==
+sudo service nginx restart
+
+
+
+
+
+=====
+
+PHP
+
+sudo rpm -Uvh http://mirror.metrocast.net/fedora/epel/beta/7/x86_64/epel-release-7-0.2.noarch.rpm
+sudo rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+sudo yum install --enablerepo=remi-php55 php php-fpm
+
+
+
+
+
+
+
+
+
+DB CONFIG
+=========
+
+INSTALL
+==
+sudo yum install mariadb-server rsync xinetd -y
+
+HOSTS
+==
+sudo nano /etc/hosts
+
+172.16.3.220 webcl1db1
+172.16.3.221 webcl1db2
+172.16.3.200 webcl1lb1
+172.16.3.210 webcl1node1
+172.16.3.211 webcl1node2
+172.16.3.212 webcl1node3
+
+CONFIG
+==
+
+sudo nano /etc/my.cnf.d/server.cnf
+
+NO GALERA SECTION, ADDED:
+
+[galera] # Mandatory settings
+wsrep_on=ON
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+
+#add your node ips here
+wsrep_cluster_address="gcomm://172.16.3.220,172.16.3.221"
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+#Cluster name
+wsrep_cluster_name="webcl1db"
+# Allow server to accept connections on all interfaces.
+
+bind-address=0.0.0.0
+
+# this server ip, change for each server
+wsrep_node_address="172.16.3.220"
+# this server name, change for each server
+wsrep_node_name="webcl1db1"
+
+wsrep_sst_method=rsync
+
+
+
+
+
+
+
+
+sudo nano /etc/yum.repos.d/mariadb.repo
+
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.0/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+sudo yum install MariaDB-Galera-server -y

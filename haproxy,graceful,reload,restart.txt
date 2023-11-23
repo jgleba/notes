@@ -1,0 +1,70 @@
+=======================
+HAPROXY GRACEFUL RELOAD
+070419
+JGleba
+=======================
+
+011722
+WORKS
+
+sudo service haproxy reload
+
+==
+
+#https://serverfault.com/questions/580595/haproxy-graceful-reload-with-zero-packet-loss
+
+#iptables -I INPUT -p tcp --dport $PORT --syn -j DROP
+#sleep 1
+#service haproxy restart
+#iptables -D INPUT -p tcp --dport $PORT --syn -j DROP
+
+TRIED, DIDNT REALLY WORK
+
+sudo iptables -I INPUT -p tcp --dport $PORT --syn -j DROP
+sleep 1
+sudo service haproxy restart
+sudo iptables -D INPUT -p tcp --dport $PORT --syn -j DROP
+
+==
+
+[user@webclfelb1 ~]$ sudo iptables -I INPUT -p tcp --dport $PORT --syn -j DROP
+iptables v1.4.21: invalid port/service `--syn' specified
+Try `iptables -h' or 'iptables --help' for more information.
+[user@webclfelb1 ~]$ sleep 1
+[user@webclfelb1 ~]$ sudo service haproxy restart
+Redirecting to /bin/systemctl restart haproxy.service
+[user@webclfelb1 ~]$ sudo iptables -D INPUT -p tcp --dport $PORT --syn -j DROP
+Broadcast message from systemd-journald@webclfelb1 (Thu 2019-07-04 13:04:33 EDT)
+
+haproxy[21198]: backend couch.dg has no server available!
+
+
+Broadcast message from systemd-journald@webclfelb1 (Thu 2019-07-04 13:04:33 EDT)
+
+haproxy[21197]: backend couch.dg has no server available!
+
+
+Message from syslogd@[localhost] at Jul  4 13:04:33 ...
+ haproxy[21198]:backend couch.dg has no server available!
+
+Message from syslogd@[localhost] at Jul  4 13:04:33 ...
+ haproxy[21197]:backend couch.dg has no server available!
+
+Broadcast message from systemd-journald@webclfelb1 (Thu 2019-07-04 13:04:33 EDT)
+
+haproxy[21197]: backend onote.dg has no server available!
+
+
+Message from syslogd@[localhost] at Jul  4 13:04:33 ...
+ haproxy[21197]:backend onote.dg has no server available!
+
+Broadcast message from systemd-journald@webclfelb1 (Thu 2019-07-04 13:04:33 EDT)
+
+haproxy[21198]: backend onote.dg has no server available!
+
+
+Message from syslogd@[localhost] at Jul  4 13:04:33 ...
+ haproxy[21198]:backend onote.dg has no server available!
+[user@webclfelb1 ~]$ sudo iptables -D INPUT -p tcp --dport $PORT --syn -j DROP
+iptables v1.4.21: invalid port/service `--syn' specified
+Try `iptables -h' or 'iptables --help' for more information.

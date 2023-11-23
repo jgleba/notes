@@ -1,0 +1,90 @@
+=============
+RSYSLOG SETUP
+=============
+
+https://www.loggly.com/ultimate-guide/centralizing-apache-logs/
+
+keeps normal logs but pipes to logger, making available in local1 which hits global messages log
+
+        ErrorLog "|/bin/sh -c '/usr/bin/tee -a /var/log/httpd/bookstack.jgleba.com/error.log | /usr/bin/logger -thttpd -plocal1.err'"
+        CustomLog "| /bin/sh -c '/usr/bin/tee -a /var/log/httpd/bookstack.jgleba.com/access.log | /usr/bin/logger -thttpd -plocal1.notice'" combined
+
+		
+		
+		
+CustomLog "| /bin/sh -c '/usr/bin/tee -a "logs/access_log" | /usr/bin/logger -thttpd -plocal1.notice'" combined
+ErrorLog "|/bin/sh -c '/usr/bin/tee -a "logs/error_log" | /usr/bin/logger -thttpd -plocal1.err'"
+
+
+==
+
+good info
+
+https://vnugget.com/linux-redhat/centos-7-rsyslog-configuration-for-apache/
+
+First open /etc/http/conf/httpd.conf and locate the ErrorLog directive and change it like this:
+
+Errorlog apache directive
+
+I have used the syslog facility local2, you should not use local7 which is Apache default facility as it is used to log boot message to /var/log/boot.log on CentOS 7.
+Then add the following line to your rsyslog.conf
+
+local2.error /var/log/httpd-error.log
+
+Restart your Apache server
+
+systemctl restart httpd
+
+Then restart your Rsyslog service
+
+systemctl restart rsyslog
+
+Check the two services status
+
+systemctl status rsyslog httpd
+
+TEST
+logger "Test message from the system `hostname`"
+
+
+==
+
+https://serverfault.com/questions/522341/how-do-i-setup-rsyslog-to-send-all-logs-to-multiple-remote-servers
+https://access.redhat.com/solutions/1396013
+https://www.rsyslog.com/doc/v8-stable/concepts/multi_ruleset.html
+https://superuser.com/questions/1002856/rsyslog-how-to-separate-incoming-logs-with-ip-addresses
+http://techies-world.com/configure-nginx-to-send-logs-to-rsyslog/
+https://www.tecmint.com/setup-rsyslog-client-to-send-logs-to-rsyslog-server-in-centos-7/
+https://stackoverflow.com/questions/53533743/how-to-send-only-specific-files-to-remote-server-using-rsyslog
+
+http://www.initlinux.com/rsyslog-send-apache-or-application-logs-to-the-remote-syslog-server/
+https://stackoverflow.com/questions/11014159/multiple-apache-virtual-host-on-different-rsyslog-facilities
+https://askubuntu.com/questions/772654/rsyslog-server-saves-logs-from-remote-also-in-var-syslog
+https://www.loggly.com/ultimate-guide/centralizing-apache-logs/
+https://vnugget.com/linux-redhat/centos-7-rsyslog-configuration-for-apache/
+https://docs.splunk.com/Documentation/Splunk/7.2.3/Data/HowSplunkEnterprisehandlessyslogdata
+
+
+WILDCARD IN FOLDER
+
+WildCards
+
+Before Version: 8.25.0
+    Wildcards are only supported in the filename part, not in directory names.
+
+    /var/log/*.log works. *
+    /var/log/*/syslog.log does not work. *
+
+Since Version: 8.25.0
+    Wildcards are supported in filename and paths which means these samples will work:
+
+    /var/log/*.log works. *
+
+    /var/log/*/syslog.log works. *
+
+    /var/log/*/*.log works. *
+
+    All matching files in all matching subfolders will work. Note that this may decrease performance in imfile depending on how many directories and files are being watched dynamically.
+
+	
+https://www.rsyslog.com/doc/v8-stable/configuration/modules/imfile.html?highlight=wildcard#wildcards

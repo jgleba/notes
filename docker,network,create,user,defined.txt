@@ -1,0 +1,47 @@
+==================================================================
+DOCKER STANDALONE USING DOCKER-COMPOSE, USING USER DEFINED NETWORK
+111119
+==================================================================
+
+##https://docs.docker.com/compose/networking/
+
+==
+CREATE NEW DOCKER NETWORKS
+==
+
+sudo docker network create --driver bridge --attachable docknet1 --subnet=10.254.0.0/16
+sudo docker network create --driver bridge --attachable docknet2 --subnet=10.253.0.0/16
+
+sudo docker network create --driver bridge docknet1 --subnet=10.254.0.0/16
+sudo docker network create --driver bridge docknet2 --subnet=10.253.0.0/16
+
+==
+DOCKNET1
+==
+
+PLACE AT TOP OF DOCKER-COMPOSE.YML FILE
+
+networks:
+  docknet1:
+    external: true
+
+PLACE IN DOCKER CONTAINER DEFINITION
+	
+    networks:
+      docknet1:
+
+
+==	 
+DOCKNET2
+==
+
+PLACE AT TOP OF DOCKER-COMPOSE.YML FILE
+
+networks:
+  docknet2:
+    external: true
+	
+PLACE IN DOCKER CONTAINER DEFINITION
+	
+    networks:
+      docknet2:
