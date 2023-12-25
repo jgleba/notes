@@ -18,6 +18,10 @@ CHANGE
 
 session.timeout = 120
 
+TO
+
+session.timeout = 4320
+
 THEN
 
 On the vCenter Server Appliance, restart the vSphere-client service
