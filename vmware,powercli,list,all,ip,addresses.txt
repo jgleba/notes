@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE POWERCLI LIST ALL IP ADDRESSES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-12-24[Dec-Sun]20-18PM 
+
+#https://communities.vmware.com/t5/VMware-PowerCLI-Discussions/Get-List-of-IP-addresses-for-each-VM/td-p/2238590
+
+Get-VM | Select Name,VMHost, @{N="IP Address";E={@($_.guest.IPAddress -join '|')}}
