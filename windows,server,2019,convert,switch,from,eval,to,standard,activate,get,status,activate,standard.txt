@@ -10,4 +10,3 @@ DISM /Online /Get-CurrentEdition
 DISM /online /Set-Edition: ServerStandard
 
 DISM /online /Set-Edition:ServerStandard /ProductKey:XXXXX-XXXXX-XXXXX-XXXXX-XXXXX /AcceptEula
-
