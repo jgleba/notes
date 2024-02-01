@@ -39,3 +39,5 @@ sudo du -hs *
 ##https://unix.stackexchange.com/questions/125429/tracking-down-where-disk-space-has-gone-on-linux
 
 sudo du -h / | grep -P '^[0-9\.]+G'
+
+sudo du -h * | grep -P '^[0-9\.]+G'
