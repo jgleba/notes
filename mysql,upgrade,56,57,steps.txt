@@ -1,0 +1,36 @@
+ Shut down the old MySQL server. For example:
+
+mysqladmin -u root -p shutdown
+
+Install MySQL 5.7. For installation instructions, see Chapter 2, Installing and Upgrading MySQL.
+
+Initialize a new data directory, as described at Section 2.9.1, “Initializing the Data Directory”. For example:
+
+mysqld --initialize --datadir=/path/to/5.7-datadir
+
+Copy the temporary 'root'@'localhost' password displayed to your screen or written to your error log for later use.
+
+Start the MySQL 5.7 server, using the new data directory. For example:
+
+mysqld_safe --user=mysql --datadir=/path/to/5.7-datadir &
+
+Reset the root password:
+
+$> mysql -u root -p
+Enter password: ****  <- enter temporary root password
+
+
+==
+
+https://dev.mysql.com/doc/refman/5.7/en/upgrade-binary-package.html
+
+==
+
+shut down mysql
+rename folder
+initialize data folder
+copy temp root pass
+start mysql with mysqlsafe
+reset root pass
+import dbs
+

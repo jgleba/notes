@@ -1,0 +1,3 @@
+docker-compose  exec dbm /bin/bash /script/imp-era.sh
+
+sudo docker compose  exec dbm /bin/bash /script/imp-era.sh
