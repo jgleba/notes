@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GNS3 NETWORK SIMULATION TOOL INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-05[Mar-Tue]14-54PM 
+
+
+sudo add-apt-repository ppa:gns3/ppa
+sudo apt install gns3-gui gns3-server
+netstat
+sudo dpkg --add-architecture i386
+sudo apt update
+sudo apt install gns3-iou
