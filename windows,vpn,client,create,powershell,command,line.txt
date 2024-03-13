@@ -1,0 +1,5 @@
+CREATE VPN CONNECTION IN WINDOWS COMMAND LINE
+031124
+=============================================
+
+Add-VpnConnection -Name 'Conn Name' -ServerAddress ServerIP -AllUserConnection -RememberCredential -AuthenticationMethod EAP -TunnelType "IKEv2" -EncryptionLevel Required -DnsSuffix "domain.com"
