@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE POWERCLI IGNORE CERT WARNING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-26[Mar-Tue]14-16PM 
+
+#https://www.ivobeerens.nl/2018/07/18/quick-tip-powercli-invalid-server-certificate-error/
+
+Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false  
