@@ -26,14 +26,14 @@ sudo nano /etc/samba/smb.conf
         security = user
         passdb backend = tdbsam
         load printers = no
-        interfaces - lo eth0 172.18.1.0/24
-        hosts allow 127. 172.18.1 172.16.0. 172.16.3. 172.16.1.
+        interfaces - lo eth0 network/mask
+        hosts allow 127. 
         dns proxy = no
 
 [0fr]
         comment = 0fr
         path = /home/x/dat/0fr
-        valid user = user, user, tv, @smbgrp
+        valid user = user, user, @group
         guest ok = no
         browseable = yes
         writable = yes
@@ -43,7 +43,7 @@ sudo nano /etc/samba/smb.conf
 [torrfr]
         comment = torrfr
         path = /home/x/dat/torr
-        valid user = user, user, tv, deluge, @smbgrp
+        valid user = user, user, @group
         guest ok = no
         browseable = yes
         writable = yes
