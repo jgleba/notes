@@ -5,3 +5,5 @@
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-12[Mar-Tue]20-01PM 
 
 curl -fsSL https://ollama.com/install.sh | sh
+
+ollama run llama2
