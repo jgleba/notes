@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS ADD STATIC ROUTE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-04-05[Apr-Fri]11-48AM 
+
+#https://www.howtogeek.com/22/adding-a-tcpip-route-to-the-windows-routing-table/
+
+route add destination_network MASK subnet_mask gateway_ip metric_cost
+
