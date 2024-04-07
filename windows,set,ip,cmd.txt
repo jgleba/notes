@@ -11,10 +11,10 @@ netsh
 
 interface ipv4
 
-set address name="Ethernet0" static 172.16.0.18 255.255.255.0 172.16.0.254
+set address name="Ethernet0" static ip 255.255.255.0 gw
 
-set dnsservers name=Ethernet0 static 172.16.0.4 primary
+set dnsservers name=Ethernet0 static ip primary
 
 DOESNT WORK
 
-set dns name=”Ethernet0” static 172.16.0.3 index=2
+set dns name=”Ethernet0” static ip index=2
