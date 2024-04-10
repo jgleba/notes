@@ -71,7 +71,7 @@ START
 sudo systemctl enable nginx
 sudo systemctl start nginx
 
-[j1@COSONION ~]$ cat /etc/nginx/sites-enabled/jgleba.com.onion.conf
+[user@COSONION ~]$ cat /etc/nginx/sites-enabled/jgleba.com.onion.conf
 server {
     listen 80;
     server_name url.onion;
@@ -88,9 +88,9 @@ server {
     }
 }
 
-[j1@COSONION ~]$ cat /etc/hosts
+[user@COSONION ~]$ cat /etc/hosts
 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
 
 172.16.3.21 jgleba.com
-[j1@COSONION ~]$
+[user@COSONION ~]$
