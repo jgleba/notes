@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL CHANGE TIMEZONE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-04-12[Apr-Fri]20-06PM 
+
+https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/set-timezone?view=powershell-7.4
+
+Set-TimeZone -Id "Eastern Standard Time"
+
+Get-TimeZone -ListAvailable
+
