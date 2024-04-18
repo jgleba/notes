@@ -21,5 +21,7 @@ Install-RDWebClientPackage
 
 Import-RDWebClientBrokerCert <.cer file path>
 
+Import-RDWebClientBrokerCert C:\j\cert\mailjex.cer
+
 Publish-RDWebClientPackage -Type Production -Latest
 

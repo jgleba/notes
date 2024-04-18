@@ -1,0 +1,30 @@
+Add-WindowsCapability -Online -Name "<tool_name>"
+Add-WindowsCapability -Online -Name "RSAT: Remote Desktop Services Tools"
+Add-WindowsCapability -Online -Name "RSAT: Server Manager"
+
+
+
+
+DisplayName                                                                          State
+-----------                                                                          -----
+RSAT: Active Directory Domain Services and Lightweight Directory Services Tools NotPresent
+RSAT: PowerShell module for Azure Stack HCI                                     NotPresent
+RSAT: BitLocker Drive Encryption Administration Utilities                       NotPresent
+RSAT: Active Directory Certificate Services Tools                               NotPresent
+RSAT: DHCP Server Tools                                                         NotPresent
+RSAT: DNS Server Tools                                                          NotPresent
+RSAT: Failover Clustering Tools                                                 NotPresent
+RSAT: File Services Tools                                                       NotPresent
+RSAT: Group Policy Management Tools                                             NotPresent
+RSAT: IP Address Management (IPAM) Client                                       NotPresent
+RSAT: Data Center Bridging LLDP Tools                                           NotPresent
+RSAT: Network Controller Management Tools                                       NotPresent
+RSAT: Network Load Balancing Tools                                              NotPresent
+RSAT: Remote Access Management Tools                                            NotPresent
+RSAT: Remote Desktop Services Tools                                             NotPresent
+RSAT: Server Manager                                                            NotPresent
+RSAT: Storage Migration Service Management Tools                                NotPresent
+RSAT: Storage Replica Module for Windows PowerShell                             NotPresent
+RSAT: System Insights Module for Windows PowerShell                             NotPresent
+RSAT: Volume Activation Tools                                                   NotPresent
+RSAT: Windows Server Update Services Tools                                      NotPresent
