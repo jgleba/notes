@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MAC FLUSH DNS CACHE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-04-20[Apr-Sat]14-13PM 
+
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
