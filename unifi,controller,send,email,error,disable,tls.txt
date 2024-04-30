@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UNIFI CONTROLLER NOT ABLE TO RELAY EMAILS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-04-30[Apr-Tue]14-42PM 
+
+#https://community.ui.com/questions/Where-did-system-properties-go/9a5dc896-9dad-4d70-b850-bbd42a7c59c9
+#https://help.ui.com/hc/en-us/articles/205202580-Explaining-the-UniFi-system-properties-File#h_01EZWX756ZGJK0630FKS83N0NF
+
+ADDED TO SYSTEM.PROPERTIES FILE 
+
+smtp.starttls_enabled=false
