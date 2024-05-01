@@ -281,3 +281,10 @@ boot || goto MENU
 
 ==
 
+WORKS 043024
+
+kernel tftp://${fog-ip}/os/ubuntu2404/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu2404/initrd
+imgargs vmlinuz initrd=initrd cloud-config-url=http://j:zvnrS55X@172.16.0.45/0/ubuntu2404/cloud-init.yaml ip=dhcp root=/dev/ram0 ramdisk_size=4800000 url=http://j:zvnrS55X@172.16.0.45/0/ubuntu2404/ubuntu-24.04-live-server-amd64.iso autoinstall ds=nocloud-net;s=nfs:///images/os/ubuntu2404
+boot || goto failed
+boot || goto failed
