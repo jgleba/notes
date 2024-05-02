@@ -1,0 +1,6 @@
+dd conv=sparse if=/Volumes/Install\ macOS\ Sonoma/ of=/j/0/osxsonoma.iso
+
+dd conv=sparse if=/dev/disk3 of=/j/0/osxsonoma.iso
+
+
+hdiutil makehybrid -iso -joliet -o sonoma.iso sonoma.cdr
