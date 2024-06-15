@@ -5,6 +5,8 @@
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-06-15[Jun-Sat]14-42PM 
 
+#https://www.server-world.info/en/note?os=Rocky_Linux_8&p=squid&f=2
+
 cat ~/.curlrc
 
 proxy=ip:3128
