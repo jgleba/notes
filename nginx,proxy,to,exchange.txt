@@ -1,0 +1,63 @@
+================================================================================
+NGINX PROXY TO EXCHANGE
+071019
+JGleba
+================================================================================
+
+WRITING SOME FROM MEMORY - TRIED WHEN SWITCHED TO EXCHANGE FULL TIME - ~03-2018
+DIDNT WORK LAST TIME, AUTODISCOVER, ACTIVESYNC IN GENERAL
+SOMETHING, SOMETHING, HTTP MAPI?? NOT RIGHT??
+SWITCHED TO HAPROXY AS FE LB FROM THAT POINT FORWARD
+
+FINDING NEW INFO
+071019
+
+==
+SHOULD TRY SOMETIME
+==
+
+#https://www.ruby-forum.com/t/nginx-as-proxy-for-exchange-2013-rpc/244061/5
+
+I’ve had most success so far with this approach (Tigunov’s config -
+https://gist.github.com/taddev/7275873 2).
+( btw, I’m using Basic Authentication rather than NTLM ).
+
+server {
+server_name mail.contoso.com;
+server_name autodiscover.contoso.com;
+keepalive_timeout 3h;
+proxy_read_timeout 3h;
+#reset_timedout_connection on;
+tcp_nodelay on;
+listen 443 ssl;
+client_max_body_size 3G;
+#proxy_pass_header Authorization;
+proxy_pass_header Date;
+proxy_pass_header Server;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header Accept-Encoding “”;
+proxy_pass_request_headers on;
+proxy_set_header Host $host;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_http_version 1.1;
+proxy_request_buffering off;
+proxy_buffering off;
+proxy_set_header Connection “Keep-Alive”;
+
+location / {
+        proxy_pass https://exchange.internal/;
+        proxy_next_upstream error timeout invalid_header http_500
+
+http_503;
+}
+
+}
+
+With Microsoft’s Remote Connectivity Analyzer, I now get up to the
+point
+where ActiveSync is tested. “OPTIONS” works, FolderSync fails (
+something
+about a request being aborted or canceled, no further details ).
+
+Posted at Nginx Forum:
+https://forum.nginx.org/read.php?2,264518,264529#msg-264529

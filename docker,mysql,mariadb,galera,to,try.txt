@@ -1,0 +1,515 @@
+good docker galera
+
+https://www.binlogic.io/blog/galera-cluster-docker/
+
+==
+
+
+
+    Home
+    Blog
+    News
+    Documentation
+
+Running Galera Cluster on Docker
+High availability with Galera Cluster and ProxySQL
+Posted by Vijay Singh Shekhawat on October 22, 2018
+
+If you’re looking for a way to gain as much power from your MariaDB database server as possible, you might be interested in a MariaDB Galera Cluster. Galera Clusters come in two general configurations, active-passive and active-active. In active-passive clusters, all writes are done on a single active server and then copied to one or more passive servers that are poised to take over only in the event of an active server failure. Active-passive clusters also allow SELECT operations on passive nodes. In an active-active cluster, every node is read-write and a change made to one is replicated to all.
+
+Galera Cluster is available on Linux only, and only supports the XtraDB/InnoDB storage engines. This article explains how to setup MariaDB Galera Cluster on Docker with 3 nodes, these three servers is the minimum amount of nodes you can have for a MariaDB Galera Cluster.
+
+In this tutorial we are going to setup Galera Cluster HA on Docker using MariaDB + ProxySQL + Keepalived + Weave
+
+Host Info :
+
+HOST1 = 172.31.43.230
+HOST2 = 172.31.32.193
+HOST3 = 172.31.46.240
+
+Weave
+
+Weave Net creates a virtual network that connects Docker containers deployed across multiple hosts. To application containers, the network established by Weave resembles a giant Ethernet switch, where all containers are connected and can easily access services from one another. Using the Weave plugin enables you to take advantage of docker’s network functionality.
+Installing of Weave :
+
+Ensure you are running Linux (kernel 3.8 or later) and have Docker (version 1.10.0 or later) installed.
+
+Install the Weave Net on all 3 servers by running the following script:
+
+*Change all 3 IP address in the script and Save the code in a file weave.sh and run the script:
+
+#!/bin/bash
+
+#Enter Galara Cluster Servers IP Address:
+
+GC1=172.31.43.230
+GC2=172.31.32.193
+GC3=172.31.46.240
+
+curl -L git.io/weave -o /usr/local/bin/weave
+chmod a+x /usr/local/bin/weave
+
+
+mkdir -p /etc/sysconfig/
+
+#Create peer file with the ip address or hostnames /etc/sysconfig/weave
+
+cat > /etc/sysconfig/weave << EOF
+PEERS="$GC1 $GC2 $GC3"
+EOF
+
+# Create a Weave systemd unit file :
+
+cat > /etc/systemd/system/weave.service << EOF
+[Unit]
+Description=Weave Network
+Documentation=http://docs.weave.works/weave/latest_release/
+Requires=docker.service
+After=docker.service
+[Service]
+EnvironmentFile=-/etc/sysconfig/weave
+ExecStartPre=/usr/local/bin/weave launch --no-restart $PEERS
+ExecStart=/usr/bin/docker attach weave
+ExecStop=/usr/local/bin/weave stop
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# start the weave and enable it on boot :
+
+systemctl start weave
+systemctl enable weave
+
+weave status
+
+After running the the script on all servers, check peers value by running again weave status. It should be 3:
+
+ Peers: 3
+
+Galera Cluster Setup
+
+Docker containers are reachable using port-forwarded only, even if the containers have IP addresses. So we will set up port forwarding for all ports that are required for Galera to operate.
+
+The following port are used by Galera:
+
+    3306-MySQL port
+    4567-Galera Cluster
+    4568-IST port
+    4444-SST port
+
+Docker Container must be created with --net=weave to have multi-host connectivity.
+
+We will be Using MariaDB docker image:
+HOST1 :
+
+Let’s start with the first container, mariadb0.
+
+Create a file under /containers/mariadb1/conf.d/my.cnf and add the following lines:
+
+mkdir -p /containers/mariadb1/conf.d
+
+cat /containers/mariadb1/conf.d/my.cnf
+[mysqld]
+
+default_storage_engine          = InnoDB
+binlog_format                   = ROW
+
+innodb_flush_log_at_trx_commit  = 0
+innodb_flush_method             = O_DIRECT
+innodb_file_per_table           = 1
+innodb_autoinc_lock_mode        = 2
+innodb_lock_schedule_algorithm  = FCFS # MariaDB >10.1.19 and >10.2.3 only
+
+wsrep_on                        = ON
+wsrep_provider                  = /usr/lib/galera/libgalera_smm.so
+wsrep_sst_method                = xtrabackup-v2
+
+To perform the first bootstrap for the cluster, run the bootstrap container (mariadb0) on host1 with mariadb1’s “datadir” and “conf.d”
+
+docker run -d \
+--name mariadb0 \
+--hostname mariadb0.weave.local \
+--net weave \
+--publish "3306" \
+--publish "4444" \
+--publish "4567" \
+--publish "4568" \
+$(weave dns-args) \
+--env MYSQL_ROOT_PASSWORD="asdf1234" \
+--env MYSQL_USER=proxysql \
+--env MYSQL_PASSWORD=asdf12345 \
+--volume /containers/mariadb1/datadir:/var/lib/mysql \
+--volume /containers/mariadb1/conf.d:/etc/mysql/mariadb.conf.d \
+mariadb:10.2.15 \
+--wsrep_cluster_address=gcomm:// \
+--wsrep_sst_auth="root:asdf1234" \
+--wsrep_node_address=mariadb0.weave.local
+
+check mariadb0 docker status and logs and check for the following line : WSREP: Synchronized with group, ready for connections. This confirms the bootstrap process is completed and Galera is active.
+
+docker ps
+docker logs -f mariadb0
+
+HOST2:
+
+mkdir -p /containers/mariadb2/conf.d
+
+cat /containers/mariadb2/conf.d/my.cnf
+[mysqld]
+
+default_storage_engine          = InnoDB
+binlog_format                   = ROW
+
+innodb_flush_log_at_trx_commit  = 0
+innodb_flush_method             = O_DIRECT
+innodb_file_per_table           = 1
+innodb_autoinc_lock_mode        = 2
+innodb_lock_schedule_algorithm  = FCFS # MariaDB >10.1.19 and >10.2.3 only
+
+wsrep_on                        = ON
+wsrep_provider                  = /usr/lib/galera/libgalera_smm.so
+wsrep_sst_method                = xtrabackup-v2
+
+Run the mariadb2 database container :
+
+docker run -d \
+--name mariadb2 \
+--hostname mariadb2.weave.local \
+--net weave \
+--publish "3306:3306" \
+--publish "4444" \
+--publish "4567" \
+--publish "4568" \
+$(weave dns-args) \
+--env MYSQL_ROOT_PASSWORD="asdf1234" \
+--volume /containers/mariadb2/datadir:/var/lib/mysql \
+--volume /containers/mariadb2/conf.d:/etc/mysql/mariadb.conf.d \
+mariadb:10.2.15 \
+--wsrep_cluster_address=gcomm://mariadb0.weave.local,mariadb1.weave.local,mariadb2.weave.local,mariadb3.weave.local \
+--wsrep_sst_auth="root:asdf1234" \
+--wsrep_node_address=mariadb2.weave.local
+
+NOTE : On Host2 and Host3 after running the docker container the entrypoint script checks the mysqld service in the background after database initialization by using MySQL root user without password. Since Galera automatically performs synchronization through SST or IST when starting up, the MySQL root user password will change, mirroring the bootstrapped node. Thus, you would see the following error during the first start up:
+
+[Warning] Access denied for user 'root'@'localhost' (using password: NO)
+
+MySQL init process in progress…
+MySQL init process failed.
+
+The trick is to restart the failed containers once more, because this time, the MySQL datadir would have been created (in the first run attempt) and it would skip the database initialization part:
+
+docker start mariadb2 #on host2
+docker start mariadb3 #on host3
+
+HOST3:
+
+mkdir -p /containers/mariadb3/conf.d
+
+cat /containers/mariadb3/conf.d/my.cnf
+[mysqld]
+
+default_storage_engine          = InnoDB
+binlog_format                   = ROW
+
+innodb_flush_log_at_trx_commit  = 0
+innodb_flush_method             = O_DIRECT
+innodb_file_per_table           = 1
+innodb_autoinc_lock_mode        = 2
+innodb_lock_schedule_algorithm  = FCFS # MariaDB >10.1.19 and >10.2.3 only
+
+wsrep_on                        = ON
+wsrep_provider                  = /usr/lib/galera/libgalera_smm.so
+wsrep_sst_method                = xtrabackup-v2
+
+run the mariadb3 container :
+
+docker run -d \
+--name mariadb3 \
+--hostname mariadb3.weave.local \
+--net weave \
+--publish "3306:3306" \
+--publish "4444" \
+--publish "4567" \
+--publish "4568" \
+$(weave dns-args) \
+--env MYSQL_ROOT_PASSWORD="asdf1234" \
+--volume /containers/mariadb3/datadir:/var/lib/mysql \
+--volume /containers/mariadb3/conf.d:/etc/mysql/mariadb.conf.d \
+mariadb:10.2.15 \
+--wsrep_cluster_address=gcomm://mariadb0.weave.local,mariadb1.weave.local,mariadb2.weave.local,mariadb3.weave.local \
+--wsrep_sst_auth="root:asdf1234" \
+--wsrep_node_address=mariadb3.weave.local
+
+Check mariadb2 and mariadb3 logs for the following line :
+
+docker logs -f mariadb2 #on host2
+docker logs -f mariadb3 #on host3
+check for the line :
+
+"WSREP: Synchronized with group, ready for connections"
+
+HOST1:
+
+Currently we have 3 containers running, mariadb0, mariadb2 and mariadb3. Take note that mariadb0 is started using the bootstrap command (gcomm://), which means if the container is automatically restarted by Docker in the future, it could potentially become disjointed with the primary component. Thus, we need to remove this container and replace it with mariadb1, using the same Galera connection string with the rest and use the same datadir and configdir with mariadb0.
+
+docker kill -s 15 mariadb0
+
+Then, start mariadb1 on host1 using:
+
+docker run -d \
+--name mariadb1 \
+--hostname mariadb1.weave.local \
+--net weave \
+--publish "3306:3306" \
+--publish "4444" \
+--publish "4567" \
+--publish "4568" \
+$(weave dns-args) \
+--env MYSQL_ROOT_PASSWORD="asdf1234" \
+--volume /containers/mariadb1/datadir:/var/lib/mysql \
+--volume /containers/mariadb1/conf.d:/etc/mysql/mariadb.conf.d \
+mariadb:10.2.15 \
+--wsrep_cluster_address=gcomm://mariadb0.weave.local,mariadb1.weave.local,mariadb2.weave.local,mariadb3.weave.local \
+--wsrep_sst_auth="root:asdf1234" \
+--wsrep_node_address=mariadb1.weave.local
+
+Once the container is started, verify the cluster size is 3, the status must be in Primary and the local state is synced:
+
+docker exec -it mariadb1 mysql -uroot -pasdf1234 -e 'select variable_name, variable_value from information_schema.global_status where variable_name in ("wsrep_cluster_size", "wsrep_local_state_comment", "wsrep_cluster_status", "wsrep_incoming_addresses")'
+
++---------------------------+-------------------------------------------------------------------------------+
+| variable_name             | variable_value                                                                |
++---------------------------+-------------------------------------------------------------------------------+
+| WSREP_CLUSTER_SIZE        | 3                                                                             |
+| WSREP_CLUSTER_STATUS      | Primary                                                                       |
+| WSREP_INCOMING_ADDRESSES  | mariadb1.weave.local:3306,mariadb3.weave.local:3306,mariadb2.weave.local:3306 |
+| WSREP_LOCAL_STATE_COMMENT | Synced                                                                        |
++---------------------------+-------------------------------------------------------------------------------+
+
+ProxySQL Setup:
+
+Currently we have three database containers running and the only way to access to the cluster now is to access the individual Docker host’s published port of MySQL, which is 3306.
+
+For that we will use ProxySQL, ProxySQL can act as the query router, load balancing the database and provide single point interaction for all database servers.
+
+On HOST1 and HOST2 we will run the ProxySQL container, for that we have to prepare the configuration file :
+
+mkdir -p /containers/proxysql1/  #on host1
+
+mkdir -p /containers/proxysql2/  #on host2
+
+Copy the following configurations into the file on host1 /containers/proxysql1/proxysql.cnf and on host2 /containers/proxysql2/proxysql.cnf
+
+datadir="/var/lib/proxysql"
+admin_variables=
+{
+        admin_credentials="admin:admin"
+        mysql_ifaces="0.0.0.0:6032"
+        refresh_interval=2000
+}
+mysql_variables=
+{
+        threads=4
+        max_connections=2048
+        default_query_delay=0
+        default_query_timeout=36000000
+        have_compress=true
+        poll_timeout=2000
+        interfaces="0.0.0.0:6033;/tmp/proxysql.sock"
+        default_schema="information_schema"
+        stacksize=1048576
+        server_version="5.1.30"
+        connect_timeout_server=10000
+        monitor_history=60000
+        monitor_connect_interval=200000
+        monitor_ping_interval=200000
+        ping_interval_server=10000
+        ping_timeout_server=200
+        commands_stats=true
+        sessions_sort=true
+        monitor_username="proxysql"
+        monitor_password="asdf12345"
+}
+mysql_servers =
+(
+        { address="mariadb1.weave.local" , port=3306 , hostgroup=10, max_connections=100 },
+        { address="mariadb2.weave.local" , port=3306 , hostgroup=10, max_connections=100 },
+        { address="mariadb3.weave.local" , port=3306 , hostgroup=10, max_connections=100 },
+        { address="mariadb1.weave.local" , port=3306 , hostgroup=20, max_connections=100 },
+        { address="mariadb2.weave.local" , port=3306 , hostgroup=20, max_connections=100 },
+        { address="mariadb3.weave.local" , port=3306 , hostgroup=20, max_connections=100 }
+)
+mysql_users =
+(
+        { username = "sbtest" , password = "password" , default_hostgroup = 10 , active = 1 }
+)
+mysql_query_rules =
+(
+        {
+                rule_id=100
+                active=1
+                match_pattern="^SELECT .* FOR UPDATE"
+                destination_hostgroup=10
+                apply=1
+        },
+        {
+                rule_id=200
+                active=1
+                match_pattern="^SELECT .*"
+                destination_hostgroup=20
+                apply=1
+        },
+        {
+                rule_id=300
+                active=1
+                match_pattern=".*"
+                destination_hostgroup=10
+                apply=1
+        }
+)
+scheduler =
+(
+        {
+                id = 1
+                filename = "/usr/share/proxysql/tools/proxysql_galera_checker.sh"
+                active = 1
+                interval_ms = 2000
+                arg1 = "10"
+                arg2 = "20"
+                arg3 = "1"
+                arg4 = "1"
+                arg5 = "/var/lib/proxysql/proxysql_galera_checker.log"
+        }
+)
+
+The above configuration will:
+
+    configure two host groups, the single-writer and multi-writer group, as defined under “mysql_servers” section,
+    send reads to all Galera nodes (hostgroup 20) while write operations will go to a single Galera server (hostgroup 10),
+    schedule the proxysql_galera_checker.sh,
+    use monitor_username and monitor_password as the monitoring credentials created when we first bootstrapped the cluster (mariadb0).
+
+HOST1
+
+Run the ProxySQL containers on host1
+
+docker run -d \
+--name=proxysql1  \
+--publish 6033 \
+--publish 6032 \
+--restart always \
+--net=weave \
+$(weave dns-args) \
+--hostname proxysql1.weave.local \
+-v /containers/proxysql1/proxysql.cnf:/etc/proxysql.cnf \
+-v /containers/proxysql1/data:/var/lib/proxysql \
+binlogicinc/proxysql
+
+HOST2:
+
+Run the ProxySQL containers on host2
+
+docker run -d \
+--name=proxysql2 \
+--publish 6033 \
+--publish 6032 \
+--restart always \
+--net=weave \
+$(weave dns-args) \
+--hostname ${NAME}.weave.local \
+-v /containers/proxysql2/proxysql.cnf:/etc/proxysql.cnf \
+-v /containers/proxysql2/data:/var/lib/proxysql \
+binlogicinc/proxysql
+
+Keepalived
+
+We configured ProxySQL containers to be running on host1 and host2, we are going to use Keepalived containers to tie these hosts together and provide virtual IP address via the host network. This allows a single endpoint for applications or clients to connect to the load balancing layer backed by ProxySQL.
+
+Check main ip network interface before go to the next step and replace that in script with eth0
+HOST1:
+
+Create a keepalive configuration file /containers/keepalived1/keepalived.conf:
+
+mkdir -p /containers/keepalived1/
+
+Paste the configuration into the file : /containers/keepalived1/keepalived.conf
+
+vrrp_instance VI_DOCKER {
+   interface eth0               # interface to monitor
+   state MASTER
+   virtual_router_id 52          # Assign one ID for this route
+   priority 101
+   unicast_src_ip 172.31.43.230
+   unicast_peer {
+      172.31.32.193
+   }
+   virtual_ipaddress {
+      172.31.43.101             # the virtual IP
+}}
+
+HOST2:
+
+Create a keepalive configuration file /containers/keepalived1/keepalived.conf:
+
+mkdir -p /containers/keepalived2/
+
+Paste the configuration into the file: /containers/keepalived2/keepalived.conf
+
+vrrp_instance VI_DOCKER {
+   interface eth0                # interface to monitor
+   state MASTER
+   virtual_router_id 52          # Assign one ID for this route
+   priority 100
+   unicast_src_ip 172.31.43.230
+   unicast_peer {
+      172.31.32.193
+   }
+   virtual_ipaddress {
+      172.31.43.101             # the virtual IP
+}}
+
+NOTE: The higher priority instance will hold the virtual IP address (in this case is host1), until the VRRP communication is interrupted (in case host1 goes down).
+HOST1:
+
+Run the Keepalived docker image :
+
+docker run -d \
+--name=keepalived1 \
+--cap-add=NET_ADMIN \
+--net=host \
+--restart=always \
+--volume /containers/keepalived1/keepalived.conf:/usr/local/etc/keepalived/keepalived.conf \
+osixia/keepalived:1.4.4
+
+HOST2:
+
+Run the Keepalived docker image :
+
+docker run -d \
+--name=keepalived2 \
+--cap-add=NET_ADMIN \
+--net=host \
+--restart=always \
+--volume /containers/keepalived2/keepalived.conf:/usr/local/etc/keepalived/keepalived.conf \
+osixia/keepalived:1.4.4
+
+After both containers are started, verify the virtual IP address existence by looking at the physical network interface of the MASTER node:
+
+ip a | grep eth0
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9001 qdisc fq_codel state UP group default qlen 1000
+    inet 172.31.43.230/20 brd 172.31.47.255 scope global dynamic eth0
+    inet 172.31.43.101/32 scope global eth0
+
+Now we have a MariaDB Galera Cluster fronted by a highly available ProxySQL service, all running on Docker containers.
+
+Want to Automate your database backups and manage your servers in a Web interface?
+Contact Us Here and request access to our tool !
+
+Tags
+
+    Binlogic CloudBackup AWS Docker backup Galera Cluster cloud 
+
+© Binlogic Inc 2018 | www.binlogic.com
+
+    Privacy Policy Terms of Service Contact 
+

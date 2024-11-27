@@ -1,0 +1,209 @@
+========================
+INSTALL HAPROXY ON DB LB
+05-31-2019
+========================
+
+==
+HOSTS FILE
+==
+
+sudo nano /etc/hosts
+
+172.16.3.231 webcldblb1
+172.16.3.232 webcldblb2
+
+==
+ON DB LB, ADD INTERNET
+==
+
+sudo nmtui
+
+*configure gateway and dns*
+
+==
+RESTART NETWORK
+==
+
+sudo service network restart
+
+** sudo service keepalived restart **
+
+==
+INSTALL HAPROXY
+==
+
+sudo yum install centos-release-scl -y
+sudo yum install rh-haproxy18-haproxy rh-haproxy18-haproxy-syspaths -y
+
+==
+CONFIGURE HAPROXY
+==
+
+sudo nano /etc/haproxy/haproxy.cfg
+
+##
+##
+##HAPROXY DB CONFIG
+##JGLEBA
+##CREATED - 05-31-2018 --  UPDATED - 05-31-2019
+
+global
+    ##https://www.haproxy.com/blog/multithreading-in-haproxy/
+    ##MULTITHREADING added 04-27-2019
+    nbproc 1
+    nbthread 2
+    cpu-map auto:1/1-2 0-1
+
+    log         /dev/log local0
+    pidfile     /var/run/haproxy.pid
+    maxconn     100000
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    retries 2
+    timeout connect 10000
+    timeout server 15000
+    timeout client 15000
+    maxconn 100000
+
+##EMAIL ALERTS - FRONTEND
+mailers mta
+mailer smtp1 172.16.3.7:25
+
+frontend webcl2_mysql
+    bind *:3306
+    mode tcp
+    option tcplog
+    default_backend webcl2_mysql
+	log         /dev/log local0
+
+backend webcl2_mysql
+    mode tcp
+    option tcpka
+    balance leastconn
+    option mysql-check user haproxy_check
+    email-alert mailers mta
+    email-alert level notice
+    email-alert from haproxy-webcl-db@jgleba.com
+    email-alert to alerts@jgleba.com
+    server mysql1 172.16.3.223:3306 check weight 1
+    server mysql2 172.16.3.224:3306 check weight 1
+    server mysql3 172.16.3.225:3306 check weight 1
+
+listen stats # Define a listen section called "stats"
+  bind :9000 process 1 # Listen on localhost:9000
+  #bind-process 1
+  mode http
+  acl stats_network_allowed src 127.0.0.0/8
+  acl stats_network_allowed src 172.16.3.0/24
+  acl stats_network_allowed src 172.16.0.0/24
+  tcp-request connection reject if !stats_network_allowed
+  stats enable  # Enable stats page
+  stats show-node
+  ##stats refresh 30s
+  stats refresh 10s
+  ##stats refresh 5s
+  #stats hide-version  # Hide HAProxy version
+  stats realm Haproxy\ Statistics  # Title text for popup window
+  stats uri /haproxy_stats  # Stats URI
+  stats auth jg:jg  # Authentication credentials
+  
+##CHECK BETWEEN HAPROXY SERVERS
+##ADDED 04or05 2019
+peers mypeer
+  peer webcldblb1 172.16.3.234:9999
+  peer webcldblb2 172.16.3.235:9999
+
+##
+##
+
+==
+STOP NGINX
+==
+
+sudo systemctl stop nginx && sudo systemctl disable nginx
+
+==
+START HAPROXY
+==
+
+sudo systemctl start haproxy && sudo systemctl enable haproxy
+
+==
+ON DB NODES - ONLY HAD TO DO ON NODE1 - MAKE SURE CHECK OTHERS
+==
+
+use mysql;
+create user 'haproxy_check'@'172.16.3.231';
+create user 'haproxy_check'@'172.16.3.232';
+flush privileges;
+
+use mysql;
+create user 'haproxy_check'@'172.16.3.234';
+create user 'haproxy_check'@'webcl2dblb1';
+create user 'haproxy_check'@'172.16.3.235';
+create user 'haproxy_check'@'webcl2dblb2';
+flush privileges;
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=9000/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9999/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9999/udp --permanent
+sudo firewall-cmd --reload
+
+==
+REMOVE INTERNET
+==
+
+sudo nmtui
+
+*configure gateway and dns*
+
+==
+RESTART NETWORK
+==
+
+sudo service network restart
+
+==
+HAPROXY SYSLOG LOGGING
+==
+
+sudo nano /etc/rsyslog.d/haproxy.conf
+
+$ModLoad imudp
+$UDPServerAddress 127.0.0.1
+$UDPServerRun 514
+
+local0.*        /var/log/haproxy.log
+
+==
+SYSLOG MORE
+==
+
+sudo nano /etc/rsyslog.conf
+
+ADD BELOW #### RULES ####
+
+$ModLoad imfile
+$InputFilePollInterval 5
+$PrivDropToGroup adm
+#$WorkDirectory /var/spool/rsyslog
+
+#Apache Error file:
+$InputFileName /var/log/haproxy.log
+$InputFileTag haproxy-db-access:
+$InputFileSeverity error
+$InputFileFacility local5
+$InputFilePersistStateInterval 20000
+$InputRunFileMonitor
+
+ADD AT BOTTOM TO FORWARD ALL EVENTS
+
+local5.* @172.16.3.14

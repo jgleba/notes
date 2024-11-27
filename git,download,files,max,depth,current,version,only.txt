@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GIT DOWNLOAD FILES, DEPTH 1 SO THAT ONLY CURRENT VERSION DOWNLOADS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-28[Dec-Mon]15-03PM 
+
+git clone https://github.com/alextselegidis/easyappointments.git --depth=1

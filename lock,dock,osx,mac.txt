@@ -1,0 +1,22 @@
+LOCK OS X DOCK - TERMINAL COMMANDS
+
+Lock the Dock to Prevent Changes to Contents
+
+defaults write com.apple.Dock contents-immutable -bool yes
+
+
+Lock the Dock to Prevent Changes in Size
+
+defaults write com.apple.Dock size-immutable -bool yes
+
+
+Lock the Dock’s Position on the Screen
+
+defaults write com.apple.Dock position-immutable -bool yes
+
+
+
+
+After executing any or all of these commands, you’ll want to relaunch the Dock by killing it:
+
+killall Dock

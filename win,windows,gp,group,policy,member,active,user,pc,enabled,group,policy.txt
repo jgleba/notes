@@ -1,0 +1,11 @@
+=========================================
+CHECK GROUP POLICY APPLIED TO PC AND USER
+=========================================
+
+https://www.tecklyfe.com/how-to-see-which-group-policies-are-applied-to-your-pc-and-user-account/
+
+gpresult /Scope User /v
+
+NEEDED ESCALATED
+
+gpresult /Scope Computer /v

@@ -1,0 +1,18 @@
+WORKS FOR FINDING WORD IN A FILE IN A LOCATION
+060419
+==
+
+grep -rnw '/path/to/somewhere/' -e 'pattern'
+
+grep -rnw '/' -e 'pattern'
+
+==
+ANOTHER WAY WORKED 022120
+PROBABLY INTENSE
+==
+
+##https://www.howtoforge.com/tutorial/linux-grep-command/
+
+grep -r "word" /path/to/place
+
+grep -Ri 'word' /path

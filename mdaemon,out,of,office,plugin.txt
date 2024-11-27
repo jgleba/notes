@@ -1,0 +1,4 @@
+is a plugin with mdaemon
+check add ins
+check disabled add ins
+enable from there

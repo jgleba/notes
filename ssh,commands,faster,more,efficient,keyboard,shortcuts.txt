@@ -1,0 +1,45 @@
+SSH COMMANDS, NEED TO KNOW!!!!!
+
+Example Edit Commands
+The following commands are very common while using the emacs mode.
+
+    Ctrl-b: Move backward by one character
+    Ctrl-f: Move forward by one character
+    Ctrl-a: Move to the beginning of the line
+    Ctrl-e: Move to the end of the line
+    Ctrl-k: Delete from the cursor forward
+    Ctrl-u: Delete from the cursor backward
+    Ctrl-r: Search the command history
+
+The following commands are very common while using the vi mode.
+
+    h: Move backward by one character
+    l: Move forward by one character
+    0: Move to the beginning of the line
+    $: Move to the end of the line
+    d$: Delete from the cursor to the end of the line
+    d0: Delete from the cursor the beginning of the line
+    :history s: Search the command history
+
+==
+
+Basic moves
+
+    Move back one character. Ctrl + b
+    Move forward one character. Ctrl + f
+    Delete current character. Ctrl + d
+    Delete previous character. Backspace
+    Undo. Ctrl + -
+
+Moving faster
+
+    Move to the start of line. Ctrl + a
+    Move to the end of line. Ctrl + e
+    Move forward a word. Meta + f (a word contains alphabets and digits, no symbols)
+    Move backward a word. Meta + b
+    Clear the screen. Ctrl + l
+
+	
+	ctrl + u cut all text before cursor
+	ctrl + k cut all text after cursor
+	ctrl + y paste text 

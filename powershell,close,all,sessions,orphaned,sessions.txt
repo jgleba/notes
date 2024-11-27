@@ -1,0 +1,6 @@
+========================================
+CLOSE ALL / ORPHANED POWERSHELL SESSIONS
+082019
+========================================
+
+Get-PSSession | Remove-PSSession

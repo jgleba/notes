@@ -1,0 +1,60 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MARIADB, GALERA, REPLICATION, TESTING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-05-20[May-Wed]14-22PM 
+
+##https://mariadb.com/kb/en/configuring-mariadb-replication-between-two-mariadb-galera-clusters/
+##https://mariadb.com/kb/en/using-mariadb-replication-with-mariadb-galera-cluster-using-mariadb-replica/#setting-server_id-on-cluster-nodes
+##https://severalnines.com/database-blog/how-setup-asynchronous-replication-between-mariadb-galera-clusters
+##https://www.linuxbabe.com/mariadb/master-slave-replication-galera-cluster
+
+==
+db, change master, mc db3
+==
+
+CHANGE MASTER TO MASTER_HOST = 'WEBCL2DB3', MASTER_USER = 'cluster_user', MASTER_PASSWORD = 'cfW6V3yMnYPLTx6yjz9z' , MASTER_AUTO_POSITION=1;
+CHANGE MASTER TO MASTER_HOST = 'WEBCL2DB3', MASTER_USER = 'root', MASTER_PASSWORD = 'SHL8RCKu8um7Y3q6HCdx' , MASTER_AUTO_POSITION=1;
+CHANGE MASTER TO MASTER_HOST = '172.16.3.223', MASTER_USER = 'cluster_user', MASTER_PASSWORD = 'cfW6V3yMnYPLTx6yjz9z';
+
+GRANT REPLICATION SLAVE ON *.* to cluster_user@'%' IDENTIFIED BY 'cfW6V3yMnYPLTx6yjz9z';
+CHANGE MASTER TO MASTER_HOST = 'WEBCL2DB3', MASTER_USER = 'cluster_user', MASTER_PASSWORD = 'cfW6V3yMnYPLTx6yjz9z' , MASTER_AUTO_POSITION=1;
+
+CHANGE MASTER TO MASTER_HOST = 'WEBCL2DB3', MASTER_USER = 'root', MASTER_PASSWORD = 'SHL8RCKu8um7Y3q6HCdx' , MASTER_AUTO_POSITION=1;
+
+CHANGE MASTER TO MASTER_HOST = 'WEBCL2DB3', MASTER_USER = 'root', MASTER_PASSWORD = 'SHL8RCKu8um7Y3q6HCdx';
+GRANT REPLICATION SLAVE ON *.* to root@'%' IDENTIFIED BY 'cfW6V3yMnYPLTx6yjz9z';
+
+START SLAVE;
+STOP SLAVE;
+
+STATUS
+SHOW SLAVE STATUS\G
+
+==
+mariabackup
+==
+##https://www.server-world.info/en/note?os=CentOS_7&p=mariadb103&f=3
+##https://yum.mariadb.org/10.4/centos7-amd64/rpms/MariaDB-backup-10.4.12-1.el7.centos.x86_64.rpm
+
+sudo yum --enablerepo=centos-sclo-rh
+sudo yum install rh-mariadb104-mariadb-backup
+
+mariabackup --backup --host 172.16.3.225 --target-dir="/home/user" --user=cluster_user --password=cfW6V3yMnYPLTx6yjz9z
+mariabackup --backup --target-dir="/home/user" --user=cluster_user --password=cfW6V3yMnYPLTx6yjz9z
+mariabackup --backup --target-dir="/tmp" --user=cluster_user --password=cfW6V3yMnYPLTx6yjz9z
+mariabackup --host=172.16.3.225 --backup --target-dir="/tmp" --user=root --password=SHL8RCKu8um7Y3q6HCdx
+
+==
+export db trying
+==
+
+mysqldump -p -u dbuser --flush-logs --all-databases > /home/user/backup-052020.sql
+mysqldump -pQ3puuay6tCBX4qA8W9Qz -u dbuser --flush-logs --all-databases > /home/user/backup-052020.sql
+mysqldump -pQ3puuay6tCBX4qA8W9Qz -u dbuser --all-databases > /home/user/backup-052020.sql
+
+[user@WEBCL2DB3 ~]$ mysqldump -pQ3puuay6tCBX4qA8W9Qz -u dbuser --flush-logs --all-databases > /home/user/backup-052020.sql
+mysqldump: Got error: 1047: "WSREP has not yet prepared node for application use" when using LOCK TABLES
+
+

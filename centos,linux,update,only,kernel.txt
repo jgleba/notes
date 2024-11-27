@@ -1,0 +1,12 @@
+==========================
+CENTOS, UPDATE ONLY KERNEL
+062019
+==========================
+
+#https://www.liquidweb.com/kb/how-to-update-the-kernel-in-centos-red-hat/
+
+sudo yum -y update kernel
+
+sudo yum update kernel
+
+NOT WORKING, TRIES TO INSTALL SOME WEIRD KERNEL, DOESNT SEEM LIKE WILL JUST UPDATE KERNEL

@@ -1,0 +1,26 @@
+mount -o loop /mnt/fp/iso/Rocky-8.5-x86_64-minimal.iso /mnt/loop
+
+sudo mkdir -p /tftpboot/os/rockylinux8
+
+sudo cp /mnt/loop/images/pxeboot/vmlinuz /tftpboot/os/rockylinux8/
+sudo cp /mnt/loop/images/pxeboot/initrd.img /tftpboot/os/rockylinux8/
+
+==
+
+sudo mkdir -p /images/os/rockylinux8
+sudo cp -R /mnt/loop/* /images/os/rockylinux8
+
+==
+
+sudo umount /mnt/loop
+
+==
+
+os.RockyLinux8-KS
+
+RockyLinux 8 KS
+
+kernel tftp://${fog-ip}/os/rockylinux8/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux8/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/rockylinux8/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/rockylinux8 inst.ks=http://j:pass@172.16.0.45/0/rockylinux8/ks.cfg splash quiet
+boot || goto MENU

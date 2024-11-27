@@ -1,0 +1,474 @@
+#######################################
+Mangle, Queue Tree and prioritization
+#######################################
+
+As we know ‘simple queue’ marks packets from/to target ip and queues them using 
+global-in/global-out parents for packets at the local side of router. If we want 
+to queue services using ‘queue tree’ we can do it at the local or public side. 
+However if we want to use ‘simple queue’ and ‘queue tree’ for services we don’t 
+have that choice. Packets are marked at the local side and queued by ‘simple queue’ 
+(we can’t see it in /ip firewall mange and /queue tree). The second marking and 
+the ‘queue tree’ at the local side won’t work. That’s why, for services we need 
+to mark packets incoming/outgoing (prerouting/postrouting) at the public side of router.
+
+
+Mangle Packet Flow
+-------------------
+
+* There are 5 places to mangle
+  - Prerouting
+  - Input
+  - Output
+  - Forward
+  - Postrouting
+
+* There are 4 places to limit
+   - Global-in
+   - Global-out
+   - Global-total
+   - Interface queue
+      - Ether1,Ether2,etc (WAN,LAN,etc)
+      - Wlan1,Wlan2,etc (WAN,LAN,etc)
+
+
+Mangle Packet Flow Diagram
+---------------------------
+                                  +---------+ 
+                              +-->| Mangle  |--+ 
+                              |   | Forward |  |
+                              |   +---------+  |
+                              |                V
+                           _________        _________  
++-------------------+     /         \      /         \       +-------------+
+|     Global-in     |    |  Routing  |    |  Routing  |      |   Mangle    |  
+| (and global-total |--->|  Decision |    |  Decision |----> | Postrouting | 
++-------------------+     \_________/      \_________/       +-------------+    
+     ^                        |                ^                    |
+     |                        V                |                    V 
++------------+         +------------+    +------------+      +------------------+
+|  Mangle    |         |  Mangle    |    |   Mangle   |      |   Global-out     |
+| Prerouting |         |   Input    |    |   Output   |      | (and global-out) |
+------------+          +------------+    +------------+      +------------------+ 
+     ^                        |                ^                    |
+     |                        V                |                    V 
++============+         +=-==-==-=-=-+----+=-=-=-=-=-=-+      +============+ 
+|    INPUT   |         |    Local   |--->|   Local    |      |   OUTPUT   |
+|  INTERFACE |         | Process-In |    |Process-Out |      | INTERFACE  |
++============+         +=-==-==-=-=-+----+=-=-=-=-=-=-+      +============+ 
+
+
+## Configuration
+
+
+/interface set ether1 name=wan
+/interface set ether2 name=lan
+
+/ip  address  add  address=192.168.0.1/24 interface=lan
+/ip  address  add  address=1.0.0.2/24 interface=wan
+/ip route  add gateway=1.0.0.1
+
+/ip firewall nat  add chain=srcnat action=masquerade src-address=192.168.0.0/24
+
+At first we make simple queue, for example:
+
+:for z from 2 to 254 do={/queue simple  add name=(0. . $z) target-addresses=(192.168.0. . $z) \
+parent=192.168.0.0/24 interface=all priority=4 queue=default/default max-limit=128000/530000 \
+total-queue=default}
+
+Now we mark packets for the services
+
+/ ip firewall mangle 
+add chain=prerouting action=mark-packet new-packet-mark=icmp_in passthrough=no \
+   in-interface=wan protocol=icmp comment="icmp" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=icmp_out \
+   passthrough=no out-interface=wan protocol=icmp comment="" disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=p2p_in passthrough=no \
+   p2p=all-p2p in-interface=wan comment="p2p" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=p2p_out \
+   passthrough=no p2p=all-p2p out-interface=wan comment="" disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=pop3_in passthrough=no \
+   in-interface=wan src-port=110 protocol=tcp comment="pop3" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=pop3_out \
+   passthrough=no out-interface=wan dst-port=110 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=smtp_in passthrough=no \
+   in-interface=wan src-port=25 protocol=tcp comment="smtp" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=smtp_out \
+   passthrough=no out-interface=wan dst-port=25 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=imap_in passthrough=no \
+   in-interface=wan src-port=143 protocol=tcp comment="imap" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=imap_out \
+   passthrough=no out-interface=wan dst-port=143 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=ssh_in passthrough=no \
+   in-interface=wan dst-port=22 protocol=tcp comment="ssh" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=ssh_out \
+   passthrough=no out-interface=wan src-port=22 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=winbox_in \
+   passthrough=no in-interface=wan dst-port=8291 protocol=tcp \
+   comment="winbox" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=winbox_out \
+   passthrough=no out-interface=wan src-port=8291 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=dns_in passthrough=no \
+   in-interface=wan src-port=53 protocol=udp comment="dns" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=dns_out \
+   passthrough=no out-interface=wan dst-port=53 protocol=udp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=www_in passthrough=no \
+   in-interface=wan src-port=80 protocol=tcp comment="www" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=www_out \
+   passthrough=no out-interface=wan dst-port=80 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=ssl_in passthrough=no \
+   in-interface=wan src-port=443 protocol=tcp comment="ssl" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=ssl_out \
+   passthrough=no out-interface=wan dst-port=443 protocol=tcp comment="" \
+   disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=udp_in passthrough=no \
+   in-interface=wan protocol=udp comment="udp" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=udp_out \
+   passthrough=no out-interface=wan protocol=udp comment="" disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=tcp_in passthrough=no \
+   in-interface=wan protocol=tcp comment="tcp" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=tcp_out \
+   passthrough=no out-interface=wan protocol=tcp comment="" disabled=no 
+add chain=prerouting action=mark-packet new-packet-mark=other_in \
+   passthrough=no in-interface=wan comment="other" disabled=no 
+add chain=postrouting action=mark-packet new-packet-mark=other_out \
+   passthrough=no out-interface=wan comment="" disabled=no
+
+
+after that we can make queue tree:
+
+/queue tree 
+add name="upload_wan1" parent=global-out packet-mark="" limit-at=0 \
+   queue=wireless-default priority=4 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="icmp_down" parent=global-in packet-mark=icmp_in limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="icmp_up" parent=global-out packet-mark=icmp_out limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="winbox_down" parent=global-in packet-mark=winbox_in limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="winbox_up" parent=global-out packet-mark=winbox_out limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="dns_down" parent=global-in packet-mark=dns_in limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="dns_up" parent=global-out packet-mark=dns_out limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="www_up" parent=upload_wan1 packet-mark=www_out limit-at=0 \
+   queue=wireless-default priority=2 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="ssl_up" parent=upload_wan1 packet-mark=ssl_out limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="p2p_up" parent=upload_wan1 packet-mark=p2p_out limit-at=0 \
+   queue=wireless-default priority=8 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="udp_up" parent=upload_wan1 packet-mark=udp_out limit-at=0 \
+   queue=wireless-default priority=6 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="tcp_up" parent=upload_wan1 packet-mark=tcp_out limit-at=0 \
+   queue=wireless-default priority=4 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="other_up" parent=upload_wan1 packet-mark=other_out limit-at=0 \
+   queue=wireless-default priority=7 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="download_wan1" parent=global-in packet-mark="" limit-at=0 \
+   queue=wireless-default priority=4 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="www_down" parent=download_wan1 packet-mark=www_in limit-at=0 \
+   queue=wireless-default priority=2 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="ssl_down" parent=download_wan1 packet-mark=ssl_in limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="p2p_down" parent=download_wan1 packet-mark=p2p_in limit-at=0 \
+   queue=wireless-default priority=8 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="udp_down" parent=download_wan1 packet-mark=udp_in limit-at=0 \
+   queue=wireless-default priority=6 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="tcp_down" parent=download_wan1 packet-mark=tcp_in limit-at=0 \
+   queue=wireless-default priority=4 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="other" parent=download_wan1 packet-mark=other_in limit-at=0 \
+   queue=wireless-default priority=7 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="ssh_down" parent=global-in packet-mark=ssh_in limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="ssh_up" parent=global-out packet-mark=ssh_out limit-at=0 \
+   queue=wireless-default priority=1 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="pop3_down" parent=download_wan1 packet-mark=pop3_in limit-at=0 \
+   queue=wireless-default priority=5 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="smtp_down" parent=download packet-mark=smtp_in limit-at=0 \
+   queue=wireless-default priority=5 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="imap_down" parent=download packet-mark=imap_in limit-at=0 \
+   queue=wireless-default priority=5 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="imap_up" parent=upload packet-mark=imap_out limit-at=0 \
+   queue=wireless-default priority=5 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="smtp_out" parent=upload packet-mark=smtp_out limit-at=0 \
+   queue=wireless-default priority=5 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no 
+add name="pop3_up" parent=upload packet-mark=pop3_out limit-at=0 \
+   queue=wireless-default priority=5 max-limit=0 burst-limit=0 \
+   burst-threshold=0 burst-time=0s disabled=no
+
+We have several basic download/upload queues:
+
+- wan
+
+- icmp
+
+- winbox
+
+- dns
+
+Icmp, dns and winbox have the highest priority to ensure low ping, quick answer 
+of dns server and winbox connection without any problems. The second is wan. 
+In wan tree we decide which service has the highest priority, for which one 
+we want to guarantee bandwidth or decrease speed. 
+
+
+From: http://wiki.mikrotik.com/wiki/Mangle%2C_Queue_Tree_and_prio_by_fly_man_..._almost_done
+
+
+###################
+# Alternatif Mangle
+###################
+
+
+Prioritization Plan
+                                              ^ 1 
+DNS,SSH,ICMP,Telnet,HTTP Request,HTTPS ...... |
+                                              |
+                                              |
+                                  Game ...... | 
+                                              |
+                                              | 
+   Voip,Skype,Video Conference,VPN,MSN ...... |  
+                                              | 
+                                              |
+          Mail,HTTP Download,sFTP,FTP ....... |    
+                                              | 
+                                              |                  
+                                  P2p.........|
+                                              |  
+                                              o 8    
+
+How to mark?
+=========================================================================================================
+Group          |  Priority |    Service          |  Protocol | Dst-Port |    Other Conditions
+===============|===========|=====================|===========|==========|================================
+P2p_services   |     8     |      P2p            |           |          | p2p=all-p2p
+---------------|-----------|---------------------|-----------|----------|-------------------------------- 
+               |           |             	 |    TCP    |    110   |
+               |           |               	 |-----------|----------|-------------------------------- 
+               |           |               	 |    TCP    |    995   |
+               |           |               	 |-----------|----------|-------------------------------- 
+               |           |     Mails  	 |    TCP    |    143   |
+Download_      |           |               	 |-----------|----------|-------------------------------- 
+Services       |           |               	 |    TCP    |    993   |
+               |     7     |               	 |-----------|----------|-------------------------------- 
+               |           |               	 |    TCP    |    25    |
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |   HTTP downloads	 |    TCP    |    80    | Connection-bytes=500000-0
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |     FTP       	 |    TCP    |    20    |
+               |           |               	 |-----------|----------|-------------------------------- 
+               |           |               	 |    TCP    |    21    |
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |     SFTP       	 |    TCP    |    22    | Packet-size=1400-1500
+---------------|-----------|---------------------|-----------|----------|-------------------------------- 
+               |           |     DNS           	 |    TCP    |    53    |
+               |           |               	 |-----------|----------|-------------------------------- 
+               |           |               	 |    UDP    |    53    |
+               |           |---------------------|-----------|----------|-------------------------------- 
+Ensign_services|           |     ICMP          	 |    ICMP   |    -     |
+               |     1     |---------------------|-----------|----------|-------------------------------- 
+               |           |     HTTPS         	 |    TCP    |    443   |
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |     Telnet        	 |    TCP    |    23    |
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |     SSH           	 |    TCP    |    22    |
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |     HTTP request    |    TCP    |    80    | Connection-bytes=0-500000
+---------------|-----------|---------------------|-----------|----------|--------------------------------
+User_request   |     3     | Online game servers |           |          | Dst-address-list=user_request
+---------------|-----------|---------------------|-----------|----------|-------------------------------- 
+Communication_ |           |      VoIP           |           |          |
+services       |           |---------------------|-----------|----------|-------------------------------- 
+               |           |      Skype          |           |          |
+               |     5     |---------------------|-----------|----------|-------------------------------- 
+               |           |   Video conference  |           |          | 
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |      VPN            |           |          |
+               |           |---------------------|-----------|----------|-------------------------------- 
+               |           |      MSN            |           |          |
+---------------|-----------|---------------------|-----------|----------|-------------------------------- 
+Source: MUM USA 2008, IL, Workshop Mikrotik, QoS Best Pracktice
+
+Create packet marks in the mangle chain “Prerouting” for traffic prioritization in the global-in queue
+
+o Ensign_services (Priority=1)
+o User_requests (Priority=3)
+o Communication_services (Priority=5)
+o Download_services (Priority=7)
+o P2P_services (Priority=8)   
+
+
+/ ip firewall mangle 
+add action=mark-connection chain=prerouting comment="Prio P2P" disabled=no \
+    new-connection-mark=prio_conn_p2p p2p=all-p2p passthrough=yes 
+add action=mark-packet chain=prerouting comment="" \
+    connection-mark=prio_conn_p2p disabled=no new-packet-mark=prio_p2p_packet \
+    passthrough=no 
+add action=mark-connection chain=prerouting comment="Prio Download_Services" \
+    disabled=no dst-port=110 new-connection-mark=prio_conn_download_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=995 new-connection-mark=prio_conn_download_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=143 new-connection-mark=prio_conn_download_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=993 new-connection-mark=prio_conn_download_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=995 new-connection-mark=prio_conn_download_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=25 \
+    new-connection-mark=prio_conn_download_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" \
+    connection-bytes=500000-0 disabled=no dst-port=80 \
+    new-connection-mark=prio_conn_download_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=20-21 new-connection-mark=prio_conn_download_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=22 \
+    new-connection-mark=prio_conn_download_services packet-size=1400-1500 \
+    passthrough=yes protocol=tcp 
+add action=mark-packet chain=prerouting comment="" \
+    connection-mark=prio_conn_download_services disabled=no \
+    new-packet-mark=prio_download_packet passthrough=yes 
+add action=mark-connection chain=prerouting comment="Prio Ensign_Services" \
+    disabled=no dst-port=53 new-connection-mark=prio_conn_ensign_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=53 \
+    new-connection-mark=prio_conn_ensign_services passthrough=yes protocol=udp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_ensign_services passthrough=yes \
+    protocol=icmp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=443 new-connection-mark=prio_conn_ensign_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no dst-port=23 \
+    new-connection-mark=prio_conn_ensign_services passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" \
+    connection-bytes=0-500000 disabled=no dst-port=80 \
+    new-connection-mark=prio_conn_ensign_services passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=179 new-connection-mark=prio_conn_ensign_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=8000 new-connection-mark=prio_conn_ensign_services \
+    passthrough=yes protocol=tcp 
+add action=mark-packet chain=prerouting comment="" \
+    connection-mark=prio_conn_ensign_services disabled=no \
+    new-packet-mark=prio_ensign_packet passthrough=no 
+add action=mark-connection chain=prerouting comment="Prio User_Request" \
+    disabled=no dst-port=22 new-connection-mark=prio_conn_ensign_services \
+    packet-size=1400-1500 passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-address-list=user_request new-connection-mark=prio_conn_user_services \
+    passthrough=yes 
+add action=mark-packet chain=prerouting comment="" \
+    connection-mark=prio_conn_user_services disabled=no \
+    new-packet-mark=prio_request_packet passthrough=yes 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_comm_services passthrough=yes protocol=gre 
+add action=mark-connection chain=prerouting comment="Prio_Communication" \
+    disabled=no dst-port=5100 new-connection-mark=prio_conn_comm_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=5050 new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=5060 new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=udp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=1869 new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=1723 new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=5190 new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    dst-port=6660-7000 new-connection-mark=prio_conn_comm_services \
+    passthrough=yes protocol=tcp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=ipencap 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=ipsec-esp 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_comm_services passthrough=yes \
+    protocol=ipsec-ah 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_comm_services passthrough=yes protocol=ipip 
+add action=mark-connection chain=prerouting comment="" disabled=no \
+    new-connection-mark=prio_conn_comm_services passthrough=yes protocol=encap 
+add action=mark-packet chain=prerouting comment="" \
+    connection-mark=prio_conn_comm_services disabled=no \
+    new-packet-mark=prio_comm_packet passthrough=no 
+
+
+Queue TRee
+
+/queue tree 
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=0 name="Priorization" packet-mark="" parent=global-in priority=1 \
+    queue=default 
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=0 name="Communication_Services_Prio3" \
+    packet-mark=prio_comm_packet parent=Priorization priority=3 queue=default 
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=0 name="Download_Services_Prio5" \
+    packet-mark=prio_download_packet parent=Priorization priority=5 \
+    queue=default 
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=0 name="Ensign_Services_Prio1" packet-mark=prio_ensign_packet \
+    parent=Priorization priority=1 queue=default 
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=0 name="P2P_Traffic_Prio8" packet-mark=prio_p2p_packet \
+    parent=Priorization priority=8 queue=default 
+add burst-limit=0 burst-threshold=0 burst-time=0s disabled=no limit-at=0 \
+    max-limit=0 name="User_Request_Prio8" packet-mark=prio_request_packet \
+    parent=Priorization priority=8 queue=default  
+
+
+Arranged by Baratev
+~baratev.sourceforge.net
+contact: baratev[at]yahoo.com
+15:18 27/05/2008

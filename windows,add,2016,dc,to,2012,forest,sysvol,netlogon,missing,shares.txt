@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ADD 2016 DC TO 2012 FOREST, MISSING SYSVOL AND NETLOGON SHARES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-16[Dec-Wed]08-15AM 
+
+##https://social.technet.microsoft.com/Forums/en-US/3d76a999-cfdc-4eff-b2ab-2fb697e8d7ee/2016-sysvol-and-netlogon-shares-missing-from-new-domain-controllers-added-to-2012-and-below?forum=ws2016
+
+MAKE SURE FOLDERS EXIST LOCALLY, IF MISSING, RE-CREATE
+
+C:\Windows\SYSVOL\sysvol\domain.local\Policies
+C:\Windows\SYSVOL\sysvol\domain.local\scripts
+
+THEN IN REGISTRY
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters
+
+CHANGE sysvolready from 0 to 1

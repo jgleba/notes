@@ -1,0 +1,126 @@
+==================================================
+SENDING EMAIL FROM SYNOLOGY WITH PHP, ROUGH, NOTES
+070519
+==================================================
+
+#https://community.synology.com/enu/forum/17/post/65221?reply=233647
+#https://linuxhint.com/how-to-send-email-from-php/
+#https://stackoverflow.com/questions/31575816/why-error-parse-error-syntax-error-unexpected-in-php-cli-code-in-variabl
+#https://www.linuxquestions.org/questions/programming-9/php-parse-error-syntax-error-unexpected-end-of-file-in-command-line-code-on-line-1-a-4175504844/
+#https://www.hostinger.com/tutorials/send-emails-using-php-mail
+#https://www.guru99.com/php-mail.html
+#https://www.w3schools.com/php/func_mail_mail.asp
+#http://www.beatificabytes.be/send-custom-notifications-from-scripts-running-on-a-synology-new/
+#https://forum.synology.com/enu/viewtopic.php?t=92788
+#https://forum.synology.com/enu/viewtopic.php?t=79334#p357596
+#http://www.beatificabytes.be/send-custom-email-notifications-from-scripts-running-on-a-synology/
+#https://swisstechiethoughts.wordpress.com/2014/01/20/howto-send-mail-from-synology-nas-commandline-using-google-mail-relay/
+
+
+to=example@example.com
+subject=test
+body=test
+
+/usr/bin/php -r "mail('$to', '$subject', '$body');";
+
+/usr/bin/php -r "mail('example@example.com','test2','test2','"From:" . example@example.com');"
+
+/usr/bin/php -r "mail('example@example.com','test2','test2','"From:"example@example.com');"
+
+sendmail -F "NAS-AQU-001" -f "example@example.com" -t example@example.com << EOF
+
+
+
+
+DESTINATIONEMAIL='example@example.com';
+SUBJECT="test123";
+BODY="test123";
+HEADERS='"From:"example@example.com';
+/usr/bin/php -r "mail($DESTINATIONEMAIL,$SUBJECT,$BODY,$HEADERS);"
+
+
+
+
+<?php     
+$to_email = 'name @ company . com';
+$subject = 'Testing PHP Mail';
+$message = 'This mail is sent using the PHP mail function';
+$headers = 'From: noreply @ company . com';
+mail($to_email,$subject,$message,$headers);
+?>
+
+
+<?php 
+function sanitize_my_email($field) {
+    $field = filter_var($field, FILTER_SANITIZE_EMAIL);
+    if (filter_var($field, FILTER_VALIDATE_EMAIL)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+$to_email = 'name @ company . com';
+$subject = 'Testing PHP Mail';
+$message = 'This mail is sent using the PHP mail ';
+$headers = 'From: noreply @ company. com';
+//check if the email address is invalid $secure_check
+$secure_check = sanitize_my_email($to_email);
+if ($secure_check == false) {
+    echo "Invalid input";
+} else { //send email 
+    mail($to_email, $subject, $message, $headers);
+    echo "This email is sent using PHP Mail";
+}
+?>
+
+
+
+
+
+
+
+/usr/bin/php -r "mail('example@example.com','test2','test2','"From:"example@example.com');"
+
+
+DESTINATIONEMAIL=example@example.com;
+SUBJECT="test123";
+BODY="test123";
+HEADERS='"From:"example@example.com';
+/usr/bin/php -r "mail($DESTINATIONEMAIL,'test2','test2','"From:"example@example.com');"
+
+    <?php
+        ini_set( 'display_errors', 1 );
+        error_reporting( E_ALL );
+        $from = "test@hostinger-tutorials.com";
+        $to = "test@gmail.com";
+        $subject = "Checking PHP mail";
+        $message = "PHP mail works just fine";
+        $headers = "From:" . $from;
+        mail($to,$subject,$message, $headers);
+        echo "The email message was sent.";
+    ?>
+	
+	
+	
+
+from="example@example.com";
+to="example@example.com";
+subject="test123";
+message="test123";
+headers=""From:" . $from;"
+/usr/bin/php -r 'mail($to,$subject,$message, $headers);'
+
+from="example@example.com";
+to="example@example.com";
+subject="test123";
+message="test123";
+headers=""From:" . $from;"
+/usr/bin/php -r "mail($to,$subject,$message,'"From:"example@example.com');"
+
+
+from="example@example.com";
+to="example@example.com";
+subject="test123";
+body="test123";
+headers=""From:"$from"
+/usr/bin/php -r "mail('$to', '$subject', '$body', '$headers');";

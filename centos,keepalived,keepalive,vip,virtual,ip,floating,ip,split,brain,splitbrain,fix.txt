@@ -1,0 +1,512 @@
+VIP ON CENTOS WITH KEEPALIVED
+02-04-2019
+JGleba
+=============================
+*good*
+##https://tecadmin.net/ip-failover-setup-using-keepalived-on-centos-redhat/
+
+===
+TRYING THIS EXTRA
+===
+##https://support.tilaa.com/hc/en-us/articles/228651767-Setting-up-a-failover-between-two-webservers-using-Keepalived-on-CentOS-6-and-7
+
+sudo nano /etc/sysctl.conf
+
+net.ipv4.conf.default.rp_filter = 0 
+net.ipv4.conf.all.rp_filter = 0
+
+END
+
+===
+
+sudo yum install keepalived
+
+sudo yum install keepalived -y
+
+sudo nano /etc/keepalived/keepalived.conf
+
+==
+
+NODE1
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-fe-lb1@jgleba.com
+   smtp_server 172.16.3.2
+   smtp_connect_timeout 10
+   router_id LVS_DEVEL
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_garp_interval 0
+   vrrp_gna_interval 0
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eno16777728
+    virtual_router_id 51
+    priority 101
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass abc
+    }
+    virtual_ipaddress {
+        172.16.3.200
+    }
+}
+
+==
+
+NODE2
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-fe-lb2@jgleba.com
+   smtp_server 172.16.3.2
+   smtp_connect_timeout 10
+   router_id LVS_DEVEL
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_garp_interval 0
+   vrrp_gna_interval 0
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eno16777728
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass abc
+    }
+    virtual_ipaddress {
+        172.16.3.200
+    }
+}
+
+==
+
+sudo systemctl start keepalived && sudo systemctl enable keepalived
+
+==
+
+THOUGHT ALL WAS GOOD, BUT ACTUALLY HAD SPLIT BRAIN - EVEN THOUGH WORKING - 02-11-19
+
+[user@webclfelb1 ~]$ sudo cat /etc/keepalived/keepalived.conf
+[sudo] password for user:
+! Configuration File for keepalived
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-fe-lb1@jgleba.com
+   smtp_server 172.16.3.2
+   smtp_connect_timeout 30
+   router_id LVS_DEVEL
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_garp_interval 0
+   vrrp_gna_interval 0
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eno16777728
+    virtual_router_id 51
+    priority 101
+    advert_int 1
+    #preempt_delay 10
+    authentication {
+        auth_type PASS
+        auth_pass pF54ft6TqaaAHZzG
+    }
+    virtual_ipaddress {
+        172.16.3.200
+    }
+}
+
+#virtual_server 172.16.3.200 443 {
+#    delay_loop 6
+#    lb_algo rr
+#    lb_kind NAT
+#    persistence_timeout 50
+#    protocol TCP
+
+#    real_server 172.16.3.202 443 {
+#        weight 2
+#        SSL_GET {
+#            url {
+#              path /
+#              digest ff20ad2481f97b1754ef3e12ecd3a9cc
+#            }
+#            url {
+#              path /mrtg/
+#              digest 9b3a0c85a887a256d6939da88aabd8cd
+#            }
+#            connect_timeout 3
+#            nb_get_retry 3
+#            delay_before_retry 3
+#        }
+#    }
+#}
+
+===================
+
+[user@webclfelb2 ~]$ sudo cat /etc/keepalived/keepalived.conf
+[sudo] password for user:
+! Configuration File for keepalived
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-fe-lb2@jgleba.com
+   smtp_server 172.16.3.2
+   smtp_connect_timeout 30
+   router_id LVS_DEVEL
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_garp_interval 0
+   vrrp_gna_interval 0
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface eno16777728
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    #preempt_delay 10
+    authentication {
+        auth_type PASS
+        auth_pass pF54ft6TqaaAHZzG
+    }
+    virtual_ipaddress {
+        172.16.3.200
+    }
+}
+
+#virtual_server 172.16.3.200 443 {
+#    delay_loop 6
+#    lb_algo rr
+#    lb_kind NAT
+#    persistence_timeout 50
+#    protocol TCP
+
+#    real_server 172.16.3.201 443 {
+#        weight 1
+#        SSL_GET {
+#            url {
+#              path /
+#              digest ff20ad2481f97b1754ef3e12ecd3a9cc
+#            }
+#            url {
+#              path /mrtg/
+#              digest 9b3a0c85a887a256d6939da88aabd8cd
+#            }
+#            connect_timeout 3
+#            nb_get_retry 3
+#            delay_before_retry 3
+#        }
+#    }
+#}
+
+==
+
+NEEDED THIS FIREWALL RULE
+
+DIDT WORK
+#sudo iptables -t filter -I INPUT -d 224.0.0.0/8 -j ACCEPT
+#sudo iptables -t filter -I INPUT -p vrrp -j ACCEPT
+
+NO WORKED
+sudo iptables -I INPUT 1 -p vrrp -j ACCEPT
+
+NO WORK SAVE RULES
+sudo iptables-save
+
+#firewall-cmd --zone=public --add-port=3000/tcp --permanent
+#firewall-cmd --reload
+
+https://docs.oracle.com/cd/E52668_01/E54669/html/section_ksr_psb_nr.html
+
+firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 \
+  --in-interface enp0s8 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+success
+# firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 \
+  --out-interface enp0s8 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+success
+# firewall-cmd --reload
+
+==
+WORKED - TESTED - 030319 - NO MORE SPLIT BRAIN - IP WAS ON BOTH AFTER REBOOT
+==
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 \
+  --in-interface eno16777728 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 \
+  --out-interface eno16777728 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --reload
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 \
+  --in-interface eno16777984 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 \
+  --out-interface eno16777984 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --reload
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 \
+  --in-interface ens32 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 \
+  --out-interface ens32 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --reload
+
+091520
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 \
+  --in-interface ens192 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 \
+  --out-interface ens192 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --reload
+
+ALSO CHANGED THIS IN DLINK SWITCHES, NOT SURE IF MADE A DIFFERENCE OR NOT
+Filter Unregistered Groups	 1723
+
+==
+BEST CONFIG SO FAR, FOUND BETTER OPTIONS, EMAIL ALERTS WORKING NOW - 070419
+FIXED ROUTER_ID, WAS WRONG, SHOULD BE HOSTNAME OR IP OF MACHINE
+==
+
+#https://docs.axway.com/bundle/APIGateway_753_ApplianceGuide_allOS_en_HTML5/page/Content/ApplianceTopics/WAI/keepalived_sendemail.htm
+#https://community.icinga.com/t/galera-mysql-cluster-with-vips-and-haproxy-for-ido-mysql-and-more/407
+
+[user@webclfelb1 ~]$ sudo cat /etc/keepalived/keepalived.conf
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-fe-lb1@jgleba.com
+   smtp_server 172.16.3.2
+   smtp_connect_timeout 30
+   router_id webclfelb1
+   vrrp_skip_check_adv_addr
+   vrrp_strict
+   vrrp_garp_interval 0
+   vrrp_gna_interval 0
+}
+
+vrrp_instance VIP_1 {
+    state MASTER
+    #state BACKUP
+    interface eno16777728
+    virtual_router_id 51
+    priority 101
+    #priority 90
+    advert_int 1
+    smtp_alert
+    #preempt_delay 10
+    authentication {
+        auth_type PASS
+        auth_pass pF54ft6TqaaAHZzG
+    }
+    virtual_ipaddress {
+        172.16.3.200
+    }
+}
+
+
+==
+==
+
+
+==
+102319 - SWITCHED NIC ON FE LB TO VMXNET3 INSTEAD OF 1000E
+NOW HAVE SPLIT BRAIN, TRYING ALL BELOW, BUT STILL NOT WORKING
+==
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 \
+  --in-interface ens160 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 \
+  --out-interface ens160 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo  firewall-cmd --reload
+
+sudo firewall-cmd --permanent --new-service=VRRP
+sudo firewall-cmd --permanent --service=VRRP --set-description="Virtual Router Redundancy Protocol"
+sudo firewall-cmd --permanent --service=VRRP --set-short=VRRP
+sudo firewall-cmd --permanent --service=VRRP --add-protocol=vrrp
+sudo firewall-cmd --permanent --service=VRRP --set-destination=ipv4:224.0.0.18
+sudo firewall-cmd --zone=internal --add-service=VRRP --permanent
+sudo  firewall-cmd --reload
+
+sudo iptables -I INPUT -p vrrp -j ACCEPT
+sudo iptables -I OUTPUT -p vrrp -j ACCEPT
+
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+sysctl -p
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --in-interface "ens160" --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 --out-interface "ens160" --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --reload
+
+ sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0  --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+ 
+ 
+
+==
+102319 END
+==
+
+
+==
+111419 - IN SPLIT BRAIN AGAIN
+==
+
+MIGHT HAVE BEEN FIREWALL - BUT SHOULDNT HAVE BEEN - TURNED OFF FOR A MINUTE AND NO CHANGE
+
+DID THIS, THEN RESTARTED, SEEMED TO HELP
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --in-interface ens32 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 --out-interface ens32 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --direct --permanent --remove-rule ipv4 filter INPUT 0 --in-interface ens32 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --remove-rule ipv4 filter OUTPUT 0 --out-interface ens32 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --direct --permanent --remove-rule ipv4 filter INPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --remove-rule ipv4 filter OUTPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+
+==
+120819
+LEARNED MORE
+==
+
+NEED TO INSTALL FOR HAPROXY CHECK
+
+sudo yum install psmisc
+
+##https://medium.com/@sliit.sk95/managing-failovers-with-keepalived-haproxy-c8de98d0c96e
+##https://serverfault.com/questions/764557/keepalived-registers-failure-but-wont-failover
+
+==
+NEWEST CONFIG
+==
+
+[user@webclfelb1 ~]$ sudo cat /etc/keepalived/keepalived.conf
+! Configuration File for keepalived
+
+##120619
+##BIG HELP
+##https://serverfault.com/questions/874802/keepalived-vip-is-active-on-both-servers
+##https://serverfault.com/questions/764557/keepalived-registers-failure-but-wont-failover
+##https://medium.com/@sliit.sk95/managing-failovers-with-keepalived-haproxy-c8de98d0c96e
+
+global_defs {
+   notification_email {
+     example@jgleba.com
+   }
+   notification_email_from keepalived-fe-lb1@jgleba.com
+   smtp_server 172.16.3.7
+   smtp_connect_timeout 30
+   router_id webclfelb1
+   #vrrp_skip_check_adv_addr
+   #vrrp_strict
+   #vrrp_garp_interval 0
+   #vrrp_gna_interval 0
+}
+
+vrrp_script chk_haproxy {           # Requires keepalived-1.1.13
+        script "killall -0 haproxy"     # cheaper than pidof
+        interval 2                      # check every 2 seconds
+        weight 2                        # add 2 points of prio if OK
+}
+
+vrrp_instance VIP_1 {
+    state MASTER
+    #state BACKUP
+    #interface eno16777728
+    interface ens32
+    #interface Wired_connection_1
+    virtual_router_id 51
+    priority 100
+    advert_int 2
+    smtp_alert
+    preempt_delay 5
+    authentication {
+        auth_type PASS
+        auth_pass pF54ft6T
+    }
+    unicast_src_ip 172.16.3.201   # IP address of local interface
+    unicast_peer {            # IP address of peer interface
+        172.16.3.202
+    }
+    virtual_ipaddress {
+        172.16.3.200
+    }
+    track_script {
+        chk_haproxy
+    }
+}
+
+vrrp_instance VIP_1_1 {
+    state BACKUP
+    #state MASTER
+    interface ens32
+    virtual_router_id 49
+    #priority 210
+    priority 190
+    advert_int 2
+    smtp_alert
+    #preempt_delay 5
+    authentication {
+        auth_type PASS
+        auth_pass pFj8ft5T
+    }
+    unicast_src_ip 172.16.3.201   # IP address of local interface
+    unicast_peer {            # IP address of peer interface
+        172.16.3.202
+    }
+    virtual_ipaddress {
+        172.16.3.199
+    }
+    track_script {
+        chk_haproxy
+    }
+}
+
+#virtual_server 172.16.3.200 443 {
+#    delay_loop 6
+#    lb_algo rr
+#    lb_kind NAT
+#    persistence_timeout 50
+#    protocol TCP
+
+#    real_server 172.16.3.202 443 {
+#        weight 2
+#        SSL_GET {
+#            url {
+#              path /
+#              digest ff20ad2481f97b1754ef3e12ecd3a9cc
+#            }
+#            url {
+#              path /mrtg/
+#              digest 9b3a0c85a887a256d6939da88aabd8cd
+#            }
+#            connect_timeout 3
+#            nb_get_retry 3
+#            delay_before_retry 3
+#        }
+#    }
+#}
+

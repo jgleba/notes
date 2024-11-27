@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX LIST AUDIO DEVICES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-02[Nov-Sat]14-12PM 
+
+##https://bbs.archlinux.org/viewtopic.php?id=181630
+
+sudo aplay -l
+

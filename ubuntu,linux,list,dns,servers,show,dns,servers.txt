@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU LINUX LIST DNS SERVERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-03-31[Mar-Tue]12-20PM 
+
+cat /etc/resolv.conf
+
+WHEN DYNAMIC, THIS HELPED
+
+##https://stackoverflow.com/questions/50299241/ubuntu-18-04-server-how-to-check-dns-ip-server-setting-being-used
+
+systemd-resolve --status

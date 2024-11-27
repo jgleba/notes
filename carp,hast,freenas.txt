@@ -1,0 +1,55 @@
+CARP + HAST on FREENAS
+======================
+
+/boot/loader.conf
+ if_carp_load="YES"
+ 
+ ==
+ 
+ in /etc/rc.conf
+ 
+ add:
+ 
+ 
+###Primary Interface##
+ifconfig_re0="inet 172.16.18.180  netmask 255.255.255.0"
+
+###Secondary Interface for HAST###
+ifconfig_re1="inet 192.168.100.100  netmask 255.255.255.0"
+
+defaultrouter="10.10.10.1"
+sshd_enable="YES"
+hostname="hast1.freebsd.loc"
+
+##CARP INTERFACE SETUP##
+cloned_interfaces="carp0"
+ifconfig_carp0="inet 10.10.10.180 netmask 255.255.255.0 vhid 1 pass mypassword advskew 0"
+
+hastd_enable=YES
+ 
+
+
+
+in /etc/hast.conf
+
+resource da1 {
+        on fnas1-ha {
+                local /dev/da1
+                remote fnas2-ha
+        }
+        on  fnas2-ha {
+                local /dev/da1
+                remote fnas1-ha
+        }
+}
+
+resource da2 {
+        on  fnas1-ha {
+                local /dev/da2
+                remote fnas2-ha
+        }
+        on  fnas2-ha {
+                local /dev/da2
+                remote fnas1-ha
+
+				

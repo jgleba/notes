@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS REMOTE DESKTOP HTML5 WEBCLIENT INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-04-12[Apr-Fri]20-27PM 
+
+#https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/clients/remote-desktop-web-client-admin
+
+Install-PackageProvider Nuget -Force
+
+Install-Module PowerShellGet -Force -AllowClobber
+
+##Install-Module -Name PowerShellGet -Force
+
+RESTART POWERSHELL CONSOLE
+
+Install-Module -Name RDWebClientManagement
+
+Install-RDWebClientPackage
+
+Import-RDWebClientBrokerCert <.cer file path>
+
+Import-RDWebClientBrokerCert C:\j\cert\mailjex.crt
+
+Publish-RDWebClientPackage -Type Production -Latest
+

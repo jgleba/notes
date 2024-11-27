@@ -1,0 +1,61 @@
+﻿#!/bin/bash
+
+##check_mk on centos 7 install
+##march 26, 2017
+##==
+
+sudo yum update -y
+
+sudo yum install nano net-tools wget epel-release –y
+
+##sudo yum install php gcc glibc glibc-common gd gd-devel make net-snmp libpng-devel libjpeg-turbo-devel httpd-devel
+
+##SELINUX = disabled
+##sudo nano /etc/sysconfig/selinux
+
+sudo wget http://files.omdistro.org/releases/centos_rhel/omd-1.20.rhel7.x86_64.rpm
+
+sudo yum install omd-1.20.rhel7.x86_64.rpm
+
+sudo omd create probity
+sudo omd start probity
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo mv /opt/omd/versions/1.20/lib/python/hashlib.py /opt/omd/versions/1.20/lib/python/old_hashlib.py
+sudo cp /usr/lib64/python2.7/hashlib.py /opt/omd/versions/1.20/lib/python/
+
+sudo yum install ssmtp -y
+
+##sudo nano /etc/ssmtp/ssmtp.conf
+
+## add relayhost = X.X.X.X
+## change mydomain = X.X.X.X
+##sudo nano /etc/postfix/main.cf
+
+##setting failover relay
+##==
+##smtp_fallback_relay = relay.forttra.com
+##smtp_sasl_auth_enable = yes
+##smtp_sasl_password_maps = hash:/etc/postfix/relay_passwd
+##smtp_sasl_security_options =
+##smtp_use_tls = yes
+
+##user:pass
+
+##sudo touch /etc/postfix/relay_passwd
+##sudo chmod -R 600 /etc/postfix/relay_passwd
+##sudo postmap /etc/postfix/relay_passwd
+
+
+
+##sudo chmod u+s check_icmp
+##sudo chmod g+s check_icmp
+
+##needed to install to use smtp authentication
+##sudo yum install cyrus-sasl cyrus-sasl-plain
+## can't install  cyrus-sasl-lib 
+
+##get rid of apache welcome page when go to IP
+sudo touch /var/www/html/index.html

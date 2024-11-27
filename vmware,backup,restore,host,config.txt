@@ -1,0 +1,56 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE BACKUP AND RESTORE CONFIG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-02-18[Feb-Sat]11-00AM 
+
+#https://wiki.sysblob.com/books/esxi/page/backing-up-and-restoring-a-host-config
+
+Backup
+
+    Go to ESXi host and enable SSH and ESXi Shell
+
+    use ssh to go to server
+
+    Make sure latest config is synced
+
+1
+
+vim-cmd hostsvc/firmware/sync_config
+
+    Backup config
+
+1
+
+vim-cmd hostsvc/firmware/backup_config
+
+    Download file by copying URL and adding IP/hostname over the wildcard
+
+1
+
+<http://ip-or-hostname-here/downloads/123456/configBundle-xx.xx.xx.xx.tgz>
+
+Restore
+
+    Remove hostname/ip from config file so it looks like “configBundle.tgz”
+
+    Put ESXi host into maintenance mode using this command
+
+1
+
+vim-cmd hostsvc/maintenance_mode_enter
+
+    Copy config file to ESXi host or data store
+
+    Run command to restore from config file
+
+1
+
+vim-cmd hostsvc/firmware/restore_config /backup_location/configBundle.tgz
+
+    Host should reboot with new config. You can force an override of UUID mismatch if necessary using a 1 as shown below
+
+1
+
+vim-cmd hostsvc/firmware/restore_config 1 /tmp/configBundle.tgz

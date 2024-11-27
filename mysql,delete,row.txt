@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MYSQL DELETE ROW
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-16[Nov-Tue]15-39PM 
+
+delete from alias where address='example@jgleba.com';
+delete from forwardings where address='example@jgleba.com';

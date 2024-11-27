@@ -1,0 +1,2 @@
+powerbroker, missing visual fox pro libraries error
+run pb workstation setup

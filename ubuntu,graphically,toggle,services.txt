@@ -1,0 +1,7 @@
+sysv-rc-conf
+Try using sysv-rc-conf
+
+sudo apt-get install sysv-rc-conf
+and to start managing the services, execute
+
+sudo sysv-rc-conf

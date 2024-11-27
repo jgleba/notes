@@ -1,0 +1,89 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  BASE DOCKER COMPOSE YAML FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-17[Oct-Sat]16-40PM 
+
+
+
+##
+EXAMPLE IS RANCHER
+##
+
+ONLY HAD DOCKER RUN COMMAND
+
+docker run -d --restart=unless-stopped -p 80:80 -p 443:443 -v /host/rancher:/var/lib/rancher rancher/rancher --acme-domain rancher.example.com
+
+CREATED
+
+[user@zxdock1 rancher]$ cat docker-compose.yml
+version: '3'
+
+networks:
+  docknet1:
+    external: true
+
+services:
+  rancher:
+    container_name: rancher
+    image: rancher/rancher
+    restart: always
+    privileged: true
+    ports:
+      - 9980:80
+      - 9981:443
+    volumes:
+      - ./data/rancher:/var/lib/rancher
+    networks:
+      docknet1:
+
+==
+MINIUM EXAMPLE
+==
+
+version: '3'
+
+networks:
+  docknet1:
+    external: true
+
+services:
+  rancher:
+    container_name: rancher
+    image: image/image
+    restart: always
+    ports:
+      - 9980:80
+      - 9981:443
+    volumes:
+      - ./data/rancher:/var/lib/rancher
+    networks:
+      docknet1:
+
+==
+ACTUALLY USED TO INSTALL RANCHER
+==
+
+##https://phoenixnap.com/kb/install-rancher-on-ubuntu
+
+version: '3'
+
+networks:
+  docknet1:
+    external: true
+
+services:
+  rancher:
+    container_name: rancher
+    image: rancher/server:stable
+    restart: always
+    privileged: true
+    ports:
+      - 9980:80
+      - 9981:443
+      - 9982:8080
+    volumes:
+      - ./data/rancher:/var/lib/rancher
+    networks:
+      docknet1:

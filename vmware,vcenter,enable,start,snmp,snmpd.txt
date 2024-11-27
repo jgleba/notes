@@ -1,0 +1,34 @@
+==============================================
+VCENTER APPLIANCE ENABLE / START SNMP SERVICE
+101519
+==============================================
+
+##https://kb.vmware.com/s/article/2135626
+
+enable ssh for vcenter appliance
+
+log in as root
+
+shell.set --enabled true
+
+shell
+
+service snmpd status
+
+service snmpd start
+
+exit
+
+##http://www.vmwarearena.com/how-to-configure-snmp-on-the-vcenter-server-appliance-6-5/
+
+snmp.set --targets 172.16.2.6@161/public,172.16.0.6@161/public
+
+snmp.set --communities public
+
+snmp.enable
+
+Command> snmp.test
+Results:
+   Message: A warmStart notification was sent to 1 target.
+   Success: True
+Command>

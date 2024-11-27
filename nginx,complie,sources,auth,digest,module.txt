@@ -1,0 +1,57 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NGINX COMPILE FROM SOURCE WITH AUTH DIGEST MODULE AND SSL FOR SPLUNK NGINX TIMEOUT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-12-03[Dec-Fri]14-07PM 
+
+##https://www.howtoforge.com/how-to-build-nginx-from-source-on-centos-7/
+##https://github.com/samizdatco/nginx-http-auth-digest
+##https://stackoverflow.com/questions/8034899/nginx-auth-basic-time-limitation
+
+[user@splunk nginxsources]$ ls -al
+total 3076
+drwxr-xr-x   5 root   root      4096 Dec  3 13:15 .
+drwx------.  5 user     user        4096 Nov 18 10:55 ..
+-rw-r--r--   1 root   root     19855 Nov 18 10:58 master.zip
+drwxr-xr-x   9 splunk splunk    4096 Nov 18 12:39 nginx-1.12.2
+-rw-r--r--   1 root   root   1000290 Oct 17  2017 nginx-1.12.2-1.el7_4.ngx.src.rpm
+-rw-r--r--   1 user     user      981687 Oct 17  2017 nginx-1.12.2.tar.gz
+drwxr-xr-x  13 splunk splunk    4096 Dec  3 13:39 nginx-1.20.1
+-rw-r--r--   1 root   root   1061461 May 25  2021 nginx-1.20.1.tar.gz
+-rwxr-xr-x   1 user     user         646 Oct 17  2017 nginx.check-reload.sh
+-rw-r--r--   1 user     user         643 Oct 17  2017 nginx.conf
+-rw-r--r--   1 user     user         468 Oct 17  2017 nginx-debug.service
+-rw-r--r--   1 user     user         148 Oct 17  2017 nginx-debug.sysconf
+drwxr-xr-x   2 root   root       155 Oct 16 12:14 nginx-http-auth-digest-master
+-rwxr-xr-x   1 user     user        3655 Oct 17  2017 nginx.init.in
+-rw-r--r--   1 user     user         456 Oct 17  2017 nginx.service
+-rw-r--r--   1 user     user       17765 Oct 17  2017 nginx.spec
+-rw-r--r--   1 user     user         355 Oct 17  2017 nginx.suse.logrotate
+-rw-r--r--   1 user     user          98 Oct 17  2017 nginx.sysconf
+-rw-r--r--   1 user     user         906 Oct 17  2017 nginx.upgrade.sh
+-rw-r--r--   1 user     user        1093 Oct 17  2017 nginx.vh.default.conf
+
+==
+
+wget https://nginx.org/download/
+
+==
+
+sudo ./configure --add-module=nginx-http-auth-digest-master --with-http_ssl_module --with-openssl=/home/user/nginxsources/nginx-1.20.1/openssl-1.1.1f
+
+sudo make && sudo make install
+
+==
+
+
+    location / {
+
+          auth_basic           "splunk.jgleba.com";
+          auth_basic_user_file path/to/.htpasswd;
+
+          auth_digest_expires 86400s;
+
+==
+
+ sudo systemctl enable nginx &&  sudo systemctl start nginx

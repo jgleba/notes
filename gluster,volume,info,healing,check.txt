@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GLUSTER GET INFO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-09-18[Sep-Wed]14-27PM 
+
+==
+GET INFO
+==
+
+sudo gluster vol info
+
+sudo gluster vol status
+
+==
+HEALING
+==
+
+sudo gluster volume heal volname
+
+sudo gluster volume heal volname info

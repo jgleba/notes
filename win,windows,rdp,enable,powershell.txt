@@ -1,0 +1,47 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ENABLE REMOTE DESKTOP WITH POWERSHELL - UNTESTED
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-24[Dec-Tue]13-11PM 
+
+##https://theitbros.com/how-to-remotely-enable-remote-desktop-using-powershell/
+
+==
+CONNECT
+==
+
+Enter-PSSession -ComputerName server.domain.local -Credential domainadministrator
+
+==
+ENABLED RDP
+==
+
+Set-ItemProperty -Path 'HKLM:SystemCurrentControlSetControlTerminal Server'-name "fDenyTSConnections" -Value 0
+
+==
+ENABLE RULE FIREWALL
+==
+
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+==
+CREATE FIREWALL RULE IF MISSING
+==
+
+netsh advfirewall firewall add rule name="allow RemoteDesktop" dir=in protocol=TCP localport=3389 action=allow
+
+==
+NLA
+==
+
+Set-ItemProperty -Path 'HKLM:SystemCurrentControlSetControlTerminal ServerWinStationsRDP-Tcp' -name "UserAuthentication" -Value 1
+
+==
+ALL IN ONE
+==
+
+Enter-PSSession -ComputerName 172.16.0.68 -Credential Administrator
+Enter-PSSession -ComputerName WIN-U373HCLCI9Q -Credential Administrator
+Set-ItemProperty -Path 'HKLM:SystemCurrentControlSetControlTerminal Server'-name "fDenyTSConnections" -Value 0
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"

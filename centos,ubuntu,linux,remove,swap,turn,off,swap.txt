@@ -1,0 +1,46 @@
+==============================
+CENTOS / UBUNTU TURN SWAP OFF
+070319
+JGleba
+==============================
+
+==
+TURN OFF SWAP
+==
+
+sudo swapoff -a
+
+==
+REMOVE FROM FSTAB
+==
+
+QUICK WITH SED
+
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+
+OR
+
+sudo nano /etc/fstab
+
+COMMENT
+
+#/dev/mapper/centos-swap swap                    swap    defaults        0 0
+
+==
+REBOOT
+==
+
+sudo reboot
+
+
+
+==
+ALL AT ONCE, SHUTDOWN FOR VMWARE VMX FILE STUFF
+==
+
+sudo cd
+
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+sudo shutdown -h now
+

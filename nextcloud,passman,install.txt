@@ -1,0 +1,11 @@
+passman
+
+cd /var/www/html/nextcloud/apps
+
+sudo wget https://releases.passman.cc/passman_2.1.4.tar.gz
+
+sudo tar -xvf passman_2.1.4.tar.gz
+
+sudo chown -R apache:wheel passman
+sudo chmod -R 770 passman
+

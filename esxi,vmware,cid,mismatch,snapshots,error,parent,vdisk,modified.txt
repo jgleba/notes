@@ -1,0 +1,13 @@
+12/27/2018
+
+ced mismatch esxi, snapshots - quickly looked, see nothing, found something below, CID mismatch
+
+https://www.google.ca/search?biw=1366&bih=654&ei=HzAlXP-bMafajgS9o7eoDQ&q=ced+mismatch+esxi&oq=ced+mismatch+esxi&gs_l=psy-ab.3...27160.27589..27756...0.0..0.114.377.3j1......0....1..gws-wiz.......0i71j0i8i7i30j0i8i13i30j0i8i13i10i30.1TISi13IX_I
+https://www.google.ca/search?biw=1366&bih=654&ei=PDAlXICYJZ-9jwTH54bQCA&q=snapshot+mismatch+esxi&oq=snapshot+mismatch+esxi&gs_l=psy-ab.3...20339.21416..22061...0.0..0.139.688.7j1......0....1..gws-wiz.......0i71j0i8i7i30.-adCgY3u7ts
+
+Content ID mismatch conditions?
+
+https://kb.vmware.com/s/article/1007969
+https://kb.vmware.com/s/article/2149772
+
+https://hypervmwarekb.wordpress.com/2015/02/19/resolving-the-cid-mismatch-error-on-a-vmware-vm-unable-to-power-on-a-virtual-machine-or-consolidate-snapshots/

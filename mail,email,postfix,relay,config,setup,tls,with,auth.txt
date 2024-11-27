@@ -1,0 +1,71 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POSTFIX RELAY CONFIG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-06-04[Jun-Thu]13-08PM 
+
+##https://sysadmins.co.za/setup-smtp-authentication-with-tls-ssl-on-postfix/
+
+sudo yum install postfix cyrus-sasl cyrus-sasl-lib cyrus-sasl-plain
+
+sudo chkconfig saslauthd on
+sudo service saslauthd restart
+
+==
+MAIN.CF CONFIG
+==
+
+##BLACKLIST CHECK - REJECT - 080419
+smtpd_client_restrictions = reject_rbl_client zen.spamhaus.org, reject_rbl_client bl.spamcop.net, reject_rbl_client sbl.spamhaus.org, reject_rbl_client cbl.abuseat.org, reject_rb$
+
+lmtp_host_lookup = native
+smtp_host_lookup = native
+
+smtpd_sasl_authenticated_header = yes
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_path = smtpd
+smtpd_relay_restrictions = permit_mynetworks,permit_sasl_authenticated,reject_unauth_destination,reject
+
+smtp_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
+
+#smtpd_sasl_authenticated_header = no
+#smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtpd_sasl_type = cyrus
+#smtpd_sasl_type = dovecot
+#smtpd_sasl_path = private/auth
+#smtpd_sasl_path = auth/dovecot
+
+smtpd_use_tls = yes
+smtpd_tls_key_file = /etc/letsencrypt/live/jgleba.com/full.pem
+smtpd_tls_cert_file = /etc/letsencrypt/live/jgleba.com/full.pem
+smtpd_tls_security_level=may
+smtpd_tls_auth_only = yes
+smtpd_sasl_tls_security_options = noanonymous
+smtpd_tls_received_header = yes
+smtpd_enforce_tls = yes
+#smtp_tls_note_starttls_offer = yes
+
+smtpd_tls_mandatory_protocols = !SSLv2,!SSLv3,!TLSv1,!TLSv1.1
+smtpd_tls_protocols = !SSLv2,!SSLv3,!TLSv1,!TLSv1.1
+smtpd_tls_mandatory_ciphers = medium
+tls_medium_cipherlist = EECDH+AESGCM:EDH+AESGCM
+tls_preempt_cipherlist = yes
+
+##TLS MIGHT NOT HAVE BEEN WORKING, WORKING NOW FROM GMAIL - 022420
+smtp_tls_security_level = may
+#smtpd_tls_security_level = may
+smtp_tls_note_starttls_offer = yes
+smtpd_tls_loglevel = 1
+smtpd_tls_received_header = yes
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_mechanism_filter = plain, login
+smtp_sasl_security_options = noanonymous
+
+smtpd_sender_restrictions =     permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination,reject
+#smtpd_recipient_restrictions = reject_sender_login_mismatch,permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination
+smtpd_recipient_restrictions = permit_sasl_authenticated,permit_mynetworks,reject_unauth_destination
+

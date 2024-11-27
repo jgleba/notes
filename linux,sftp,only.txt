@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SFTP ONLY USER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-03[Mar-Wed]10-56AM 
+
+##https://unix.stackexchange.com/questions/342383/set-up-sftp-to-not-require-private-key

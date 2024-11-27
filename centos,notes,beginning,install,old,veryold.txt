@@ -1,0 +1,116 @@
+change comp name
+configure networking
+enable ssh
+
+==
+
+what i did
+
+==
+
+log into root user
+changed password
+
+added user to sudo
+==
+
+
+How to add a user to the sudoers list:
+
+    Open a Root Terminal and type visudo (to access and edit the list)
+    Using the up/down arrows, navigate to the bottom of the sudoers file that is now displayed in the terminal
+    Just under the line that looks like the following:
+
+        root ALL=(ALL) ALL
+
+    Add the following (replacing user with your actual username):
+
+        user ALL=(ALL) ALL
+
+    Now press Ctrl+X and press Y when promted to save
+
+
+
+
+add ssh 
+==
+
+sudo yum install openssh-server
+
+
+add nano
+=
+
+sudo yum install nano
+
+
+
+networking
+==
+
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+ 
+DEVICE="eth0"
+NM_CONTROLLED="yes"
+ONBOOT=yes
+HWADDR=A4:BA:DB:37:F1:04
+TYPE=Ethernet
+BOOTPROTO=static
+NAME="System eth0"
+UUID=5fb06bd0-0bb0-7ffb-45f1-d6edd65f3e03
+IPADDR=192.168.1.44
+NETMASK=255.255.255.0 
+
+vi /etc/sysconfig/network  - configure gateway
+ 
+NETWORKING=yes
+HOSTNAME=centos6
+GATEWAY=192.168.1.1 
+
+
+/etc/init.d/network restart - restart networking
+
+
+
+vi /etc/resolv.conf - dns
+
+
+install syslog
+==
+
+yum -y install rsyslog
+
+vi /etc/rsyslog.conf - edit settings - on port 514 for now
+
+restart
+
+service rsyslog restart
+
+
+
+
+changing vm memory from mac - prlctl
+
+Configuring Main Memory
+
+To configure the amount of memory that will be available to the virtual machine, use the --memsize option of the prlctl set command. The following session shows how to change the amount of memory for the MyVM virtual machine from 512 MB to 756 MB and to check that the new value has been successfully set:
+
+# prlctl list -i MyVM | grep memory
+
+memory 512Mb
+
+# prlctl set MyVM --memsize 756
+
+Set the memsize parameter to 756Mb
+
+The VM has been successfully configured.
+
+# prlctl list -i MyVM | grep memory
+
+memory 756Mb
+
+
+display external ip
+======
+
+wget -qO- http://ipecho.net/plain ; echo

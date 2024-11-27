@@ -1,0 +1,66 @@
+============================================================
+ACTIVE DIRECTORY EXPORT MEMBERS OF DISTRIBUTION GROUPS IN OU
+062819
+JGleba
+============================================================
+
+#https://community.idera.com/database-tools/powershell/ask_the_experts/f/powershell_for_exchange-24/21744/exporting-distribution-group-members
+
+TAKING FROM NOTES ABOUT EXPORTING THE LIST OF GROUPS
+
+Get-ADGroup -SearchBase "ou=Groups,ou=jgleba.com,ou=MailDomains,dc=domain,dc=local" -filter {GroupCategory -eq "Distribution"} | export-csv "c:\tmp\jglebacom-groups.csv"
+
+READING BETWEEN LINES WITH
+
+$report=foreach($i in Get-DistributionGroup | where {$_.Name -like '*equity*'}) {
+
+  Get-DistributionGroupMember $i -ResultSize Unlimited |
+
+    Select-Object @{n="Member";e={$_.Name}},
+
+       @{n="Group";e={$i.Name}}
+
+}
+
+JEDIT, TRYING - DIDT WORK
+
+Get-ADGroup -SearchBase "ou=Groups,ou=jgleba.com,ou=MailDomains,dc=domain,dc=local" -filter {GroupCategory -eq "Distribution"} | Get-DistributionGroupMember | export-csv "c:\tmp\jglebacom-groups.csv"
+
+
+==
+
+KIND OF WORKS, ERRORS WHEN NESTED, DOES ALL GROUPS, NOT SPECIFIC OU
+
+#https://www.morgantechspace.com/2015/06/powershell-export-distribution-list-members-to-csv.html
+
+$Groups = Get-DistributionGroup
+$Groups | ForEach-Object {
+$group = $_.Name
+$members = ''
+Get-DistributionGroupMember $group | ForEach-Object {
+        If($members) {
+              $members=$members + ";" + $_.Name
+           } Else {
+              $members=$_.Name
+           }
+  }
+New-Object -TypeName PSObject -Property @{
+      GroupName = $group
+      Members = $members
+     }
+} | Export-CSV "c:\tmp\jglebacom-groups-members.csv" -NoTypeInformation -Encoding UTF8
+
+==
+
+IF GROUP NAME IS KNOWN, THIS MIGHT WORK, LIKE COPY DIST GROUP INTO NEW DIST Group
+
+#https://stackoverflow.com/questions/51353258/export-distribution-group-members-and-description-of-each-member-to-csv
+
+#https://www.reddit.com/r/PowerShell/comments/8z6gs2/export_all_distribution_group_members_with_job/
+
+Get-DistributionGroupMember 'GroupName' |
+    Select Name, Title |
+    Export-Csv C:\output.csv -NoTypeInformation
+	
+==
+

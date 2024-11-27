@@ -1,0 +1,3 @@
+OPEN APP AS SUDO
+
+sudo open -a "Cisco AnyConnect Secure Mobility Client"

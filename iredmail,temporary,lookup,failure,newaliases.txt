@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  IREDMAIL FAILS TO SEND EMAIL, AFTER ADDING NEW ALIAS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-27[Nov-Sat]16-07PM 
+
+##https://serverfault.com/questions/506347/postfix-temporary-lookup-failure
+
+ reject: RCPT from localhost[127.0.0.1]: 451 4.3.0 <example@jgleba.com>: Temporary lookup failure; from=<example@jgleba.com> to=<example@gmail.com> proto=ESMTP helo=<localhost>
+ 
+RUN
+
+sudo newaliases

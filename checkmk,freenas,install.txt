@@ -1,0 +1,27 @@
+cd /usr/local/bin/
+mount -uw /
+wget -O check_mk_agent "http://git.mathias-kettner.de/git/?p=check_mk.git;a=blob_plain;f=agents/check_mk_agent.freebsd;hb=HEAD"
+
+chmod a+x check_mk_agent
+
+# restrict access
+echo "check_mk        6556/tcp   #check_mk agent" >> /etc/services
+echo "check_mk  stream  tcp nowait  root  /usr/local/bin/check_mk_agent check_mk_agent" >> /etc/inetd.conf
+echo "check_mk_agent : 10.0.0.6 : allow" >> /etc/hosts.allow
+echo "check_mk_agent : 127.0.0.1 : allow" >> /etc/hosts.allow
+echo "check_mk_agent : ALL : deny" >> /etc/hosts.allow
+echo "check_mk        6556/tcp   #check_mk agent" >> /conf/base/etc/services
+echo "check_mk  stream  tcp nowait  root  /usr/local/bin/check_mk_agent check_mk_agent" >> /conf/base/etc/inetd.conf
+echo "check_mk_agent : 10.0.0.6 : allow" >> /conf/base/etc/hosts.allow
+echo "check_mk_agent : 127.0.0.1 : allow" >> /conf/base/etc/hosts.allow
+echo "check_mk_agent : ALL : deny" >> /conf/base/etc/hosts.allow
+
+# create plugin directory
+mkdir -p /usr/lib/check_mk_agent/plugins
+cd /usr/lib/check_mk_agent/plugins
+
+# enable smart plugin
+wget -O smart "http://git.mathias-kettner.de/git/?p=check_mk.git;a=blob_plain;f=agents/plugins/smart;hb=HEAD"
+chmod +x /usr/lib/check_mk_agent/plugins/smart
+
+mount -ur /

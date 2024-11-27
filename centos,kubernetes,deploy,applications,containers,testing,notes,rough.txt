@@ -1,0 +1,1421 @@
+=================================
+KUBERNETES DEPLOY STUFF - TESTING
+112219
+=================================
+
+==
+NOW TRY TO DEPLOY SOMETHING
+==
+
+KOMPOSE SEEMS EASIEST TO START
+
+##https://kompose.io/
+##https://www.digitalocean.com/community/tutorials/how-to-migrate-a-docker-compose-workflow-to-kubernetes
+##https://github.com/kubernetes/kompose
+
+##sudo yum -y install kompose
+
+##https://kompose.io/installation/
+curl -L https://github.com/kubernetes/kompose/releases/download/v1.19.0/kompose-linux-amd64 -o kompose
+sudo chmod +x kompose
+sudo mv ./kompose /usr/local/bin/kompose
+
+kompose version
+
+==
+TRYING
+==
+
+##https://dzone.com/articles/simplifying-kubernetes-with-docker-compose-and-fri
+
+ON HAPROXY1, NOT SURE WHERE DATA LIKE THIS SHOULD GO
+
+sudo mkdir -p /j/mysql
+cd /j/mysql
+sudo nano docker-compose.yml
+
+version: '3.3'
+
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+    - ./data:/var/lib/mysql
+    ports:
+    - "8001:3306"
+    #restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+	  
+==
+START
+==
+
+docker stack deploy --orchestrator=kubernetes -c docker-compose.yml mysql
+
+[root@kube1haproxy1 mysql]# docker stack deploy --orchestrator=kubernetes -c docker-compose.yml mysql
+bash: docker: command not found
+
+MAKES SENSE
+
+TRYING FROM MASTER1
+
+[root@kube1master1 mysql]# docker stack deploy --orchestrator=kubernetes -c docker-compose.yml mysql
+Ignoring unsupported options: restart
+
+unable to load configuration file: stat /root/.kube/config: no such file or directory
+
+==
+
+[root@kube1master1 mysql]# docker stack deploy --orchestrator=kubernetes -c docker-compose.yml mysql
+Ignoring unsupported options: restart
+
+Get https://172.16.3.175:6443/api?timeout=32s: x509: certificate signed by unknown authority (possibly because of "crypto/rsa: verification error" while trying to verify candidate authority certificate "kubernetes")
+
+
+ON HAPROXY1
+
+cd /j/mysql
+
+[root@kube1haproxy1 mysql]# kompose convert
+WARN Volume mount on the host "/j/mysql/data" isn't supported - ignoring path on the host
+INFO Kubernetes file "mysql-service.yaml" created
+INFO Kubernetes file "mysql-deployment.yaml" created
+INFO Kubernetes file "mysql-claim0-persistentvolumeclaim.yaml" created
+
+kompose up
+WARN Volume mount on the host "/j/mysql/data" isn't supported - ignoring path on the host
+INFO We are going to create Kubernetes Deployments, Services and PersistentVolumeClaims for your Dockerized application. If you need different kind of resources, use the 'kompose convert' and 'kubectl create -f' commands instead.
+
+FATA Error while deploying application: Get http://localhost:8080/api: dial tcp [::1]:8080: connect: connection refused
+
+kompose up
+INFO We are going to create Kubernetes Deployments, Services and PersistentVolumeClaims for your Dockerized application. If you need different kind of resources, use the 'kompose convert' and 'kubectl create -f' commands instead.
+
+FATA Error while deploying application: Get http://localhost:8080/api: dial tcp [::1]:8080: connect: connection refused
+
+[root@kube1haproxy1 mysql]# kompose convert
+INFO Kubernetes file "mysql-service.yaml" created
+INFO Kubernetes file "mysql-deployment.yaml" created
+[root@kube1haproxy1 mysql]# ls -al
+total 16
+drwxr-xr-x 2 root root 134 Nov 21 22:58 .
+drwxr-xr-x 3 root root  19 Nov 21 22:43 ..
+-rw-r--r-- 1 root root 203 Nov 21 23:00 docker-compose.yml
+-rw-r--r-- 1 root root 245 Nov 21 22:58 mysql-claim0-persistentvolumeclaim.yaml
+-rw-r--r-- 1 root root 719 Nov 21 23:00 mysql-deployment.yaml
+-rw-r--r-- 1 root root 343 Nov 21 23:00 mysql-service.yaml
+[root@kube1haproxy1 mysql]# sudo cat mysql-claim0-persistentvolumeclaim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mysql-claim0
+  name: mysql-claim0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
+[root@kube1haproxy1 mysql]# cat mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mysql
+  name: mysql
+spec:
+  ports:
+  - name: "8001"
+    port: 8001
+    targetPort: 3306
+  selector:
+    io.kompose.service: mysql
+status:
+  loadBalancer: {}
+[root@kube1haproxy1 mysql]#
+
+
+
+
+##https://kubernetes.io/docs/tasks/run-application/run-single-instance-stateful-application/
+
+kubectl apply -f mysql-pv.yaml
+persistentvolume/mysql-pv-volume created
+persistentvolumeclaim/mysql-pv-claim created
+
+kubectl apply -f mysql-deployment.yaml
+service/mysql unchanged
+deployment.apps/mysql created
+
+[root@kube1haproxy1 mysql]# kubectl describe deployment mysql
+Name:               mysql
+Namespace:          default
+CreationTimestamp:  Thu, 21 Nov 2019 23:17:27 -0500
+Labels:             <none>
+Annotations:        deployment.kubernetes.io/revision: 1
+                    kubectl.kubernetes.io/last-applied-configuration:
+                      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"mysql","namespace":"default"},"spec":{"selector":{"matchL...
+Selector:           app=mysql
+Replicas:           1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+StrategyType:       Recreate
+MinReadySeconds:    0
+Pod Template:
+  Labels:  app=mysql
+  Containers:
+   mysql:
+    Image:      mysql:5.6
+    Port:       3306/TCP
+    Host Port:  0/TCP
+    Environment:
+      MYSQL_ROOT_PASSWORD:  pass
+    Mounts:
+      /var/lib/mysql from mysql-persistent-storage (rw)
+  Volumes:
+   mysql-persistent-storage:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  mysql-pv-claim
+    ReadOnly:   false
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      True    MinimumReplicasAvailable
+  Progressing    True    NewReplicaSetAvailable
+OldReplicaSets:  <none>
+NewReplicaSet:   mysql-86447bfd68 (1/1 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  38s   deployment-controller  Scaled up replica set mysql-86447bfd68 to 1
+
+  
+ 
+kubectl get all
+NAME                         READY   STATUS    RESTARTS   AGE
+pod/mysql-86447bfd68-p6mdk   1/1     Running   0          106s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP    3h40m
+service/mysql        ClusterIP   None         <none>        8001/TCP   2m5s
+
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mysql   1/1     1            1           107s
+
+NAME                               DESIRED   CURRENT   READY   AGE
+replicaset.apps/mysql-86447bfd68   1         1         1       107s
+
+
+kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h mysql -pcSsfMk7GR3
+
+LOOKED LIKE WAS GOING INTO SQL INSTANCE, FROZE
+
+CTRL + C
+
+TRIED COMMAND AGAIN
+
+[root@kube1haproxy1 mysql]# kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h mysql -pcSsfMk7GR3
+Error from server (AlreadyExists): pods "mysql-client" already exists
+
+
+
+
+
+
+
+
+===
+
+
+
+root@kube1master1 home]# sudo kubeadm
+
+
+    ┌──────────────────────────────────────────────────────────┐
+    │ KUBEADM                                                  │
+    │ Easily bootstrap a secure Kubernetes cluster             │
+    │                                                          │
+    │ Please give us feedback at:                              │
+    │ https://github.com/kubernetes/kubeadm/issues             │
+    └──────────────────────────────────────────────────────────┘
+
+Example usage:
+
+    Create a two-machine cluster with one control-plane node
+    (which controls the cluster), and one worker node
+    (where your workloads, like Pods and Deployments run).
+
+    ┌──────────────────────────────────────────────────────────┐
+    │ On the first machine:                                    │
+    ├──────────────────────────────────────────────────────────┤
+    │ control-plane# kubeadm init                              │
+    └──────────────────────────────────────────────────────────┘
+
+    ┌──────────────────────────────────────────────────────────┐
+    │ On the second machine:                                   │
+    ├──────────────────────────────────────────────────────────┤
+    │ worker# kubeadm join <arguments-returned-from-init>      │
+    └──────────────────────────────────────────────────────────┘
+
+    You can then repeat the second step on as many other machines as you like.
+
+Usage:
+  kubeadm [command]
+
+Available Commands:
+  alpha       Kubeadm experimental sub-commands
+  completion  Output shell completion code for the specified shell (bash or zsh)
+  config      Manage configuration for a kubeadm cluster persisted in a ConfigMap in the cluster
+  help        Help about any command
+  init        Run this command in order to set up the Kubernetes control plane
+  join        Run this on any machine you wish to join an existing cluster
+  reset       Performs a best effort revert of changes made to this host by 'kubeadm init' or 'kubeadm join'
+  token       Manage bootstrap tokens
+  upgrade     Upgrade your cluster smoothly to a newer version with this command
+  version     Print the version of kubeadm
+
+Flags:
+      --add-dir-header           If true, adds the file directory to the header
+  -h, --help                     help for kubeadm
+      --log-file string          If non-empty, use this log file
+      --log-file-max-size uint   Defines the maximum size a log file can grow to. Unit is megabytes. If the value is 0, the maximum file size is unlimited. (default 1800)
+      --rootfs string            [EXPERIMENTAL] The path to the 'real' host root filesystem.
+      --skip-headers             If true, avoid header prefixes in the log messages
+      --skip-log-headers         If true, avoid headers when opening log files
+  -v, --v Level                  number for the log level verbosity
+
+Use "kubeadm [command] --help" for more information about a command.
+[root@kube1master1 home]# sudo kubeadm reset
+[reset] Reading configuration from the cluster...
+[reset] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+
+==
+KUBERNETES USAGE NEW, ALSO IN INSTALL NOTES
+120419
+==
+
+==
+KUBERNETES INGRESS CONTROLLER
+==
+
+HAPROXY MIGHT WORK
+
+##https://www.haproxy.com/documentation/hapee/1-9r1/traffic-management/kubernetes-ingress-controller/
+##https://www.haproxy.com/blog/dissecting-the-haproxy-kubernetes-ingress-controller/
+
+HAPROXY INGRESS REF
+##https://github.com/jcmoraisjr/haproxy-ingress
+##https://github.com/haproxytech/kubernetes-ingress
+##https://hub.kubeapps.com/charts/incubator/haproxy-ingress
+
+
+TRYING
+
+kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+CHECK
+
+[user@kube1haproxy1 ~]$  kubectl get pods -n haproxy-controller
+NAME                                       READY   STATUS    RESTARTS   AGE
+haproxy-ingress-596fb4b4f4-fxfh6           1/1     Running   0          2m29s
+ingress-default-backend-558fbc9b46-dvfhs   1/1     Running   0          2m29s
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE            NAME                                       READY   STATUS    RESTARTS   AGE
+haproxy-controller   haproxy-ingress-596fb4b4f4-fxfh6           1/1     Running   0          111s
+haproxy-controller   ingress-default-backend-558fbc9b46-dvfhs   1/1     Running   0          111s
+kube-system          coredns-5644d7b6d9-gmlmj                   1/1     Running   3          4d19h
+kube-system          coredns-5644d7b6d9-jb9fb                   1/1     Running   3          4d19h
+kube-system          kube-apiserver-kube1master1                1/1     Running   3          4d19h
+kube-system          kube-apiserver-kube1master2                1/1     Running   5          4d19h
+kube-system          kube-apiserver-kube1master3                1/1     Running   6          4d19h
+kube-system          kube-controller-manager-kube1master1       1/1     Running   5          4d19h
+kube-system          kube-controller-manager-kube1master2       1/1     Running   5          4d19h
+kube-system          kube-controller-manager-kube1master3       1/1     Running   6          4d19h
+kube-system          kube-proxy-4s2vf                           1/1     Running   6          4d19h
+kube-system          kube-proxy-cjfwc                           1/1     Running   3          4d19h
+kube-system          kube-proxy-m46s5                           1/1     Running   5          4d19h
+kube-system          kube-proxy-mjrgs                           1/1     Running   4          4d19h
+kube-system          kube-proxy-q5c5c                           1/1     Running   3          4d19h
+kube-system          kube-proxy-vg5h4                           1/1     Running   4          4d19h
+kube-system          kube-scheduler-kube1master1                1/1     Running   4          4d19h
+kube-system          kube-scheduler-kube1master2                1/1     Running   6          4d19h
+kube-system          kube-scheduler-kube1master3                1/1     Running   6          4d19h
+kube-system          weave-net-692nw                            2/2     Running   15         4d18h
+kube-system          weave-net-7mlq7                            2/2     Running   10         4d18h
+kube-system          weave-net-blzhj                            2/2     Running   8          4d18h
+kube-system          weave-net-mwmlq                            2/2     Running   12         4d18h
+kube-system          weave-net-rmp64                            2/2     Running   18         4d18h
+kube-system          weave-net-xrgzv                            2/2     Running   9          4d18h
+
+[user@kube1haproxy1 ~]$ kubectl get svc --namespace=haproxy-controller
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                     AGE
+haproxy-ingress           NodePort    10.104.224.110   <none>        80:32384/TCP,443:30175/TCP,1024:31436/TCP   4m47s
+ingress-default-backend   ClusterIP   10.102.53.33     <none>        8080/TCP                                    4m47s
+
+==
+DELETE HAPROXY INGRESS
+==
+
+kubectl delete -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+
+==
+STOP WITH HAPROXY INGRESS
+NOT UNDERSTANDING THE CONCEPTS CORRECTLY
+==
+
+==
+113019
+==
+
+FOUND HAPROXY STATS PAGE ON ALL MASTERS, NOT SURE IF ALL THE SAME PAGE
+
+http://172.16.3.160:31436
+http://172.16.3.161:31436
+http://172.16.3.162:31436
+
+==
+METALLB TO BE ABLE TO CREATE LOADBALANCER TYPE SERVICE ON BARE METAL KUBERNETES
+CAN BE USED WITH AN INGRESS (TRAEFIK, HAPROXY, NGINX) SOMEHOW
+==
+
+METALLB REF
+##https://metallb.universe.tf/
+##https://metallb.universe.tf/concepts/
+##https://metallb.universe.tf/usage/
+##https://metallb.universe.tf/installation/
+##https://stackoverflow.com/questions/55162890/loadbalancing-for-kubernetes-in-non-cloud-environment
+##https://medium.com/@JockDaRock/metalloadbalancer-kubernetes-on-prem-baremetal-loadbalancing-101455c3ed48
+##https://medium.com/@JockDaRock/kubernetes-metal-lb-for-on-prem-baremetal-cluster-in-10-minutes-c2eaeb3fe813
+##https://github.com/danderson/metallb
+##https://kubernetes.github.io/ingress-nginx/deploy/baremetal/
+
+METALLB NETWORK OVERLAY CHOICES
+##https://metallb.universe.tf/installation/network-addons/
+
+TRAEFIK REF
+##https://docs.traefik.io/providers/kubernetes-ingress/
+
+INGRESS REF
+##https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0
+##https://medium.com/@carlosedp/multiple-traefik-ingresses-with-letsencrypt-https-certificates-on-kubernetes-b590550280cf
+##https://stackoverflow.com/questions/50585616/kubernetes-metallb-traefik-how-to-get-real-client-ip
+##https://github.com/Thoorium/kubernetes-local-cluster-flannel-metallb-traefik
+##https://www.devtech101.com/2019/02/23/using-metallb-and-traefik-load-balancing-for-your-bare-metal-kubernetes-cluster-part-1/
+##https://www.devtech101.com/2019/03/02/using-traefik-as-your-ingress-controller-combined-with-metallb-on-your-bare-metal-kubernetes-cluster-part-2/
+##https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+##https://www.weave.works/blog/kubernetes-faq-how-can-i-route-traffic-for-kubernetes-on-bare-metal
+##https://lab.wallarm.com/choose-the-right-ingress-controller-for-your-kubernetes-environment/
+##https://medium.com/@chamilad/load-balancing-and-reverse-proxying-for-kubernetes-services-f03dd0efe80
+##https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/
+
+##https://medium.com/oracledevs/experimenting-with-ingress-controllers-on-oracle-container-engine-oke-part-1-5af51e6cdb85
+##https://docs.netapp.com/us-en/kubernetes-service/managing-ingresses-on-kubernetes.html#pod
+
+MIGHT HELP WITH EXTERNAL EXPOSE SERVICE, TALKS ABOUT HOSTNAME SOMETHING
+##https://medium.com/@ManagedKube/kubernetes-access-external-services-e4fd643e5097
+##https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-mapping-external-services
+
+METALLB IN BGP MODE REF
+##https://medium.com/@futuredon/kubernetes-on-prem-demo-using-gns3-kubespray-nginx-ingress-frr-and-metallb-part-2-4f11ace36c00
+
+EXAMPLE WORDPRESS, SHOULD CHECK
+##https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/
+
+==
+KEEP GOING WITH METALLB
+==
+
+[user@kube1haproxy1 ~]$ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml
+namespace/metallb-system created
+serviceaccount/controller created
+serviceaccount/speaker created
+clusterrole.rbac.authorization.k8s.io/metallb-system:controller created
+clusterrole.rbac.authorization.k8s.io/metallb-system:speaker created
+role.rbac.authorization.k8s.io/config-watcher created
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller created
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker created
+rolebinding.rbac.authorization.k8s.io/config-watcher created
+unable to recognize "https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml": no matches for kind "DaemonSet" in version "apps/v1beta2"
+unable to recognize "https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml": no matches for kind "Deployment" in version "apps/v1beta2"
+
+==
+DIDNT WORK, VERSION ISSUE, TRY AGAIN, v0.8.3 (ON METALLB WEBSITE) INSTEAD OF v0.7.3 FROM ARTICLE
+==
+
+kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml
+
+[user@kube1haproxy1 ~]$ kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/metallb.yaml
+namespace/metallb-system unchanged
+podsecuritypolicy.policy/speaker created
+serviceaccount/controller unchanged
+serviceaccount/speaker unchanged
+clusterrole.rbac.authorization.k8s.io/metallb-system:controller unchanged
+clusterrole.rbac.authorization.k8s.io/metallb-system:speaker configured
+role.rbac.authorization.k8s.io/config-watcher configured
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:controller unchanged
+clusterrolebinding.rbac.authorization.k8s.io/metallb-system:speaker unchanged
+rolebinding.rbac.authorization.k8s.io/config-watcher unchanged
+daemonset.apps/speaker created
+deployment.apps/controller created
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS              RESTARTS   AGE
+kube-system      coredns-5644d7b6d9-gmlmj               1/1     Running             3          9d
+kube-system      coredns-5644d7b6d9-jb9fb               1/1     Running             3          9d
+kube-system      kube-apiserver-kube1master1            1/1     Running             4          9d
+kube-system      kube-apiserver-kube1master2            1/1     Running             7          9d
+kube-system      kube-apiserver-kube1master3            1/1     Running             8          9d
+kube-system      kube-controller-manager-kube1master1   1/1     Running             7          9d
+kube-system      kube-controller-manager-kube1master2   1/1     Running             7          9d
+kube-system      kube-controller-manager-kube1master3   1/1     Running             8          9d
+kube-system      kube-proxy-4s2vf                       1/1     Running             8          9d
+kube-system      kube-proxy-cjfwc                       1/1     Running             4          9d
+kube-system      kube-proxy-m46s5                       1/1     Running             7          9d
+kube-system      kube-proxy-mjrgs                       1/1     Running             7          9d
+kube-system      kube-proxy-q5c5c                       1/1     Running             3          9d
+kube-system      kube-proxy-vg5h4                       1/1     Running             5          9d
+kube-system      kube-scheduler-kube1master1            1/1     Running             6          9d
+kube-system      kube-scheduler-kube1master2            1/1     Running             8          9d
+kube-system      kube-scheduler-kube1master3            1/1     Running             8          9d
+kube-system      weave-net-692nw                        2/2     Running             20         9d
+kube-system      weave-net-7mlq7                        2/2     Running             12         9d
+kube-system      weave-net-blzhj                        2/2     Running             11         9d
+kube-system      weave-net-mwmlq                        2/2     Running             20         9d
+kube-system      weave-net-rmp64                        2/2     Running             22         9d
+kube-system      weave-net-xrgzv                        2/2     Running             9          9d
+metallb-system   controller-65895b47d4-2hqqt            0/1     ContainerCreating   0          9s
+metallb-system   speaker-4vjc4                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-7gq52                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-pr4tx                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-vvh4d                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-x7qwx                          0/1     ContainerCreating   0          9s
+metallb-system   speaker-xxhv8                          0/1     ContainerCreating   0          9s
+
+==
+METALLB CONFIG
+==
+
+https://raw.githubusercontent.com/google/metallb/v0.8.3/manifests/example-layer2-config.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: my-ip-space
+      protocol: layer2
+      addresses:
+      - 192.168.1.240/28
+	 
+
+sudo nano metallbconfig.yaml	 
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: my-ip-space
+      protocol: layer2
+      addresses:
+      - 172.16.3.80/24
+
+kubectl apply -f metallbconfig.yaml
+
+[user@kube1haproxy1 ~]$ kubectl apply -f https://raw.githubusercontent.com/JockDaRock/metallb-testing/master/nginxlb.yml
+service/nginx created
+error: unable to recognize "https://raw.githubusercontent.com/JockDaRock/metallb-testing/master/nginxlb.yml": no matches for kind "Deployment" in version "apps/v1beta2"
+
+MAKE FILE MYSELF, CHANGE VERSION TO apps/v1
+
+sudo nano nginxlbconfig.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1
+        ports:
+        - name: http
+          containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
+
+kubectl apply -f nginxlbconfig.yaml
+
+NOW HAVE NGINX LOAD BALANCER TYPE, CAN ACCESS ON IP AT PORT 8080 OR ON ALL MASTERS AND WORKERS ON INTERNAL PORT 31433
+
+[user@kube1haproxy1 ~]$ kubectl get services
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+kubernetes   ClusterIP      10.96.0.1       <none>        443/TCP          10d
+nginx        LoadBalancer   10.98.174.103   172.16.3.80   8080:31433/TCP   15h
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS    RESTARTS   AGE
+default          nginx-5f78746595-fltkp                 1/1     Running   0          15h
+kube-system      coredns-5644d7b6d9-gmlmj               1/1     Running   3          10d
+kube-system      coredns-5644d7b6d9-jb9fb               1/1     Running   3          10d
+kube-system      kube-apiserver-kube1master1            1/1     Running   4          10d
+kube-system      kube-apiserver-kube1master2            1/1     Running   7          10d
+kube-system      kube-apiserver-kube1master3            1/1     Running   8          10d
+kube-system      kube-controller-manager-kube1master1   1/1     Running   7          10d
+kube-system      kube-controller-manager-kube1master2   1/1     Running   7          10d
+kube-system      kube-controller-manager-kube1master3   1/1     Running   8          10d
+kube-system      kube-proxy-4s2vf                       1/1     Running   8          10d
+kube-system      kube-proxy-cjfwc                       1/1     Running   4          10d
+kube-system      kube-proxy-m46s5                       1/1     Running   7          10d
+kube-system      kube-proxy-mjrgs                       1/1     Running   7          10d
+kube-system      kube-proxy-q5c5c                       1/1     Running   3          10d
+kube-system      kube-proxy-vg5h4                       1/1     Running   5          10d
+kube-system      kube-scheduler-kube1master1            1/1     Running   6          10d
+kube-system      kube-scheduler-kube1master2            1/1     Running   8          10d
+kube-system      kube-scheduler-kube1master3            1/1     Running   8          10d
+kube-system      weave-net-692nw                        2/2     Running   20         10d
+kube-system      weave-net-7mlq7                        2/2     Running   12         10d
+kube-system      weave-net-blzhj                        2/2     Running   11         10d
+kube-system      weave-net-mwmlq                        2/2     Running   20         10d
+kube-system      weave-net-rmp64                        2/2     Running   22         10d
+kube-system      weave-net-xrgzv                        2/2     Running   9          10d
+metallb-system   controller-65895b47d4-2hqqt            1/1     Running   0          15h
+metallb-system   speaker-4vjc4                          1/1     Running   0          15h
+metallb-system   speaker-7gq52                          1/1     Running   0          15h
+metallb-system   speaker-pr4tx                          1/1     Running   0          15h
+metallb-system   speaker-vvh4d                          1/1     Running   0          15h
+metallb-system   speaker-x7qwx                          1/1     Running   0          15h
+metallb-system   speaker-xxhv8                          1/1     Running   0          15h
+  
+==
+NGINX TEST
+==
+
+kubectl run nginx --image=nginx --port=80
+kubectl expose deployment nginx --type=LoadBalancer --name=nginx-service
+
+[user@kube1haproxy1 ~]$ kubectl get services
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+kubernetes      ClusterIP      10.96.0.1       <none>         443/TCP        11d
+nginx-service   LoadBalancer   10.109.188.10   172.16.3.144   80:30816/TCP   43s
+
+==
+HORIZONTAL AUTOSCALER (PODS)
+==
+
+##https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+
+[user@kube1haproxy1 ~]$ kubectl get rs
+NAME               DESIRED   CURRENT   READY   AGE
+nginx-5578584966   1         1         1       2m30s
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl describe rs/nginx-5578584966
+Name:           nginx-5578584966
+Namespace:      default
+Selector:       pod-template-hash=5578584966,run=nginx
+Labels:         pod-template-hash=5578584966
+                run=nginx
+Annotations:    deployment.kubernetes.io/desired-replicas: 1
+                deployment.kubernetes.io/max-replicas: 2
+                deployment.kubernetes.io/revision: 1
+Controlled By:  Deployment/nginx
+Replicas:       1 current / 1 desired
+Pods Status:    1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:  pod-template-hash=5578584966
+           run=nginx
+  Containers:
+   nginx:
+    Image:        nginx
+    Port:         80/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Events:
+  Type    Reason            Age    From                   Message
+  ----    ------            ----   ----                   -------
+  Normal  SuccessfulCreate  3m26s  replicaset-controller  Created pod: nginx-5578584966-58hp4
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl autoscale rs nginx-5578584966 --max=3
+horizontalpodautoscaler.autoscaling/nginx-5578584966 autoscaled
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl autoscale rs nginx-5578584966 --max=3 --min=3
+Error from server (AlreadyExists): horizontalpodautoscalers.autoscaling "nginx-5578584966" already exists
+
+##https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/
+
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get hpa
+NAME               REFERENCE                     TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+nginx-5578584966   ReplicaSet/nginx-5578584966   <unknown>/80%   1         3         1          4m55s
+
+==
+DELETE HORIZONTAL AUTOSCALER
+==
+
+kubectl delete hpa nginx-5578584966
+
+==
+TRYING AGAIN
+==
+
+[user@kube1haproxy1 ~]$ kubectl autoscale rs nginx-5578584966 --cpu-percent=50 --min=5 --max=10
+horizontalpodautoscaler.autoscaling/nginx-5578584966 autoscaled
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get hpa
+NAME               REFERENCE                     TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+nginx-5578584966   ReplicaSet/nginx-5578584966   <unknown>/50%   5         10        1          26s
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS    RESTARTS   AGE
+default          nginx-5578584966-2z5pr                 0/1     Pending   0          0s
+default          nginx-5578584966-58hp4                 1/1     Running   0          27m
+default          nginx-5578584966-5gb47                 0/1     Pending   0          0s
+default          nginx-5578584966-9sjzp                 0/1     Pending   0          0s
+default          nginx-5578584966-t7lcv                 0/1     Pending   0          0s
+
+==
+MANUAL REPLICA SCALING
+==
+
+[user@kube1haproxy1 ~]$ kubectl scale --replicas=3 -f nginxlbconfig.yaml
+deployment.apps/nginx scaled
+Error from server (NotFound): the server could not find the requested resource
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS    RESTARTS   AGE
+default          nginx-5578584966-58hp4                 1/1     Running   0          33m
+default          nginx-5578584966-9cpwl                 1/1     Running   0          8s
+default          nginx-5578584966-xc2x5                 1/1     Running   0          8s
+
+==
+AB BENCHMARK, 1 REPLICA NGINX VS 5 REPLICA
+==
+
+==
+1 REPLICA
+==
+
+[user@zxjprox ~]$  ab -c 500 -n 25000 http://172.16.3.144:80/
+This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 172.16.3.144 (be patient)
+Completed 2500 requests
+Completed 5000 requests
+Completed 7500 requests
+Completed 10000 requests
+Completed 12500 requests
+Completed 15000 requests
+Completed 17500 requests
+Completed 20000 requests
+Completed 22500 requests
+Completed 25000 requests
+Finished 25000 requests
+
+
+Server Software:        nginx/1.17.6
+Server Hostname:        172.16.3.144
+Server Port:            80
+
+Document Path:          /
+Document Length:        612 bytes
+
+Concurrency Level:      500
+Time taken for tests:   7.352 seconds
+Complete requests:      25000
+Failed requests:        0
+Write errors:           0
+Total transferred:      21125000 bytes
+HTML transferred:       15300000 bytes
+Requests per second:    3400.56 [#/sec] (mean)
+Time per request:       147.035 [ms] (mean)
+Time per request:       0.294 [ms] (mean, across all concurrent requests)
+Transfer rate:          2806.13 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0   30 193.0      0    3008
+Processing:    11   52 354.3     21    6221
+Waiting:        0   52 354.3     21    6221
+Total:         18   82 465.2     22    7225
+
+Percentage of the requests served within a certain time (ms)
+  50%     22
+  66%     23
+  75%     24
+  80%     25
+  90%     30
+  95%     78
+  98%   1023
+  99%   1226
+ 100%   7225 (longest request)
+ 
+==
+
+==
+5 REPLICA
+==
+
+[user@zxjprox ~]$  ab -c 500 -n 25000 http://172.16.3.144:80/
+This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 172.16.3.144 (be patient)
+Completed 2500 requests
+Completed 5000 requests
+Completed 7500 requests
+Completed 10000 requests
+Completed 12500 requests
+Completed 15000 requests
+Completed 17500 requests
+Completed 20000 requests
+Completed 22500 requests
+Completed 25000 requests
+Finished 25000 requests
+
+
+Server Software:        nginx/1.17.6
+Server Hostname:        172.16.3.144
+Server Port:            80
+
+Document Path:          /
+Document Length:        612 bytes
+
+Concurrency Level:      500
+Time taken for tests:   2.878 seconds
+Complete requests:      25000
+Failed requests:        0
+Write errors:           0
+Total transferred:      21125000 bytes
+HTML transferred:       15300000 bytes
+Requests per second:    8685.73 [#/sec] (mean)
+Time per request:       57.566 [ms] (mean)
+Time per request:       0.115 [ms] (mean, across all concurrent requests)
+Transfer rate:          7167.42 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0   28 127.6      9    1029
+Processing:     0   28  27.4     22     681
+Waiting:        0   24  26.1     17     680
+Total:          1   56 132.3     37    1228
+
+Percentage of the requests served within a certain time (ms)
+  50%     37
+  66%     50
+  75%     56
+  80%     61
+  90%     87
+  95%    115
+  98%    144
+  99%   1045
+ 100%   1228 (longest request)
+
+
+ 
+== 
+BASIC DEPLOYMENT, EXPOSE AS SERVICE, DELETE SERVICE
+##https://www.youtube.com/watch?v=xYiYIjlAgHY
+##https://www.youtube.com/watch?v=A_PjjCM1eLA&t=1114s
+120919
+==
+
+==
+DEPLOYMENT
+==
+
+kubectl run nginx --image nginx
+
+RUN MIGHT BE DEPRECATED CREATE INSTEAD
+
+==
+EXPOSE AS SERVICE TYPE LOADBALANCER
+==
+
+kubectl expose deploy nginx --port 80 --type LoadBalancer
+
+==
+EXPOSE AS SERVICE TYPE CLUSTERIP
+==
+
+kubectl expose deploy nginx --port 80 --type ClusterIP
+
+==
+DELETE SERVICE
+==
+
+kubectl delete svc nginx
+
+==
+NAMESPACE
+==
+
+kubectl get ns
+
+==
+
+==
+DELETE POD AND SERVICES BY NAME
+==
+
+kubectl delete pods,services -l name=myLabel 
+
+==
+DELETE ALL PODS AND SERVICES IN NAMESPACE
+==
+
+kubectl -n my-ns delete pod,svc --all
+
+==
+DELETE PODS AND SERVICES WITH FILENAME
+==
+
+kubectl delete -f ./pod.json
+
+
+DEMONSET RUNS ON ALL WORKER NODES
+DEPLOYMENT CAN PICK HOW MANY REPLICAS
+
+
+
+
+TRYING TRAEFIK AGAIN FROM YOUTUBE VIDEO - 120919
+
+
+==
+TRAEFIK INGRESS, DEPLOYPMENT, CONTROLLER - REPLICA 2, INGRESS SERVICE TYPE LOADBALANCER
+==
+
+[user@kube1haproxy1 ~]$ sudo cat traefik-rbac.yaml
+
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: traefik-ingress-controller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+    - extensions
+    resources:
+    - ingresses/status
+    verbs:
+    - update
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: traefik-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+- kind: ServiceAccount
+  name: traefik-ingress-controller
+  namespace: kube-system
+
+  
+[user@kube1haproxy1 ~]$ sudo cat traefik-deployment.yaml
+
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: traefik-ingress-controller
+  namespace: kube-system
+  labels:
+    k8s-app: traefik-ingress-lb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: traefik-ingress-lb
+  template:
+    metadata:
+      labels:
+        k8s-app: traefik-ingress-lb
+        name: traefik-ingress-lb
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      terminationGracePeriodSeconds: 60
+      containers:
+      - image: traefik:v1.7
+        name: traefik-ingress-lb
+        ports:
+        - name: http
+          containerPort: 80
+        - name: admin
+          containerPort: 8080
+        args:
+        - --api
+        - --kubernetes
+        - --logLevel=INFO
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-ingress-service
+  namespace: kube-system
+spec:
+  selector:
+    k8s-app: traefik-ingress-lb
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+    - protocol: TCP
+      port: 8080
+      name: admin
+  type: LoadBalancer
+
+  
+  
+==
+APPLY RBAC AND DEPLOYMENT OF TRAEFIK INGRESS  
+==
+
+kubectl apply -f traefik-rbac.yaml
+kubectl apply -f traefik-deployment.yaml
+
+==
+INGRESS RESOURCE FOR NGINX DEPLOYMENT/SERVICE
+==
+
+sudo nano ingress-nginx-resource.yaml
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-nginx-resource
+spec:
+  rules:
+  - host: nginx.kube1.jgleba.com
+  http:
+    paths:
+	- backend:
+	    serviceName: nginx
+		servicePort: 80
+		
+		
+		
+[user@kube1haproxy1 ~]$ kubectl create -f ingress-nginx-resource.yaml
+ingress.extensions/ingress-nginx-resource created
+
+[user@kube1haproxy1 ~]$ kubectl describe ingress
+Name:             ingress-nginx-resource
+Namespace:        default
+Address:
+Default backend:  default-http-backend:80 (<none>)
+Rules:
+  Host                    Path  Backends
+  ----                    ----  --------
+  nginx.kube1.jgleba.com
+                             nginx:80 (10.44.0.3:80)
+Annotations:
+Events:  <none>
+
+
+==
+MARIADB/GALERA, PERSISTENT VOLUME, PERSISTENT VOLUME CLAIM
+121219
+==
+
+##https://severalnines.com/database-blog/running-galera-cluster-kubernetes
+
+==
+PV
+==
+
+sudo nano galera-pv.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: datadir-galera-0
+  labels:
+    app: galera-ss
+    podindex: "0"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /data/pods/galera-0/datadir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: datadir-galera-1
+  labels:
+    app: galera-ss
+    podindex: "1"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /data/pods/galera-1/datadir
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: datadir-galera-2
+  labels:
+    app: galera-ss
+    podindex: "2"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 5Gi
+  hostPath:
+    path: /data/pods/galera-2/datadir
+	
+
+kubectl create -f galera-pv.yaml	
+
+==
+PVC
+==
+
+sudo nano galera-pvc.yaml
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-datadir-galera-ss-0
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchLabels:
+      app: galera-ss
+      podindex: "0"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-datadir-galera-ss-1
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchLabels:
+      app: galera-ss
+      podindex: "1"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mysql-datadir-galera-ss-2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  selector:
+    matchLabels:
+      app: galera-ss
+      podindex: "2"
+	  
+
+kubectl create -f galera-pvc.yaml
+
+==
+STATEFUL SET SS
+==
+
+sudo nano galera-ss.yaml
+
+# Headless service used by WordPress
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+    name: mysql
+spec:
+  ports:
+    - port: 3306
+      name: mysql
+      targetPort: 3306
+      protocol: TCP
+  clusterIP: None      
+  selector: 
+    name: mysql
+
+---
+
+# Endpoint for connecting external MySQL clients. Delete this if not required
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-client
+  labels:
+    name: mysql
+spec:
+  type: NodePort
+  ports:
+    - port: 3306
+      name: server
+      targetPort: 3306
+      protocol: TCP
+  selector: 
+    name: mysql
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  labels:
+    name: mysql  
+spec:
+  serviceName: "mysql"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        name: mysql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql
+        image: perconalab/percona-xtradb-cluster:5.6
+        ports:
+        - containerPort: 3306
+          name: mysql
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: CmmpDZ52
+          - name: DISCOVERY_SERVICE
+            value: etcd:2379
+          - name: XTRABACKUP_PASSWORD
+            value: CmmpDZ52
+          - name: CLUSTER_NAME
+            value: mysql1
+        volumeMounts:
+        - name: db
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi
+
+
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+NO WORK
+
+sudo nano galera-ss.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: galera-ss
+  labels:
+    app: galera-ss
+spec:
+  ports:
+  - port: 3306
+    name: mysql
+  clusterIP: None
+  selector:
+    app: galera-ss
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: galera-ss
+spec:
+  serviceName: "galera-ss"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: galera-ss
+    spec:
+      containers:
+      - name: galera
+        image: severalnines/mariadb:10.1
+        ports:
+        - name: mysql
+          containerPort: 3306
+        env:
+        # kubectl create secret generic mysql-pass --from-file=password.txt
+        - name: MYSQL_ROOT_PASSWORD
+          value: CmmpDZ52
+        - name: DISCOVERY_SERVICE
+          value: etcd-client:2379
+        - name: XTRABACKUP_PASSWORD
+          value: CmmpDZ52
+        - name: CLUSTER_NAME
+          value: mariadb_galera_ss
+        - name: MYSQL_DATABASE
+          value: test
+        - name: MYSQL_USER
+          value: dbuser
+        - name: MYSQL_PASSWORD
+          value: CmmpDZ52
+        readinessProbe:
+          exec:
+            command:
+            - /healthcheck.sh
+            - --readiness
+          initialDelaySeconds: 120
+          periodSeconds: 1
+        livenessProbe:
+          exec:
+            command:
+            - /healthcheck.sh
+            - --liveness
+          initialDelaySeconds: 120
+          periodSeconds: 1
+        volumeMounts:
+        - name: mysql-datadir
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      # uncomment if using slow storageClass on AWS
+      # then no need for running pv or pvc manifests
+      storageClassName: slow
+      resources:
+        requests:
+          storage: 5Gi
+
+kubectl create -f mariadb-ss.yaml
+
+
+
+
+
+
+
+==
+ANOTHER WAY TO DELETE, SEEMS TO WORK
+==
+
+kubectl get service -o wide
+kubectl delete svc mysql-client

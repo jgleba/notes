@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS STARTUP REPAIR LOOP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-05[Jan-Wed]09-20AM 
+
+https://winaero.com/disable-launch-startup-repair-recommendation-in-windows-7/
+
+bcdedit /set {current} bootstatuspolicy ignoreallfailures
+

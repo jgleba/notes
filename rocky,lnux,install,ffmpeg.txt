@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL FFMPEG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-27[Mar-Wed]16-28PM 
+
+#https://it.megocollector.com/media/install-ffmpeg-on-rocky-linux-8/
+
+sudo dnf install epel-release
+sudo dnf config-manager --add-repo=https://negativo17.org/repos/epel-multimedia.repo
+sudo dnf config-manager --set-enabled powertools
+sudo dnf install ffmpeg

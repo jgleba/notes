@@ -1,0 +1,1 @@
+PowerShell -NoProfile -ExecutionPolicy Bypass -File "<C:\j\testemail3.ps1>" -Parameter 'Value'

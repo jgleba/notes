@@ -1,0 +1,106 @@
+
+
+==
+COULD BE GOOD GLUSTER INFO
+==
+
+#https://access.redhat.com/documentation/en-US/Red_Hat_Storage/2.0/html/Administration_Guide/sect-User_Guide-Monitor_Workload-Displaying_Volume_Status.html
+
+==
+GEO REPLICATION INFO, LOOK INTO
+==
+
+#https://www.digitalocean.com/community/questions/glusterfs-geo-replication
+
+==
+LOOKS GOOD
+==
+
+#https://serverfault.com/questions/835343/unexplicable-glusterfs-load-and-poor-performance
+#https://www.gluster.org/gluster-tiering-and-small-file-performance/
+
+$ gluster volume set <volname> features.cache-invalidation on
+$ gluster volume set <volname> features.cache-invalidation-timeout 600
+$ gluster volume set <volname> performance.stat-prefetch on
+$ gluster volume set <volname> performance.cache-samba-metadata on
+$ gluster volume set <volname> performance.cache-invalidation on
+$ gluster volume set <volname> performance.md-cache-timeout 600
+$ gluster volume set <volname> network.inode-lru-limit: <big number here>
+
+
+TRYING 071219 - webcl
+==
+sudo gluster volume set webvol1 features.cache-invalidation on
+sudo gluster volume set webvol1 features.cache-invalidation-timeout 600
+sudo gluster volume set webvol1 performance.stat-prefetch on
+sudo gluster volume set webvol1 performance.cache-samba-metadata on
+sudo gluster volume set webvol1 performance.cache-invalidation on
+sudo gluster volume set webvol1 performance.md-cache-timeout 600
+sudo gluster volume set webvol1 network.inode-lru-limit 1000000
+
+In the example, I used 90000 for the inode-lru-limit. 
+
+==
+PERFORMANCE OPTIONS TO LOOK INTO
+==
+
+#http://www.brandyce.net/creating-a-glusterfs-cluster-for-vms/
+
+Now, the only thing left is to tune some parameters meant for VMs. For each parameter below, we will use a command like the following:
+
+gluster volume set prod storage.fips-mode-rchecksum on
+
+Here are my options:
+
+storage.fips-mode-rchecksum: on
+cluster.shd-wait-qlength: 10000
+cluster.shd-max-threads: 8
+performance.strict-o-direct: on
+server.event-threads: 3
+client.event-threads: 8
+performance.io-thread-count: 32
+cluster.server-quorum-type: server
+cluster.quorum-type: auto
+network.remote-dio: on
+cluster.eager-lock: enable
+performance.stat-prefetch: off
+performance.io-cache: off
+performance.read-ahead: off
+performance.quick-read: off
+features.shard-block-size: 67108864
+features.shard: on
+server.allow-insecure: on
+cluster.data-self-heal-algorithm: full
+performance.client-io-threads: on
+nfs.disable: on
+transport.address-family: inet
+
+TRYING A BUNCH ON WEBCL - FE - NODES - NGINX 071319
+
+#https://www.reddit.com/r/filesystems/comments/8zshfv/gluster_small_file_performance_tuning_help/
+
+performance.cache-refresh-timeout: 1
+auth.allow: 172.16.3.*
+
+#http://knowledgebase.45drives.com/kb/gluster-performance-tuning/
+
+performance.io-cache on
+performance.io-thread-count 32
+
+TRYING THIS
+
+
+sudo gluster volume set webclvol1 features.cache-invalidation on
+sudo gluster volume set webclvol1 features.cache-invalidation-timeout 600
+sudo gluster volume set webclvol1 performance.stat-prefetch on
+sudo gluster volume set webclvol1 performance.cache-samba-metadata on
+sudo gluster volume set webclvol1 performance.cache-invalidation on
+sudo gluster volume set webclvol1 performance.md-cache-timeout 600
+sudo gluster volume set webclvol1 network.inode-lru-limit 1000000
+sudo gluster volume set webclvol1 performance.client-io-threads on
+sudo gluster volume set webclvol1 nfs.disable on
+sudo gluster volume set webclvol1 transport.address-family inet
+sudo gluster volume set webclvol1 performance.cache-refresh-timeout 1
+sudo gluster volume set webclvol1 performance.io-cache on
+sudo gluster volume set webclvol1 performance.io-thread-count 32
+sudo gluster volume set webclvol1 auth.allow 172.16.3.*

@@ -1,0 +1,201 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OLD SECURITY ONION THRESHOLDS FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-25[Mar-Thu]12-46PM 
+
+user@cossec:~$ sudo cat /etc/nsm/rules/threshold.conf
+# Configure Thresholding and Suppression
+# ======================================
+#
+# The threshold command is deprecated.  Use detection_filter for thresholds
+# within a rule and event_filter for standalone threshold configurations.
+# Please see README.filters for more information on filters.
+#
+# Thresholding:
+#
+# This feature is used to reduce the number of logged alerts for noisy rules.
+# This can be tuned to significantly reduce false alarms, and it can also be
+# used to write a newer breed of rules. Thresholding commands limit the number
+# of times a particular event is logged during a specified time interval.
+#
+# There are 3 types of event_filters:
+#
+# 1) Limit
+#    Alert on the 1st M events during the time interval, then ignore
+#    events for the rest of the time interval.
+#
+# 2) Threshold
+#    Alert every M times we see this event during the time interval.
+#
+# 3) Both
+#    Alert once per time interval after seeing M occurrences of the
+#    event, then ignore any additional events during the time interval.
+#
+# Threshold commands are formatted as:
+#
+# event_filter gen_id gen-id, sig_id sig-id, \
+#     type limit|threshold|both, track by_src|by_dst, \
+#     count n , seconds m
+#
+# Limit to logging 1 event per 60 seconds:
+#
+# event_filter gen_id 1, sig_id 1851, type limit, \
+#     track by_src, count 1, seconds 60
+#
+# Global Threshold - Limit to logging 1 event per 60 seconds per IP triggering
+# each rule (rules are gen_id 1):
+#
+# event_filter gen_id 1, sig_id 0, type limit, track by_src, count 1, seconds 60
+#
+# Global Threshold - Limit to logging 1 event per 60 seconds per IP triggering
+# any alert for any event generator:
+#
+# event_filter gen_id 0, sig_id 0, type limit, track by_src, count 1, seconds 60
+#
+# Suppression:
+#
+# Suppression commands are standalone commands that reference generators and
+# sids and IP addresses via a CIDR block (or IP list). This allows a rule to be
+# completely suppressed, or suppressed when the causitive traffic is going to
+# or comming from a specific IP or group of IP addresses.
+#
+# Suppress this event completely:
+#
+# suppress gen_id 1, sig_id 1852
+#
+# Suppress this event from this IP:
+#
+# suppress gen_id 1, sig_id 1852, track by_src, ip 10.1.1.54
+#
+# Suppress this event to this CIDR block:
+#
+# suppress gen_id 1, sig_id 1852, track by_dst, ip 10.1.1.0/24
+#
+
+suppress gen_id 1, sig_id 2101411
+suppress gen_id 1, sig_id 2001330 ##rdp connection confirm
+
+disabling 102720
+suppress gen_id 1, sig_id 2013504 ##linux package management, apt-get
+suppress gen_id 1, sig_id 2013505 ##linux package management, yum
+
+suppress gen_id 1, sig_id 2001219
+suppress gen_id 1, sig_id 2003068 ##ssh scan outbound
+
+#BAD REP IP START 102119
+suppress gen_id 1, sig_id 2403444
+suppress gen_id 1, sig_id 2403420
+suppress gen_id 1, sig_id 2403468
+suppress gen_id 1, sig_id 2403432
+suppress gen_id 1, sig_id 2403364
+suppress gen_id 1, sig_id 2403476
+#BAD REP IP END
+
+#torrent
+suppress gen_id 1, sig_id 2010144, track by_src, ip 172.16.0.20
+suppress gen_id 1, sig_id 2008585, track by_src, ip 172.16.0.20
+suppress gen_id 1, sig_id 2008581, track by_src, ip 172.16.0.20
+
+#dns
+suppress gen_id 1, sig_id 2027757 ##NS Query for .to TLD
+suppress gen_id 1, sig_id 2012811, track by_src, ip 172.16.0.10
+suppress gen_id 1, sig_id 2012811, track by_src, ip 172.16.0.11
+
+#me
+suppress gen_id 1, sig_id 2025701, track by_src, ip 172.16.0.101
+suppress gen_id 1, sig_id 2027390, track by_src, ip 172.16.0.101
+suppress gen_id 1, sig_id 2025275 ##Windows OS Submitting USB Metadata to Microsoft
+suppress gen_id 1, sig_id 2016149, track by_src, ip 172.16.0.101
+
+#other, annoying
+suppress gen_id 1, sig_id 2023753 ##ms ts on non standard port
+uppress gen_id 1, sig_id 31101 ##ossec web server 400
+
+#not sure, but need probably annoying
+suppress gen_id 1, sig_id 2101201
+
+#mail
+suppress gen_id 1, sig_id 2025330, track by_dst, ip 172.16.3.2
+suppress gen_id 1, sig_id 2025331, track by_src, ip 172.16.3.2
+
+#checkmk disabling 102720
+suppress gen_id 1, sig_id 2101411, track by_src, ip 172.16.0.6 ##snmp
+suppress gen_id 1, sig_id 2101892, track by_src, ip 172.16.0.6 ##snmp null community
+
+#http annoying, fe lb
+suppress gen_id 1, sig_id 2011768 ##ET WEB_SERVER PHP tags in HTTP POST
+suppress gen_id 1, sig_id 2020102 ##ET WEB_SERVER PHP System Command in HTTP POST
+suppress gen_id 1, sig_id 2013031, track by_src, ip 172.16.2.42 ##ET POLICY Python-urllib/ Suspicious User Agent
+suppress gen_id 1, sig_id ##ET WEB_SERVER Possible XXE SYSTEM ENTITY in POST BODY
+suppress gen_id 1, sig_id 2018317, track by_dst, ip 172.16.3.200 ##ET SCAN NMAP SIP Version Detect OPTIONS Scan
+
+
+#OLD, SUPPRESSED TOO MUCH, WORRIED ABOUT BLOCKING TOO MUCH AFTER ALL MY SECURITY CHANGES, LOOSENING UP AND DOING AGAIN - 102119
+
+#jprox,not sure if needed
+suppress gen_id 1, sig_id 2025709, track by_dst, ip 172.31.0.15
+suppress gen_id 1, sig_id 2025701, track by_dst, ip 172.31.0.15
+suppress gen_id 1, sig_id 2018959, track by_src, ip 172.16.3.15
+suppress gen_id 1, sig_id 2006380, track by_dst, ip 172.16.3.15
+suppress gen_id 1, sig_id 2006402, track by_dst, ip 172.16.3.15
+suppress gen_id 1, sig_id 2016184, track by_src, ip 172.16.0.15
+suppress gen_id 1, sig_id 2403402, track by_src, ip 172.16.0.15
+suppress gen_id 1, sig_id 31101, track by_src, ip 172.16.0.15
+suppress gen_id 1, sig_id 31120, track by_src, ip 172.16.0.15
+suppress gen_id 1, sig_id 2012647, track by_dst, ip 172.31.0.23
+suppress gen_id 1, sig_id 2012648
+suppress gen_id 1, sig_id 2013659
+suppress gen_id 1, sig_id 2002995
+suppress gen_id 1, sig_id 2100366
+suppress gen_id 1, sig_id 2012709
+suppress gen_id 1, sig_id 2100368
+suppress gen_id 1, sig_id 2023472
+suppress gen_id 1, sig_id 2010524
+suppress gen_id 1, sig_id 2403486
+suppress gen_id 1, sig_id 2403418
+suppress gen_id 1, sig_id 2403332
+suppress gen_id 1, sig_id 2022775, track by_dst, ip 172.16.3.200
+suppress gen_id 1, sig_id 2022775, track by_dst, ip 172.16.3.201
+suppress gen_id 1, sig_id 2403477, track by_dst, ip 172.16.3.20
+suppress gen_id 1, sig_id 2403371, track by_dst, ip 172.16.3.20
+suppress gen_id 1, sig_id 2024107
+suppress gen_id 1, sig_id 2025534
+suppress gen_id 1, sig_id 2025494
+suppress gen_id 1, sig_id 2012811, track by_src, ip 172.31.0.5
+suppress gen_id 1, sig_id 2012811, track by_src, ip 172.31.0.6
+suppress gen_id 1, sig_id 2400021
+suppress gen_id 1, sig_id 2027758
+suppress gen_id 1, sig_id 2402000
+suppress gen_id 1, sig_id 2403318
+suppress gen_id 1, sig_id 2403424
+suppress gen_id 1, sig_id 2403358
+suppress gen_id 1, sig_id 2403316
+suppress gen_id 1, sig_id 2403362
+suppress gen_id 1, sig_id 2403448
+suppress gen_id 1, sig_id 2403412
+suppress gen_id 1, sig_id 2403438
+suppress gen_id 1, sig_id 2403430
+suppress gen_id 1, sig_id 2027865
+suppress gen_id 1, sig_id 2403446
+suppress gen_id 1, sig_id 2403370
+suppress gen_id 1, sig_id 2403422
+suppress gen_id 1, sig_id 2403380
+suppress gen_id 1, sig_id 2403414
+suppress gen_id 1, sig_id 2403354
+suppress gen_id 1, sig_id 2403450
+suppress gen_id 1, sig_id 2403436
+suppress gen_id 1, sig_id 2403426
+suppress gen_id 1, sig_id 2403434
+suppress gen_id 1, sig_id 2403346
+suppress gen_id 1, sig_id 2403392
+suppress gen_id 1, sig_id 2403452
+suppress gen_id 1, sig_id 2403428
+suppress gen_id 1, sig_id 2403454
+suppress gen_id 1, sig_id 2025855
+suppress gen_id 1, sig_id 2024044
+suppress gen_id 1, sig_id 2012936 ##ZmEu
+suppress gen_id 1, sig_id 550 ##ossec integrity checksum changed
+suppress gen_id 1, sig_id 533 ##ossec listen changed
+suppress gen_id 1, sig_id 2012647, track by_dst, ip 172.16.1.199 ##dropbox

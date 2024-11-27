@@ -1,0 +1,5 @@
+MYSQL MARIADB GALERA CLUSTER INFO
+
+logged into mysql:
+show status like 'wsrep%';
+show status like 'wsrep_cluster%';

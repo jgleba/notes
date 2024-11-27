@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  AD TRANSFER ALL FSMO ROLES POWERSHELL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-12-10[Dec-Fri]18-48PM 
+
+##https://theitbros.com/transfer-fsmo-roles-using-powershell/
+##https://thesysadminchannel.com/how-to-transfer-fsmo-roles-in-server-2019-using-powershell/
+
+Import-Module activedirectory
+
+Move-ADDirectoryServerOperationMasterRole -Identity "Target_DC_Name" –OperationMasterRole 0,1,2,3,4 -Confirm:$false -Force
+
+Move-ADDirectoryServerOperationMasterRole -Identity "DC3" –OperationMasterRole 0,1,2,3,4 -Confirm:$false -Force
+

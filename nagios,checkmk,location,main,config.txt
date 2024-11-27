@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NAGIOS CONFIG CHECKMK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-05[May-Wed]15-55PM 
+
+sudo nano /opt/omd/sites/jgdc/etc/nagios/nagios.d/tuning.cfg

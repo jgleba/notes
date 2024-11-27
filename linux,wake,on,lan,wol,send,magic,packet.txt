@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WAKE ON LAN MAGIC PACKET SEND
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-06-01[Jun-Thu]14-30PM 
+
+etherwake interface
+
+wakeonlan interface

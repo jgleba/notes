@@ -1,0 +1,45 @@
+=================
+CENTOS LOG ROTATE
+04-27-2019
+=================
+
+sudo nano /etc/logrotate.d/syslog
+ 
+/var/log/cron
+/var/log/maillog
+/var/log/messages
+/var/log/secure
+/var/log/spooler
+{
+    missingok
+    sharedscripts
+    postrotate
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+    endscript
+}
+
+sudo nano /etc/logrotate.d/syslog2
+
+/var/log/docker/*/*.log
+/var/log/esxi/*/*.log
+/var/log/mail/*/*.log
+/var/log/router/*/*.log
+/var/log/ssh/*/*.log
+/var/log/web/*/*.log
+{
+    missingok
+    sharedscripts
+    postrotate
+        /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+    endscript
+}
+
+REBOOT
+
+==
+MANUAL RUN OF LOGROTATE
+==
+
+#https://www.shellhacks.com/logrotate-force-log-rotation/
+
+sudo logrotate -vf CONFIG_FILE

@@ -1,0 +1,35 @@
+===================================================================================
+INTERESTING VERY COMPRESSED FILE, IS 42MB, EXPANDS TO 4.6PB, APPARENLY 15 YEARS OLD
+071019
+JGleba
+===================================================================================
+
+#https://unforgettable.dk/
+
+42.zip
+
+Click here to download 42.zip(42.374 bytes zipped)
+
+The file contains 16 zipped files, which again contains 16 zipped files, which again contains 16 zipped files, which again contains 16 zipped, which again contains 16 zipped files, which contain 1 file, with the size of 4.3GB.
+
+So, if you extract all files, you will most likely run out of space :-)
+
+16 x 4294967295       = 68.719.476.720 (68GB)
+16 x 68719476720      = 1.099.511.627.520 (1TB)
+16 x 1099511627520    = 17.592.186.040.320 (17TB)
+16 x 17592186040320   = 281.474.976.645.120 (281TB)
+16 x 281474976645120  = 4.503.599.626.321.920 (4,5PB)
+
+
+Password: 42
+
+==
+
+#https://hardware.slashdot.org/story/19/07/10/2341251/the-most-clever-zip-bomb-ever-made-explodes-a-46mb-file-to-45-petabytes?utm_source=rss1.0mainlinkanon&utm_medium=feed
+
+==
+
+Programmer and engineer David Fifield has unveiled a brand-new Zip bomb that explodes a 46-megabyte file to 4.5 petabytes of data. Fifield's new type of "Zip bomb" or "compression bomb" is particularly novel because he "figured out how to 'overlap' files inside of a Zip archive, allowing for compression rates far beyond those of a traditional archive," reports Motherboard. From the report:
+In an email interview, Fifield noted that, while 42.zip (which has a 106 billion-to-one compression ratio and has been hosted on the same single-serving website for at least 15 years) gets much of the attention, he finds later attempts more technically interesting. "eI find 42.zip inspiring on an aesthetic level -- not so much the file itself but the circumstances around it," Fifield said. "It's like folklore. There must have been many examples of the same basic idea, but for whatever reason 42.zip is the one that had staying power."
+
+Fifield noted that part of what makes his process possible was by coming up with ways to handle cyclic redundancy checks, or CRCs, a basic error-correction functionality baked into Zip, PNG, Ethernet, and numerous other technical standards. Messing around with CRC -- 32 checksums, as they're called, was where Fifield said he learned the most. Fifield, who will present his findings at the USENIX Workshop on Offensive Technologies (WOOT) conference next month, noted that while the work itself adds to a history of research and likely will be superseded in the future, its benefit from an awareness standpoint is important. 

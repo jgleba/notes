@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL DOCKER NEWEST
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-21[Aug-Wed]13-14PM 
+
+#ADD DEPS
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+#GET REPO
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+#INSTALL DOCKER
+sudo yum install docker -y
+
+#ENABLE AND START
+sudo systemctl enable podman
+sudo systemctl start podman
+
+#INSTALL EPEL FOR PODMAN-COMPOSE
+sudo yum install epel-release -y
+
+#INSTALL PODMAN-COMPOSE
+sudo yum install podman-compose -y
+

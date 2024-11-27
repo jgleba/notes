@@ -1,0 +1,14 @@
+===============================
+mysql create database with dash
+===============================
+
+https://stackoverflow.com/questions/28881624/creating-database-via-bash-with-dash-in-database-name
+
+Either you quote the backticks or simply use single quotes instead double quotes around the command:
+
+mysql -uuser -ppw -e 'CREATE DATABASE IF NOT EXISTS `db-name` CHARACTER SET utf8 COLLATE utf8_general_ci'
+Otherwise the shell would expand the backticks to a command substitution. Check this: http://tldp.org/LDP/abs/html/commandsub.html
+
+WORKED
+
+create database `test-test`;

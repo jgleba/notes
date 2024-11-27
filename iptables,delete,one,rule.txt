@@ -1,0 +1,30 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  IPTABLES DELETE RULE 
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-02-15[Feb-Thu]16-27PM 
+
+##https://www.digitalocean.com/community/tutorials/how-to-list-and-delete-iptables-firewall-rules
+##https://stackoverflow.com/questions/41479879/how-to-check-prerouting-list-from-iptable-in-linux
+
+LIST RULES WITH SYNTAX TO DELETE
+
+sudo iptables -S
+
+DELETE ONE RULE
+
+sudo /sbin/iptables -D FORWARD -s 159.66.236.46/32 -d 192.168.0.2/32 -p udp -m udp --dport 12000 -j ACCEPT
+
+==
+
+ANOTHER WAY, DELETE BY LINE NUMBER
+
+
+LIST
+
+sudo iptables -L --line-numbers
+
+DELETE RULE BY CHAIN AND NUMBER
+
+sudo iptables -D FORWARD 4

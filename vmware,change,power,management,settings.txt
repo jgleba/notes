@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE CHANGE POWER MANAGEMENT SETTINGS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-02[Feb-Wed]09-26AM 
+
+##https://infohub.delltechnologies.com/l/day-three-best-practices-6/vmware-vsphere-power-management-policy

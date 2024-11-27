@@ -1,0 +1,23 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FIREFOX UBUNTU APT INSTALL 
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-10-15[Oct-Tue]11-51AM 
+
+##https://www.omgubuntu.co.uk/2022/04/how-to-install-firefox-deb-apt-ubuntu-22-04
+
+echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+
+echo '
+Package: *
+Pin: origin packages.mozilla.org
+Pin-Priority: 1000
+
+Package: firefox*
+Pin: release o=Ubuntu
+Pin-Priority: -1' | sudo tee /etc/apt/preferences.d/mozilla
+
+sudo apt update && sudo apt remove firefox
+
+sudo apt install firefox

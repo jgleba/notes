@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EVIL-WINRM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-03[Aug-Mon]23-27PM 
+
+sudo gem install evil-winrm
+
+evil-winrm -i ip -u user -p pass
+
+ALTERNATIVE?
+
+https://github.com/masterzen/winrm-cli

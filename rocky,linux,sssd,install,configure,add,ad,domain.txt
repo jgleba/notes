@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX SSSD INSTALL CONFIGURE JOIN TO AD DOMAIN, UBUNTU
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-07-26[Jul-Fri]19-24PM 
+
+##https://serverfault.com/questions/1010378/error-kdc-reply-did-not-match-expectations
+
+sudo yum install sssd realmd oddjob oddjob-mkhomedir adcli
+
+sudo apt install sssd realmd oddjob oddjob-mkhomedir adcli
+
+sudo realm join  --user=user@DOMAIN.LOCAL DOMAIN.LOCAL
+

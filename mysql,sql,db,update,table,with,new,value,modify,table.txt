@@ -1,0 +1,8 @@
+update yc3_config set config_value='https://classifieds.jgleba.com/' where group_name='general' and config_key='base_url';
+
+update yc3_config set config_value='https://classifieds2.jgleba.com/' where group_name='general' and config_key='base_url';
+
+##https://www.w3schools.com/sql/sql_update.asp
+
+MariaDB [vmail]> update alias set domain='jgleba.com' where address='example@gleba.ca';
+

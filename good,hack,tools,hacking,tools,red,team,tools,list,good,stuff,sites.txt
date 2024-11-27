@@ -1,0 +1,22 @@
+====================================================================
+POTENTIALLY GOOD RED TEAM TOOLS - OFTEN SEE GOOD THINGS ON THIS SITE
+KEEPING LIST
+083019
+JGLEBA
+====================================================================
+
+
+WIFI
+
+https://www.hacking.land/2019/08/hashcatch-capture-handshakes-of-nearby.html
+
+S3
+
+https://www.hacking.land/2019/08/slurp-s3-bucket-enumerator.html
+https://www.kitploit.com/2019/08/slurp-s3-bucket-enumerator.html
+https://www.darknet.org.uk/2019/07/slurp-amazon-aws-s3-bucket-enumerator/
+
+https://digi.ninja/projects/bucket_finder.php
+
+https://buckets.grayhatwarfare.com
+

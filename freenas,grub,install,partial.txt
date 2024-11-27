@@ -1,0 +1,13 @@
+ /mnt/pool1/repl-jfnas-pool1/fnasutil# grub-install /dev/da1
+Installing for i386-pc platform.
+grub-install: warning: this GPT partition label contains no BIOS Boot Partition; em                                                                                     bedding won't be possible.
+grub-install: error: filesystem `zfs' doesn't support blocklists.
+
+
+ grub-install --target=x86_64-efi /dev/da1
+ 
+grub-install --modules='zfs part_gpt' --target=i386-efi /dev/da1
+ 
+ 
+grub-install --modules='zfs part_gpt' --target=i386-efi --efi-directory=/boot/grub /dev/da1
+

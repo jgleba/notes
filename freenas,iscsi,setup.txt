@@ -1,0 +1,77 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FREENAS ISCSI SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-10[Dec-Thu]12-01PM 
+
+##https://thesolving.com/storage/how-to-create-an-iscsi-target-with-freenas/
+
+TURN ON ISCSI IN SERVICES
+
+CLICK SETTINGS, BRINGS TO ISCSI BLOCK TAB
+
+==
+
+CREATE PORTAL
+
+ADD IP IN PORTAL
+
+==
+
+ADD TARGET
+
+ADD NAME TO TARGET
+
+PICK PORTAL GROUP ID
+
+==
+
+ADD EXTENT
+
+PICK FILE
+
+CHANGE SIZE TO 100GB
+
+==
+
+BACK TO BLOCK(ISCSI) TAB / ASSOCIATED TARGETS
+
+ADD TARGET/EXTENT
+
+PICK TARGET AND EXTENT THAT ARE AVAILABLE
+
+==
+
+CONNECT ISCSI ON ESXI
+
+Go Storage > Adaptors > Software iSCSI
+
+==
+
+NOT WORKING
+
+==
+
+VSPHERE CLIENT
+
+==
+
+CONFIGURATION -> STORAGE ADAPTERS
+
+CREATE NEW SOFTWARE ISCSI
+
+IN DYNAMIC DISCOVERY ADD ISCSI SERVER IP
+
+==
+
+RESCAN STORAGE
+
+ADD STORAGE LIKE NORMAL, CHOOSE DISK/LUN
+
+ISCSI SHOWS UP
+
+==
+
+GOT WORKING
+

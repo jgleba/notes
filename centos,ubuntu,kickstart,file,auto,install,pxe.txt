@@ -1,0 +1,585 @@
+=======================================================
+CENTOS AND UBUNTU AUTO INSTALL / KICKSTART FILE VIA PXE
+111519
+=======================================================
+
+##https://docs.centos.org/en-US/centos/install-guide/Kickstart2/
+##https://docs.centos.org/en-US/centos/install-guide/adminoptions/
+
+##https://gainanov.pro/eng-blog/linux/centos-installation-with-kickstart/
+
+
+##https://www.alteeve.com/w/File_c6_minimal.ks
+##https://unix.stackexchange.com/questions/481990/kickstart-netinstall-ignores-kickstart-file-hosted-in-lan-and-proceeds-with-manu
+##https://www.tecmint.com/multiple-centos-installations-using-kickstart/
+
+CENTOS REPOS INFO
+##https://serverfault.com/questions/315313/installing-yum-repositories-that-are-specified-in-kickstart-file
+
+==
+GOOD KICKSTART EXAMPLE FILE
+==
+
+#version=RHEL7
+# System authorization information
+auth --enableshadow --passalgo=sha512
+
+# Use network installation
+url --url="ftp://172.16.0.45/0/ks.cfg"
+# Run the Setup Agent on first boot
+firstboot --enable
+ignoredisk --only-use=sda
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# Network information
+network  --bootproto=dhcp --device=eno16777736 --ipv6=auto --activate
+network  --hostname=localhost.localdomain
+# Root password
+rootpw --iscrypted xxxx
+# System services
+services --enabled="chronyd"
+# System timezone
+timezone Europe/Bucharest --isUtc
+# System bootloader configuration
+bootloader --location=mbr --boot-drive=sda
+# Partition clearing information
+clearpart --none --initlabel
+# Disk partitioning information
+part pv.20 --fstype="lvmpv" --ondisk=sda --size=19979
+part /boot --fstype="xfs" --ondisk=sda --size=500
+volgroup centos --pesize=4096 pv.20
+logvol /  --fstype="xfs" --grow --maxsize=51200 --size=1024 --name=root --vgname=centos
+logvol swap  --fstype="swap" --size=2048 --name=swap01 --vgname=centos
+
+%packages
+@compat-libraries
+@core
+wget
+nano
+net-tools
+chrony
+
+%end
+
+==
+EXAMPLE KICKSTART FILE END
+==
+
+
+==
+TESTING BOOT OPTIONS, NOT WORKING TO SELECT KEYBOARD, TIMEZONE, LANGUAGE - ONLY US KEYBOARD WORKING
+==
+
+inst.keymap=--vckeymap=us --xlayouts='us'
+en_US.UTF-8 utf8 latarcyrheb-sun16 English (USA
+inst.lang=en_US.UTF-8
+inst.geoloc=America/Toronto
+
+==
+KICKSTART FILE BOOT OPTION
+==
+
+inst.ks=172.16.0.45/0/ks.cfg
+
+
+==
+FOG CONFIG, CENTOS USE KICKSTART FILE
+==
+
+KIND OF WORKING
+
+kernel tftp://${fog-ip}/os/centos7-1908-netinstall/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1908-netinstall/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1908-netinstall/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1908-netinstall inst.ks=http://172.16.0.45/0/ks.cfg splash quiet
+boot || goto MENU
+
+NOT WORKING
+
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7 inst.ks=172.16.0.45/0/ks.cfg splash quiet
+boot || goto MENU
+
+ORIG
+
+kernel tftp://${fog-ip}/os/centos7/vmlinuz
+initrd tftp://${fog-ip}/os/centos7/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7 locale=en_US.UTF-8 splash quiet
+boot || goto MENU
+
+
+
+
+
+
+==
+LATEST LIVE
+DOESNT ACTUALLY AUTO INSTALL
+ONLY GOING GUI, EVEN THOUGH TEXT SPECIFIED
+TIMEZONE NOT WORKING
+==
+
+/var/www/html/fog/0/ks.cfg
+
+
+##CENTOS7 KICKSTART INSTALL FILE
+##JGLEBA
+##111519
+##MOST TAKEN FROM
+##https://www.alteeve.com/w/File_c6_minimal.ks
+##https://docs.centos.org/en-US/centos/install-guide/adminoptions/
+##https://docs.centos.org/en-US/centos/install-guide/Kickstart2/
+
+#version=RHEL7
+
+install
+text
+
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# System timezone
+##NOT WORKING
+timezone --utc America/Toronto
+#timezone America/Toronto
+##"timezone America/Toronto --isUtc --nontp"
+##"timezone Americas/Toronto --nontp"
+##timezone Americas/Toronto --ntpservers=0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.centos.pool.ntp.org,3.centos.pool.ntp.org
+##timezone --nontp
+
+# This sets the (first) ethernet device. There is currently no way to map
+# device names to physical interfaces. For this reason, I use DHCP for install
+# and configure the network manually post-install.
+network --device eth0 --bootproto dhcp --onboot yes --hostname minimal.alteeve.com
+
+# This is the root user's password, which is "initial". To change this, set the
+# password you want for a user on an existing system. Once set, look in
+# '/etc/shadow' for the line starting with the user name whom you set the
+# password for. Here is an example for the user 'digimer':
+# digimer:$6$YEoLNxHI$cu/673fGD/BPqfuserRCd0F6ZRqHhkfbI6HPdy1YuKBoxA6AW7eyyWC2NmkQ/czP1dzXfBn5uJbdn/HR84i.WhO1:14896:0:99999:7:::
+# The part to copy below falls between the first and second ':' character.
+authconfig --enableshadow --passalgo=sha512 --enablefingerprint
+
+##SE Linux OFF
+selinux --disabled
+
+# Given how often I rebuild machines, I like to pre-define the initial user and
+# thus skip 'firstboot' to save time.
+firstboot --disable
+
+# System bootloader configuration
+bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+part /boot --fstype=xfs --onpart=sda1 --size=512
+part /root --fstype=xfs --onpart=sda2 --size=4096
+
+# Accept EULA
+eula --agreed
+
+rootpw --iscrypted xxxx
+user --name=user --groups=wheel --iscrypted --password=xxxx
+
+# These options allow me to disable and enable services. Given that we're
+# building servers, I particularly like to replace 'NetworkManager' with the
+# simpler, and more static, 'network' service. If you want to add additional
+# services, seperate the service names with commans. (ie: foo,bar,baz).
+services --disabled NetworkManager,iptables,iptables,ip6tables
+services --enabled network
+
+%packages
+@core
+nano
+wget
+%end
+
+# Restart after installation
+reboot
+
+# Post-installation
+/usr/bin/yum -y update
+[user@zxpxe 0]$ pwd
+/var/www/html/fog/0
+[user@zxpxe 0]$ sudo nano ks.cfg
+[sudo] password for user:
+[user@zxpxe 0]$ sudo nano ks.cfg
+[user@zxpxe 0]$ sudo nano ks.cfg
+[user@zxpxe 0]$ sudo nano ks.cfg
+[user@zxpxe 0]$ sudo cat ks.cfg
+##CENTOS7 KICKSTART INSTALL FILE
+##JGLEBA
+##111519
+##MOST TAKEN FROM
+##https://www.alteeve.com/w/File_c6_minimal.ks
+##https://docs.centos.org/en-US/centos/install-guide/adminoptions/
+##https://docs.centos.org/en-US/centos/install-guide/Kickstart2/
+##https://unix.stackexchange.com/questions/481990/kickstart-netinstall-ignores-kickstart-file-hosted-in-lan-and-proceeds-with-manu
+
+#version=RHEL7
+
+install
+#text
+
+# Keyboard layouts
+#keyboard --vckeymap=us --xlayouts='us'
+keyboard 'us'
+
+# System language
+lang en_US.UTF-8
+
+# System timezone
+##NOT WORKING
+#timezone --utc America/Toronto
+timezone America/Toronto
+##"timezone America/Toronto --isUtc --nontp"
+##"timezone Americas/Toronto --nontp"
+##timezone Americas/Toronto --ntpservers=0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.centos.pool.ntp.org,3.centos.pool.ntp.org
+##timezone --nontp
+
+# This sets the (first) ethernet device. There is currently no way to map
+# device names to physical interfaces. For this reason, I use DHCP for install
+# and configure the network manually post-install.
+network --device eth0 --bootproto dhcp --onboot yes --hostname centos1.jgleba.com
+
+# This is the root user's password, which is "initial". To change this, set the
+# password you want for a user on an existing system. Once set, look in
+# '/etc/shadow' for the line starting with the user name whom you set the
+# password for. Here is an example for the user 'digimer':
+# digimer:$6$YEoLNxHI$cu/673fGD/BPqfuserRCd0F6ZRqHhkfbI6HPdy1YuKBoxA6AW7eyyWC2NmkQ/czP1dzXfBn5uJbdn/HR84i.WhO1:14896:0:99999:7:::
+# The part to copy below falls between the first and second ':' character.
+authconfig --enableshadow --passalgo=sha512 --enablefingerprint
+
+# Use graphical install
+graphical
+
+# Do not configure the X Window System
+skipx
+
+##SE Linux OFF
+selinux --disabled
+
+# Given how often I rebuild machines, I like to pre-define the initial user and
+# thus skip 'firstboot' to save time.
+firstboot --disable
+
+# System bootloader configuration
+#bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+#part /boot --fstype=xfs --onpart=sda1 --size=512
+#part /root --fstype=xfs --onpart=sda2 --size=4096
+bootloader --location=mbr
+autopart --type=lvm
+
+# Clear the Master Boot Record
+zerombr
+# Partition clearing information
+clearpart --all
+
+# Accept EULA
+eula --agreed
+
+rootpw --iscrypted xxxxxxxxxxx
+user --name=user --groups=wheel --iscrypted --password=xxxxxxxxxxx
+
+# These options allow me to disable and enable services. Given that we're
+# building servers, I particularly like to replace 'NetworkManager' with the
+# simpler, and more static, 'network' service. If you want to add additional
+# services, seperate the service names with commans. (ie: foo,bar,baz).
+services --disabled NetworkManager,iptables,iptables,ip6tables
+services --enabled network
+
+%packages
+@core
+nano
+wget
+%end
+
+# Restart after installation
+reboot
+
+# Post-installation
+/usr/bin/yum -y update
+
+
+==
+LATEST
+==
+
+[user@zxpxe images]$ sudo cat /var/www/html/fog/0/ks.cfg
+##CENTOS7 KICKSTART INSTALL FILE
+##JGLEBA
+##111519
+##MOST TAKEN FROM
+##https://www.alteeve.com/w/File_c6_minimal.ks
+##https://docs.centos.org/en-US/centos/install-guide/adminoptions/
+##https://docs.centos.org/en-US/centos/install-guide/Kickstart2/
+##https://unix.stackexchange.com/questions/481990/kickstart-netinstall-ignores-kickstart-file-hosted-in-lan-and-proceeds-with-manu
+
+#version=RHEL7
+
+install
+#text
+
+# Keyboard layouts
+#keyboard --vckeymap=us --xlayouts='us'
+keyboard 'us'
+
+# System language
+lang en_US.UTF-8
+
+# System timezone
+##NOT WORKING
+timezone America/Toronto --isUtc --nontp
+##timezone --utc America/Toronto
+##timezone America/Toronto
+##"timezone America/Toronto --isUtc --nontp"
+##"timezone Americas/Toronto --nontp"
+##timezone Americas/Toronto --ntpservers=0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.centos.pool.ntp.org,3.centos.pool.ntp.org
+##timezone --nontp
+
+# Use network installation
+url --url="http://172.16.0.45/images/os/centos7-1908-netinstall/"
+
+# This sets the (first) ethernet device. There is currently no way to map
+# device names to physical interfaces. For this reason, I use DHCP for install
+# and configure the network manually post-install.
+network --device eth0 --bootproto dhcp --onboot yes --hostname centos1.jgleba.com
+
+# This is the root user's password, which is "initial". To change this, set the
+# password you want for a user on an existing system. Once set, look in
+# '/etc/shadow' for the line starting with the user name whom you set the
+# password for. Here is an example for the user 'digimer':
+# digimer:$6$YEoLNxHI$cu/673fGD/BPqfuserRCd0F6ZRqHhkfbI6HPdy1YuKBoxA6AW7eyyWC2NmkQ/czP1dzXfBn5uJbdn/HR84i.WhO1:14896:0:99999:7:::
+# The part to copy below falls between the first and second ':' character.
+authconfig --enableshadow --passalgo=sha512 --enablefingerprint
+
+# Use graphical install
+graphical
+
+# Do not configure the X Window System
+skipx
+
+##SE Linux OFF
+selinux --disabled
+
+# Given how often I rebuild machines, I like to pre-define the initial user and
+# thus skip 'firstboot' to save time.
+firstboot --disable
+
+# System bootloader configuration
+#bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+#part /boot --fstype=xfs --onpart=sda1 --size=512
+#part /root --fstype=xfs --onpart=sda2 --size=4096
+bootloader --location=mbr
+autopart --type=lvm
+
+# Clear the Master Boot Record
+zerombr
+# Partition clearing information
+clearpart --all
+
+# Accept EULA
+eula --agreed
+
+rootpw --iscrypted xxxx
+##user --name=user --groups=wheel --iscrypted --password=xxxxx
+user --groups=wheel --name=user --password=xxxx --iscrypted --gecos="user"
+
+# These options allow me to disable and enable services. Given that we're
+# building servers, I particularly like to replace 'NetworkManager' with the
+# simpler, and more static, 'network' service. If you want to add additional
+# services, seperate the service names with commans. (ie: foo,bar,baz).
+services --disabled NetworkManager,iptables,iptables,ip6tables
+services --enabled network
+
+%packages
+#@core
+#nano
+#wget
+%end
+
+# Partition clearing information
+clearpart --none --initlabel
+
+# Restart after installation
+reboot
+
+# Post-installation
+#/usr/bin/yum -y update
+
+
+
+=====
+=====
+=====
+WORKING
+=====
+=====
+=====
+
+
+
+
+[user@zxpxe os]$ sudo cat /var/www/html/fog/0/centos7-1908/ks.cfg
+##CENTOS7 KICKSTART INSTALL FILE
+##JGLEBA
+##111519
+##MOST TAKEN FROM
+##https://www.alteeve.com/w/File_c6_minimal.ks
+##https://docs.centos.org/en-US/centos/install-guide/adminoptions/
+##https://docs.centos.org/en-US/centos/install-guide/Kickstart2/
+##https://unix.stackexchange.com/questions/481990/kickstart-netinstall-ignores-kickstart-file-hosted-in-lan-and-proceeds-with-manu
+##https://github.com/joyent/mi-centos-7/blob/master/ks.cfg
+
+#version=RHEL7
+
+install
+
+# Use text install
+text
+
+# Use graphical install
+#graphical
+
+# Keyboard layouts
+keyboard 'us'
+#keyboard --vckeymap=us --xlayouts='us'
+
+# System language
+lang en_US.UTF-8
+
+# System timezone
+##NOT WORKING
+timezone America/Toronto --isUtc --nontp
+##timezone America/Toronto --ntpservers=0.centos.pool.ntp.org,1.centos.pool.ntp.org,2.centos.pool.ntp.org,3.centos.pool.ntp.org
+
+# Use network installation
+url --url="http://172.16.0.45/images/os/centos7-1908"
+
+# Set repo to mirror.centos.org
+#repo --name="CentOS" --baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/ --cost=100
+#repo --name="Updates" --baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/ --cost=100
+
+# This sets the (first) ethernet device. There is currently no way to map
+# device names to physical interfaces. For this reason, I use DHCP for install
+# and configure the network manually post-install.
+network --device eth0 --bootproto dhcp --onboot yes --hostname centos.local
+
+# This is the root user's password, which is "initial". To change this, set the
+# password you want for a user on an existing system. Once set, look in
+# '/etc/shadow' for the line starting with the user name whom you set the
+# password for. Here is an example for the user 'digimer':
+# digimer:$6$YEoLNxHI$cu/673fGD/BPqfuserRCd0F6ZRqHhkfbI6HPdy1YuKBoxA6AW7eyyWC2NmkQ/czP1dzXfBn5uJbdn/HR84i.WhO1:14896:0:99999:7:::
+# The part to copy below falls between the first and second ':' character.
+authconfig --enableshadow --passalgo=sha512 --enablefingerprint
+
+# Do not configure the X Window System
+skipx
+
+##SE Linux OFF
+selinux --disabled
+
+# Given how often I rebuild machines, I like to pre-define the initial user and
+# thus skip 'firstboot' to save time.
+firstboot --disable
+
+# System bootloader configuration
+bootloader --location=mbr
+autopart --type=lvm
+##NOTWORKING
+#bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
+#part /boot --fstype=xfs --onpart=sda1 --size=512
+#part /root --fstype=xfs --onpart=sda2 --size=4096
+
+# Clear the Master Boot Record
+zerombr
+# Partition clearing information
+clearpart --all
+
+# Accept EULA
+eula --agreed
+
+rootpw --iscrypted xxxxxxxxx
+user --groups=wheel --name=user --password=xxxxxxxxxxxxxxxx --iscrypted --gecos="user"
+
+# These options allow me to disable and enable services. Given that we're
+# building servers, I particularly like to replace 'NetworkManager' with the
+# simpler, and more static, 'network' service. If you want to add additional
+# services, seperate the service names with commans. (ie: foo,bar,baz).
+services --disabled NetworkManager,iptables,iptables,ip6tables
+services --enabled network
+
+%packages
+#@core
+##NOTFOUND
+#nano
+#wget
+%end
+
+# Partition clearing information
+clearpart --none --initlabel
+
+# Restart after installation
+reboot
+
+#NOTWORKING
+# Post-installation
+#/usr/bin/yum -y update
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+==
+DUHH I GUESS THAT IS WHAT THIS FILE IS FOR
+/root/anaconda-ks.cfg
+==
+
+[root@zxpxe ~]# sudo cat anaconda-ks.cfg
+#version=RHEL7
+# System authorization information
+auth --enableshadow --passalgo=sha512
+
+# Use CDROM installation media
+cdrom
+# Run the Setup Agent on first boot
+firstboot --enable
+ignoredisk --only-use=sda
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# Network information
+network  --bootproto=static --device=eno16777984 --gateway=172.16.0.254 --ip=172.16.0.45 --nameserver=172.16.0.10,172.16.0.11 --netmask=255.255.255.0 --noipv6 --activate
+network  --hostname=zxpxe
+# Root password
+rootpw --iscrypted xxxxx
+# System timezone
+timezone America/Toronto --isUtc --nontp
+user --groups=wheel --name=user --password=xxxxx --iscrypted --gecos="user"
+# System bootloader configuration
+bootloader --location=mbr --boot-drive=sda
+autopart --type=lvm
+# Partition clearing information
+clearpart --none --initlabel
+
+%packages
+@core
+
+%end
+
+

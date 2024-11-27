@@ -1,0 +1,17 @@
+sudo docker run --network host -d -h cent-d1 -v /j:/j -w /j/docker/ --name cent-d1 -it ubuntu boot.sh
+
+sudo docker run --network host -d -u root -h ubu-d1 -w /j/ -v /j/boot.sh/:/j/boot.sh --name ubu-d1 -it ubuntu  bash -c /j/boot.sh
+
+sudo docker run --network host -d -u root -h ubu-d1 -w /j/ -v /j/boot.sh/:/j/boot.sh --name ubu-d1 -it ubuntu bash
+
+
+sudo docker run -d -h nginx1 --name nginx1 -v /j:/usr/share/nginx/html -p 80:80 -u root nginx
+
+
+FROM docker.io/centos
+RUN yum update -y && yum -y install httpd wget htop net-tools
+RUN mkdir -p /j/bin
+WORKDIR /j
+VOLUME /j:/j
+
+CMD python app.py

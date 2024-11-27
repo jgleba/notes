@@ -1,0 +1,29 @@
+============================================================
+DISABLE SWAP FROM VMWARE IN VMX FILE AND IN VM MEMORY CONFIG
+111719
+============================================================
+
+##https://kb.vmware.com/s/article/2146618
+
+
+REMOVED FROM VMX FILE
+
+sched.swap.derivedName = "/vmfs/volumes/7b556c2e-80d87e63/o/vm/infra/COSCMK/COSCMK-b010dfe0.vswp"
+
+ADDED TO VMX FILE
+
+sched.swap.vmxSwapEnabled = "FALSE"
+
+LAST PART IS TO EDIT VM SETTINGS IN MEMORY CHECK THE BOX THAT SAYS "Reserve all guest memory (All Locked)"
+
+NNED TO SHUTDOWN VM FOR SWAP FILES TO DISAPPEAR
+
+THIS IS ALSO AFTER SWAP HAS ALREADY BEEN DISABLED INSIDE THE GUEST OS
+
+==
+
+NEED TO TRY SED METHOD - NOT WORKING
+
+sed -i /sched.swap.derivedName*/c\sched.swap.vmxSwapEnabled = "FALSE" /mnt/pool1/COSTBELT/COSTBELT.vmx
+
+sed -i /sched.swap.derivedName*/sched.swap.vmxSwapEnabled = "FALSE" /mnt/pool1/COSTBELT/COSTBELT.vmx

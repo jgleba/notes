@@ -1,0 +1,1 @@
+00 12 * * 1-6                          /usr/sbin/ntpdate -v ntp0.oleane.net

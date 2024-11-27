@@ -1,0 +1,260 @@
+================================================
+VMWARE POWERCLI INSTALL - USE TO EDIT, CREATE VM
+NOTES ROUGH ALL
+082819
+JGleba
+================================================
+
+##https://vmguru.com/2015/12/powershell-friday-adding-memory/
+##https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.powercli.cmdletref.doc%2FNew-VM.html
+
+==
+NEED TO INSTALL POWERCLI ON WIN BOX FROM VMWARE WEBSITE
+==
+
+##https://code.vmware.com/web/tool/11.4.0/vmware-powercli
+
+==
+ON MACHINE, WHERE ADMINISTERING
+==
+
+START -> search for "power" -> VMWare PowerCLI
+
+OR
+
+open powershell
+
+Import-module VMware.VimAutomation.Core
+
+THEN CONNECT TO VCENTER
+
+Connect-VIServer vcenterIP
+
+CONNECTED WITH CORP CREDS BECAUSE ALREADY AUTHENTICATED
+
+==
+TRYING TO INSTALL POWERCLI FOR JGDC1 ON MAIN JWORK - 082919
+==
+
+getting error
+
+PS C:\Users\jg> Import-module VMware.VimAutomation.Core
+Import-Module : File C:\Program Files (x86)\VMware\Infrastructure\PowerCLI\Modu
+les\VMware.VimAutomation.Sdk\VMware.VimAutomation.Sdk.ps1 cannot be loaded
+because running scripts is disabled on this system. For more information, see
+about_Execution_Policies at http://go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
++ Import-module VMware.VimAutomation.Core
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : SecurityError: (:) [Import-Module], PSSecurityEx
+   ception
+    + FullyQualifiedErrorId : UnauthorizedAccess,Microsoft.PowerShell.Commands
+   .ImportModuleCommand
+PS C:\Users\jg>
+
+##http://mvsourcecode.com/powercli-powerclienvironment-ps1-cannot-be-loaded-because-running-scripts-is-disabled-on-this-system/
+
+Set-ExecutionPolicy RemoteSigned
+
+==
+STILL ERROR - NEED ADMIN CMD/PS
+AFTER EXEC POLICY CHANGE NOW WORKING
+==
+
+==
+CREATE VM - BEST - WORKING WITH VARIABLES
+==
+
+$VMNAME = "TEST1"
+$DISK = "10"
+$CPUCOUNT = "2"
+$MEMORYGB = "2"
+$DATASTORE = "fnas"
+$VMNETWORK = "VLAN"
+
+New-VM –Name $VMNAME -ResourcePool JGDC1Cluster1  –DiskGB $DISK –DiskStorageFormat Thin –DataStore $DATASTORE -Location $DATASTOREFOLDER –MemoryGB $MEMORYGB -NumCpu $CPUCOUNT –NetworkName $VMNETWORK
+Get-VM -Name $VMNAME | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name $VMNAME | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false
+
+==
+GET INFO ABOUT VM
+==
+
+Get-VM -Name MyVM
+
+==
+START / POWER ON VM
+==
+
+Start-VM -Name MyVM
+
+==
+RESTART VM
+==
+
+Restart-VM -Name MyVM
+Restart-VM MyVM -Confirm:$false
+
+==
+STOP / POWER OFF VM
+==
+
+Stop-VM -Name MyVM
+
+==
+CHANGE RAM ON VM
+==
+
+Get-VM -Name MyVM |Set-VM -MemoryGB 12
+
+==
+SET CD FOR ISO FOR GUEST OS INSTALL
+==
+
+$isopath = "[datastore3] ISO\en_sql_server_2012_standard_edition_with_sp1_x86_x64_dvd_1228143.iso"
+get-cddrive -VM "MyVM" | set-cddrive -IsoPath $isopath -Connected $true
+
+==
+SET CD DRIVE EMPTY AFTER INSTALL
+==
+
+get-cddrive -VM "MyVM" | set-cddrive -NoMedia
+
+==
+SET NTP FOR ESXI HOST
+==
+
+Get-VMHost esx01 | Add-VMHostNtpServer -NtpServer ntpservername
+
+==
+CHANGE NETWORK ADAPTER
+==
+
+##https://pubs.vmware.com/vsphere-51/index.jsp?topic=%2Fcom.vmware.powercli.cmdletref.doc%2FSet-NetworkAdapter.html
+
+Get-VM -Name "TEST1" | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false
+
+==
+CHANGE SCSI CONTROLLER
+==
+
+Get-VM -Name "$VMNAME" | Get-ScsiController | Set-ScsiController -Type Paravirtual
+
+==
+REMOVE FROM INVENTORY AND DELETE VM FROM DISK
+==
+
+Remove-VM MyVM -DeletePermanently:$true -Confirm:$false
+
+==
+GET VMS WITH NAMES LIKE, SHOW NETWORK AND MAC ADDRESS
+==
+
+Get-VM -Name "KUBE1*" | Get-NetworkAdapter | Select-Object Parent,NetworkName,MacAddress
+
+==
+REGISTER VM
+==
+
+New-VM -VMFilePath "[DATASTORE] vmfolder/vmname.vmx" -VMHost (Get-Cluster "clustername" | Get-VMHost | Get-Random) -Location (Get-Folder foldername) -RunAsync
+
+
+
+==
+CREATE VM - WORKING - 111519
+==
+
+New-VM –Name "TEST1" -ResourcePool JGDC1Cluster1  –DiskGB 10 –DiskStorageFormat Thin –DataStore fnas –MemoryGB 2 -NumCpu 2 –NetworkName "VLAN"
+Get-VM -Name "TEST1" | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name "TEST1" | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false
+
+==
+NEW VM
+==
+
+##https://www.altaro.com/vmware/5-powercli-cmdlets-every-administrator-know/
+
+New-VM –Name "MyVM" –VMHost esxi01 –ResourcePool Production –DiskGB 20 –DiskStorageFormat Thin –DataStore datastore1 –MemoryGB 3 –NetworkName "ProdNetwork"
+New-VM –Name "MyVM" –VMHost esxi01 –DiskGB 20 –DiskStorageFormat Thin –DataStore datastore1 –MemoryGB 3 –NetworkName "ProdNetwork"
+
+==
+LATEST, ACTUALLY TRYING CREATE VM FROM COMMAND LINE
+111519
+==
+
+START -> search for "power" -> VMWare PowerCLI
+
+Connect-VIServer 172.16.2.42
+
+sign in
+
+==
+CREATE VM - WORKING - 111519
+==
+
+New-VM –Name "TEST1" -ResourcePool JGDC1Cluster1  –DiskGB 10 –DiskStorageFormat Thin –DataStore fnas –MemoryGB 2 -NumCpu 2 –NetworkName "VLAN"
+Get-VM -Name "TEST1" | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name "TEST1" | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false
+
+==
+TESTING WITH VARIABLES, WORKING
+==
+
+$VMNAME = "TEST1"
+$DISK = "10"
+$CPUCOUNT = "2"
+$MEMORYGB = "2"
+$DATASTORE = "fnas"
+$VMNETWORK = "VLAN"
+
+New-VM –Name $VMNAME -ResourcePool JGDC1Cluster1  –DiskGB $DISK –DiskStorageFormat Thin –DataStore $DATASTORE -Location $DATASTOREFOLDER –MemoryGB $MEMORYGB -NumCpu $CPUCOUNT –NetworkName $VMNETWORK
+Get-VM -Name $VMNAME | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name $VMNAME | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false
+
+==
+DEALING WITH FOLDERS FOR DATASTORE
+==
+
+##https://communities.vmware.com/thread/459202
+
+ -Location (Get-Folder vm | where {$_.Parent -like "o"})
+ 
+ ==
+
+$folder = 'PARENT\CHILD'
+$vmpath = get-folderbypath -folder $folder -separator '\'
+New-vm ... -Location $vmpath ....
+
+==
+MORE TESTING
+==
+
+==
+NOT SURE IF WILL WORK
+==
+
+$sourceVC = Connect-VIServer -Server ip -User user@domain.local -Password VMware1!
+$targetVC = Connect-VIServer -Server ip -User user@domain.local -Password 
+$vmhost = "ip"
+$vm = Get-VM -Server $sourceVC ""
+Move-VM -VM $vm -VMotionPriority High -Destination (Get-VMhost -Server $targetVC -Name $vmhost) -Datastore (Get-Datastore -Server $targetVC -Name iSCSI-01)
+
+==
+TESTING MOVING VM TO NEW FOLDER - NOT LOOKING PROMISING
+==
+
+##https://stackoverflow.com/questions/40596014/moving-vm-to-a-folder-within-datacenter
+
+Move-VM $vm -Datastore ($vm | Get-Datastore) -Destination Test
+Move-VM TEST1 -Datastore (TEST1 | Get-Datastore) -Destination 
+Move-VM TEST1 -Destination  ((TEST1 | Get-Datacenter) | Get-Folder -Name "o" )
+
+##https://jackiechen.org/2011/11/01/moving-vm-to-folder-in-vcenter/
+
+Move-VM -VM vm-name -Destination folder-name
+
+Get-Folder
+
+Move-VM -VM TEST1 -Destination webcl
+
+NOT DOING WHAT I THINK IT DOES

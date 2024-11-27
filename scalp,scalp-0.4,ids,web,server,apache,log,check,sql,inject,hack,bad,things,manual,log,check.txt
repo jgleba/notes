@@ -1,0 +1,130 @@
+==============================================================
+SCALP 0.4 - MANUAL LOG CHECK FOR BAD THINGS IN APACHE LOGS
+081519
+==============================================================
+
+#https://github.com/hphelion/tools/blob/master/scalp-0.4.py
+#https://raw.githubusercontent.com/hphelion/tools/master/scalp-0.4.py
+#http://natesbox.com/blog/assets/default_filter.txt
+
+==
+SETUP
+==
+
+copy both scalp-0.4.py and default_filter.txt into a working directory
+sudo mv default_filter.txt default_filter.xml
+
+start using by pointing to log file to analyize
+
+==
+USAGE
+==
+
+SFA WORKED
+python scalp-0.4.py  --log /root/attack-check-081519/access_log-trim2 --filters default_filter.xml   –o output –html
+
+JG HAPROXY, NGINX - NO WORK
+python scalp-0.4.py  --log /var/log/web/172.16.3.201/nginx.log --filters default_filter.xml   –o output –html
+
+JG APACHE - WORKED
+python scalp-0.4.py  --log /var/log/web/172.16.3.22/httpd.log --filters default_filter.xml   –o output –html
+
+Loading XML file 'default_filter.xml'...
+Processing the file '/var/log/web/172.16.3.22/httpd.log'...
+Scalp results:
+        Processed 3904 lines over 3918
+        Found 17 attack patterns in 3.095002 s
+Generating output in /path/to/attack-check-scalp04/httpd.log_scalp_*
+Cannot open the file: /path/to/attack-check-scalp04/httpd.log_scalp_Thu-15-Aug-2019.txt
+
+==
+
+sudo python scalp-0.4.py  --log /var/log/web/172.16.3.22/httpd.log --filters default_filter.xml   –o output –html
+Loading XML file 'default_filter.xml'...
+Processing the file '/var/log/web/172.16.3.22/httpd.log'...
+Scalp results:
+        Processed 3939 lines over 3953
+        Found 17 attack patterns in 3.262478 s
+Generating output in /path/to/attack-check-scalp04/httpd.log_scalp_*
+
+==
+RESULTS EXAMPLE
+==
+
+[user@zxlog attack-check-scalp04]$ cat httpd.log_scalp_Thu-15-Aug-2019.txt
+
+#
+# File created by Scalp! by Romain Gaucher - http://code.google.com/p/apache-scalp
+# Apache log attack analysis tool based on PHP-IDS filters
+#
+Scalped file: httpd.log
+Creation date: Thu-15-Aug-2019
+
+Attack type: files
+Attack Cross-Site Scripting (xss)
+
+        ### Impact 5
+        2019-08-15T05:25:10-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:25:09 -0400] "GET /confirm.php?id=13406&hash=9bc5e1e21e1f399adbd1fb4fbf07fac4 HTTP/1.1" 200 2896 "https://auction2.jgleba.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.99" "107.161.94.107, 172.69.33.215"
+        Reason: "Detects hash-contained xss payload attacks, setter usage and property overloading"
+
+        2019-08-15T05:42:51-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:42:47 -0400] "GET /confirm.php?id=13047&hash=dcaa64cf7fce0299a0d4e08636ee7478 HTTP/1.1" 200 2898 "https://auction2.jgleba.com/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2909.87 Safari/537.36" "45.10.239.17, 172.68.102.10"
+        Reason: "Detects hash-contained xss payload attacks, setter usage and property overloading"
+
+        2019-08-15T09:26:32-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:09:26:25 -0400] "GET /confirm.php?id=13363&hash=3a0aed6288e420eb365f35a56b9c6e09 HTTP/1.1" 200 2896 "https://auction2.jgleba.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Whale/1.0.40.10 Safari/537.36" "209.99.174.44, 162.158.79.89"
+        Reason: "Detects hash-contained xss payload attacks, setter usage and property overloading"
+
+
+        ### Impact 4
+        2019-08-15T04:11:46-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:04:11:43 -0400] "GET /index.php?returnto=Special%3AWhatLinksHere%2FExchange%2B2013%2BAllow%2Brelay%2Bto%2Bany%2Bdomain&returntoquery=hidetrans%3D1%26printable%3Dyes&title=Special%3AUserLogin HTTP/1.1" 200 3724 "-" "Mozilla/5.0 (compatible; SemrushBot/3~bl; +http://www.semrush.com/bot.html)" "46.229.168.153, 172.69.63.29"
+        Reason: "Detects JavaScript language constructs"
+
+        2019-08-15T07:20:06-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:07:20:05 -0400] "GET /index.php?printable=yes&returnto=Exchange%2B2013%2BAllow%2Brelay%2Bto%2Bany%2Bdomain&returntoquery=action%3Dedit&title=Special%3AUserLogin HTTP/1.1" 200 3659 "-" "Mozilla/5.0 (compatible; SemrushBot/3~bl; +http://www.semrush.com/bot.html)" "46.229.168.150, 172.69.63.67"
+        Reason: "Detects JavaScript language constructs"
+
+        2019-08-15T08:36:50-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:08:36:47 -0400] "GET /services?sort=published-asc HTTP/1.1" 200 4636 "-" "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)" "141.8.144.1, 172.68.11.143"
+        Reason: "Detects JavaScript array properties and methods"
+
+Attack Cross-Site Request Forgery (csrf)
+Attack Spam (spam)
+Attack Local File Inclusion (lfi)
+
+        ### Impact 5
+        2019-08-15T04:56:48-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:04:56:41 -0400] "GET /home/favicon.ico HTTP/1.1" 404 214 "-" "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko" "124.225.44.228, 172.68.47.222"
+        Reason: "Detects specific directory and path traversal"
+
+        2019-08-15T05:25:30-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:25:22 -0400] "GET /select_category.php? HTTP/1.1" 200 3076 "https://auction2.jgleba.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.99" "107.161.94.107, 172.68.211.52"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T05:25:30-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:25:26 -0400] "POST /select_category.php HTTP/1.1" 200 3566 "https://auction2.jgleba.com/select_category.php?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.99" "107.161.94.107, 172.68.211.52"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T05:25:30-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:25:29 -0400] "POST /select_category.php HTTP/1.1" 302 - "https://auction2.jgleba.com/select_category.php?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.170 Safari/537.36 OPR/53.0.2907.99" "107.161.94.107, 172.68.47.96"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T05:43:01-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:42:51 -0400] "GET /select_category.php? HTTP/1.1" 200 3076 "https://auction2.jgleba.com/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2909.87 Safari/537.36" "45.10.239.17, 172.68.102.106"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T05:43:01-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:42:52 -0400] "POST /select_category.php HTTP/1.1" 200 3185 "https://auction2.jgleba.com/select_category.php?" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2909.87 Safari/537.36" "45.10.239.17, 172.68.102.102"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T05:43:01-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:05:42:53 -0400] "POST /select_category.php HTTP/1.1" 302 - "https://auction2.jgleba.com/select_category.php?" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2909.87 Safari/537.36" "45.10.239.17, 172.68.102.104"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T08:30:29-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:08:30:22 -0400] "GET /home/favicon.ico HTTP/1.1" 404 214 "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36" "111.224.221.31, 172.68.47.222"
+        Reason: "Detects specific directory and path traversal"
+
+        2019-08-15T09:26:32-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:09:26:27 -0400] "GET /select_category.php? HTTP/1.1" 200 3050 "https://auction2.jgleba.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Whale/1.0.40.10 Safari/537.36" "209.99.174.44, 162.158.78.118"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T09:26:32-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:09:26:28 -0400] "POST /select_category.php HTTP/1.1" 200 3553 "https://auction2.jgleba.com/select_category.php?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Whale/1.0.40.10 Safari/537.36" "209.99.174.44, 162.158.78.16"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+        2019-08-15T09:26:32-04:00 zxsw2 apache-access: 172.16.3.201 - - [15/Aug/2019:09:26:28 -0400] "POST /select_category.php HTTP/1.1" 302 - "https://auction2.jgleba.com/select_category.php?" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Whale/1.0.40.10 Safari/537.36" "209.99.174.44, 172.69.63.63"
+        Reason: "Detects concatenated basic SQL injection and SQLLFI attempts"
+
+Attack SQL Injection (sqli)
+Attack type: format string
+Attack Remote File Execution (rfe)
+Attack Denial Of Service (dos)
+Attack Directory Traversal (dt)
+Attack Information Disclosure (id)

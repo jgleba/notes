@@ -1,0 +1,34 @@
+LINUX SMB SAMBA SHOW CLIENTS AND USERS CONNECTED
+06-03-2019
+
+##https://www.cyberciti.biz/faq/how-do-i-find-the-current-connections-to-a-samba-server/
+
+==
+CLIENTS CONNECTED
+==
+
+SHORT DETAIL
+
+sudo smbstatus
+
+MORE DETAIL
+
+sudo smbstatus -b
+
+MORE MORE DETAIL 
+
+sudo smbstatus -v
+
+ONLY LIST OF SHARES
+
+smbstatus -s
+
+==
+SMB USERS AND INFO
+==
+
+sudo pdbedit -L -v
+
+J EDIT - SMB USERS - ONLY LIST USERS
+
+sudo pdbedit -L -v | grep "Unix username"

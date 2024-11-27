@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ENCODE AND DECODE BASE64 CODE LINUX
+#@ 
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]09-44AM 
+
+[user@zxcj ~]$ echo "ping 8.8.8.8" | base64
+cGluZyA4LjguOC44Cg==
+
+[user@zxcj ~]$ echo "cGluZyA4LjguOC44Cg==" | base64 -d
+ping 8.8.8.8
+
+user@kali:~$ echo cGluZyA4LjguOC44Cg== | base64 -d | bash
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=5.73 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=118 time=5.73 ms

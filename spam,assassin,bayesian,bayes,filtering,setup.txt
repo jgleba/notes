@@ -1,0 +1,35 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SPAM ASSASSIN BAYESIAN CLASSIFIER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-02[Mar-Tue]10-21AM 
+
+##http://spamassassin.1065346.n5.nabble.com/Problem-with-learning-bayes-td53177.html
+##https://spamassassin.apache.org/full/3.0.x/dist/doc/Mail_SpamAssassin_Conf.html
+
+##https://www.awsmonster.com/2020/03/how-to-integrate-bayesian-classifier-in.html
+##https://cwiki.apache.org/confluence/display/SPAMASSASSIN/SiteWideBayesSetup
+
+sudo nano /etc/mail/spamassassin/local.cf
+
+ADD
+
+##BAYES
+use_bayes 1
+use_bayes_rules 1
+bayes_auto_learn 1
+bayes_path /home/user/.spamassassin/bayes
+bayes_file_mode 0660
+
+sudo chmod 777 /home/user/.spamassassin
+
+CREATE FOLDERS SPAM AND HAM, FILL WITH SPAM AND GOOD MESSAGES
+
+/path/to/bayes/ham
+/path/to/bayes/spam
+
+RUN TO START THE LEARNING
+
+sa-learn --spam --showdots --dir /path/to/bayes/spam
+sa-learn --ham --showdots --dir /path/to/bayes/ham

@@ -1,0 +1,107 @@
+===============================================
+CENTOS GLUSTERFS / GLUSTER VOLUME SETUP
+TAKEN FROM KUBERNETES SETUP, SHOULD BE GENERIC
+USED SAME IDEA FOR WEBCL APACHE
+070819
+JGleba
+===============================================
+
+**NEED TO CHECK OVER**
+**070819**
+
+sudo nano /etc/hosts
+
+ipaddr WEBCL-FE-N1
+ipaddr WEBCL-FE-N2
+ipaddr WEBCL-FE-N3
+
+==
+COULD BE GOOD NOTES, HAVENT USED, STARTS GLUSTER CLUSTER IN TCP, CHECK INTO
+==
+
+#https://www.serverlab.ca/tutorials/linux/storage-file-systems-linux/scaling-wordpress-with-haproxy-and-glusterfs/
+
+==
+INSTALL GLUSTER AND START
+==
+
+sudo yum install -y centos-release-gluster
+sudo yum install -y glusterfs-server
+
+sudo systemctl restart glusterd && sudo systemctl enable glusterd
+
+==
+GLUSTER CONFIG
+==
+
+sudo mkdir -p /home/gl/data /home/swarm/mnt/vol1
+
+sudo mkdir -p /home/gl/data /home/mnt/vol1
+
+sudo mkdir -p /home/gl/data /home/mnt/data /home/mnt/data/appdata /home/mnt/data/appconfig
+
+==
+FIREWALL, ON ALL
+==
+
+sudo firewall-cmd --zone=public --add-port=24007/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24007/udp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/udp --permanent
+sudo firewall-cmd --reload
+
+==
+JOIN NODES TO GLUSTER CLUSTER ON MASTER (1)
+==
+
+sudo gluster peer probe webcldock2
+sudo gluster peer probe webcldock3
+
+sudo gluster peer probe WEBCL-FE-N1
+sudo gluster peer probe WEBCL-FE-N2
+sudo gluster peer probe WEBCL-FE-N3
+
+sudo gluster peer probe webcld2
+sudo gluster peer probe webcld3
+sudo gluster peer probe webcld4
+
+sudo gluster peer status
+
+==
+CREATE AND START GLUSTER VOLUME
+==
+
+sudo gluster volume create swarm-vol1 replica 3 webcldock1:/home/gl/data webcldock2:/home/gl/data webcldock3:/home/gl/data force
+sudo gluster volume set swarm-vol1 auth.allow 127.0.0.1
+sudo gluster volume start swarm-vol1
+
+sudo gluster volume create swarm-vol1 replica 4 webcld1:/home/gl/data webcld2:/home/gl/data webcld3:/home/gl/data webcld4:/home/gl/data force
+
+sudo gluster volume create webcl2-vol1 replica 3 WEBCL-FE-N1:/home/gl/data WEBCL-FE-N2:/home/gl/data WEBCL-FE-N3:/home/gl/data force
+sudo gluster volume start webcl2-vol1
+
+==
+MOUNT GLUSTER ONCE
+==
+
+sudo mount.glusterfs localhost:/swarm-vol1 /home/swarm/mnt/vol1
+
+sudo mount.glusterfs localhost:/swarm-vol1 /home/mnt/data
+
+==
+MOUNT GLUSTER ON BOOT
+==
+
+sudo nano /etc/fstab
+
+localhost:/swarm-vol1 /home/mnt/vol1 glusterfs  defaults,_netdev, 0 0
+
+localhost:/swarm-vol1 /home/mnt/data glusterfs  defaults,_netdev, 0 0
+
+sudo mount -a

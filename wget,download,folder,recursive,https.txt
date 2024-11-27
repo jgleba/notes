@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WGET RECURSIVE DOWNLOAD HTTPS FOLDER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-14[Jan-Fri]11-03AM 
+
+wget -r  --no-check-certificate --no-parent https://mirror.dst.ca/rocky/8.5/BaseOS/x86_64/os/
+

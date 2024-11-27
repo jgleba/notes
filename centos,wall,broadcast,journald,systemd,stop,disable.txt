@@ -1,0 +1,23 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS STOP BROADCAST ERROR MESSAGES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-05[Feb-Fri]09-26AM 
+
+##https://stackoverflow.com/questions/41444630/how-to-avoid-broadcast-messages-from-syslog-printed-on-the-console
+
+Broadcast message from systemd-journald@FELB1-TEST (Thu 2021-02-04 22:59:45 EST):
+haproxy[13025]: backend wp has no server available!
+
+==
+ 
+sudo nano /etc/systemd/journald.conf
+
+CHANGE
+
+#ForwardToWall=yes
+
+TO
+
+ForwardToWall=no

@@ -1,0 +1,54 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK POOR MANS LOADBALANCING - ROUND ROBIN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-27[Sep-Sun]14-17PM 
+
+==
+3 LB 
+==
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1  -- START" disabled=yes dst-port=80 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.200
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1" disabled=yes dst-port=443 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.200
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1" disabled=yes dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.200
+add action=dst-nat chain=dstnat comment="UDP RDS to HAPROXY LB VIP1" disabled=yes dst-port=3391 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=udp to-addresses=172.16.3.15
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2" disabled=yes dst-port=80 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.199
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2" disabled=yes dst-port=443 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.199
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2" disabled=yes dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.199
+add action=dst-nat chain=dstnat comment="UDP RDS to HAPROXY LB VIP2" disabled=yes dst-port=3391 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=udp to-addresses=172.16.3.15
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP3" disabled=yes dst-port=80 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP3" disabled=yes dst-port=443 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP3  --  END" disabled=yes dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="UDP RDS to HAPROXY LB VIP3  --  END" disabled=yes dst-port=3391 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=udp to-addresses=172.16.3.15
+
+==
+2 LB
+==
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1 - NEW" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.190
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1 - NEW" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.190
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:2/0 protocol=tcp to-addresses=172.16.3.190
+
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.191
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.191
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:2/1 protocol=tcp to-addresses=172.16.3.191
+
+==
+122320
+==
+
+add action=dst-nat chain=dstnat comment="SMTP to HAPROXY LB VIP1 - NEW" disabled=yes dst-port=25 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.190
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1 - NEW" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.190
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1 - NEW" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.190
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:3/0 protocol=tcp to-addresses=172.16.3.190
+add action=dst-nat chain=dstnat comment="SMTP to HAPROXY LB VIP2 - NEW" disabled=yes dst-port=25 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.191
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.191
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.191
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:3/1 protocol=tcp to-addresses=172.16.3.191
+add action=dst-nat chain=dstnat comment="SMTP to HAPROXY LB VIP2 - NEW" disabled=yes dst-port=25 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.192
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-port=80 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.192
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-port=443 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.192
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=4433 in-interface=ether1 per-connection-classifier=src-address:3/2 protocol=tcp to-addresses=172.16.3.192

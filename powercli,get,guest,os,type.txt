@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERCLI GET VM GUEST TYPE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-06-04[Jun-Fri]15-44PM 
+
+Get-VM | Select Name,@{N="Configured OS";E={$_.ExtensionData.Config.GuestFullname}},@{N="Running OS";E={$_.Guest.OsFullName}}, @{N="disktype";E={(Get-Harddisk $_).Storageformat}}

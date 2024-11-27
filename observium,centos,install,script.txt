@@ -1,0 +1,92 @@
+#OBSERVIUM install script
+#RHEL 7 – CENTOS 7
+##LOOKED OVER BY JGLEBA
+##01-02-18
+
+#install needed repos for observium
+rpm –import http://apt.sw.be/RPM-GPG-KEY.dag.txt
+rpm -Uvh http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+rpm -Uvh http://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+
+#install pre reqs for observium
+yum -y install nano wget.x86_64 httpd.x86_64 php.x86_64 php-mysql.x86_64 php-gd.x86_64 php-posix \
+php-mcrypt.x86_64 php-pear.noarch cronie.x86_64 net-snmp.x86_64 net-snmp-utils.x86_64 fping.x86_64 \
+mariadb-server.x86_64 mariadb.x86_64 MySQL-python.x86_64 rrdtool.x86_64 subversion.x86_64 jwhois.x86_64 \
+ipmitool.x86_64 graphviz.x86_64 ImageMagick.x86_64 libvirt.x86_64 net-snmp net-snmp-utils
+
+#Setup observium
+mkdir -p /opt/observium && cd /opt
+wget http://www.observium.org/observium-community-latest.tar.gz
+tar zxvf observium-community-latest.tar.gz
+
+#setup database
+systemctl enable mariadb
+systemctl start mariadb
+/usr/bin/mysqladmin -u root pass pass
+mysql -u root -p pass -Bse "CREATE DATABASE observium DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;"
+mysql -u root -p pass -Dobservium << QUERY_INPUT
+#sql commands go here
+GRANT ALL PRIVILEGES ON observium.* TO 'root'@'localhost' IDENTIFIED BY 'pass';
+QUERY_INPUT
+
+#finish observium configuration
+cd observium
+cp config.php.default config.php
+sed -i -e 's/USERNAME/root/g' config.php
+sed -i -e 's/PASSWORD/pass/g' config.php
+echo '$config['\"fping'\"] = "/sbin/fping";' >> config.php
+./discovery.php -u
+
+#SELINUX
+setenforce 0
+sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+
+#RRD
+mkdir rrd
+chown apache:apache rrd
+
+#WEB ACCESS
+touch /etc/httpd/conf.d/observium.conf
+cat <<EOF > /etc/httpd/conf.d/observium.conf
+<VirtualHost *:80>
+DocumentRoot /opt/observium/html/
+ServerName observium.jgleba.com
+CustomLog /opt/observium/logs/access_log combined
+ErrorLog /opt/observium/logs/error_log
+<Directory "/opt/observium/html/">
+AllowOverride All
+Options FollowSymLinks MultiViews
+Require all granted
+</Directory>
+</VirtualHost>
+EOF
+
+#LOGS
+mkdir /opt/observium/logs
+chown apache:apache /opt/observium/logs
+
+#Add first observium user
+cd /opt/observium
+./adduser.php admin password 10
+
+#firewall
+firewall-cmd –add-port=80/tcp
+firewall-cmd –permanent –add-port=80/tcp
+
+#CRON
+cat <<EOF >> /etc/crontab
+33 */6 * * * root /opt/observium/discovery.php -h all >> /dev/null 2>&1
+*/5 * * * * root /opt/observium/discovery.php -h new >> /dev/null 2>&1
+*/5 * * * * root /opt/observium/poller-wrapper.py 2 >> /dev/null 2>&1
+EOF
+
+#final system commands
+sudo systemctl enable httpd
+sudo systemctl enable mariadb
+sudo systemctl restart httpd
+systemctl enable firewalld
+systemctl enable crond.service
+sudo systemctl restart httpd
+systemctl restart mariadb
+systemctl restart firewalld
+systemctl restart crond.service

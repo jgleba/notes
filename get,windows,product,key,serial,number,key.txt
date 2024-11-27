@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GET WINDOWS PRODUCT KEY, SERIAL KEY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-04-06[Apr-Wed]12-52PM 
+
+##https://www.howtogeek.com/660517/how-to-find-your-windows-10-product-key-using-the-command-prompt/
+
+wmic path softwarelicensingservice get OA3xOriginalProductKey

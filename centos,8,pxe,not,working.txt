@@ -1,0 +1,34 @@
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos8-2004 ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos8-2004 inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg splash
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos8-2004 inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg splash
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+boot || goto MENU
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://172.16.0.45:/images/os/centos8-2004 inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg splash
+
+
+
+
+
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos8-2004 inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg splash
+boot || goto MENU
+
+==
+
+WORKING - NETWORK INSTALL NOT FOUND, SOFTWARE REPOS NOT WORKING - 121720
+
+kernel tftp://${fog-ip}/os/centos8-2004/vmlinuz
+initrd tftp://${fog-ip}/os/centos8-2004/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://172.16.0.45/images/os/centos8-2004/ inst.ks=http://j:pass@172.16.0.45/0/centos8-2004/ks.cfg
+boot || goto MENU
+

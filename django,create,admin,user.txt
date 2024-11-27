@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DJANGO CREATE ADMIN USER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-02[Nov-Sat]14-43PM 
+
+##https://stackoverflow.com/questions/39696310/django-contrib-admin-default-admin-and-password
+
+python manage.py migrate
+
+python manage.py createsuperuser

@@ -1,0 +1,177 @@
+##http://van-oudheusden.com/?p=786
+##HAS RIGHT CLICK TURNED OFF
+
+Observium on CentOS 7
+
+##Install the required packages
+
+sudo yum install wget.x86_64 httpd.x86_64 php.x86_64 php-mysql.x86_64 php-gd.x86_64 php-posix php-mcrypt.x86_64 php-pear.noarch net-snmp.x86_64 net-snmp-utils.x86_64 fping.x86_64 mariadb-server.x86_64 mariadb.x86_64 MySQL-python.x86_64 rrdtool.x86_64 subversion.x86_64 jwhois.x86_64 ipmitool.x86_64 graphviz.x86_64 ImageMagick.x86_64 libvirt mod_ssl openssl
+
+##Make the required directory and go to it
+
+sudo mkdir -p /opt/observium && cd /opt
+
+##Lets get the install package
+
+sudo wget http://www.observium.org/observium-community-latest.tar.gz
+
+##Un-tar it
+
+sudo tar zxvf observium-community-latest.tar.gz
+
+##Setup Maria if a new install
+
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+sudo /usr/bin/mysql_secure_installation
+
+##Get into observium
+
+cd observium
+
+##Copy the default configuration file and edit it for your system.
+
+sudo cp config.php.default config.php
+
+##edit config.php and add DB user and password you will be creating below
+
+sudo vi config.php
+
+$config['db_user'] = 'observium';
+$config['db_pass'] = 'password';
+
+##While you are in there add:
+
+$config['fping'] = "/usr/sbin/fping";
+
+##Create the Database
+
+mysql -u root -p
+<mysql root password>
+mysql> CREATE DATABASE observium DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+mysql> GRANT ALL PRIVILEGES ON observium.* TO 'observium'@'localhost'
+ -> IDENTIFIED BY '<observium db password>';
+
+##Setup the MySQL database and insert the default schema
+
+sudo php includes/update/update.php
+
+##Create the directory Observium will store its logs in:
+
+sudo mkdir logs
+sudo chown apache:apache logs
+
+##Create the rrd directory to store RRDs in:
+
+sudo mkdir rrd
+sudo chown apache:apache rrd
+
+##vi /etc/httpd/conf.d/observium.conf:
+
+Alias /observium "/opt/observium/html/"
+DocumentRoot "/opt/observium/html/"
+
+<Directory "/opt/observium/html/">
+ Options +FollowSymLinks
+ AllowOverride All
+ order allow,deny
+ allow from all
+ Require all granted
+</Directory>
+
+##Add a first user, use level of 10 for admin:
+
+cd /opt/observium
+sudo ./adduser.php <username> <password> <level>
+
+sudo ./adduser.php admin password 10
+
+##On Client
+
+CentOS7
+
+sudo yum install net-snmp
+
+Ubuntu Variants
+
+sudo apt-get install snmpd
+
+##edit /etc/snmp/snmpd.conf
+
+sudo vi /etc/snmp/snmpd.conf
+
+###############################################################################
+#
+# snmpd.conf:
+# Hohenfels/KJETT SNMP Configuration.
+#
+###############################################################################
+agentaddress udp:161
+# sec.name source community
+ 
+com2sec Hohenfels_Network 192.168.1.0/24 LAN
+com2sec Hohenfels_Network 172.16.4.0/24 DMZ
+com2sec local localhost Local
+ 
+# groupName securityModel securityName
+group ReadOnlyGroup v2c Hohenfels_Network
+group ReadOnlyGroup v2c local
+ 
+ 
+# Make at least snmpwalk -v 1 localhost -c public system fast again.
+# name incl/excl subtree mask(optional)
+view systemview included .1.3.6.1.2.1.1
+view systemview included .1.3.6.1.2.1.25.1.1
+view systemview included .1
+ 
+# group context sec.model sec.level prefix read write notif
+access ReadOnlyGroup "" any noauth exact systemview none none
+ 
+# System information
+syslocation 78621
+syscontact erik@mail.hohenfels.com
+
+#This line allows Observium to detect the host OS if the distro script is installed
+extend .1.3.6.1.4.1.2021.7890.1 distro /usr/bin/distro
+
+##Restart the service
+
+Ubuntu:
+
+sudo service snmpd restart
+
+CentOS:
+
+sudo firewall-cmd --zone=public --add-port=161/udp --permanent
+sudo systemctl restart firewalld.service
+sudo systemctl enable snmpd
+sudo systemctl start snmpd
+
+##Add a first device to monitor
+
+sudo ./add_device.php <hostname> <community> v2c
+
+sudo ./add_device.php server DMZ v2c
+
+##Do an initial discovery and polling run to populate the data for the new device
+
+sudo ./discovery.php -h all
+sudo ./poller.php -h all
+
+##Add discovery and poller to cron
+
+sudo vi /etc/cron.d/observium
+
+33 */6 * * * root /opt/observium/discovery.php -h all >> /dev/null 2>&1
+*/5 * * * * root /opt/observium/discovery.php -h new >> /dev/null 2>&1
+*/5 * * * * root /opt/observium/poller-wrapper.py 2 >> /dev/null 2>&1
+
+##Restart cron
+
+sudo systemctl restart crond
+
+##Logon using the username and password you set above.
+
+http://server.tld/observium/
+
+#

@@ -1,0 +1,290 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FOG PXE, UBUNTU, BOOT NOTES, TESTING, NOT WORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-25[Jan-Sat]13-58PM 
+
+
+
+kernel tftp://192.168.0.22/os/ubuntu/16.04/server/vmlinuz
+initrd tftp://192.168.0.22/os/ubuntu/16.04/server/initrd.gz
+imgargs vmlinuz initrd=initrd.gz root=/dev/nfs netboot=nfs nfsroot=192.168.0.22:/images/os/ubuntu/16.04/server/ locale=en_GB.UTF-8 keyboard-configuration/layoutcode=gb
+boot || goto MENU
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs linux auto=true console-setup/layoutcode=en keyboard-configuration/xkb-keyboard=us locale=en_US.UTF-8 hostname=ubuntu domain=local url=http://j:pass@172.16.0.45/0/ubuntu1804/ks.cfg quiet initrd=initrd root=/dev/nfs netboot=nfs nfsroot=${fog-ip}:/images/os/ubuntu1804/
+boot
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=/dev/nfs netboot=nfs nfsroot=192.168.0.45:/images/os/ubuntu1804/ locale=en_US.UTF-8 keyboard-configuration/layoutcode=us
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd root=/dev/nfs netboot=nfs url=http://j:pass@172.16.0.45/images/os/ubuntu1804/ locale=en_US.UTF-8 keyboard-configuration/layoutcode=us
+boot || goto MENU
+
+
+
+
+http://172.16.0.45/images/os/ubuntu1804/
+
+
+url=http://j:pass@172.16.0.45/images/os/ubuntu1804/
+
+
+NFS PATH /images/os/ubuntu1804
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=/dev/nfs netboot=nfs nfsroot=192.168.0.45:/images/os/ubuntu1804 locale=en_US.UTF-8 keyboard-configuration/layoutcode=us
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/centos7-1908/vmlinuz
+initrd tftp://${fog-ip}/os/centos7-1908/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/centos7-1908/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/centos7-1908 inst.ks=http://j:pass@172.16.0.45/0/centos7-1908/ks.cfg splash quiet
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=/dev/nfs root=live:http://${fog-ip}:/images/os/ubuntu1804/casper/ locale=en_US.UTF-8 keyboard-configuration/layoutcode=us
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/casper/vmlinuz[/url]
+initrd tftp://${fog-ip}/os/ubuntu1804/casper/initrd.lz[/url]
+imgargs vmlinuz boot=live config console=ttyS0 username=live fetch=[url]http://${fog-ip}/os/images/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live config console=ttyS0 username=live fetch=[url]http://${fog-ip}/os/images/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live config console=ttyS0 root=live:http://${fog-ip}:/os/images/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live root=live:http://${fog-ip}:/os/images/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live root=live:http://j:pass@${fog-ip}:/os/images/ubuntu1804/casper/
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live config root=live:http://${fog-ip}:/os/images/ubuntu1804/casper/filesystem.squashfs
+boot || goto failed
+goto MENU
+
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=live:http://j:pass@172.16.0.45:/images/os/ubuntu1804/casper/ locale=en_US.UTF-8 keyboard-configuration/layoutcode=us
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=live:http://j:pass@172.16.0.45:/os/images/ubuntu1804/casper/filesystem.squashfs
+boot || goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=live:http://j:pass@172.16.0.45:/os/images/ubuntu1804/casper/
+boot || goto MENU
+
+==
+
+http://172.16.0.45/images/os/ubuntu1804/casper/
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper root=live:http://j:pass@172.16.0.45:/images/os/ubuntu1804/casper/
+boot || goto MENU
+
+==
+
+https://www.google.ca/search?q=fog+ubuntu+18.04+unable+to+find+a+medium+containing+a+live+filesystem&ei=_48sXomtFoix5wKhm7CwCg&start=10&sa=N&ved=2ahUKEwjJqOnBt5_nAhWI2FkKHaENDKYQ8NMDegQIDBA1&biw=1920&bih=1086
+
+https://forums.fogproject.org/topic/4170/live-cd-configurations-for-boot/15
+
+==
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live config console=ttyS0 username=live fetch=[url]http://172.16.0.45/images/os/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live fetch=[url]http://172.16.0.45/images/os/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+
+
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=casper fetch=[url]http://172.16.0.45/images/os/ubuntu1804/casper/
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz boot=live fetch=[url]http://172.16.0.45/images/os/ubuntu1804/casper/filesystem.squashfs[/url]
+boot || goto failed
+goto MENU
+
+==
+
+kernel tftp://${fog-ip}/images/os/ubuntu1804/casper/vmlinuz
+initrd tftp://${fog-ip}/images/os/ubuntu1804/casper/initrd
+imgargs vmlinuz boot=casper fetch=[url]http://172.16.0.45/images/os/ubuntu1804/casper/
+boot || goto failed
+goto MENU
+
+==
+
+##WORKING - HAD TO REPLACE initrd FROM NETBOOT
+##https://forums.fogproject.org/topic/10944/using-fog-to-pxe-boot-into-your-favorite-installer-images/6
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd ip=dhcp root=live:http://172.16.0.45/images/os/ubuntu1804/casper/ keymap=us splash quiet
+boot || goto MENU
+
+==
+WORKING - 012820
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd ip=dhcp root=live:http://172.16.0.45/images/os/ubuntu1804/casper/ keymap=us splash quiet
+boot || goto MENU
+
+==
+
+KS NOT WORKING FOR UBUNTU YET
+
+==
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd ip=dhcp root=live:http://172.16.0.45/images/os/ubuntu1804/casper/ inst.ks=http://j:pass@172.16.0.45/0/ubuntu1804/ubuntu.ks splash quiet
+boot || goto MENU
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd ip=dhcp root=live:http://172.16.0.45/images/os/ubuntu1804/casper/ splash quiet
+boot || goto MENU
+
+KS SORT OF WORKING - STILL NETWORK ISSUE
+
+kernel tftp://${fog-ip}/os/ubuntu1804/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu1804/initrd
+imgargs vmlinuz initrd=initrd ip=dhcp root=live:http://172.16.0.45/images/os/ubuntu1804/casper/ ks=http://j:pass@172.16.0.45/0/ubuntu1804/ks.cfg splash quiet
+boot || goto MENU
+
+==
+
+ESXI - 012920 - NOT WORKING
+
+==
+
+
+
+sudo mount -o loop -t iso9660 /mnt/fp/iso/VMware-VMvisor-Installer-6.7.0-8169922.x86_64-DellEMC_Customized-A01.iso /mnt/loop
+sudo cp -R /mnt/loop/* /images/os/esxi67/
+sudo umount /mnt/loop
+
+sudo sed -i 's/\///g' /images/os/esxi67/efi/boot/boot.cfg
+
+Menu Item: os.esxi65u1
+Description: ESXi 6.5u1 Installer
+Parameters:
+kernel nfs://${fog-ip}:/images/os/esxi/6.5u1/efi/boot/bootx64.efi -c nfs://${fog-ip}:/images/os/esxi/6.5u1/efi/boot/boot.cfg
+boot || goto MENU
+Menu Show with: All Hosts
+
+
+kernel tftp://${fog-ip}/images/os/esxi67/efi/boot/bootx64.efi root=live:http://172.16.0.45/images/os/esxi67/efi/boot/boot.cfg
+boot || goto MENU
+
+
+
+kernel tftp://${fog-ip}/images/os-full/esxi67/efi/boot/bootx64.efi -c tftp://${fog-ip}/images/os-full/esxi67/efi/boot/boot.cfg
+boot || goto MENU
+
+
+
+
+kernel tftp://${fog-ip}:/os-full/esxi67/efi/boot/bootx64.efi -c http://172.16.0.45/images/os/esxi67/efi/boot/boot.cfg
+boot || goto MENU
+
+
+kernel nfs://${fog-ip}:/images/os/esxi67/efi/boot/bootx64.efi -c nfs://${fog-ip}:/images/os/esxi67/efi/boot/boot.cfg
+boot || goto MENU
+
+kernel tftp://172.16.0.45:/images/os-full/esxi67/efi/boot/bootx64.efi -c tftp://172.16.0.45:/images/os-full/esxi67/efi/boot/boot.cfg
+boot || goto MENU
+
+==
+
+WORKS 043024
+
+kernel tftp://${fog-ip}/os/ubuntu2404/vmlinuz
+initrd tftp://${fog-ip}/os/ubuntu2404/initrd
+imgargs vmlinuz initrd=initrd cloud-config-url=http://j:zvnrS55X@172.16.0.45/0/ubuntu2404/cloud-init.yaml ip=dhcp root=/dev/ram0 ramdisk_size=4800000 url=http://j:zvnrS55X@172.16.0.45/0/ubuntu2404/ubuntu-24.04-live-server-amd64.iso autoinstall ds=nocloud-net;s=nfs:///images/os/ubuntu2404
+boot || goto failed
+boot || goto failed

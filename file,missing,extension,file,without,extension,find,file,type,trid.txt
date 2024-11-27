@@ -1,0 +1,23 @@
+======================================================================
+FILES WITHOUT EXTENSIONS - DETERMINE WHAT TYPE THE FILE IS - GOOD TOOL
+091319
+======================================================================
+
+##http://mark0.net/soft-trid-e.html
+
+TrID - File Identifier
+
+==
+USAGE EXAMPLE
+==
+
+C:\Users\jgleba.CORP\Downloads\trid_w32>trid "Guiderdoni 318"
+
+TrID/32 - File Identifier v2.24 - (C) 2003-16 By M.Pontello
+Definitions found:  11827
+Analyzing...
+
+Collecting data from file: Guiderdoni 318
+100.0% (.QXP) QuarkXpress project (2003/2)
+
+C:\Users\jgleba.CORP\Downloads\trid_w32>

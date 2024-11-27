@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NGINX RD GATEWAY STREAM UPSTREAM LOAD BALANCE, WORKS WITH SERVER 2016
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-05[Feb-Sat]15-04PM 
+
+stream {
+upstream rdshttps {
+    server ip:443;
+}
+server {
+    listen 443;
+    proxy_pass rdshttps;
+}
+}

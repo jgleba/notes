@@ -1,0 +1,23 @@
+mikrotik change mac address on interface
+
+/interface ethernet set ether1 mac-address=xxx
+
+092819
+/interface ethernet set ether2 mac-address=2C:1D:2C:77:1A:3B
+
+/interface ethernet set ether12 mac-address=CC:2D:E0:DC:2F:72
+
+/interface ethernet set ether12 mac-address=00:50:56:B1:60:DF
+
+/interface ethernet set ether11 mac-address=CC:2D:E0:DC:2F:76
+
+/interface ethernet set ether12 mac-address=00:50:56:B1:60:02
+
+==
+100121
+
+/interface ethernet set ether1 mac-address=CC:2D:E0:DC:2F:6C
+
+
+
+/interface ethernet set ether1 mac-address=00:50:56:B1:EB:BE

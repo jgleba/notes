@@ -1,0 +1,55 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS COMMAND LINE INTERNET SPEED TEST
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-03-31[Mar-Tue]11-53AM 
+
+##https://opensource.com/article/20/1/internet-speed-tests
+
+#sudo yum install speedtest-cli
+##sudo pip3 install speedtest-cli
+
+DIDNT WORK
+
+==
+ANOTHER WAY, WORKED
+==
+
+##https://www.mysterydata.com/speed-test-server-network-via-linux-command-speedtest-cli/
+
+#sudo yum install epel-release -y
+sudo yum install python python-pip -y
+sudo pip install speedtest-cli
+
+[user@zxcj ~]$ speedtest-cli
+Retrieving speedtest.net configuration...
+Testing from Wightman Telecom (216.110.224.99)...
+Retrieving speedtest.net server list...
+Selecting best server based on ping...
+Hosted by NeuStyle Software & Systems Corporation (Waterloo, ON) [36.86 km]: 6.204 ms
+Testing download speed................................................................................
+Download: 99.78 Mbit/s
+Testing upload speed................................................................................................
+Upload: 49.78 Mbit/s
+
+==
+ANOTHER WAY, WORKED
+==
+
+##https://sringserver.com/how-to-test-internet-speed-in-centos-7-using-speedtest-cli/
+
+wget https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+chmod +x speedtest.py
+./speedtest.py
+
+[user@zxcj ~]$ ./speedtest.py
+Retrieving speedtest.net configuration...
+Testing from Wightman Telecom (216.110.224.99)...
+Retrieving speedtest.net server list...
+Selecting best server based on ping...
+Hosted by NeuStyle Software & Systems Corporation (Waterloo, ON) [36.86 km]: 10.816 ms
+Testing download speed................................................................................
+Download: 99.71 Mbit/s
+Testing upload speed................................................................................................
+Upload: 46.36 Mbit/s

@@ -1,0 +1,357 @@
+============================================
+ESXI, CENTOS, EXTEND/INCREASE DISK PARTITION
+WORKED 04-21-2019
+============================================
+
+#https://www.miarec.com/doc/administration-guide/doc1012
+
+#THIS WORKED ON CENTOS 7 110624
+
+CHECK PARTITION TABLE
+
+sudo fdisk -l
+
+IF LESS THAN 4, THAN CAN BE EXTENDED
+
+Disk /dev/sda: 16.1 GB, 16106127360 bytes, 31457280 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x0002289b
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048     1026047      512000   83  Linux
+/dev/sda2         1026048    31457279    15215616   8e  Linux LVM
+
+==
+
+SHUT DOWN VM, MAKE VHD BIGGER
+
+==
+
+[user@zxplex ~]$ sudo fdisk -l
+
+Disk /dev/sda: 53.7 GB, 53687091200 bytes, 104857600 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
+Disk identifier: 0x0002289b
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1   *        2048     1026047      512000   83  Linux
+/dev/sda2         1026048    31457279    15215616   8e  Linux LVM
+
+==
+
+[user@zxplex ~]$ ls  /sys/class/scsi_host/
+host0  host1  host2
+
+==
+
+CREATE NEW PARTITION
+
+sudo fdisk /dev/sda
+
+n
+
+p
+
+enter for default next number
+
+enter for default first sector
+
+enter for default last sector
+
+t
+
+default, enter
+
+8e
+
+w
+
+RESCAN
+
+#sudo partprobe -s - NO WORK
+sudo partprobe
+
+#sudo partx -v -a /dev/sda - NO WORK
+
+REBOOT
+
+NEED TO EXTEND LOGICAL
+
+sudo pvcreate /dev/sda3
+
+sudo vgdisplay
+ 
+#VG Name               centos
+
+sudo vgextend centos /dev/sda3
+
+sudo pvscan
+ 
+#ls /dev/centos
+
+sudo lvextend /dev/centos/root /dev/sda3
+
+sudo xfs_growfs /dev/mapper/centos-root
+
+DONE ##TO HERE 110624
+
+[user@zxplex ~]$ df -h
+Filesystem               Size  Used Avail Use% Mounted on
+/dev/mapper/centos-root   48G   13G   36G  27% /
+devtmpfs                 907M     0  907M   0% /dev
+tmpfs                    920M  8.0K  920M   1% /dev/shm
+tmpfs                    920M  8.8M  911M   1% /run
+tmpfs                    920M     0  920M   0% /sys/fs/cgroup
+/dev/sda1                497M  152M  345M  31% /boot
+//172.16.0.106/Media      13G  1.3G   12G  10% /mnt/fm/Media
+tmpfs                    184M     0  184M   0% /run/user/1000
+
+REBOOT - NOT NEEDED
+
+
+
+
+*************START HERE************************
+
+
+
+
+==
+##092919
+##TRYING AGAIN FOR SPLUNK
+##https://www.miarec.com/doc/administration-guide/doc1012
+==
+
+==
+RESCAN AFTER INCREASING VM DISK
+==
+
+ls /sys/class/scsi_device/
+##1:0:0:0  2:0:0:0
+
+su root
+
+echo 1 > /sys/class/scsi_device/1\:0\:0\:0/device/rescan
+echo 1 > /sys/class/scsi_device/2\:0\:0\:0/device/rescan
+
+==
+MAKE NEW PARTITION
+==
+
+sudo fdisk /dev/sda
+sudo fdisk /dev/xvda
+
+n
+
+p
+
+enter for default next number
+
+enter for default first sector
+
+enter for default last sector
+
+t
+
+default, enter
+
+8e
+
+w
+
+==
+EXTEND LOGICAL
+==
+
+sudo partprobe -s
+
+sudo pvcreate /dev/sda3
+sudo pvcreate /dev/xvda3
+
+sudo vgextend centos /dev/sda3
+sudo vgextend centos /dev/xvda3
+
+sudo vgextend centos /dev/sda4
+
+df -h
+
+
+sudo lvextend /dev/centos/root /dev/sda4
+
+sudo lvextend /dev/centos/root /dev/sda3
+sudo lvextend /dev/centos/root /dev/xvda3
+
+sudo xfs_growfs /dev/mapper/centos-root
+
+sudo xfs_growfs /dev/mapper/ubuntu--vg-ubuntu--lv
+
+==
+CHECK
+==
+
+[root@splunk user]# df -h
+Filesystem               Size  Used Avail Use% Mounted on
+/dev/mapper/centos-root   96G   40G   57G  41% /
+devtmpfs                 908M     0  908M   0% /dev
+tmpfs                    920M     0  920M   0% /dev/shm
+tmpfs                    920M   25M  895M   3% /run
+tmpfs                    920M     0  920M   0% /sys/fs/cgroup
+/dev/sda1                497M  151M  347M  31% /boot
+tmpfs                    184M     0  184M   0% /run/user/1000
+
+WORKED 092919
+
+==
+WORKED AT SFA - 092120
+==
+
+shutdown machine
+
+change vm disk size
+
+boot up with gparted
+
+extend partition in gparted
+
+reboot
+
+sudo partprobe -s
+
+sudo lvextend /dev/centos/root /dev/sda4
+
+sudo xfs_growfs /dev/mapper/centos-root
+
+df -h
+
+==
+WORKED, NEEDED TO SHUTDOWN TO ADD DISK SPACE, 112720
+==
+
+==
+MAKE NEW PARTITION
+==
+
+sudo fdisk /dev/sda
+sudo fdisk /dev/xvda
+
+n
+
+p
+
+enter for default next number
+
+enter for default first sector
+
+enter for default last sector
+
+t
+
+default, enter
+
+8e
+
+w
+
+==
+EXTEND LOGICAL
+==
+
+sudo partprobe -s
+
+sudo pvcreate /dev/sda3
+
+sudo vgextend centos /dev/sda3
+
+sudo lvextend /dev/centos/root /dev/sda3
+
+sudo xfs_growfs /dev/mapper/centos-root
+
+==
+
+012423
+NO LVM
+NEED TO TRY
+
+#https://www.linuxtechi.com/extend-xfs-root-partition-without-lvm-linux/
+
+sudo apt install cloud-guest-utils gdisk -y         // For Ubuntu & Debian
+sudo dnf install cloud-utils-growpart gdisk -y     // For RHEL 8 / CentOS 8
+sudo yum install cloud-utils-growpart gdisk -y    // For RHEL 7 / CentOS 7
+
+sudo growpart /dev/sda 3
+
+sudo xfs_growfs /
+
+
+
+
+==
+
+090923
+ubuntu
+
+https://packetpushers.net/ubuntu-extend-your-default-lvm-space/
+
+  136  sudo fdisk -l
+  137  ls -la /dev/sd*
+  138  ls -la /dev/sdb
+  139  ls -la /dev/sdb*
+  140  ls -la /dev/sd*
+  141  sudo xfs_growfs /dev/mapper/ubuntu--vg-ubuntu--lv
+  142  sudo cfdisk
+  143  df -h
+  144  sudo cfdisk
+  145  sudo reboot
+  146  df -h
+  147  sudo cfdisk
+  148  sudo pvresize /dev/sda3
+  149  df -h
+  150  sudo lvextend -l +10%FREE /dev/ubuntu-vg/ubuntu-lv
+  151  df -h
+  152  sudo lvextend -l +5%FREE /dev/ubuntu-vg/ubuntu-lv
+  153  df -h
+  154  sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+  155  df -h
+  156  sudo lvextend -l +15 /dev/ubuntu-vg/ubuntu-lv
+  157  sudo lvextend -l +45 /dev/ubuntu-vg/ubuntu-lv
+  158  sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+  159  sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+
+  
+  
+  
+  
+081024 UBUNTU 2204 WORKED
+
+gparted to make partition bigger
+
+sudo pvresize /dev/sda3
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+
+==
+
+110324
+
+RESIZE DISK ON ROCKY
+
+shut down, make disk bigger
+
+boot back up
+
+sudo fdisk /dev/sda
+
+delete sda2
+
+make new partition, extended use defaults for start and end
+
+w to save
+
+sudo resize2fs -p /dev/sda2
+

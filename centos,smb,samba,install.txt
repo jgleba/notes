@@ -1,0 +1,62 @@
+##CENTOS SMB/SAMBA INSTALL
+##07-14-18
+##userleba
+
+##INSTALL SMB/SAMBA
+sudo yum install samba samba-client samba-common -y
+
+##CLIENT INSTALL
+sudo yum install samba-client cifs-utils -y
+
+
+##START AND ENABLE SERVICES
+sudo systemctl enable smb.service && sudo systemctl enable nmb.service
+sudo systemctl restart smb.service && sudo systemctl restart nmb.service
+
+##EDIT CONFIG
+sudo nano /etc/samba/smb.conf
+
+##JEXAMPLE
+[global]
+        follow symlinks = yes
+        wide links = yes
+        unix extensions = no
+        socket options=SO_RCVBUF=131072 SO_SNDBUF=131072 TCP_NODELAY min receivefile size = 16384 use sendfile = t$
+        workgroup = WORKGROUP
+        security = user
+        passdb backend = tdbsam
+        load printers = no
+        interfaces - lo eth0 network/mask
+        hosts allow 127. 
+        dns proxy = no
+
+[0fr]
+        comment = 0fr
+        path = /home/x/dat/0fr
+        valid user = user, user, @group
+        guest ok = no
+        browseable = yes
+        writable = yes
+        read only = no
+        force group = smbgrp
+
+[torrfr]
+        comment = torrfr
+        path = /home/x/dat/torr
+        valid user = user, user, @group
+        guest ok = no
+        browseable = yes
+        writable = yes
+        read only = no
+        force user = deluge
+        force group = smbgrp
+        force directory mode = 770
+        force create mode = 770
+
+
+##FIREWALL
+sudo firewall-cmd --permanent --zone=public --add-service=samba
+sudo firewall-cmd --reload
+
+##ADD PASSWORD TO USER
+sudo smbpasswd -a user

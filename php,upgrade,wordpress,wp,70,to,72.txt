@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS, PHP, UPGRADE FROM 7.0 TO 7.2 WORDPRESS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-05[Feb-Fri]12-41PM 
+
+sudo yum install yum-utils -y
+
+sudo yum remove php*
+
+sudo yum-config-manager --disable remi-php70-php
+sudo yum-config-manager --enable remi-php72-php
+
+sudo yum install php72-php php72-php-cli php72-php-common php72-php-gd php72-php-mbstring php72-php-mysqlnd php72-php-pdo php72-php-fpm php72-php-curl php72-php-zip php72-php-xml -y
+
+sudo yum install php72-php-fpm 
+
+sudo systemctl start php72-php-fpm  && sudo systemctl enable php72-php-fpm 
+
+==
+
+112122
+
+php-exif php-curl php-ftp php-gd php-mstring php-mcrypt php-mysqld php-zip php-zlib php-dom php-json php-pcre php-xml php-bcmath php-bc
+
+sudo yum install php-exif php-curl php-ftp php-gd php-mstring php-mcrypt php-mysqld php-zip php-zlib php-dom php-json php-pcre php-xml php-bcmath php-bc

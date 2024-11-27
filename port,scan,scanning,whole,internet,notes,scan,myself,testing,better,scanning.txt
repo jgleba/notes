@@ -1,0 +1,311 @@
+================================================================
+SCANNING WHOLE INTERNET NOTES + CHECKING MYSELF, BETTER SCANNING
+071019
+================================================================
+
+USING MASSCAN
+
+#https://github.com/robertdavidgraham/masscan
+#https://www.securitynewspaper.com/2015/10/15/how-to-scan-whole-internet-3-7-billion-ip-addresses-in-few-minutes/
+
+masscan 0.0.0.0/0 -p0-65535
+masscan 0.0.0.0/0 -p0-65535 –excludefile exclude.txt
+
+#https://danielmiessler.com/study/masscan/
+
+CHANGE RATE
+
+masscan 10.11.0.0/16 --top-ports 100 ––rate 100000
+
+OUTPUT TO SCREEN
+
+masscan 10.11.0.0/16 --top-ports 100 --echo > scan.txt
+
+OUTPUT TO FILE
+
+masscan 10.11.0.0/16 --top-ports 100 > results.txt
+
+==
+
+NO WORK, DOESNT RESOLVE DNS
+
+masscan jgleba.com -p0-65535 > jgleba.com.scan.071019.txt
+
+RESOLVE FIRST?
+
+DOMAINIP="dig +short jgleba.com | head -1"
+echo $DOMAINIP
+masscan $DOMAINIP -p0-65535 > jgleba.com.scan.071019.txt
+
+NOT WORKING
+CHEATING, JUST GET IT DONE
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+TRYING AGAIN, STILL NOT GREAT, WILL RESOLVE TO CFLARE
+
+DOMAINIP=$(dig +short www.google.com | head -1)
+masscan $DOMAINIP -p0-65535 > jgleba.com.scan.071019.txt
+
+==
+
+HMM
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 28.20% done,   0:16:17 remaining, found=18406
+
+PINGS DROPPING IN KITCH, INTERNET STILL USABLE BUT DOESNT LOOK GOOD
+FR CONNECTION UP AND DOWN, ABLE TO CONNECT EXTERNALLY
+
+TAKING WAY TOO LONG, TOO HURTFUL
+
+HMM
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 34.08% done,   0:14:09 remaining, found=22305
+
+==
+
+THESE ALERTS MAKE MORE SENSE NOW
+
+JUST GOT AS SCANNING FROM FR
+
+[2019-07-10 18:32:32] ALERT 3.83052 from cossec-ens192-1: ET SCAN Suspicious inbound to mySQL port 3306. 62.210.157.153 (fr1.jgleba.com):43108 -> 172.17.0.100 (Unknown):3306
+
+==
+
+CHECKED ROUTER, IP SHOWING UP IN PORT SCANNERS ADDRESS LIST, STILL SCANNING THOUGH
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 43.06% done,   0:12:14 remaining, found=28191
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 62.58% done,   0:08:13 remaining, found=40948
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 82.54% done,   0:03:40 remaining, found=54057
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 89.95% done,   0:02:20 remaining, found=58906
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 97.12% done,   0:00:36 remaining, found=63606
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.10-kpps, 99.63% done,   0:00:04 remaining, found=65237
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+rate:  0.00-kpps, 100.00% done, waiting 5-secs, found=65497
+
+==
+
+masscan 108.168.14.114 -p0-65535 > jgleba.com.scan.071019.txt
+
+Starting masscan 1.0.3 (http://bit.ly/14GZzcT) at 2019-07-10 18:25:09 GMT
+ -- forced options: -sS -Pn -n --randomize-hosts -v --send-eth
+Initiating SYN Stealth Scan
+Scanning 1 hosts [65536 ports/host]
+
+==
+
+CURRENT TIME 1947? THINKING SCAN TOOK 22 MINUTES? DATE/TIME/TIMEZONE NOT CORRECT
+
+==
+
+Discovered open port 443/tcp on 108.168.14.114
+
+ cat jgleba.com.scan.071019.txt
+ 
+Discovered open port 17723/tcp on 108.168.14.114
+Discovered open port 62706/tcp on 108.168.14.114
+Discovered open port 37054/tcp on 108.168.14.114
+Discovered open port 20431/tcp on 108.168.14.114
+Discovered open port 20481/tcp on 108.168.14.114
+Discovered open port 6488/tcp on 108.168.14.114
+Discovered open port 13885/tcp on 108.168.14.114
+Discovered open port 39454/tcp on 108.168.14.114
+Discovered open port 13756/tcp on 108.168.14.114
+Discovered open port 29401/tcp on 108.168.14.114
+Discovered open port 61778/tcp on 108.168.14.114
+Discovered open port 8790/tcp on 108.168.14.114
+Discovered open port 41340/tcp on 108.168.14.114
+Discovered open port 11371/tcp on 108.168.14.114
+Discovered open port 12002/tcp on 108.168.14.114
+Discovered open port 41526/tcp on 108.168.14.114
+Discovered open port 41277/tcp on 108.168.14.114
+Discovered open port 705/tcp on 108.168.14.114
+Discovered open port 758/tcp on 108.168.14.114
+Discovered open port 31881/tcp on 108.168.14.114
+Discovered open port 30017/tcp on 108.168.14.114
+Discovered open port 38183/tcp on 108.168.14.114
+Discovered open port 38207/tcp on 108.168.14.114
+Discovered open port 65390/tcp on 108.168.14.114
+Discovered open port 23535/tcp on 108.168.14.114
+Discovered open port 25833/tcp on 108.168.14.114
+Discovered open port 31359/tcp on 108.168.14.114
+Discovered open port 52927/tcp on 108.168.14.114
+Discovered open port 38209/tcp on 108.168.14.114
+Discovered open port 30688/tcp on 108.168.14.114
+Discovered open port 55852/tcp on 108.168.14.114
+Discovered open port 28708/tcp on 108.168.14.114
+Discovered open port 1769/tcp on 108.168.14.114
+Discovered open port 8005/tcp on 108.168.14.114
+Discovered open port 58469/tcp on 108.168.14.114
+Discovered open port 13569/tcp on 108.168.14.114
+Discovered open port 31267/tcp on 108.168.14.114
+Discovered open port 47977/tcp on 108.168.14.114
+
+==
+
+NOT UNDERSTANDING HOW THIS WORKS, PRETTY MUCH STATING ALL PORTS OPEN, I DONT THINK SO
+
+==
+
+MORE USAGE
+
+#https://forum.bugcrowd.com/t/bulk-ip-scanning-for-ports-by-masscan/4058
+
+I am trying to use masscan to scan ports of multiple IP addresses. How to provide list of IP addresses in the input of command ? So far I have used the following command. But there is only one IP address is possible to check.
+
+masscan [IP Address] -p0-65535 -oX [outputfile.xml]
+
+-iL will work.
+
+masscan [IP Address] -p0-65535 -iL [scope.txt] -oX [outputfile.xml]
+
+When in doubt try nmap syntax, since masscan uses nmap options.
+
+==
+
+BACK TO TRYING TO FIGURE OUT MASSCAN OUTPUT, NOT SEEING ANY USEFUL INFO
+
+==
+
+masscan --banners -p445 10.1.10.95
+
+==
+
+TRYING INTERNALLY
+
+==
+
+sudo masscan --banners -p445 172.16.0.106 > testscan.txt
+
+==
+
+NOT UNDERSTANDING
+
+==
+
+cat testscan.txt
+
+sizeof(TCB) = 448
+
+Discovered open port 445/tcp on 172.16.0.106
+
+==
+
+#https://kalilinuxtutorials.com/masscan/
+
+Command: masscan 216.58.196.0/24<replace with yours> -p80,443 --output-format=xml --output-filename=google.xml<replace with yours>
+Command: masscan 23.92.56.53<replace with tour target IP>  -p 80,443 --banners --source-ip 192.168.1.200
+
+==
+
+sudo masscan --banners --output-format=xml --output-filename=testscan2.txt -p445 172.16.0.106
+
+ cat testscan2.txt
+<?xml version="1.0"?>
+<!-- masscan v1.0 scan -->
+<?xml-stylesheet href="" type="text/xsl"?>
+<nmaprun scanner="masscan" start="1562785500" version="1.0-BETA"  xmloutputversion="1.03">
+<scaninfo type="syn" protocol="tcp" />
+<host endtime="1562785500"><address addr="172.16.0.106" addrtype="ipv4"/><ports><port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="64"/></port></ports></host>
+<runstats>
+<finished time="1562785511" timestr="2019-07-10 15:05:11" elapsed="11" />
+<hosts up="1" down="0" total="1" />
+</runstats>
+</nmaprun>
+
+==
+
+sudo masscan --banners --output-format=xml --output-filename=testscan2.txt --source-ip 172.16.0.4 -p445 172.16.0.106
+
+==
+
+cat testscan2.txt
+<?xml version="1.0"?>
+<!-- masscan v1.0 scan -->
+<?xml-stylesheet href="" type="text/xsl"?>
+<nmaprun scanner="masscan" start="1562785607" version="1.0-BETA"  xmloutputversion="1.03">
+<scaninfo type="syn" protocol="tcp" />
+<host endtime="1562785607"><address addr="172.16.0.106" addrtype="ipv4"/><ports><port protocol="tcp" portid="445"><state state="open" reason="syn-ack" reason_ttl="64"/></port></ports></host>
+<runstats>
+<finished time="1562785618" timestr="2019-07-10 15:06:58" elapsed="11" />
+<hosts up="1" down="0" total="1" />
+</runstats>
+</nmaprun>
+
+==
+

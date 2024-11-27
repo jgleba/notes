@@ -1,0 +1,106 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NGINX VCENTER, NEED TO TRY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-01-03[Jan-Tue]14-58PM 
+
+##https://www.reddit.com/r/sysadmin/comments/102byxx/putting_vcenter_behind_nginx_and_a_duo_dng_proxy/
+
+server { 
+   listen 443 ssl http2; 
+   server_name vmware.company.com; 
+   ssl_certificate /etc/nginx/ssl/vsphere-proxy-prod.company.lan.cert; 
+   ssl_certificate_key /etc/nginx/ssl/vsphere-proxy-prod.company.lan.key; 
+
+   location / { 
+      proxy_set_header Host "vsphere.company.com";
+      proxy_set_header Origin "vsphere.company.com";
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-Server $host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Authorization "";
+      proxy_set_header Origin https://vsphere.company.com;
+      #proxy_set_header Origin "";
+      proxy_pass_header X-XSRF-TOKEN; 
+      proxy_ssl_verify off; 
+      proxy_pass https://vsphere.company.com;  
+      proxy_set_header Upgrade $http_upgrade; 
+      proxy_set_header Connection "Upgrade"; 
+      proxy_buffering off;  
+      http2_push_preload on;
+      proxy_send_timeout      300;
+      proxy_read_timeout      300;
+      send_timeout            300;
+      client_max_body_size    1000m;
+      proxy_redirect https://vsphere.company.com/ https://vmware.company.com/; 
+   } 
+
+   location /websso/SAML2 { 
+      sub_filter "vsphere.company.com" "vmware.company.com";
+      proxy_set_header Host vsphere.company.com;
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-Server $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header Authorization "";
+      proxy_set_header Origin "";
+      proxy_pass_header X-XSRF-TOKEN;
+      proxy_ssl_verify off;
+      proxy_pass https://vsphere.company.com;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection "upgrade";
+      proxy_buffering off;
+      http2_push_preload on;
+      proxy_send_timeout      300;
+      proxy_read_timeout      300;
+      send_timeout            300;
+      client_max_body_size    1000m;
+      proxy_ssl_session_reuse on;
+      proxy_redirect https://vsphere.company.com/ https://vmware.company.com/;
+  }
+  # wss://vmware.company.com/ui/app-fabric/fabric
+  location /ui/app-fabric/fabric {
+    proxy_pass https://vsphere.company.com/ui/app-fabric/fabric;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Origin https://vsphere.company.com;
+
+    proxy_buffering off;
+    client_max_body_size 0;
+    proxy_read_timeout 36000s;
+    proxy_redirect off;
+    proxy_ssl_session_reuse off;
+  }
+  # wss://vmware.company.com/ui/webconsole/authd
+  location /ui/webconsole/authd {
+    proxy_pass https://vsphere.company.com/ui/webconsole/authd;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header Origin https://vsphere.company.com;
+
+    proxy_buffering off;
+    client_max_body_size 0;
+    proxy_read_timeout 36000s;
+    proxy_redirect off;
+    proxy_ssl_session_reuse off;
+  }
+
+  # wss://vmware.company.com/sdk
+  #location /sdk {
+  #  proxy_pass https://vsphere.company.com/sdk;
+  #  proxy_http_version 1.1;
+  #  proxy_set_header Upgrade $http_upgrade;
+  #  proxy_set_header Connection "Upgrade";
+  #  proxy_set_header Origin https://vsphere.company.com;
+#
+  #  proxy_buffering off;
+  #  client_max_body_size 0;
+  #  proxy_read_timeout 36000s;
+  #  proxy_redirect off;
+  #  proxy_ssl_session_reuse off;
+  #}
+}

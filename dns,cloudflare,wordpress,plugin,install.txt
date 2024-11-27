@@ -1,0 +1,41 @@
+===================================
+CLOUDFLARE WORDPRESS PLUGIN INSTALL
+061019
+===================================
+
+#https://wordpress.org/plugins/cloudflare/
+#https://downloads.wordpress.org/plugin/cloudflare.3.3.3.zip
+
+
+cd ./wptwothree/wp-content/plugins
+cd ./wpgreeeninfo/wp-content/plugins
+cd ./wp/wp-content/plugins
+
+sudo wget https://downloads.wordpress.org/plugin/cloudflare.3.3.3.zip
+sudo unzip cloudflare.3.3.3.zip
+sudo chown -R root:apache cloudflare
+sudo chmod -R 750 cloudflare
+sudo rm cloudflare.3.3.3.zip
+
+log into wp-admin
+disable apache basic auth on wp-admin
+sudo nano /etc/httpd/sites-enabled/twothreeee.com.conf
+sudo nano /etc/httpd/sites-enabled/greeen.info.conf
+sudo service httpd restart
+
+enable plugin
+
+plugin is located under settings/cloudflare
+
+added email/user and api key
+
+tried to hit the 'apply' button to optimize, just spins, doesn't work
+
+enabled:
+
+Automatic HTTPS Rewrites
+Automatic HTTPS Rewrites helps fix mixed content by changing "http" to "https" for all resources or links on your web site that can be served with HTTPS.
+
+and enabled cloudflare proxy
+
+NO CHANGE WITH WP IMAGES, STILL DOESNT DISPLAY CORRECTLY - 061019

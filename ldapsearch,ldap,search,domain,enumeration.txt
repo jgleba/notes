@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LDAP SEARCH DOMAIN ENUMERATION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]20-30PM 
+
+ldapsearch -x -h ip -s base namingcontexts
+
+ANONYMOUS INFO GATHERING
+
+ldapsearch -x -h ip -b 'DOMAIN STRING' -s sub

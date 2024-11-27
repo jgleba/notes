@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KEEPALIVED HAPROXY, MOVE VIP WHEN HAPROXY DEAD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-01-13[Jan-Fri]15-12PM 
+
+WORKING 011323
+
+IN GLOBAL
+
+vrrp_script chk_haproxy {           # Requires keepalived-1.1.13
+        script "/usr/bin/killall -s 0 haproxy"     # cheaper than pidof
+        interval 1                      # check every 2 seconds
+        weight -40                        # add 2 points of prio if OK
+}
+
+IN VIP SECTION AFTER AUTH
+
+track_script {
+     chk_haproxy
+  }
+
+WASNT WORKING BECAUSE KILLALL COMMAND NOT FOUND
+
+sudo yum install psmisc

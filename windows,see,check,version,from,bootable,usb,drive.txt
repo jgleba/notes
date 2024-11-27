@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS, SEE VERSION FROM USB DRIVE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-13[May-Thu]10-47AM 
+
+dism /Get-WimInfo /WimFile:d:\sources\install.esd /index:1

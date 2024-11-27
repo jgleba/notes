@@ -1,0 +1,51 @@
+============================
+LINUX, DF, DISK CHECK, EMAIL
+JGleba
+05-11-2019
+============================
+
+==
+CRONTAB
+==
+
+crontab -e
+
+45 23 * * * /path/to/df-email.sh>/dev/null 2>&1
+
+==
+SCRIPT
+==
+
+sudo nano /path/to/df-email.sh
+sudo chmod +x /path/to/df-email.sh
+
+###
+#!/bin/bash
+
+##QUICK DF EMAIL TO KEEP AN EYE ON DISK SPACE
+##JGleba
+##05-11-2019
+
+#get machine hostname
+machinehostname=$(hostname)
+
+#one way to do it, longer, was testing
+#echo $machinehostname > /path/to/dftemp.txt
+#echo "
+#
+#" >> /path/to/dftemp.txt
+#df >> /path/to/dftemp.txt
+#cat /path/to/dftemp.txt | /bin/mail -s "$machinehostname df disk space check" example@jgleba.com
+#rm -f /path/to/dftemp.txt
+
+#shorter way
+df -h | /bin/mail -s "$machinehostname df disk space check" example@jgleba.com
+###
+
+==
+TEST
+==
+
+/bin/sh /path/to/df-email.sh
+/bin/bash /path/to/df-email.sh
+./df-email.sh

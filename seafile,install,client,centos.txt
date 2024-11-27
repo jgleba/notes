@@ -1,0 +1,48 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS INSTALL SEAFILE CLIENT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-25[Oct-Sun]00-03AM 
+
+##https://download.seafile.com/published/seafile-user-manual/syncing_client/install_linux_client.md
+
+sudo cat > /etc/yum.repos.d/seafile.repo <<EOF
+[seafile]
+name=seafile
+baseurl=https://linux-clients.seafile.com/seafile-rpm/centos7
+gpgcheck=0
+enabled=1
+EOF
+
+sudo yum install -y epel-release
+sudo yum install -y seafile --enablerepo=cr
+
+==
+USAGE
+==
+
+##https://download.seafile.com/published/seafile-user-manual/syncing_client/linux-cli.md
+
+# choose a folder where to store the seafile client settings e.g ~/seafile-client
+mkdir ~/seafile-client            # create the settings folder
+seaf-cli init -d ~/seafile-client  # initialise seafile client with this folder
+seaf-cli start
+
+==
+
+Download and sync a library from a server. 
+    retrieve the library id by browsing into a library on the server. The ID is part of the URL. The format looks like f4962ce9-ba07-47b8-a83a-73dd96c2ebfd .
+    then
+seaf-cli download -l "the id of the library" -s  "the url + port of server" -d "the folder where the library folder will be downloaded" -u "username on server" [-p "password"]
+seaf-cli status  # check status of ongoing downloads
+# Name  Status  Progress
+# Apps    downloading     9984/10367, 9216.1KB/s
+
+
+seaf-cli sync -l "the id of the library" -s  "the url + port of server" -d "the folder which the library will be synced with" -u "username on server" [-p "password"]
+
+seaf-cli sync -l "661367e7-891b-46f8-8c7f-9e620f3fc826" -s "https://seafile.jgleba.com" -d "/j/seafile/1data" -u "example@jgleba.com"
+
+seaf-cli sync -l "c51322fe-924b-4309-b650-456381bb9d50" -s "https://seafile.jgleba.com" -d "/j/seafile/softw-win" -u "example@jgleba.com"
+seaf-cli sync -l "eca42a01-e0cf-4ac9-a14a-3ad6c1c96cf4" -s "https://seafile.jgleba.com" -d "/j/seafile/softw-mac" -u "example@jgleba.com"

@@ -1,0 +1,18 @@
+LOOKS PROMISING BUT CAN'T FIGURE OUT HOW TO SAVE
+============================
+
+Setting Static IP from SSH command line
+
+If you wish to configure your static IP Address from command line, enter each of the following command.
+
+The IP addresses used are for example only.
+set lan.if.1.use_dhcp=0
+set lan.if.1.ip=192.168.28.2
+set lan.if.1.subnet=255.255.255.0
+set lan.gateway.ip=192.168.0.1
+set lan.gateway.dhcp_ip=0
+
+Then type the following commands to save your changes
+
+-> save
+-> reboot system

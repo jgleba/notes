@@ -1,0 +1,7 @@
+http_access allow localhost
+
+acl ok_youtube_access src "/etc/squid/youtubeallow"
+acl bad_youtube_domains dstdomain "/etc/squid/youtubedomains"
+
+http_access allow ok_youtube_access
+http_access deny bad_youtube_domains

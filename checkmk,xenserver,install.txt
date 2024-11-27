@@ -1,0 +1,50 @@
+check mk install on xenserver 7
+
+wget ftp://bo.mirror.garr.it/1/slc/centos/7.2.1511/os/x86_64/Packages/xinetd-2.3.15-12.el7.x86_64.rpm
+
+rpm -ivh  xinetd-2.3.15-12.el7.x86_64.rpm
+
+vi /etc/sysconfig/iptables
+
+add to top of file
+
+-A RH-Firewall-1-INPUT -p tcp --dport 6556 -j ACCEPT
+
+systemctl restart iptables
+
+rpm -ivh check_mk-agent-1.2.4p3-1.noarch.rpm
+
+systemctl restart xinetd.service
+
+working now
+
+==
+
+UPDATED - 022820
+
+##https://discussions.citrix.com/topic/405097-xenserver-snmp-configuration-and-test/
+
+sudo scp user@172.31.0.15:/home/x/dat/short/j/softw/1win/7checkmk/check_mk-agent-1.2.4p3-1.noarch.rpm ./
+sudo scp -rv user@172.31.0.15:/home/x/dat/short/j/softw/7checkmk/128/check-mk-agent-1.2.8p27-1.noarch.rpm ./
+ 
+sudo scp -rv user@172.31.0.15:/home/x/dat/short/j/softw/7checkmk/server,install/xinetd-2.3.15-12.el7.x86_64.rpm ./
+rpm -ivh xinetd-2.3.15-12.el7.x86_64.rpm
+ 
+ 
+rpm -ivh   check-mk-agent-1.2.8p27-1.noarch.rpm
+rpm -ivh check_mk-agent-1.2.4p3-1.noarch.rpm
+ 
+ iptables -N SNMP-Input
+iptables -I INPUT -j SNMP-Input
+iptables -A SNMP-Input -p udp --dport 161 -j ACCEPT
+iptables -A SNMP-Input -p udp --dport 6556 -j ACCEPT
+iptables -A SNMP-Input -p tcp --dport 6556 -j ACCEPT
+/sbin/service iptables save  
+
+ nano /etc/xinetd.d/check_mk
+ 
+ systemctl restart xinetd.service
+ 
+ ==
+ TRIED AGAIN 042920 - NOT WORKING
+ ==

@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERSHELL REMOTE SHUTDOWN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-06-20[Jun-Sat]11-52AM 
+
+##https://www.computerperformance.co.uk/powershell/stop-computer/
+##https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.management/stop-computer?view=powershell-7
+
+Stop-Computer -computerName ExchServer
+
+Stop-Computer -Force -computerName 192.168.0.1
+
+Stop-Computer -Force -credential domain\user -computerName 192.168.0.1
+
+==
+FORCE RESTART
+==
+
+Restart-Computer -force -credential wescast.com\glebjd_a -computername 192.168.0.1
+
+
+
+CMD RESTART
+
+shutdown /m ip /r /f /t 0

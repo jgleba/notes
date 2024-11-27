@@ -1,0 +1,144 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS ZABBIX INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-28[Aug-Fri]18-38PM 
+
+##https://computingforgeeks.com/how-to-install-zabbix-server-on-centos-7/
+##https://www.fosslinux.com/7705/how-to-install-and-configure-zabbix-on-centos-7.htm
+##https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-zabbix-to-securely-monitor-remote-servers-on-centos-7
+##https://www.howtoforge.com/tutorial/how-to-install-and-configure-zabbix-on-centos-7/
+
+==
+INSTALL HTTPD
+==
+
+sudo yum -y install httpd
+
+sudo systemctl enable httpd
+sudo systemctl start httpd
+
+sudo firewall-cmd --add-service={http,https} --permanent
+sudo firewall-cmd --reload
+
+==
+INSTALL MYSQL
+==
+sudo yum install mariadb-server -y
+
+sudo systemctl start mariadb
+sudo systemctl enable mariadb
+
+sudo mysql_secure_installation
+
+GRANT ALL PRIVILEGES ON *.* TO 'zabbix'@'localhost' IDENTIFIED BY 'pass' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* to 'zabbix'@'localhost';
+FLUSH PRIVILEGES;
+
+==
+INSTALL PHP
+==
+
+sudo yum install epel-release
+sudo yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+
+sudo yum install yum-utils
+sudo yum-config-manager --enable remi-php72
+sudo yum -y install mod_php72-php php72-php-cli php72-php-common php72-php-devel php72-php-pear php72-php-gd php72-php-mbstring php72-php-mysql php72-php-xml php72-php-bcmath
+sudo yum remove yum-utils
+
+==
+INSTALL ZABBIX
+==
+
+sudo rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
+
+sudo yum install -y zabbix-server-mysql zabbix-agent zabbix-get
+sudo yum-config-manager --enable zabbix-frontend
+sudo yum -y install centos-release-scl
+sudo yum -y install zabbix-web-mysql-scl zabbix-apache-conf-scl
+
+==
+DB SCHEMA
+==
+
+create database zabbix character set utf8 collate utf8_bin;
+
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -ppass zabbix
+
+==
+ZABBIX DB CONFIG
+==
+
+sudo nano /etc/zabbix/zabbix_server.conf 
+
+UNCOMMENT
+
+#DBPassword=
+
+==
+PHP TIMEZONE
+==
+
+sudo nano /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf
+
+CHANGE
+
+; php_value[date.timezone] = Europe/Riga
+
+TO
+
+php_value[date.timezone] = America/Toronto
+
+==
+START SERVICES
+==
+
+sudo systemctl restart zabbix-server zabbix-agent httpd rh-php72-php-fpm
+sudo systemctl enable zabbix-server zabbix-agent httpd rh-php72-php-fpm
+
+#sudo systemctl start zabbix-server.service
+#sudo systemctl enable zabbix-server.service
+#sudo systemctl restart httpd
+
+==
+ZABBIX FIREWALL
+==
+
+sudo firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
+sudo firewall-cmd --reload
+
+==
+FINISH SETUP ON WEBPAGE
+==
+
+http://172.16.0.17/zabbix/setup.php
+
+
+==
+INSTALL ZABBIX AGENT ON CENTOS
+==
+
+sudo rpm -Uvh https://repo.zabbix.com/zabbix/5.0/rhel/7/x86_64/zabbix-release-5.0-1.el7.noarch.rpm
+sudo yum install zabbix-agent
+
+sudo nano /etc/zabbix/zabbix_agentd.conf
+
+CHANGE
+
+Server=192.168.1.100
+ActiveServer=192.168.1.100
+Hostname=Server1
+
+FIREWALL
+
+iptables -A INPUT -p tcp -s 192.168.1.100 --dport 10050 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+sudo firewall-cmd --zone=public --add-port=10050/tcp --permanent
+sudo firewall-cmd --reload
+
+START AGENT
+
+sudo systemctl enable zabbix-agent
+sudo systemctl start zabbix-agent

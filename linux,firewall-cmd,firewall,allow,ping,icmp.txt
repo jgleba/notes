@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  FIREWALL-CMD ALLOW PING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-26[Nov-Fri]15-54PM 
+
+##https://superuser.com/questions/1114065/getting-firewalld-to-allow-ping-requests
+
+sudo firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT 0 -p icmp -s 0.0.0.0/0 -d 0.0.0.0/0 -j ACCEPT
+
+sudo firewall-cmd --reload
+OR
+sudo systemctl restart firewalld.service

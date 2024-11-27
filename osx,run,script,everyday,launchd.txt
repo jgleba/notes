@@ -1,0 +1,31 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OSX RUN SCRIPT FROM LOCATION EVERYDAY AT 310AM USING LAUNCHD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-02[Nov-Sat]14-54PM 
+
+cat /Library/LaunchAgents/com.a.plist
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+
+<dict>
+    <key>Label</key>
+    <string>com.a</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/location/script.sh</string>
+    </array>
+   <key>StartCalendarInterval</key>
+   <dict>
+   <key>Hour</key>
+   <integer>03</integer>
+   <key>Minute</key>
+   <integer>10</integer>
+</dict>
+</dict>
+</plist>
+
+

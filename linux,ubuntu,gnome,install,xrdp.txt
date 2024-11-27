@@ -1,0 +1,37 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU XRDP GNOME DESKTOP INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-07[Aug-Wed]13-41PM 
+
+##https://stackoverflow.com/questions/78074498/how-to-configure-xrdp-to-work-with-gnome-on-ubuntu
+
+
+#Install xrdp and gnome-session:
+
+sudo apt update
+sudo apt install xrdp gnome-session
+
+#Allow log in after xrdp setup:
+
+sudo adduser xrdp ssl-cert
+
+#Specify Gnome for your remote session:
+
+echo "gnome-session" | tee ~/.xsession
+
+#Then set your ~/.xsessionrc file using:
+
+echo "export XAUTHORITY=${HOME}/.Xauthority" | tee ~/.xsessionrc
+echo "export GNOME_SHELL_SESSION_MODE=ubuntu" | tee -a ~/.xsessionrc
+echo "export XDG_CONFIG_DIRS=/etc/xdg/xdg-ubuntu:/etc/xdg" | tee -a ~/.xsessionrc
+
+#Here the XAUTHORITY line solves the Display error when opening Firefox and other apps that rely on root privileges.
+#Optionally, if you want the regular Gnome desktop with vertical menu on the side rather than Activities menu, do this:
+
+echo "export XDG_CURRENT_DESKTOP=ubuntu:GNOME" | tee -a ~/.xsessionrc
+
+#Finally do this:
+
+sudo systemctl restart xrdp

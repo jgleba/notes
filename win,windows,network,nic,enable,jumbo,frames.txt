@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS ENABLE JUMBO FRAMES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-28[Sep-Mon]09-40AM 
+
+##https://sites.google.com/site/win88optimization/5-network/enable-jumbo-frames
+
+GO TO DEVICE MANAGER
+
+EXPAND NETWORK ADAPTERS
+
+RIGHT CLICK ON NETWORK ADAPTER
+
+PROPERTIES
+
+JUMBO FRAMES ON LEFT SIDE
+
+CHANGE TO JUMBO 9000

@@ -1,0 +1,23 @@
+powerbroker
+5dsp file
+==
+
+in powerbroker
+tables -> csio insurance companies
+find company
+multiple contracts? only if more than one branch
+get contract number
+
+in powerbroker
+tables -> insurance companies
+find company
+check that
+
+return to pb main screen
+
+edi -> create 5dsp
+add CSIO company code
+pick auto / hab
+enter contract code
+csio identification -> from mastercom
+

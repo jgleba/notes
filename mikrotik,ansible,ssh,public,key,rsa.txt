@@ -1,0 +1,12 @@
+ansible with mikrotik
+======================
+
+create user ansible
+enable ssh, ip services
+firewall rule
+
+log into router with ansible user 
+put public key file from ansible machine into files
+user ssh-keys import public-key-file=id_rsa.pub
+ 
+log in from ansible machine

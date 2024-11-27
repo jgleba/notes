@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX DATE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-06[Apr-Mon]09-11AM 
+
+##https://www.geeksforgeeks.org/date-command-linux-examples/
+
+MDY
+$(date +"%m%d%y")
+
+MDY-HM
+ $(date +"%m%d%y-%H%M")

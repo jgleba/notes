@@ -1,0 +1,82 @@
+=====================================
+RESEARCHING OPEN / NO AUTH S3 BUCKETS
+071119
+JGleba
+=====================================
+
+==
+LOOKED VERY QUICKLY BEFORE, SAW IT WAS EASY, BUT NOT SUPER EASY TO ITERATE THROUGH MANY BUCKETS
+WANT TO FIND A WAY
+==
+
+==
+IS COOL, BUT I THINK I CAN DO BETTER, LIMITS, DOESNT SHOW MUCH, ON PURPOSE PROBABLY
+==
+
+https://buckets.grayhatwarfare.com/
+
+==
+SOMETHING ELSE SIMILAR
+==
+
+#https://app.cloudcheckr.com/IsS3BucketPublic/#!/isS3BucketPublic
+#https://digi.ninja/projects/bucket_finder.php
+
+==
+STARTING HERE
+==
+
+#https://www.google.ca/search?q=find+open+s3+buckets&ei=f4EnXfCpMJamtQbj-YHICw&start=10&sa=N&ved=0ahUKEwiw5YD-wK3jAhUWU80KHeN8ALkQ8NMDCLcB&biw=1366&bih=654
+
+==
+RESOURCES
+==
+
+#http://jermsmit.com/how-to-search-for-open-amazon-s3-buckets-and-their-contents/
+#https://disruptops.com/how-s3-buckets-become-public-and-the-fastest-way-to-find-yours/
+#https://github.com/sa7mon/S3Scanner
+#https://auth0.com/blog/fantastic-public-s3-buckets-and-how-to-find-them/
+#https://securityonline.info/s3scanner-scan-open-s3-buckets-dump/
+#https://www.cbtnuggets.com/blog/2018/10/are-your-s3-buckets-leaking/
+#https://expel.io/blog/find-amazon-s3-bucket-misconfigurations-fix-them/
+#https://www.provensec.com/penetration-testing-aws-s3-bucket/
+
+==
+HOW TO ALLOW PUBLIC
+==
+
+#https://havecamerawilltravel.com/photographer/how-allow-public-access-amazon-bucket/
+
+==
+BUCKETS, BASIC USAGE
+==
+
+#https://s3browser.com/how-to-browse-amazon-s3-bucket.aspx
+
+==
+SEARCH GOOGLE
+==
+
+#https://www.provensec.com/penetration-testing-aws-s3-bucket/
+site: s3.amazonaws.com file type: xls password
+
+DIDNT FIND ANYTHING, PROBABLY TOO LATE, SEE TONS OF PAGES WITH SAME INFO, COMING UP IN SEARCH
+
+==
+QUERY?
+==
+
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Sid": "ABC",
+    "Effect": "Allow",
+    "Principal": { "AWS": "*" },
+    "Action": ["s3:GetObject"],
+    "Resource": ["arn:aws:s3:::bucket_name/*" ]
+  }]
+}
+
+==
+
+

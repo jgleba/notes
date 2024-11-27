@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS SHORTCUTS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-01-18[Jan-Tue]12-50PM 
+
+system dialog
+sysdm.cpl
+
+applications and features
+appwiz.cpl
+
+network and sharing center connections
+ncpa.cpl

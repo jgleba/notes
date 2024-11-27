@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE POWERCLI DISPLAY VMs AND NIC TYPE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-13[Sep-Sun]16-50PM 
+
+
+##https://communities.vmware.com/thread/395849
+
+Get-VM | Get-NetworkAdapter | Select @{N="VM";E={$_.Parent.Name}},Name,Type,WakeOnLan | ft -Autosize
+
+Get-VM | Get-NetworkAdapter | Select @{N="VM";E={$_.Parent.Name}},Name,Type | ft -Autosize
+
+Get-VM | Get-NetworkAdapter | Select @{N="VM";E={$_.Parent.Name}},Name,Type,NetworkName | ft -Autosize

@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS PROXYSQL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-05-08[May-Fri]15-43PM 
+
+##https://mydbops.wordpress.com/2018/08/20/proxysql-series-percona-cluster-mariadb-cluster-galera-read-write-split/
+##https://mydbops.wordpress.com/2018/02/19/proxysql-series-mysql-replication-read-write-split-up/
+##https://github.com/sysown/proxysql/wiki
+
+see other instructions, seemed to work 050820

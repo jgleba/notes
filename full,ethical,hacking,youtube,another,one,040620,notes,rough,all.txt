@@ -1,0 +1,46 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  YOUTUBE ANOTHER ETHICAL HACKING COURSE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-06[Apr-Mon]14-43PM 
+
+##https://www.youtube.com/watch?v=dz7Ntp7KQGA
+
+==
+TOOLS
+==
+
+sslscan - scan ssl certs for ciphers and info
+PackETH - manipulate packets
+github.com/LionSec/katoolin - kali tools install on other distros
+metasploitable - vulnerable machine
+
+==
+OTHER GOOD HACKING DISTROS
+==
+
+backbox
+deft
+arch
+cyborg
+pentoo
+bugtraq-2 blackwidow
+
+==
+NMAP
+==
+
+nmap -iL tsrgets.txt
+nmap -oN results.txt host
+
+==
+REFLECTIVE, STORED, DOM XSS
+==
+
+==
+EASY WIRELESS DOS, DEFAUTHENICATE ALL USERS TO AP
+==
+
+airreplay-ng -0 0 bssid
+

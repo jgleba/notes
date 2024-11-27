@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PHP INFO PAGE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-29[Feb-Sat]19-28PM 
+
+##https://mediatemple.net/community/products/dv/204643880/how-can-i-create-a-phpinfo.php-page
+
+<?php
+// Show all information, defaults to INFO_ALL
+phpinfo();
+
+sudo echo "
+<?php
+phpinfo();
+?>" > phpinfo.php

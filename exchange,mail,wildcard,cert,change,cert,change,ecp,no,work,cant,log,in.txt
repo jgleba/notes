@@ -1,0 +1,10 @@
+EXCHANGE WILDCARD CERT, AFTER CHANGE, ECP NO WORK, CANT LOGIN
+05-24-2019
+
+#https://www.sslsupportdesk.com/troubleshooting-exchange-unable-to-open-owa-ecp-or-ems-after-a-self-signed-certificate-is-removed-from-the-exchange-back-end-website/
+
+FROM ADMIN CMD RUN:
+
+iisreset
+
+WORKING AGAIN

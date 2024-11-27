@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GOOGLE DORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-31[Jan-Fri]17-54PM 
+
+##OLDER VERISON OF SITE
+cache: sitename.com
+
+##LOG FILES CONTAIN THE STRING USERNAME
+allintext:username filetype:log
+
+##
+inurl:/proc/self/cwd
+
+##FTP SERVERS
+intitle:"index of" inurl:ftp
+
+##DB
+db_password filetype:env
+

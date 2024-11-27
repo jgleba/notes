@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE ENHANCED PLUGIN, SIGN IN WITH WINDOWS CREDS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-15[Jan-Fri]11-47AM 
+
+WORKS IN OPERA 
+
+HAVE TO ADD EXCEPTION FROM WEBSITE BELOW TO GET WORKING ON FIREFOX
+
+https://kb.vmware.com/s/article/70914

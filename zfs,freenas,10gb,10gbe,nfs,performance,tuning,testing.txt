@@ -1,0 +1,129 @@
+================================================
+TESTING NFS ZFS TO TRY TO GET BETTER PERFORMANCE
+061819
+================================================
+
+TRIED JUMBO FRAMES, NO IMPROVEMENT - 061719
+
+TEST JUMBO FRAMES WORKING - DIDNT DO - NEED TO TRY AGAIN TO CONFIRM
+Test procedure and results:
+- ping host and storage -s 9000 - working ok
+
+==
+MORE THINGS TO TRY
+==
+
+CHANGE NFS SERVER COUNT (BETTER CONCURRENCY AND RANDOM IOPS
+
+https://www.ixsystems.com/community/threads/10gb-nfs-vs-iscsi-benchmarks-esxi-6-5-with-5-ioanalyzer-workers-any-tuning-suggestions.62762/
+
+TEST HIGHER NUMBER IN NFS SERVER + JUMBO FRAMES
+
+but swapping to 48 NFS servers on our pure SSD array (4x 2TB samsung 850 pros with an Intel p3520 ZIL) shows almost a DOUBLING of IOPs and halving of latency over previous tests (iSCSI included). Before iSCSI was a marginal victor, now NFS is absolutely smashing it.
+
+DEFAULT IS 4
+
+==
+
+SHOULD TRY THESE OPTIONS IN FREENAS
+
+https://discussions.citrix.com/topic/385611-xenserver-65-nfs-performance/
+
+With 10 Mbs NICs, you may need some additional tweaks. Here are some I use, added to /etc/rc.local:
+# for 10 Mbs NICs, increase the queue length:
+ifconfig eth4 txqueuelen 300000
+ifconfig eth5 txqueuelen 300000
+#
+sysctl -w net.ipv4.tcp_congestion_control=cubic
+sysctl -w net.core.rmem_max=16777216
+sysctl -w net.core.wmem_max=16777216
+sysctl -w net.ipv4.tcp_rmem="4096 87380 16777216"
+sysctl -w net.ipv4.tcp_wmem="4096 65536 16777216"
+sysctl -w net.core.netdev_max_backlog=300000
+#add the following to help with jumbo frames if configured as such and 10 Gbs Ethernet:
+sysctl -w net.ipv4.tcp_mtu_probing=1
+--Tobias
+
+LOOKS INTERESTING
+
+sysctl -w net.ipv4.tcp_mtu_probing=1
+
+
+LOOKS VERY GOOD
+
+http://45drives.blogspot.com/2016/05/how-to-tune-nas-for-direct-from-server.html
+
+kern.ipc.maxsockbuf 16777216
+net.inet.ip.intr_queue_maxlen 2048
+net.inet.tcp.recvbuf_inc 524288
+net.inet.tcp.recvbuf_max 16777216
+net.inet.tcp.recvspace 4194304
+net.inet.tcp.sendbuf_inc 32768
+net.inet.tcp.sendbuf_max 16777216
+net.inet.tcp.sendspace 2097152
+net.route.netisr_maxqlen 2048
+
+
+==
+GOOD DISK TESTING
+==
+
+ $ dd if=/dev/zero of=tmp.dat bs=2048k count=10k
+Results = 395 MBytes/s
+$ dd if=tmp.dat of=/dev/zero bs=2048k count=10k
+Results = 456 MBytes/s
+
+dd if=/dev/zero of=/mnt/test/tmp.dat bs=2048k count=5k
+
+==
+INTERESTING READ - GETTING BETTER PERFORMANCE THAN ME - ARE USING SYNC OFF
+==
+
+https://forums.servethehome.com/index.php?threads/nfsv3-vs-nfsv4-vs-iscsi-for-esxi-datastores.23203/
+
+Send and receive buffers are tuned for 40gbe, but other than that, the tuning is pretty much default.
+
+(write)
+dd if=/dev/zero of=/home/test/test1 bs=512k count=20000
+800-900 MB/s
+
+(read)
+dd if=test1 of=/dev/null bs=512k
+1.1 - 1.2 GB/s
+
+Disk array:
+Same commands as above.
+(write)
+520 - 530 MB/s
+
+(read)
+1.1 - 1.2 GB/s
+
+==
+MORE STUFF
+==
+
+https://www.findelabs.com/post/nfs-performance-tuning/
+
+Conclusions
+Change your r/w buffer sizes to 32768!
+
+==
+MORE
+==
+
+https://forums.overclockers.com.au/threads/esxi-6-7-slow-iscsi-and-nfs-transfer-to-freenas.1255721/
+
+==
+GOOD INFO
+==
+
+https://linuxhint.com/configuring-zfs-cache/
+https://www.centos.org/forums/viewtopic.php?t=67737
+
+==
+GOOD STORY
+==
+
+https://www.suse.com/media/presentation/CAS1260_HPC_Meets_SUSE_Enterprise_Storage_at_University_of_Maine.pdf
+

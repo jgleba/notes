@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NODEJS INSTALL HEXO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-07-09[Jul-Fri]11-07AM 
+
+sudo npm install hexo-cli -g
+
+hexo init blog
+
+cd blog
+
+npm install
+
+hexo server

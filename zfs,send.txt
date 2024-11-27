@@ -1,0 +1,36 @@
+/mnt/pool1/fnasutil/zxfer -v -dFP -T "-i /data/ssh/replication -o BatchMode=yes -o StrictHostKeyChecking=no root@10.0.0.50" -u pool1@auto-20170415.1918-1w pool1
+
+
+
+zfs send pool1@auto-20170415.0118-1w > /mnt/pool1/auto-20170415.0118-1w.bak
+
+
+
+
+!#/bin/bash
+
+#Justin Gleba
+#April 20, 2017
+#zfs send and receive script
+#send snap to new dataset on new host
+
+echo -n "Enter the source pool and dataset (eg. pool/dataset) and press [ENTER]: "
+read SOURPOOLNAMEWDATASET
+
+echo -n "Enter the full name of the snapshot and press [ENTER]: "
+read SNAP
+
+echo -n "Enter the IP of the destination machine and press [ENTER]: "
+read DESTINATIONHOST
+
+echo -n "Enter the destination pool and dataset and press [ENTER] (*NOTE* destination dataset must not exist and will be created): "
+read DESTPOOLNAMEWDATASET
+
+'zfs send '$SOURPOOLNAMEWDATASET'@'$SNAP' > ssh '$DESTINATIONHOST' zfs recv '$DESTPOOLNAMEWDATASET''&
+
+
+
+
+
+
+zfs send pool1/test1@snap > ssh 10.0.0.50 zfs recv pool1/test1dataset

@@ -1,0 +1,8 @@
+SET DATETIMEFILE="C:\scripts\rclone\excludes\datetimetemp.txt"
+for /f "tokens=*" %%i in ('C:\scripts\rclone\date.exe +"%%y-%%m-%%d_%%H_%%M"') do echo %%i>%DATETIMEFILE%
+set /p CURRENTDATETIME=<%DATETIMEFILE%
+
+SET SOURCEPATH="C:\Users\jgleba\Box\PROCEDURES ET ASTUCES\RCLONE"
+SET DESTPATH="\\10.110.0.15\jga\j\rclone\rclone-archive-%CURRENTDATETIME%"
+
+robocopy %SOURCEPATH% %DESTPATH% /E /XO

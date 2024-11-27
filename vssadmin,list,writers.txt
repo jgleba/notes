@@ -1,0 +1,4 @@
+vssadmin list writers
+
+shows vss writers status
+

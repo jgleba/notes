@@ -1,0 +1,19 @@
+outlook 2007 the set of folders cannot be opened the information store could not be opened
+
+close outlook
+
+close all processes
+
+log out
+
+log in
+
+if that doesn't work
+
+go to %localappdata% or user profile
+
+alt-n/outlook connector/accounts/outlook/user-email/localcache.db
+
+delete that file
+
+re-open outlook

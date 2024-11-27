@@ -1,0 +1,959 @@
+﻿CENTOS7 + ZFS + GLUSTERFS + (NFS-GANESHA + PACEMAKER + COROSYNC) + (CTDB ** NOT USING)
+======================================================================================
+Justin Gleba
+06/07/2017 - edit 06/25/2017
+
+========================
+UPDATE AND INSTALL STUFF
+========================
+
+##update and install stuff
+sudo yum update -y
+sudo yum install nano wget -y
+sudo yum install epel-release -y
+##not using
+##sudo yum install kernel-devel -y  
+
+=============================================
+SWITCH TO NETWORK SCRIPTS FROM NetworkManager
+=============================================
+
+##need to configure interface file in /etc/sysconfig/network-scripts/ifcfg-*interface*
+
+##disable and stop NetworkManager
+systemctl disable NetworkManager
+service NetworkManager stop
+
+##configure network scripts file
+sudo nano /etc/sysconfig/network-scripts/ifcfg-eno16777728
+##change mac address to match VM
+##add to bottom of file:
+NM_CONTROLLED=no
+
+##rename to match interface name
+mv /etc/sysconfig/network-scripts/ifcfg-eno16777728 /etc/sysconfig/network-scripts/ifcfg-ens32
+
+##second interface
+cp /etc/sysconfig/network-scripts/ifcfg-ens32 /etc/sysconfig/network-scripts/ifcfg-ens34
+nano /etc/sysconfig/network-scripts/ifcfg-ens34
+
+for static ip need to put this in config file:
+
+HWADDR="00:0C:29:8F:03:42"
+TYPE="Ethernet"
+BOOTPROTO="static"
+IPADDR="172.250.250.154"
+NETMASK="255.255.255.0"
+DEFROUTE="no"
+PEERDNS="no"
+PEERROUTES="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6INIT="yes"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_PEERDNS="yes"
+IPV6_PEERROUTES="yes"
+IPV6_FAILURE_FATAL="no"
+NAME="ens34"
+UUID="31c9d608-8e51-429a-a66f-3aebf87b4227"
+ONBOOT="yes"
+NM_CONTROLLED=no
+
+
+##make sure there is dns server
+sudo cat /etc/resolv.conf 
+nano /etc/resolv.conf
+
+##enable and start (or reboot machine) to start network scripts
+systemctl enable network
+##service network restart
+reboot
+
+==========
+HOSTS FILE
+==========
+
+nano /etc/hostname
+nano /etc/hosts
+
+172.16.18.183 zfscl3-1
+172.16.18.182 zfscl3-2
+172.16.18.181 zfscl3-3
+172.16.18.83 zfscl3-1v
+172.16.18.82 zfscl3-2v
+172.16.18.81 zfscl3-3v
+
+172.16.18.154 zfscl4-1
+172.16.18.153 zfscl4-2
+172.16.18.152 zfscl4-3
+172.16.18.151 zfscl4-4
+172.250.250.154 zfscl4-1v
+172.250.250.153 zfscl4-2v
+172.250.250.152 zfscl4-3v
+172.250.250.151 zfscl4-4v
+
+========
+FIREWALL
+========
+##firewall config - none of this working, had to turn firewall off
+
+systemctl disable firewalld
+systemctl stop firewalld
+
+##sudo firewall-cmd --permanent --zone=public --add-service=ssh
+##sudo firewall-cmd --permanent --zone=public --add-service=nfs
+##sudo firewall-cmd --permanent --zone=public --add-service=mountd
+##sudo firewall-cmd --permanent --zone=public --add-service=rpc-bind
+##firewall-cmd --permanent --add-port=111/tcp
+##firewall-cmd --permanent --add-port=54302/tcp
+##firewall-cmd --permanent --add-port=20048/tcp
+##firewall-cmd --permanent --add-port=2049/tcp
+##firewall-cmd --permanent --add-port=46666/tcp
+##firewall-cmd --permanent --add-port=42955/tcp
+##firewall-cmd --permanent --add-port=875/tcp
+##sudo firewall-cmd --reload
+
+================
+PASSWORDLESS SSH
+================
+ssh-keygen
+ssh-copy-id root@172.16.18.197
+
+172.16.18.183 zfscl3-1
+172.16.18.182 zfscl3-2
+172.16.18.181 zfscl3-3
+
+node 1
+ssh-copy-id root@172.16.18.182
+ssh-copy-id root@172.16.18.181
+ssh-copy-id root@zfscl3-2
+ssh-copy-id root@zfscl3-3
+
+node 2
+ssh-copy-id root@172.16.18.183
+ssh-copy-id root@172.16.18.181
+ssh-copy-id root@zfscl3-1
+ssh-copy-id root@zfscl3-3
+
+node 3
+ssh-copy-id root@172.16.18.182
+ssh-copy-id root@172.16.18.183
+ssh-copy-id root@zfscl3-2
+ssh-copy-id root@zfscl3-1
+
+
+node 1
+ssh-copy-id root@172.16.18.153
+ssh-copy-id root@172.16.18.152
+ssh-copy-id root@172.16.18.151
+ssh-copy-id root@172.250.250.153
+ssh-copy-id root@172.250.250.152
+ssh-copy-id root@172.250.250.151
+ssh-copy-id root@zfscl4-2
+ssh-copy-id root@zfscl4-3
+ssh-copy-id root@zfscl4-4
+ssh-copy-id root@zfscl4-2v
+ssh-copy-id root@zfscl4-3v
+ssh-copy-id root@zfscl4-4v
+
+node 2
+ssh-copy-id root@172.16.18.154
+ssh-copy-id root@172.16.18.152
+ssh-copy-id root@172.16.18.151
+ssh-copy-id root@172.250.250.154
+ssh-copy-id root@172.250.250.152
+ssh-copy-id root@172.250.250.151
+ssh-copy-id root@zfscl4-1
+ssh-copy-id root@zfscl4-3
+ssh-copy-id root@zfscl4-4
+ssh-copy-id root@zfscl4-1v
+ssh-copy-id root@zfscl4-3v
+ssh-copy-id root@zfscl4-4v
+
+node 3
+ssh-copy-id root@172.16.18.154
+ssh-copy-id root@172.16.18.153
+ssh-copy-id root@172.16.18.151
+ssh-copy-id root@172.250.250.154
+ssh-copy-id root@172.250.250.153
+ssh-copy-id root@172.250.250.151
+ssh-copy-id root@zfscl4-2
+ssh-copy-id root@zfscl4-1
+ssh-copy-id root@zfscl4-4
+ssh-copy-id root@zfscl4-2v
+ssh-copy-id root@zfscl4-1v
+ssh-copy-id root@zfscl4-4v
+
+node 4
+ssh-copy-id root@172.16.18.154
+ssh-copy-id root@172.16.18.153
+ssh-copy-id root@172.16.18.152
+ssh-copy-id root@172.250.250.154
+ssh-copy-id root@172.250.250.153
+ssh-copy-id root@172.250.250.152
+ssh-copy-id root@zfscl4-2
+ssh-copy-id root@zfscl4-3
+ssh-copy-id root@zfscl4-1
+ssh-copy-id root@zfscl4-2v
+ssh-copy-id root@zfscl4-3v
+ssh-copy-id root@zfscl4-1v
+
+
+
+  On one (primary) node in the cluster, run:
+    ssh-keygen -f /var/lib/glusterd/nfs/secret.pem
+Deploy the pubkey ~root/.ssh/authorized keys on all nodes, run:
+    ssh-copy-id -i /var/lib/glusterd/nfs/secret.pem.pub root@172.16.18.196
+	
+	
+	ssh-copy-id -i /var/lib/glusterd/nfs/secret.pem.pub root@zfscl3-2
+	ssh-copy-id -i /var/lib/glusterd/nfs/secret.pem.pub root@zfscl3-3
+	ssh-copy-id -i /var/lib/glusterd/nfs/secret.pem.pub root@172.16.18.196
+	
+Copy the keys to all nodes in the cluster, run:
+    scp /var/lib/glusterd/nfs/secret.* 172.16.18.196:/var/lib/glusterd/nfs/
+	
+PART OF TRY2
+
+mkdir -p /var/lib/glusterd/nfs/
+ssh-keygen -f /var/lib/glusterd/nfs/secret.pem
+ssh-copy-id -i /var/lib/glusterd/nfs/secret.pem.pub root@zfs01
+ssh-copy-id -i /var/lib/glusterd/nfs/secret.pem.pub root@zfs02
+scp /var/lib/glusterd/nfs/secret.* zfs02:/var/lib/glusterd/nfs/
+
+ssh -oPasswordAuthentication=no -oStrictHostKeyChecking=no -i /var/lib/glusterd/nfs/secret.pem root@zfs02
+
+===
+ZFS
+===
+
+##INSTALL ZFS
+sudo wget http://download.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
+sudo yum install zfs-release.el7.noarch.rpm -y
+sudo yum install zfs -y
+
+##aug7 2017
+##error after update
+##couldn't install zfs
+yum install epel-release -y
+yum install zfs -y
+
+##IMPORT ON BOOT AND OTHER THINGS
+sudo systemctl preset zfs-import-cache zfs-import-scan zfs-mount zfs-share zfs-zed zfs.target
+
+##ADD ZFS TO KERNEL
+modprobe zfs
+/sbin/modprobe zfs
+
+##getting error when adding to kernel
+##modprobe: FATAL: Module zfs not found.
+##aug16, 2017
+dkms status
+dkms remove -m zfs -v 0.6.5.9 --all
+dkms remove -m spl -v 0.6.5.9 --all
+dkms add -m spl -v 0.6.5.9
+dkms add -m zfs -v 0.6.5.9
+dkms install -m spl -v 0.6.5.9
+dkms install -m zfs -v 0.6.5.9
+##still fails
+
+AUG18,2017 - WAS ABLE TO INSTALL ZFS AND ADD TO KERNEL
+after normal install failed, ran:
+yum install zfs-dracut
+TRIED ON SECOND BOX AND FAILED
+WORKED
+yum update -y
+yum install zfs-dracut
+
+##SHOW DRIVES (may not always work)
+ls /dev | grep sd*
+##my disks show up as sdX
+
+##CREATE POOL
+zpool create -f pool1 mirror sdb sdc
+zpool add -f pool1 mirror sde sdf
+zpool add -f pool1 log sdd
+
+##MOUNT POOL
+sudo zfs set mountpoint=/mnt/pool1 pool1
+
+
+======================
+ZFS PERFORMANCE TWEAKS
+======================
+
+## performance tweaks
+zfs set xattr=sa pool1
+zfs set atime=off pool1
+zfs set acltype=posixacl pool1
+
+## compression
+zfs set compression=lz4 pool1
+
+MORE BELOW**
+
+***
+NEED TO LOOK INTO ZFS PERFORMANCE TUNING - TRYING-JUNE12-CL2
+***
+
+sudo nano /etc/modprobe.d/zfs.conf
+
+Add the following
+
+# My tweaks for ZFS Performance
+options zfs zfs_prefetch_disable=1
+options zfs zfs_txg_timeout=3
+options zfs zfs_vdev_async_write_max_active=1
+options zfs zfs_vdev_async_write_min_active=1
+options zfs zfs_vdev_async_read_max_active=1
+options zfs zfs_vdev_async_read_min_active=1
+options zfs zfs_vdev_sync_write_max_active=1
+options zfs zfs_vdev_sync_write_min_active=1
+options zfs zfs_vdev_sync_read_min_active=1
+options zfs zfs_vdev_sync_read_max_active=1
+
+Do not close and save this file yet until we do our memory tuning.
+Now let’s touch on memory here. ZFS is memory hungry and the more memory you add to your server the better your performance will be. But we want to make sure that we don’t starve the system for memory so we will limit the ZFS_ARC_MAX by allocating only 50% of our installed memory to begin with (You will want to tune this as you go forward). In this example I have 16GB installed in my server so I am going to limit ZFS_ARC_MAX to 8GB. We need to add this in bytes.
+For 8GB I would add the following to the still open /etc/modprobe.d/zfs.conf. You can always tweak this up as you start to see how things perform.
+
+#### Memory tuning - entered in bytes 16GB RAM - 8GB for these values
+# zfs_zrc_max (1/2 or 3/4 of system memory)
+options zfs zfs_arc_max=4294967296
+# zfs zfs_arc_meta_limit (1/4 of zfs_arc_max)
+options zfs zfs_arc_meta_limit=2147483648
+# zfs_arc_min (1/2 of zfs_arc_meta_limit)
+options zfs zfs_arc_min=1073741824
+
+8GB RAM - 4GB to start for these values
+#### Memory tuning - entered in bytes
+# zfs_zrc_max (1/2 or 3/4 of system memory)
+options zfs zfs_arc_max=4294967296
+# zfs zfs_arc_meta_limit (1/4 of zfs_arc_max)
+options zfs zfs_arc_meta_limit=1073741824
+# zfs_arc_min (1/2 of zfs_arc_meta_limit)
+options zfs zfs_arc_min=536870912
+
+===============
+GLUSTERFS SETUP
+===============
+##yum install glusterfs-server gluster-api glusterfs-ganesha nfs-ganesha nfs-ganesha-gluster
+
+sudo yum -y install glusterfs-server glusterfs-fuse glusterfs-cli glusterfs-ganesha glusterfs-resource-agents nfs-ganesha-gluster
+sudo yum -y install centos-release-gluster 
+
+systemctl enable glusterd.service
+systemctl start glusterd.service
+
+(on server1) gluster peer probe server2
+(on server2) gluster peer probe server1
+
+gluster peer probe zfscl3-1
+gluster peer probe zfscl3-2
+gluster peer probe zfscl3-3
+
+gluster peer status
+
+##not using
+##mkdir /etc/systemd/system/glusterd.service.wants
+##ln -s /usr/lib/systemd/system/zfs.target /etc/systemd/system/glusterd.service.wants
+
+## create gluster volume JUNE25/2017
+mkdir -p /mnt/pool1/data
+gluster volume create pool1-data replica 3 zfscl3-1:/mnt/pool1/data zfscl3-2:/mnt/pool1/data zfscl3-3:/mnt/pool1/data
+gluster volume start pool1-data
+
+aug20, 2017
+gluster volume create pool1-data replica 4 zfscl4-1:/mnt/pool1/data zfscl4-2:/mnt/pool1/data zfscl4-3:/mnt/pool1/data zfscl4-4:/mnt/pool1/data
+gluster volume start pool1-data
+
+###ex
+###gluster volume create cluster-demo replica 2 node0:/home/bricks/demo node1:/home/bricks/demo node2:/home/bricks/demo node3:/home/bricks/demo
+##gluster volume create pool1 replica 2 zfs1:/mnt zfs2:/mnt force
+##try2
+##gluster volume create pool1-data replica 2 zfs01:/mnt/pool1/data zfs02:/mnt/pool1/data
+
+gluster vol start pool1
+gluster vol info pool1
+gluster volume top pool1-data read, write
+
+##more than 2 servers?
+gluster volume set pool1 cluster.quorum-count 2
+##not using
+##gluster volume set pool1 nfs.rpc-auth-allow 172.16.18.197,172.16.18.196
+
+##create folder for gluster mount
+mkdir -p /mnt/gluster
+##mount gluster vol on boot
+sudo nano /etc/fstab
+
+zfscl4-1:pool1-data /mnt/gluster/  glusterfs  defaults,_netdev,backupvolfile-server=zfscl4-2,backupvolfile-server=zfscl4-3,backupvolfile-server=zfscl4-4,direct-io-mode=disable  0       0
+zfscl4-2:pool1-data /mnt/gluster/  glusterfs  defaults,_netdev,backupvolfile-server=zfscl4-3,backupvolfile-server=zfscl4-1,backupvolfile-server=zfscl4-4,direct-io-mode=disable  0       0
+zfscl4-3:pool1-data /mnt/gluster/  glusterfs  defaults,_netdev,backupvolfile-server=zfscl4-4,backupvolfile-server=zfscl4-1,backupvolfile-server=zfscl4-3,direct-io-mode=disable  0       0
+zfscl4-4:pool1-data /mnt/gluster/  glusterfs  defaults,_netdev,backupvolfile-server=zfscl4-2,backupvolfile-server=zfscl4-3,backupvolfile-server=zfscl4-1,direct-io-mode=disable  0       0
+
+===========================
+PERFORMANCE TWEAKS - NEEDED
+===========================
+
+##on node1
+gluster volume set all cluster.enable-shared-storage enable
+##change failover timeout
+gluster volume set pool1-data network.ping-timeout 1
+##NEEDED - JUNE25/2017
+gluster v set pool1-data performance.stat-prefetch off
+gluster v set pool1-data performance.md-cache-timeout 1
+
+##mount gluster volume to folder on all nodes, add to /etc/fstab
+##notworking
+mount -t glusterfs zfs1:pool1 /gluster/mnt
+##working
+zfs1:pool1  /gluster/mnt  glusterfs  defaults,_netdev,backupvolfile-server=zfs2,direct-io-mode=disable  0       0
+
+zfs2:pool1  /gluster/mnt  glusterfs  defaults,_netdev,backupvolfile-server=zfs1,direct-io-mode=disable  0       0
+
+##for NFS 
+gluster volume set pool1 nfs.disable off
+gluster volume set pool1 nfs.rpc-auth-allow 172.16.18.0/24
+gluster volume set pool1 nfs.export-volumes on
+
+=============================
+GLUSTER REMOVE BRICK & RE-ADD
+=============================
+
+gluster volume remove-brick gluster_shared_storage replica 3 zfscl2-1:/var/lib/glusterd/ss_brick
+
+FAILED
+DO FOR SHARED STORAGE
+setfattr -x trusted.glusterfs.volume-id /var/lib/glusterd/ss_brick
+setfattr -x trusted.gfid /var/lib/glusterd/ss_brick
+rm -rf /var/lib/glusterd/ss_brick/.glusterfs
+DO FOR GLUSTER POOL
+setfattr -x trusted.glusterfs.volume-id /mnt/pool1/data
+setfattr -x trusted.gfid /mnt/pool1/data
+rm -rf /mnt/pool1/data/.glusterfs
+
+##add new node to volume
+gluster volume add-brick pool1-data replica 3 zfs03:/mnt/pool1/data
+gluster volume add-brick gluster_shared_storage replica 3 zfs03:/var/lib/glusterd/ss_brick
+
+gluster volume add-brick gluster_shared_storage zfs01:/var/lib/glusterd/ss_brick zfs03:/var/lib/glusterd/ss_brick /export-repl
+
+========================
+GLUSTER INFO VERY USEFUL
+========================
+
+How to to check the details of volume ?
+[root@Node2 tmp]# gluster vol status RepVol1 detail
+
+How to check the clients connected to volume ?
+[root@Node2 tmp]# gluster vol status RepVol1 clients
+
+How to check the memory statistics associated with memory ?
+[root@Node2 tmp]# gluster vol status RepVol1 mem
+
+How to check the inode(gfid) information of volume ?
+[root@Node2 tmp]# gluster vol status RepVol1 inode
+
+How to check the call statistics of volume ?
+[root@Node2 tmp]# gluster vol status RepVol1 callpool
+
+How to check the status of file descriptor of volume ?
+[root@Node2 tmp]# gluster vol status RepVol1 fd
+
+=============================
+ENABLE PACEMAKER AND COROSYNC
+=============================
+
+sudo yum install pacemaker pcs corosync -y
+
+sudo nano /etc/corosync/corosync.conf
+
+totem {
+    version: 2
+    secauth: off
+    cluster_name: nfscl4
+    transport: udpu
+}
+
+nodelist {
+    node {
+        ring0_addr: zfscl4-1
+        nodeid: 1
+    }
+    node {
+        ring0_addr: zfscl4-2
+        nodeid: 2
+    }
+    node {
+        ring0_addr: zfscl4-3
+        nodeid: 3
+    }
+	node {
+        ring0_addr: zfscl4-4
+        nodeid: 4
+    }
+}
+
+quorum {
+    provider: corosync_votequorum
+}
+
+logging {
+    to_logfile: yes
+    logfile: /var/log/cluster/corosync.log
+    to_syslog: yes
+}
+
+sudo systemctl enable corosync.service && sudo service corosync start
+
+##do on all nodes
+sudo systemctl enable pcsd && sudo systemctl enable pacemaker.service && sudo systemctl enable pcsd.service && sudo systemctl enable corosync && sudo service pcsd start
+##sudo pcs status 
+
+##SET PASSWORD FOR USER ON ALL NODES
+sudo passwd hacluster
+
+##on node1
+pcs cluster auth zfscl4-1
+pcs cluster auth zfscl4-2
+pcs cluster auth zfscl4-3
+pcs cluster auth zfscl4-4
+
+sudo pcs cluster start --all
+sudo pcs property set stonith-enabled=false
+
+##add node
+pcs cluster auth *nodename*
+pcs cluster node add *nodename*
+pcs cluster enable
+
+##pcs cluster setup --name nfscl zfs01 zfs02
+##sudo pcs property set no-quorum-policy=ignore
+
+============================
+CREATE RESOURCE ON PACEMAKER
+============================
+
+pcs resource create --force ZFSPool ocf:heartbeat:ZFSPool pool="pool1" volume="pool1" mountpoint="/mnt" op monitor interval=1s
+sudo pcs resource create WebServer ocf:heartbeat:apache configfile=/etc/httpd/conf/httpd.conf statusurl="http://127.0.0.1/server-status" op monitor interval=20s
+
+pcs resource create --force glvol01 ocf:heartbeat:Filesystem params fstype="glusterfs"  directory="/mnt/glusterpcs" device="localhost:/mnt/gluster" op monitor interval=2s role=Started
+pcs resource create --force glvol2 ocf:heartbeat:Filesystem params fstype="glusterfs"  directory="/mnt/gluster" device="/mnt/pool1/data"  op monitor interval=2s role=Started
+pcs resource create --force glvol1 class=ocf provider=heartbeat type=Filesystem device=virt_ip:/mnr/pool1/data directory=/mnt/pool1/data fstype=glusterfs start interval=0 timeout=10 home-start-interval-0 stop interval=0 timeout=120 home-stop-interval-0 monitor interval=2s role=Started home-monitor-interval-0
+crm configure primitive glvol1 ocf:heartbeat:Filesystem params fstype="glusterfs" device="172.16.18.210:/" directory="/opt"
+sudo pcs resource create --force glvol1 ocf:glusterfs:/mnt/pool1/data op monitor interval=2s
+
+HEARTBEAT IP
+sudo pcs resource create virt_ip ocf:heartbeat:IPaddr2 ip=172.16.18.201 cidr_netmask=24 op monitor interval=5s
+sudo pcs resource create virt_ip ocf:heartbeat:IPaddr2 ip=172.16.18.211 cidr_netmask=24 op monitor interval=2s role=Started
+sudo pcs resource create virt_ip ocf:heartbeat:IPaddr2 ip=172.16.18.211 cidr_netmask=24 op monitor interval=1s
+sudo pcs resource create virt_ip ocf:heartbeat:IPaddr2 ip=172.16.18.212 cidr_netmask=24 op monitor interval=1s role=Started
+AUG20,2017
+sudo pcs resource create virt_ip ocf:heartbeat:IPaddr2 ip=172.16.18.215 cidr_netmask=24 op monitor interval=1s role=Started
+
+FLOAT IP (no work)
+
+sudo mkdir -p /usr/lib/ocf/resource.d/zfscl3/
+cd /usr/lib/ocf/resource.d/zfscl3/
+sudo wget http://do.co/ocf-floatip
+sudo mv ocf-floatip floatip
+sudo chmod +x /usr/lib/ocf/resource.d/zfscl3/floatip
+
+sudo pcs resource create --force FloatIP ocf:zfscl3:floatip floating_ip=172.16.18.212
+sudo pcs resource create --force virt_ip ocf:nfscl2:floatip floating_ip=172.16.18.211
+
+===========
+NFS GANESHA
+===========
+
+sudo yum install glusterfs-ganesha nfs-ganesha  -y
+
+##systemctl start nfs-ganesha
+##systemctl enable nfs-ganesha
+
+##NFS-Ganesha uses 'Cache-Invalidation' mechanism to serve as Multi-Head – Config options:
+gluster vol set pool1-data features.cache-invalidation on
+gluster vol set pool1-data features.cache-invalidation-timeout 1
+
+
+cat /etc/ganesha/ganesha.conf
+
+EXPORT
+{
+        Export_Id = 100;
+        Path = /mnt/gluster;
+        FSAL {
+                Name = GLUSTER;
+                Hostname = localhost;
+                Volume = pool1-data;
+        }
+        Pseudo = /mnt/gluster;
+        Access_Type = RW;
+        Squash = No_root_squash;
+        Disable_ACL = TRUE;
+        Protocols = "3","4";
+        Transports = "UDP","TCP";
+        SecType = "SYS";
+}
+
+cat /etc/ganesha/ganesha-ha.conf
+
+# Name of the HA cluster created.
+# must be unique within the subnet and 15 characters or less in length
+HA_NAME="nfscl4"
+#
+# N.B. you may use short names or long names; you may not use IP addrs.
+# Once you select one, stay with it as it will be mildly unpleasant to
+# clean up if you switch later on. Ensure that all names - short and/or
+# long - are in DNS or /etc/hosts on all machines in the cluster.
+#
+# The subset of nodes of the Gluster Trusted Pool that form the ganesha
+# HA cluster. Hostname is specified.
+HA_CLUSTER_NODES="zfscl4-1,zfscl4-2,zfscl4-3,zfscl4-4"
+#
+# Virtual IPs for each of the nodes specified above.
+VIP_zfscl4-1v="172.250.250.154"
+VIP_zfscl4-2v="172.250.250.153"
+VIP_zfscl4-3v="172.250.250.152"
+VIP_zfscl4-4v="172.250.250.151"
+
+==
+
+AUG20,2017
+cd /etc/ganesha/
+##rm -rf ./*
+rm -rf ganesha.conf ganesha-ha.conf.sample
+sudo nano /var/run/gluster/shared_storage/nfs-ganesha/ganesha.conf
+sudo nano /var/run/gluster/shared_storage/nfs-ganesha/ganesha-ha.conf
+cd /etc/ganesha
+sudo ln -s /var/run/gluster/shared_storage/nfs-ganesha/ganesha.conf ganesha.conf
+sudo ln -s /var/run/gluster/shared_storage/nfs-ganesha/ganesha-ha.conf ganesha-ha.conf
+cd /var/run/gluster/shared_storage/
+sudo ln -s /var/run/gluster/shared_storage/nfs-ganesha/ganesha.conf ganesha.conf
+sudo ln -s /var/run/gluster/shared_storage/nfs-ganesha/ganesha-ha.conf ganesha-ha.conf
+
+
+
+NFS GANESHA LATEST - JUNE25/2017
+##make sure stopped on all nodes
+service nfs-ganesha status
+service nfs-ganesha stop
+wants to create different symlinks for conf files
+mkdir -p /var/run/gluster/shared_storage/nfs-ganesha/
+cd /var/run/gluster/shared_storage/nfs-ganesha/
+ln -s /var/run/gluster/shared_storage/ganesha.conf ganesha.conf
+ln -s /var/run/gluster/shared_storage/ganesha-ha.conf ganesha-ha.conf
+gluster nfs-ganesha enable
+gluster volume set pool1-data ganesha.enable on
+service nfs-ganesha start
+
+
+
+service nfs-ganesha start
+service nfs-ganesha stop
+service nfs-ganesha status
+systemctl disable nfs-ganesha
+shutdown -h now
+
+
+##using script to delay start in rc.local
+/bin/sh /root/nfs-ganesha-start.sh
+
+cat /root/nfs-ganesha-start.sh
+#!/bin/bash
+
+##June 25,2017
+##Justin Gleba
+##Delay start on NFS-Ganesha service
+##bit of a hack but seems to be working for issue where service is enabled but won't start on boot
+##working running in /etc/rc.local
+
+sleep 45
+/bin/systemctl start nfs-ganesha.service
+
+
+
+##always fails for me
+##gluster nfs-ganesha enable
+
+/usr/libexec/ganesha/ganesha-ha.sh --add /usr/libexec/ganesha zfs1 172.16.18.97
+/usr/libexec/ganesha/ganesha-ha.sh --add /usr/libexec/ganesha zfs1 172.16.18.96
+
+sudo /usr/libexec/ganesha/dbus-send.sh /etc/ganesha on /gluster/mnt/pool1
+sudo /usr/libexec/ganesha/create-export-ganesha.sh /etc/ganesha on /gluster/mnt/pool1
+
+TRY2 NFS GANESHA
+cd /etc/ganesha
+ln -s /var/run/gluster/shared_storage/ganesha.conf ganesha.conf
+ln -s /var/run/gluster/shared_storage/ganesha-ha.conf ganesha-ha.conf
+ln -s /var/run/gluster/shared_storage/exports.conf exports.conf
+
+service nfs-ganesha start - worked##
+
+##fails
+##sudo bash -x /usr/libexec/ganesha/dbus-send.sh /etc/ganesha on glvol1
+
+##fails
+##gluster volume set pool1-data ganesha.enable on
+
+dbus-send --system --dest=org.ganesha.nfsd /org/ganesha/nfsd/ExportMgr org.ganesha.nfsd.exportmgr.AddExport string:/exports/export.conf string:"EXPORT(Path=/mnt/gluster)"
+
+##might be useful to manually change export in nfs-ganesha
+##manage_exports add /etc/ganesha/my_server.conf 'export(path = /fs0/some/path)'
+
+===
+NFS
+===
+
+yum install nfs-utils -y 
+
+##start *NFS* now and start at boot
+sudo systemctl enable nfs-server.service
+sudo systemctl start nfs-server.service
+
+##allow share mount
+echo "/mnt/gluster 172.16.18.0/24(rw,sync,no_root_squash,no_subtree_check)" > /etc/exports
+
+##update nfs options
+sudo exportfs -a
+
+##allow share on pool
+zfs set sharenfs=on 
+zfs set sharenfs="rw=@172.16.18.0/24" pool1
+
+##NOT USING ON SERVER2
+## allow access to nfs share some say don't need - zfs set share is same thing - did after having issue mounting nfs
+sudo nano /etc/hosts.allow
+172.16.18.0/24
+10.0.0.0/8
+
+===============================
+TROUBLE MOUNTING (** DONT NEED)
+===============================
+##seems like good idea, did this after having trouble mounting ##not using
+/sbin/service rpcbind start
+sudo systemctl enable rpcbind
+
+===================
+CTDB FOR GLUSTER HA
+===================
+
+sudo yum install ctdb -y
+sudo mkdir -p /gluster/mnt/pool1/ctdb_lock
+sudo mkdir -p /gluster/mnt/pool1/brick_lock
+
+gluster volume create ctdb_lock replica 2 zfs1:/brick_lock zfs2:/brick_lock force
+
+gluster volume start ctdb_lock
+
+##add to /etc/fstab:
+zfs1:ctdb_lock  /gluster/mnt/pool1  glusterfs  defaults,_netdev,backupvolfile-server=zfs2,direct-io-mode=disable  0       0
+
+try2
+==
+zfs01:pool1-data /mnt/gluster/  glusterfs  defaults,_netdev,backupvolfile-server=zfs02,direct-io-mode=disable  0       0
+
+nano /etc/sysconfig/ctdb
+##change to:
+CTDB_RECOVERY_LOCK=/gluster/mnt/pool1/ctdb_lock/.CTDB-lockfile
+
+##uncomment:
+CTDB_NODES=/etc/ctdb/nodes
+
+nano /etc/ctdb/nodes
+##added:
+172.16.18.197
+172.16.18.196
+
+nano /etc/ctdb/public_addresses
+##add:
+172.16.18.200/24 eno16777728
+
+systemctl enable ctdb
+systemctl start ctdb
+
+nano /etc/sysconfig/ctdb
+
+CTDB_SET_MonitorInterval=5
+CTDB_SET_TakeoverTimeout=5
+CTDB_SET_ElectionTimeout=2
+CTDB_SET_KeepaliveLimit=3
+CTDB_SET_KeepaliveInterval=1
+CTDB_SET_ControlTimeout=15
+
+==
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+
+NEED TO SORT, LATEST GLUSTER PERFORMANCE TWEAKS TRYING TO FIX MEMORY ISSUE 042418
+
+http://lists.gluster.org/pipermail/gluster-users/2014-August/018388.html
+
+>>>> Volume Name: w-vol
+>>>> Type: Distribute
+>>>> Volume ID: 89e31546-cc2e-4a27-a448-17befda04726
+>>>> Status: Started
+>>>> Number of Bricks: 5
+>>>> Transport-type: tcp
+>>>> Bricks:
+>>>> Brick1: gl0:/mnt/brick1/export
+>>>> Brick2: gl1:/mnt/brick1/export
+>>>> Brick3: gl2:/mnt/brick1/export
+>>>> Brick4: gl3:/mnt/brick1/export
+>>>> Brick5: gl4:/mnt/brick1/export
+>>>> Options Reconfigured:
+>>>> nfs.mount-udp: on
+>>>> nfs.addr-namelookup: off
+>>>> nfs.ports-insecure: on
+>>>> nfs.port: 2049
+>>>> cluster.stripe-coalesce: on
+>>>> nfs.disable: off
+>>>> performance.flush-behind: on
+>>>> performance.io-thread-count: 64
+>>>> performance.quick-read: off
+>>>> performance.stat-prefetch: on
+>>>> performance.io-cache: off
+>>>> performance.write-behind: on
+>>>> performance.read-ahead: on
+>>>> performance.write-behind-window-size: 4MB
+>>>> performance.cache-refresh-timeout: 1
+>>>> performance.cache-size: 4GB
+>>>> network.frame-timeout: 60
+>>>> performance.cache-max-file-size: 1GB
+
+As a temperory solution, could you disable io-cache and/or
+>>>>>> quick-read and see if the leak still persists?
+>>>>>>
+>>>>>> $gluster volume set io-cache off
+>>>>>> $gluster volume set quick-read off
+>>>>>>
+>>>>>> This may reduce the performance to certain extent.
+
+OPTIONS ADDED 042418
+
+sudo gluster volume set webvol1 performance.flush-behind on
+sudo gluster volume set webvol1 performance.io-thread-count 64
+sudo gluster volume set webvol1 performance.write-behind on
+sudo gluster volume set webvol1 performance.read-ahead on
+sudo gluster volume set webvol1 performance.write-behind-window-size 4MB
+sudo gluster volume set webvol1 performance.cache-refresh-timeout 1
+sudo gluster volume set webvol1 network.frame-timeout 60
+sudo gluster volume set webvol1 performance.cache-max-file-size 1GB
+sudo gluster volume set webvol1 performance.cache-size 4GB
+
+
+
+
+
+
+  
+  
+  
+  
+ =====================================================================================================
+  =====================================================================================================
+   =====================================================================================================
+    =====================================================================================================
+	 =====================================================================================================
+	  =====================================================================================================
+	   =====================================================================================================
+	    =====================================================================================================
+		 =====================================================================================================
+		  =====================================================================================================
+		   =====================================================================================================
+		    =====================================================================================================
+			 =====================================================================================================
+			  =====================================================================================================
+			   =====================================================================================================
+			    =====================================================================================================
+				 =====================================================================================================
+				  =====================================================================================================
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  =====
+  TRY 2
+  =====
+
+mkdir -p /mnt/pool1/data
+mkdir -p /mnt/gluster
+
+systemctl enable glusterd
+systemctl start glusterd
+sudo systemctl enable pcsd.service
+systemctl start pcsd
+
+
+nano /etc/ganesha/ganesha-ha.conf
+
+
+service nfs-ganesha start
+
+/etc/ganesha/ganesha.conf
+
+
+passwd hacluster
+
+pcs cluster auth zfs01
+pcs cluster auth zfs02
+
+
+==
+
+Current NFS-Ganesha version (>V2.2.0) support pNFS with Gluster but not
+with HA. That means you need to disable HA to use pNFS. More details are
+in the doc -
+
+https://github.com/gluster/glusterfs/blob/master/doc/features/mount_gluster_volume_using_pnfs.md
+For HA, as mentioned in the demo video, there are certain pre-requisites
+to be followed. Noting down them below -
+
+1. Populate /etc/hosts (or ensure DNS) on all machines.
+2. Disable and stop NetworkManager service, enable and start network
+service on all machines
+3. Create a gluster shared volume 'gluster_shared_storage' and mount it
+on '/var/run/gluster/shared_storage' on all the cluster nodes using
+glusterfs native mount.
+4. Touch /etc/ganesha/ganesha.conf (empty file)
+5.. `yum -y install pacemaker cman pcs ccs resource-agents corosync` on
+all machines
+6. set cluster auth password on all machines
+- `echo hacluster | passwd --stdin hacluster`
+- pcs cluster auth on all the nodes
+7. Enable IPv6 on all the cluster nodes.
+8. Enable and start pcsd on all machines
+- `chkconfig --add pcsd; chkconfig pcsd on; service pcsd start`
+9. Populate /etc/ganesha/ganesha-ha.conf on all the cluster nodes.
+
+Please make sure if you have followed all of them. From the logs, looks
+like step3 and step4 are missed.
+
+==
+
+
+
+DISABLE NetworkManager

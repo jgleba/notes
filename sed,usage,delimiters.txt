@@ -1,0 +1,15 @@
+Delimiters in sed substitution
+
+https://coderwall.com/p/khdkuw/delimiters-in-sed-substitution
+
+When using sed's substitute command, this is the most common syntax:
+
+echo foo | sed s/foo/bar/ 
+
+Here sed is used to replace the text foo with bar before it is echoed. The delimiter of choice is a forward slash (/), which is the most commonly used delimiter. However, sed can use any character as a delimiter. In fact, it will automatically use the character following the s as a delimiter.
+
+For example, this works:
+
+echo foo | sed s,foo,bar,
+
+echo foo | sed 's foo bar '

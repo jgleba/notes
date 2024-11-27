@@ -1,0 +1,5 @@
+start something at boot
+
+run
+
+shell:common startup

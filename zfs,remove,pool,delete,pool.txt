@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ZFS REMOVE POOL WITHOUT DELETE AND WITH DELETE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-06-20[Jun-Sun]11-24AM 
+
+##https://askubuntu.com/questions/304822/how-do-i-remove-a-pool-from-zfs
+
+==
+REMOVE AND DELETE DATA
+==
+
+zpool destroy pool1
+zpool destroy -f pool1
+
+
+==
+REMOVE WITHOUT DELETE DATA
+==
+
+sudo zpool export rdata

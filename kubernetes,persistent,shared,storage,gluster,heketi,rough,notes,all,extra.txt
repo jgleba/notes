@@ -1,0 +1,1632 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GLUSTER, HEKETI, ROUGH NOTES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-19[Jan-Sun]14-23PM 
+
+
+
+
+
+
+
+
+
+==
+MORE TESTING, TRYING TO GET WP AND MYSQL COMBINED TO WORK, NOT WORKING
+PV AND PVC WORKING, SECRET NOT WORKING
+==
+
+[user@kube1haproxy1 yamls]$ sudo cat testwpmysql.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: heketi-gluster
+  name: heketi-gluster3
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: n7xw3E3yA7d53NJS
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: heketi-gluster3
+[user@kube1haproxy1 yamls]$ sudo cat testwpmysql2.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: heketi-gluster
+  name: heketi-gluster5
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: 3aP5sQsNfJz7QsEU
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: heketi-gluster5
+
+		  
+		  
+		  
+==
+
+[user@kube1haproxy1 yamls]$ kubectl describe pod wordpress-59c46c7d9b-bp5j5
+Name:         wordpress-59c46c7d9b-bp5j5
+Namespace:    default
+Priority:     0
+Node:         kube1worker2/172.16.3.181
+Start Time:   Sun, 12 Jan 2020 14:05:30 -0500
+Labels:       app=wordpress
+              pod-template-hash=59c46c7d9b
+              tier=frontend
+Annotations:  <none>
+Status:       Pending
+IP:           10.40.0.3
+IPs:
+  IP:           10.40.0.3
+Controlled By:  ReplicaSet/wordpress-59c46c7d9b
+Containers:
+  wordpress:
+    Container ID:
+    Image:          wordpress:4.8-apache
+    Image ID:
+    Port:           80/TCP
+    Host Port:      0/TCP
+    State:          Waiting
+      Reason:       CreateContainerConfigError
+    Ready:          False
+    Restart Count:  0
+    Environment:
+      WORDPRESS_DB_HOST:      wordpress-mysql
+      WORDPRESS_DB_PASSWORD:  <set to the key '3aP5sQsNfJz7QsEU' in secret 'mysql-pass'>  Optional: false
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-rxkh6 (ro)
+      /var/www/html from wordpress-persistent-storage (rw)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  wordpress-persistent-storage:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  heketi-gluster5
+    ReadOnly:   false
+  default-token-rxkh6:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-rxkh6
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                From                   Message
+  ----     ------            ----               ----                   -------
+  Warning  FailedScheduling  92s (x3 over 93s)  default-scheduler      error while running "VolumeBinding" filter plugin for pod "wordpress-59c46c7d9b-bp5j5": pod has unbound immediate PersistentVolumeClaims
+  Normal   Scheduled         89s                default-scheduler      Successfully assigned default/wordpress-59c46c7d9b-bp5j5 to kube1worker2
+  Normal   Pulled            6s (x9 over 87s)   kubelet, kube1worker2  Container image "wordpress:4.8-apache" already present on machine
+  Warning  Failed            6s (x9 over 87s)   kubelet, kube1worker2  Error: secret "mysql-pass" not found
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+==
+EXTRA JUNK
+==
+
+
+
+
+
+
+
+
+==
+TRYING ANOTHER WAY FROM WITHIN KUBERNETES - NEED TO BE ON HAPROXY1
+==
+
+sudo wget https://github.com/heketi/heketi/archive/master.zip
+sudo unzip master.zip
+cd heketi-master/extras/kubernetes
+
+sudo nano  glusterfs-daemonset.json
+
+kubectl create -f glusterfs-daemonset.json
+
+
+
+
+
+
+==
+TRYING ANOTHER WAY
+121819
+==
+
+
+##https://www.xenonstack.com/blog/persistent-storage/
+##https://github.com/gluster/gluster-kubernetes/blob/master/docs/examples/sample-gluster-endpoints.yaml
+
+
+
+==
+MAKE DATA DIR ON ALL NODES
+==
+
+sudo mkdir -p /home/kube1gl/data
+
+==
+CREATE AND START GLUSTER VOLUME
+==
+
+sudo gluster volume create kube1vol1 replica 3 kube1gluster1:/home/kube1gl/data kube1gluster2:/home/kube1gl/data kube1gluster3:/home/kube1gl/data force
+
+sudo gluster volume start kube1vol1
+
+==
+ON HAPROXY MACHINE CREATE GLUSTER ENDPOINT FILE
+==
+
+
+sudo nano gluster-endpoint.yaml
+
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: kube1glustervol1
+subsets:
+- addresses:
+  - ip: 172.16.3.167
+  ports:
+  - port: 1
+- addresses:
+  - ip: 172.16.3.168
+  ports:
+  - port: 1
+- addresses:
+  - ip: 172.16.3.169
+  ports:
+  - port: 1
+
+
+kubectl create -f gluster-endpoint.yaml
+
+==
+CREATE GLUSTER SERVICE
+==
+
+sudo nano glusterfs-service.yaml
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: kube1glustervol1
+spec:
+  ports:
+  - port: 1
+  
+kubectl create -f glusterfs-service.yaml
+
+==
+DONE, TEST, CREATE APACHE POD WITH WEB DIR
+==
+
+sudo nano apachetestgl-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apachetestgl1
+spec:
+  containers:
+  - name: glusterfs
+    image: apache
+    volumeMounts:
+    - mountPath: "/var/www/html"
+      name: apachetestgl1
+  volumes:
+  - name: apachetestgl1
+    glusterfs:
+      endpoints: kube1glustervol1
+      path: kube_vol
+      readOnly: false
+
+kubectl create -f apachetestgl-pod.yaml
+
+
+DIDNT WORK
+
+
+==
+DELETE ALL
+==
+
+kubectl delete -f apachetestgl-pod.yaml
+kubectl delete -f glusterfs-service.yaml
+kubectl delete -f gluster-endpoint.yaml
+
+
+
+
+
+
+
+
+
+
+
+
+sudo nano /etc/heketi/topology.json
+
+{
+  "clusters": [
+    {
+      "nodes": [
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "kube1gluster1"
+              ],
+              "storage": [
+                "172.16.3.167"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/home/kube1gl/data"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "kube1gluster2"
+              ],
+              "storage": [
+                "172.16.3.168"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/home/kube1gl/data"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "kube1gluster3"
+              ],
+              "storage": [
+                "172.16.3.169"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/home/kube1gl/data"
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+==
+LOAD TOPOLOGY FOR HEKETI
+==
+
+heketi-cli --server http://172.16.3.167:8080 --user heketi topology load --json="/etc/heketi/topology.json"
+
+[root@kube1gluster1 ~]# heketi-cli --server http://172.16.3.167:8080 --user heketi topology load --json="/etc/heketi/topology.json"
+Error: Unable to get topology information: Invalid JWT token: Unknown user
+[root@kube1gluster1 ~]#
+
+heketi-cli --server http://172.16.3.167:9005 --user heketi topology load --json="/etc/heketi/topology.json"
+
+==
+
+TRYING AGAIN
+
+##https://docs.openshift.com/container-platform/3.5/install_config/storage_examples/dedicated_gluster_dynamic_example.html
+##https://github.com/heketi/heketi/issues/1664
+
+export HEKETI_CLI_SERVER=http://kube1gluster1:8080
+export HEKETI_CLI_USER=admin
+export HEKETI_CLI_KEY=AuTwBn4WgaeVWdNH
+
+[root@kube1gluster1 heketi]# heketi-cli topology load --json=/etc/heketi/topology.json
+Creating cluster ... ID: 0a17fffd4275f3da7618b1e8374e819d
+        Allowing file volumes on cluster.
+        Allowing block volumes on cluster.
+        Creating node kube1gluster1 ... ID: fbf0841df6eba23bb3fdfd28018bfbc6
+                Adding device /home/kube1gl/data ... Unable to add device: Device /home/kube1gl/data not found.
+        Creating node kube1gluster2 ... ID: 379f25d6b8424d8b3e7c33f0ead4fb2a
+                Adding device /home/kube1gl/data ... Unable to add device: Device /home/kube1gl/data not found.
+        Creating node kube1gluster3 ... ID: fd49703fe7b42c90de04495a1a8056ad
+                Adding device /home/kube1gl/data ... Unable to add device: Device /home/kube1gl/data not found.
+
+==
+
+TEAR DOWN GLUSTER VOL, ADD DEDICATED DISK FOR GLUSTER, SEEMS HEKATI NEEDS THE WHOLE DISK
+
+==
+
+[root@kube1gluster1 heketi]# ls -al^C
+[root@kube1gluster1 heketi]# sudo gluster volume stop kube1vol1
+Stopping volume will make its data inaccessible. Do you want to continue? (y/n) y
+volume stop: kube1vol1: success
+[root@kube1gluster1 heketi]# sudo gluster volume delete kube1vol1
+Deleting volume will erase all information about the volume. Do you want to continue? (y/n) y
+volume delete: kube1vol1: success
+[root@kube1gluster1 heketi]#
+
+
+
+==
+CREATE STORAGE CLASS
+==
+
+user@kube1haproxy1 ~]$ kubectl apply -f  gluster-storage-class.yaml
+storageclass.storage.k8s.io/kube1glvol1 created
+[user@kube1haproxy1 ~]$ cat gluster-storage-class.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: kube1glvol1
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://kube1gluster1:8080"
+  restauthenabled: "false"
+
+
+[user@kube1haproxy1 ~]$ kubectl apply -f  gluster-storage-class.yaml
+storageclass.storage.k8s.io/kube1glvol1 created
+
+==
+CREATE PERSISTENT VOLUME CLAIM
+==
+
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: kube1glvol1-pvc
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-dyn
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+        storage: 14Gi
+
+
+
+kubectl apply -f  gluster-storage-class-pvc.yaml
+		
+==
+
+kubectl get pvc
+
+==
+STILL NOT WORKING
+==
+
+STUCK PENDING
+
+[user@kube1haproxy1 ~]$ kubectl apply -f gluster-storage-class.yaml
+storageclass.storage.k8s.io/kube1glvol1 created
+[user@kube1haproxy1 ~]$ kubectl apply -f gluster-storage-class-pvc.yaml
+persistentvolumeclaim/kube1glvol1-pvc created
+[user@kube1haproxy1 ~]$ kubectl get pv,pvc -n default
+NAME                                    STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+persistentvolumeclaim/kube1glvol1-pvc   Pending                                      kube1glvol1-pvc   4s
+[user@kube1haproxy1 ~]$
+
+==
+
+##https://stackoverflow.com/questions/36001225/persistent-volume-creation-via-kubectl-stuck-at-pending-states/45502638
+##https://stackoverflow.com/questions/44891319/kubernetes-persistent-volume-claim-indefinitely-in-pending-state
+
+==
+
+##https://miminar.fedorapeople.org/openshift-docs/prometheus-metrics-registered/install_config/storage_examples/gluster_dynamic_example.html
+
+
+sudo nano gluster-storage-class-2.yaml
+
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: gluster-heketi 
+provisioner: kubernetes.io/glusterfs  
+  parameters:
+  endpoint: "heketi-storage-endpoints"  
+  resturl: "http://kube1gluster1:8080"  
+  restuser: "admin"  
+  restuserkey: "AuTwBn4WgaeVWdNH"  
+  
+sudo nano gluster-storage-class-2-pvc.yaml
+  
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: gluster-heketi
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-heketi
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+	 
+	 
+	 
+==
+
+[user@kube1haproxy1 ~]$ kubectl apply -f gluster-storage-class-2-pvc.yaml
+persistentvolumeclaim/glustervol1 created
+[user@kube1haproxy1 ~]$ kubectl get pvc
+NAME          STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+glustervol1   Pending                                      gluster-heketi-vol1   15s
+[user@kube1haproxy1 ~]$ kubectl get pvc
+NAME          STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+glustervol1   Pending                                      gluster-heketi-vol1   18s
+[user@kube1haproxy1 ~]$ kubectl get pvc
+
+
+
+STILL NOT WORKING
+
+
+
+
+
+==
+
+
+
+
+##https://stackoverflow.com/questions/44891319/kubernetes-persistent-volume-claim-indefinitely-in-pending-state
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: models-1-0-0
+  labels:
+    name: models-1-0-0
+spec:
+  capacity:
+    storage: 200Gi
+  storageClassName: standard
+  accessModes:
+    - ReadOnlyMany
+  gcePersistentDisk:
+    pdName: models-1-0-0
+    fsType: ext4
+    readOnly: true
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: models-1-0-0-claim
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 200Gi
+  selector:
+    matchLabels:
+      name: models-1-0-0
+	  
+	  
+	  
+	  
+==
+
+##https://github.com/gluster/gluster-kubernetes/blob/master/docs/examples/hello_world/gluster-storage-class.yaml
+
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: gluster-heketi
+provisioner: kubernetes.io/glusterfs
+parameters:
+  endpoint: "heketi-storage-endpoints"
+  resturl: "http://10.42.0.0:8080"
+  restuser: "joe"
+  restuserkey: "My Secret Life"
+
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: gluster-heketi-vol1
+provisioner: kubernetes.io/glusterfs
+  parameters:
+    endpoint: "heketi-storage-endpoints"  
+    resturl: "http://172.16.3.167:8080"  
+    restuser: "admin"  
+    restuserkey: "AuTwBn4WgaeVWdNH"
+  
+==
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: glustervol1
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-heketi-vol1
+spec:
+ accessModes:
+  - ReadWriteOnce
+ resources:
+   requests:
+     storage: 2Gi
+	 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: glustervol1
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-heketi-vol1 
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 2Gi
+	 
+	 
+	 
+	 
+	 
+==
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: testvol1
+  labels:
+    name: testvol1
+spec:
+  capacity:
+    storage: 1Gi
+  storageClassName: standard
+  accessModes:
+    - ReadOnlyMany
+  gcePersistentDisk:
+    pdName: testvol1
+    fsType: ext4
+    readOnly: true
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testvol1-claim
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      name: testvol1
+	  
+
+==	  
+TROUBLESHOOTING
+==
+
+[user@kube1haproxy1 ~]$ kubectl describe pvc
+Name:          testvol1-claim
+Namespace:     default
+StorageClass:
+Status:        Pending
+Volume:
+Labels:        <none>
+Annotations:   kubectl.kubernetes.io/last-applied-configuration:
+                 {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"testvol1-claim","namespace":"default"},"spec":{"acc...
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:
+Access Modes:
+VolumeMode:    Filesystem
+Mounted By:    <none>
+Events:
+  Type    Reason         Age               From                         Message
+  ----    ------         ----              ----                         -------
+  Normal  FailedBinding  5s (x2 over 16s)  persistentvolume-controller  no persistent volumes available for this claim and no storage class is set
+[user@kube1haproxy1 ~]$
+
+REMOVED ENDPOINT OPTION, NOW GETTING NEW ERROR
+
+[user@kube1haproxy1 ~]$ kubectl describe pvc
+Name:          glustervol1
+Namespace:     default
+StorageClass:  gluster-heketi-vol1
+Status:        Pending
+Volume:
+Labels:        <none>
+Annotations:   kubectl.kubernetes.io/last-applied-configuration:
+                 {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{"volume.beta.kubernetes.io/storage-class":"gluster-heketi-vol...
+               volume.beta.kubernetes.io/storage-class: gluster-heketi-vol1
+               volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:
+Access Modes:
+VolumeMode:    Filesystem
+Mounted By:    <none>
+Events:
+  Type     Reason              Age   From                         Message
+  ----     ------              ----  ----                         -------
+  Warning  ProvisioningFailed  4s    persistentvolume-controller  Failed to provision volume with StorageClass "gluster-heketi-vol1": failed to create volume: failed to create volume: Failed to allocate new volume: No space
+
+
+Name:          testvol1-claim
+Namespace:     default
+StorageClass:
+Status:        Pending
+Volume:
+Labels:        <none>
+Annotations:   kubectl.kubernetes.io/last-applied-configuration:
+                 {"apiVersion":"v1","kind":"PersistentVolumeClaim","metadata":{"annotations":{},"name":"testvol1-claim","namespace":"default"},"spec":{"acc...
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:
+Access Modes:
+VolumeMode:    Filesystem
+Mounted By:    <none>
+Events:
+  Type    Reason         Age                    From                         Message
+  ----    ------         ----                   ----                         -------
+  Normal  FailedBinding  2m5s (x26 over 8m16s)  persistentvolume-controller  no persistent volumes available for this claim and no storage class is set
+[user@kube1haproxy1 ~]$
+
+
+
+
+
+==
+FROM YOUTUBE VIDEO
+==
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: heketi-secret
+  namespace: default
+data:
+  key: AuTwBn4WgaeVWdNH
+  type: kubernetes.io/glusterfs
+---
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: default
+provisioner: kubernetes.io/glusterfs  
+  parameters: 
+  resturl: "http://172.16.3.167:8080"  
+  restuser: "admin"
+  secretNamespace: "default"
+  secretName: heketi-secret
+  
+  
+  
+==
+122719
+==
+
+##https://github.com/gluster/gluster-kubernetes/blob/master/docs/examples/hello_world/README.md
+
+
+[user@kube1haproxy1 ~]$ kubectl apply -f gluster-storage-class-4.yaml
+storageclass.storage.k8s.io/gluster-heketi created
+[user@kube1haproxy1 ~]$ kubectl  get endpoints
+NAME                                                     ENDPOINTS                                               AGE
+glusterfs-dynamic-048ad453-3112-4d74-acf8-aed390dff175   <none>                                                  4d2h
+glusterfs-dynamic-2d6710e2-e506-4645-9db3-f0f6c3b95058   <none>                                                  4d2h
+glusterfs-dynamic-d631c4a3-c321-441c-86dc-cd8c10e8b798   <none>                                                  4d2h
+kubernetes                                               172.16.3.160:6443,172.16.3.161:6443,172.16.3.162:6443   12d
+nginx                                                    10.44.0.4:80                                            12d
+nginx2                                                   10.32.0.3:80                                            11d
+[user@kube1haproxy1 ~]$ kubectl get storageclass
+NAME             PROVISIONER               RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+gluster-heketi   kubernetes.io/glusterfs   Delete          Immediate           false                  25s
+[user@kube1haproxy1 ~]$ cat gluster-storage-class
+gluster-storage-class-2-pvc.yaml  gluster-storage-class-3-pvc.yaml  gluster-storage-class-4.yaml      gluster-storage-class.yaml
+gluster-storage-class-2.yaml      gluster-storage-class-3.yaml      gluster-storage-class-pvc.yaml
+[user@kube1haproxy1 ~]$ cat gluster-storage-class-4.yaml
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: gluster-heketi
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://172.16.3.167:8080"
+  restuser: "admin"
+  restuserkey: "AuTwBn4WgaeVWdNH"
+[user@kube1haproxy1 ~]$
+
+==
+
+sudo nano gluster-storage-class-4-pvc.yaml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: gluster1
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-heketi
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+	 
+	 
+$ kubectl create -f gluster-storage-class-4-pvc.yaml
+persistentvolumeclaim/gluster1 created
+[user@kube1haproxy1 ~]$
+
+[user@kube1haproxy1 ~]$ kubectl get pvc
+NAME             STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS     AGE
+gluster1         Pending                                      gluster-heketi   22s
+testvol1-claim   Pending                                                       4d2h
+
+[user@kube1haproxy1 ~]$ kubectl get pv
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE
+testvol1   1Gi        ROX            Retain           Available           standard                4d2h
+
+
+
+
+
+
+
+==
+123019
+TRYING SOMETHING DIFFERENT, NOT GETTING ANYWHERE
+DEPLOY MINIKUBE TRY PV, PVC THERE
+==
+
+sudo nano testvol1-pv-pvc.yaml
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: testvol1
+  labels:
+    name: testvol1
+spec:
+  capacity:
+    storage: 1Gi
+  storageClassName: standard
+  accessModes:
+    - ReadOnlyMany
+  gcePersistentDisk:
+    pdName: testvol1
+    fsType: ext4
+    readOnly: true
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testvol1-claim
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      name: testvol1
+	  
+	  
+sudo kubectl create -f testvol1-pv-pvc.yaml
+
+[user@MINIKUBE1 ~]$ sudo kubectl create -f testvol1-pv-pvc.yaml
+persistentvolume/testvol1 created
+persistentvolumeclaim/testvol1-claim created
+[user@MINIKUBE1 ~]$ sudo kubectl get pv
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   REASON   AGE
+testvol1   1Gi        ROX            Retain           Bound    default/testvol1-claim   standard                11s
+[user@MINIKUBE1 ~]$ sudo kubectl get pvc
+NAME             STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+testvol1-claim   Bound    testvol1   1Gi        ROX            standard       14s
+
+==
+THIS IS WHY IT WORKS
+==
+
+[user@MINIKUBE1 ~]$ sudo kubectl get storageclass
+NAME                 PROVISIONER                RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+standard (default)   k8s.io/minikube-hostpath   Delete          Immediate           false                  6m15s
+
+
+
+==
+123119
+TRYING AGAIN
+##https://stackoverflow.com/questions/44891319/kubernetes-persistent-volume-claim-indefinitely-in-pending-state
+==
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: testvol1
+  labels:
+    name: testvol1
+spec:
+  capacity:
+    storage: 2Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteMany
+  gcePersistentDisk:
+    pdName: testvol1
+    fsType: ext4
+    readOnly: true
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testvol1-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi
+  selector:
+    matchLabels:
+      name: testvol1
+	  
+	  
+	  
+	  
+==
+MORE TROUBLESHOOTING - 010320
+==
+
+[user@kube1haproxy1 ~]$ kubectl describe pod/nginxvol1
+Name:         nginxvol1
+Namespace:    default
+Priority:     0
+Node:         <none>
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration:
+                {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"nginxvol1","namespace":"default"},"spec":{"containers":[{"image":"ngi...
+Status:       Pending
+IP:
+IPs:          <none>
+Containers:
+  nginx:
+    Image:        nginx
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:
+      /usr/share/nginx/html from glusterfs (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-9tlsh (ro)
+Conditions:
+  Type           Status
+  PodScheduled   False
+Volumes:
+  glusterfs:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  nginxvol1pvc
+    ReadOnly:   false
+  default-token-9tlsh:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-9tlsh
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age                    From               Message
+  ----     ------            ----                   ----               -------
+  Warning  FailedScheduling  2m39s (x72 over 108m)  default-scheduler  persistentvolumeclaim "nginxvol1pvc" not found
+[user@kube1haproxy1 ~]$
+
+==
+
+TRYING, STILL NOT WORKING
+
+==
+
+##https://github.com/justmeandopensource/kubernetes
+
+==
+
+
+
+
+
+
+011120
+
+
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: default
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://172.16.3.167:8080"
+  restuser: "admin"
+  restuserkey: "AuTwBn4WgaeVWdNH"
+
+
+  
+==
+ 
+  
+[user@kube1haproxy1 yamls]$ cat gluster-storage-class.yaml
+
+apiVersion: storage.k8s.io/v1beta1
+kind: StorageClass
+metadata:
+  name: heketi-gluster
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://172.16.3.167:8080"
+  restuser: "admin"
+  restuserkey: "AuTwBn4WgaeVWdNH"
+[user@kube1haproxy1 yamls]$ cat gluster-storage-class-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: heketi-gluster
+ annotations:
+   volume.beta.kubernetes.io/storage-class: heketi-gluster
+spec:
+ accessModes:
+  - ReadWriteMany
+ resources:
+   requests:
+     storage: 1Gi
+
+	 
+[user@kube1haproxy1 yamls]$ cat 4-heketi-nginx.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      volumes:
+      - name: www
+        persistentVolumeClaim:
+          claimName: heketi-gluster
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+
+		  
+[user@kube1haproxy1 yamls]$ kubectl get pv,pvc
+NAME                                                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS     REASON   AGE
+persistentvolume/pv-nfs-pv1                                 1Gi        RWX            Retain           Bound    default/pvc-nfs-pv1      manual                    5h14m
+persistentvolume/pvc-8f3badef-b3b2-4366-9913-df345791cf67   1Gi        RWX            Delete           Bound    default/heketi-gluster   heketi-gluster            11m
+
+NAME                                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS     AGE
+persistentvolumeclaim/heketi-gluster   Bound    pvc-8f3badef-b3b2-4366-9913-df345791cf67   1Gi        RWX            heketi-gluster   11m
+persistentvolumeclaim/pvc-nfs-pv1      Bound    pv-nfs-pv1                                 1Gi        RWX            manual           5h12m
+
+
+
+
+==
+
+##MODIFIED FROM YOUTUBE VIDEO, WORKS WITH NFS, ADAPTED FOR HEKETI, GLUSTER, NOT WORKING
+##011120
+
+[user@kube1haproxy1 yamls]$ cat 4-heketi-nginx.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: nginx-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels:
+        run: nginx
+    spec:
+      volumes:
+      - name: www
+        persistentVolumeClaim:
+          claimName: heketi-gluster
+      containers:
+      - image: nginx
+        name: nginx
+        volumeMounts:
+        - name: www
+          mountPath: /usr/share/nginx/html
+
+
+[user@kube1haproxy1 yamls]$ kubectl create -f 4-heketi-nginx.yaml
+deployment.apps/nginx-deploy created
+[user@kube1haproxy1 yamls]$ kubectl describe pods
+Name:           nginx-deploy-f65468775-j656b
+Namespace:      default
+Priority:       0
+Node:           kube1worker1/172.16.3.180
+Start Time:     Sat, 11 Jan 2020 18:01:12 -0500
+Labels:         pod-template-hash=f65468775
+                run=nginx
+Annotations:    <none>
+Status:         Pending
+IP:
+IPs:            <none>
+Controlled By:  ReplicaSet/nginx-deploy-f65468775
+Containers:
+  nginx:
+    Container ID:
+    Image:          nginx
+    Image ID:
+    Port:           <none>
+    Host Port:      <none>
+    State:          Waiting
+      Reason:       ContainerCreating
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /usr/share/nginx/html from www (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-rxkh6 (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  www:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  heketi-gluster
+    ReadOnly:   false
+  default-token-rxkh6:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-rxkh6
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason       Age   From                   Message
+  ----     ------       ----  ----                   -------
+  Normal   Scheduled    8s    default-scheduler      Successfully assigned default/nginx-deploy-f65468775-j656b to kube1worker1
+  Warning  FailedMount  8s    kubelet, kube1worker1  MountVolume.SetUp failed for volume "pvc-8f3badef-b3b2-4366-9913-df345791cf67" : mount failed: mount failed: exit status 32
+Mounting command: systemd-run
+Mounting arguments: --description=Kubernetes transient mount for /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67 --scope -- mount -t glusterfs -o auto_unmount,backup-volfile-servers=172.16.3.167:172.16.3.168:172.16.3.169,log-file=/var/lib/kubelet/plugins/kubernetes.io/glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67/nginx-deploy-f65468775-j656b-glusterfs.log,log-level=ERROR 172.16.3.168:vol_83c4dfee0301de2b84e269ac51c81591 /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67
+Output: Running scope as unit run-1027.scope.
+mount: unknown filesystem type 'glusterfs'
+, the following error information was pulled from the glusterfs log to help diagnose this issue: could not open log file for pod nginx-deploy-f65468775-j656b
+  Warning  FailedMount  7s  kubelet, kube1worker1  MountVolume.SetUp failed for volume "pvc-8f3badef-b3b2-4366-9913-df345791cf67" : mount failed: mount failed: exit status 32
+Mounting command: systemd-run
+Mounting arguments: --description=Kubernetes transient mount for /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67 --scope -- mount -t glusterfs -o auto_unmount,backup-volfile-servers=172.16.3.167:172.16.3.168:172.16.3.169,log-file=/var/lib/kubelet/plugins/kubernetes.io/glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67/nginx-deploy-f65468775-j656b-glusterfs.log,log-level=ERROR 172.16.3.167:vol_83c4dfee0301de2b84e269ac51c81591 /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67
+Output: Running scope as unit run-1042.scope.
+mount: unknown filesystem type 'glusterfs'
+, the following error information was pulled from the glusterfs log to help diagnose this issue: could not open log file for pod nginx-deploy-f65468775-j656b
+  Warning  FailedMount  6s  kubelet, kube1worker1  MountVolume.SetUp failed for volume "pvc-8f3badef-b3b2-4366-9913-df345791cf67" : mount failed: mount failed: exit status 32
+Mounting command: systemd-run
+Mounting arguments: --description=Kubernetes transient mount for /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67 --scope -- mount -t glusterfs -o auto_unmount,backup-volfile-servers=172.16.3.167:172.16.3.168:172.16.3.169,log-file=/var/lib/kubelet/plugins/kubernetes.io/glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67/nginx-deploy-f65468775-j656b-glusterfs.log,log-level=ERROR 172.16.3.169:vol_83c4dfee0301de2b84e269ac51c81591 /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67
+Output: Running scope as unit run-1048.scope.
+mount: unknown filesystem type 'glusterfs'
+, the following error information was pulled from the glusterfs log to help diagnose this issue: could not open log file for pod nginx-deploy-f65468775-j656b
+  Warning  FailedMount  4s  kubelet, kube1worker1  MountVolume.SetUp failed for volume "pvc-8f3badef-b3b2-4366-9913-df345791cf67" : mount failed: mount failed: exit status 32
+Mounting command: systemd-run
+Mounting arguments: --description=Kubernetes transient mount for /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67 --scope -- mount -t glusterfs -o auto_unmount,backup-volfile-servers=172.16.3.167:172.16.3.168:172.16.3.169,log-file=/var/lib/kubelet/plugins/kubernetes.io/glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67/nginx-deploy-f65468775-j656b-glusterfs.log,log-level=ERROR 172.16.3.169:vol_83c4dfee0301de2b84e269ac51c81591 /var/lib/kubelet/pods/a6fdb73e-af67-4d87-9fc1-7c684b98f9b3/volumes/kubernetes.io~glusterfs/pvc-8f3badef-b3b2-4366-9913-df345791cf67
+Output: Running scope as unit run-1063.scope.
+mount: unknown filesystem type 'glusterfs'
+, the following error information was pulled from the glusterfs log to help diagnose this issue: could not open log file for pod nginx-deploy-f65468775-j656b
+[user@kube1haproxy1 yamls]$ kubectl describe pods
+
+==
+011320
+==
+
+==
+MORE TESTING, MAKING PROGRESS, WP AND MYSQL STARTING, JUST CANNOT ACCESS AS EXPECTED
+==
+
+SECRET
+
+[user@kube1haproxy1 yamls]$ cat mysqlsecret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: default
+  name: mysql-pass
+data:
+  username: root
+  password: g8tyeyAy2V7x2Ejc
+
+kubectl create -f mysqlsecret.yaml
+
+WP AND MYSQL
+
+[user@kube1haproxy1 yamls]$ cat mysqlsecret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: default
+  name: mysql-pass
+data:
+  username: root
+  password: g8tyeyAy2V7x2Ejc
+[user@kube1haproxy1 yamls]$ cat testwpmysql2.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: heketi-gluster
+  name: heketi-gluster5
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: heketi-gluster5
+
+
+kubectl create -f testwpmysql2.yaml
+
+==
+WORKING WORDPRESS AND MYSQL!!!!
+##https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/
+==
+
+[user@kube1haproxy1 yamls]$ cat testmysql.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: wordpress
+    tier: mysql
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: heketi-gluster
+  name: gluster-heketi-mysql
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:5.6
+        name: mysql
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: gluster-heketi-mysql
+[user@kube1haproxy1 yamls]$ cat testwp.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: heketi-gluster
+  name: heketi-gluster-wp
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:4.8-apache
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: wordpress-mysql
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: heketi-gluster-wp
+
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+==
+TRYING AGAIN - 121919
+==
+
+
+##https://www.mtenrero.com/setting-up-a-glusterfs-heketi-data-backend-for-a-kubernetes-bare-metal-installation/
+
+sudo yum install heketi heketi-cli -y
+sudo yum install heketi-client -y
+
+==
+TRYING ANOTHER
+==
+
+##https://icicimov.github.io/blog/virtualization/Kubernetes-shared-storage-with-external-GlusterFS-backend/
+
+
+[root@kube1gluster1 ~]# sudo cat /etc/heketi/heketi.json
+
+{
+  "_port_comment": "Heketi Server Port Number",
+  "port": "8080",
+
+  "_use_auth": "Enable JWT authorization. Please enable for deployment",
+  "use_auth": true,
+
+  "_jwt": "Private keys for access",
+  "jwt": {
+    "_admin": "Admin has access to all APIs",
+    "admin": {
+      "key": "AuTwBn4WgaeVWdNH"
+    },
+    "_user": "User only has access to /volumes endpoint",
+    "user": {
+      "key": "AuTwBn4WgaeVWdNH"
+    }
+  },
+
+  "_glusterfs_comment": "GlusterFS Configuration",
+  "glusterfs": {
+    "_executor_comment": [
+      "Execute plugin. Possible choices: mock, ssh",
+      "mock: This setting is used for testing and development.",
+      "      It will not send commands to any node.",
+      "ssh:  This setting will notify Heketi to ssh to the nodes.",
+      "      It will need the values in sshexec to be configured.",
+      "kubernetes: Communicate with GlusterFS containers over",
+      "            Kubernetes exec api."
+    ],
+    "executor": "ssh",
+
+    "_sshexec_comment": "SSH username and private key file information",
+    "sshexec": {
+      "keyfile": "/etc/heketi/heketi_key",
+      "user": "root",
+      "port": "22",
+      "fstab": "/etc/fstab"
+    },
+
+    "_kubeexec_comment": "Kubernetes configuration",
+    "kubeexec": {
+      "host" :"https://kubernetes.host:8443",
+      "cert" : "/path/to/crt.file",
+      "insecure": false,
+      "user": "kubernetes username",
+      "password": "password for kubernetes user",
+      "namespace": "OpenShift project or Kubernetes namespace",
+      "fstab": "Optional: Specify fstab file on node.  Default is /etc/fstab"
+    },
+
+    "_db_comment": "Database file name",
+    "db": "/var/lib/heketi/heketi.db",
+    "brick_max_size_gb" : 1024,
+    "brick_min_size_gb" : 1,
+    "max_bricks_per_volume" : 33,
+
+    "_loglevel_comment": [
+      "Set log level. Choices are:",
+      "  none, critical, error, warning, info, debug",
+      "Default is warning"
+    ],
+    "loglevel" : "debug"
+  }
+}
+
+==
+
+==
+START AND ENABLE HEKETI
+==
+
+sudo systemctl restart heketi && sudo systemctl enable heketi && sudo systemctl status heketi

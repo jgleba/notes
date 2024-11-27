@@ -1,0 +1,757 @@
+=================================================================
+ISPCONFIG CENTOS SETUP V2 - MINIMAL WITH EXTERNAL MYSQL + PHP 7.2
+05-05-2019
+=================================================================
+
+#https://www.howtoforge.com/tutorial/perfect-server-centos-7-apache-mysql-php-pureftpd-postfix-dovecot-and-ispconfig/
+
+==
+FIREWALL OFF
+==
+
+sudo systemctl stop firewalld.service
+sudo systemctl disable firewalld.service
+
+==
+CHECK FIREWALL
+==
+
+firewall-cmd --state
+
+==
+HOSTS FILE
+==
+
+sudo nano /etc/hosts
+
+172.16.3.35 ispconf1.jgleba.com ispconf1
+172.16.3.36 ispconf2.jgleba.com ispconf2
+172.16.3.233 db
+
+==
+INSTALL STUFF
+==
+
+sudo yum -y install epel-release
+
+==
+MORE INITIAL STUFF
+==
+
+sudo yum -y groupinstall 'Development Tools'
+
+==
+QUOTA
+==
+
+sudo yum -y install quota
+
+==
+CHECK QUOTA
+==
+
+sudo mount | grep ' / '
+
+[user@ispconf1 ~]$ sudo mount | grep ' / '
+/dev/mapper/centos-root on / type xfs (rw,relatime,attr2,inode64,noquota)
+
+==
+NEED TO ENABLE QUOTA
+==
+
+sudo cp /boot/grub2/grub.cfg /boot/grub2/grub.cfg_bak
+
+sudo nano /etc/default/grub
+
+ADD 
+
+rootflags=uquota,gquota
+
+TO THE END OF THE "GRUB_CMDLINE_LINUX" LINE
+
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+
+REBOOT
+
+sudo reboot
+
+CHECK QUOTA AGAIN
+
+sudo mount | grep ' / '
+
+[user@ispconf1 ~]$ sudo mount | grep ' / '
+[sudo] password for user:
+/dev/mapper/centos-root on / type xfs (rw,relatime,attr2,inode64,usrquota,grpquota)
+[user@ispconf1 ~]$
+
+GOOD
+
+==
+INSTALL PHP
+==
+sudo yum install yum-utils -y
+sudo yum install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum-config-manager --enable remi-php72
+
+sudo yum -y install httpd mod_ssl php php-mysql php-mbstring phpmyadmin
+
+==
+HTTPD HEADER SECURITY THING
+==
+
+su root
+
+sudo echo "RequestHeader unset Proxy early" >> /etc/httpd/conf/httpd.conf
+
+==
+START AND ENABLE HTTPD
+==
+
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
+==
+DOVECOT
+==
+
+sudo yum -y install dovecot dovecot-mysql dovecot-pigeonhole
+
+sudo touch /etc/dovecot/dovecot-sql.conf
+sudo ln -s /etc/dovecot/dovecot-sql.conf /etc/dovecot-sql.conf
+
+==
+START AND ENABLE DOVECOT
+==
+
+sudo systemctl restart dovecot.service
+sudo systemctl enable dovecot.service
+
+==
+INSTALL GETMAIL
+==
+
+sudo yum -y install getmail
+
+==
+CONFIGURE PHPMYADMIN
+==
+
+sudo nano /etc/httpd/conf.d/phpMyAdmin.conf
+
+COMMENT
+
+     # Apache 2.4
+     <RequireAny>
+       Require ip 127.0.0.1
+       Require ip ::1
+     </RequireAny>
+
+sudo nano /etc/phpMyAdmin/config.inc.php
+
+CHANGE
+
+$cfg['Servers'][$i]['auth_type']     = 'cookie';    // Authentication method (config, http or cookie based)?
+
+TO
+
+$cfg['Servers'][$i]['auth_type']     = 'http';    // Authentication method (config, http or cookie based)?
+
+==
+RESTART HTTPD
+==
+
+sudo systemctl restart httpd
+
+==
+INSTALL AMAVISD, SPAMASSASSIN, CLAMAV, POSTGREY - START AND ENABLE
+==
+
+sudo yum -y install amavisd-new spamassassin clamav-server clamav-data clamav-update clamav-filesystem clamav clamav-scanner-systemd clamav-devel clamav-lib clamav-server-systemd unzip bzip2 perl-DBD-mysql postgrey re2c
+
+sudo sa-update
+sudo freshclam
+sudo systemctl enable amavisd.service
+sudo systemctl start amavisd.service
+sudo systemctl start clamd@amavisd.service
+sudo systemctl enable postgrey.service
+sudo systemctl start postgrey.service
+
+==
+INSTALL MORE PHP
+==
+
+sudo yum -y install php php-devel php-gd php-imap php-ldap php-mysql php-odbc php-pear php-xml php-xmlrpc php-pecl-apc php-mbstring php-mcrypt php-mssql php-snmp php-soap php-tidy curl curl-devel perl-libwww-perl ImageMagick libxml2 libxml2-devel mod_fcgid php-cli httpd-devel php-fpm php-intl php-imagick php-pspell wget
+
+==
+ONLY PHP 5.4 FOR php-imagick NOT FOUND
+==
+
+#https://www.linuxhelp.com/how-to-install-php-imagemagick-on-centos-7
+
+sudo yum install ImageMagick ImageMagick-devel -y
+sudo yum install php-pear -y
+sudo pecl install Imagick
+
+sudo nano /etc/php.ini
+
+ADD
+
+extension=imagick.so
+
+sudo service php-fpm restart
+sudo service httpd restart
+
+==
+PHP INI
+==
+
+sudo nano /etc/php.ini
+
+SET TIMEZONE - date.time - 'America/Toronto'
+
+UNCOMMENT - cgi.fix_pathinfo=1
+
+CHANGE expose_php=On TO Off
+
+==
+ENABLE PHP-FPM
+==
+
+sudo systemctl start php-fpm.service
+sudo systemctl enable php-fpm.service
+sudo systemctl restart httpd
+
+==
+INSTALL MOD PYTHON
+==
+
+sudo yum -y install python-devel
+
+cd /usr/local/src/
+sudo wget http://dist.modpython.org/dist/mod_python-3.5.0.tgz
+sudo tar xfz mod_python-3.5.0.tgz
+cd mod_python-3.5.0
+
+sudo ./configure
+sudo make
+
+sudo sed -e 's/(git describe --always)/(git describe --always 2>\/dev\/null)/g' -e 's/`git describe --always`/`git describe --always 2>\/dev\/null`/g' -i $( find . -type f -name Makefile\* -o -name version.sh )
+
+sudo make install
+
+su root
+
+sudo echo 'LoadModule python_module modules/mod_python.so' > /etc/httpd/conf.modules.d/10-python.conf
+sudo systemctl restart httpd.service
+
+==
+INSTALL, START, ENABLE PUREFTPD
+==
+
+sudo yum -y install pure-ftpd
+
+sudo systemctl enable pure-ftpd.service
+sudo systemctl start pure-ftpd.service
+
+==
+INSTALL BIND
+==
+
+sudo yum -y install bind bind-utils haveged
+
+sudo cp /etc/named.conf /etc/named.conf_bak
+sudo cat /dev/null > /etc/named.conf
+sudo nano /etc/named.conf
+
+USE THIS
+
+
+##########
+//
+// named.conf
+//
+// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+// server as a caching only nameserver (as a localhost DNS resolver only).
+//
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+options {
+        listen-on port 53 { any; };
+        listen-on-v6 port 53 { any; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        allow-query     { any; };
+				allow-recursion {"none";};
+        recursion no;
+};
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+include "/etc/named.conf.local";
+###############
+
+==
+MAKE FILE
+==
+
+sudo touch /etc/named.conf.local
+
+==
+START AND ENABLE BIND
+
+sudo systemctl enable named.service
+sudo systemctl start named.service
+sudo systemctl enable haveged.service
+sudo systemctl start haveged.service
+
+==
+INSTALL WEBALIZER AND AWSTATS
+==
+
+sudo yum -y install webalizer awstats perl-DateTime-Format-HTTP perl-DateTime-Format-Builder
+
+sudo nano /etc/httpd/conf.d/awstats.conf
+
+CHANGE
+
+Require local TO: Require all granted
+
+sudo systemctl restart httpd.service
+
+==
+INSTALL JAILKIT
+==
+
+cd /tmp
+sudo wget http://olivier.sessink.nl/jailkit/jailkit-2.20.tar.gz
+sudo tar xvfz jailkit-2.20.tar.gz
+cd jailkit-2.20
+sudo ./configure
+sudo make
+sudo make install
+cd ..
+sudo rm -rf jailkit-2.20*
+
+==
+INSTALL FAIL2BAN
+==
+
+sudo yum -y install iptables-services fail2ban fail2ban-systemd
+sudo systemctl stop firewalld.service
+sudo systemctl mask firewalld.service
+sudo systemctl disable firewalld.service
+sudo systemctl stop firewalld.service
+
+==
+CONFIGURE FAIL2BAN
+==
+
+sudo nano /etc/fail2ban/jail.local
+
+ADD
+
+#########
+
+[sshd]
+enabled = true
+action = iptables[name=sshd, port=ssh, protocol=tcp]
+
+[pure-ftpd]
+enabled = true
+action = iptables[name=FTP, port=ftp, protocol=tcp]
+maxretry = 3
+
+[dovecot]
+enabled = true
+action = iptables-multiport[name=dovecot, port="pop3,pop3s,imap,imaps", protocol=tcp]
+maxretry = 5
+
+[postfix-sasl]
+enabled = true
+action = iptables-multiport[name=postfix-sasl, port="smtp,smtps,submission", protocol=tcp]
+maxretry = 3
+
+#########
+
+sudo systemctl enable fail2ban.service
+sudo systemctl start fail2ban.service
+
+==
+INSTALL RKHUNTER
+==
+
+sudo yum -y install rkhunter
+
+==
+INSTALL MAILMAN **SKIPPING**
+==
+
+sudo yum -y install mailman
+
+==
+INSTALL ROUNDCUBE WEBMAIL
+==
+
+cd /tmp
+sudo wget https://github.com/roundcube/roundcubemail/releases/download/1.3.9/roundcubemail-1.3.9-complete.tar.gz
+
+sudo tar xfz roundcubemail-1.3.9-complete.tar.gz
+sudo mkdir -p /usr/share/roundcubemail
+sudo mv /tmp/roundcubemail-1.3.9/* /usr/share/roundcubemail/
+sudo chown -R root:root /usr/share/roundcubemail
+sudo chown apache /usr/share/roundcubemail/temp
+sudo chown apache /usr/share/roundcubemail/logs
+
+sudo nano /etc/httpd/conf.d/roundcubemail.conf
+
+ADD
+
+#########
+#
+# Round Cube Webmail is a browser-based multilingual IMAP client
+#
+
+Alias /roundcubemail /usr/share/roundcubemail
+Alias /webmail /usr/share/roundcubemail
+
+# Define who can access the Webmail
+# You can enlarge permissions once configured
+
+<Directory /usr/share/roundcubemail/>
+        Options none
+        AllowOverride Limit
+        Require all granted
+</Directory>
+
+# Define who can access the installer
+# keep this secured once configured
+
+<Directory /usr/share/roundcubemail/installer>
+        Options none
+        AllowOverride Limit
+        Require all granted
+</Directory>
+
+
+# Those directories should not be viewed by Web clients.
+<Directory /usr/share/roundcubemail/bin/>
+    Order Allow,Deny
+    Deny from all
+</Directory>
+<Directory /usr/share/roundcubemail/plugins/enigma/home/>
+    Order Allow,Deny
+    Deny from all
+</Directory>
+
+#######
+
+sudo systemctl restart httpd
+
+==
+DB CONFIGURE FOR ROUNDCUBE
+==
+
+CREATE DATABASE roundcubemail;
+***NOT WORKING***
+CREATE USER 'roundcube'@'%' IDENTIFIED BY 'pass'
+***SEEMS TO BE WORKING, BUT NOW FROM LOCALHOST, HAVE TO CHANGE IN ADMINER***
+CREATE USER 'roundcube'@'localhost' IDENTIFIED BY 'pass';
+***WORKING WITH USER AND DB ALREADY CREATED***
+GRANT ALL PRIVILEGES on roundcubemail.* to 'roundcube'@'%' IDENTIFIED BY 'pass';
+FLUSH PRIVILEGES;
+exit
+
+GO HERE IN BROWSER
+
+http://172.16.3.35/roundcubemail/installer
+
+MOSTLY DEFAULTS, CHANGED DB
+
+AT BOTTOM CREATE CONFIG
+
+sudo nano /usr/share/roundcubemail/config/config.inc.php
+
+AFTER DB INITALIZED
+
+sudo nano /usr/share/roundcubemail/config/config.inc.php
+
+ADD
+
+$config['enable_installer'] = false;
+
+WEBMAIL IS AVAILBLE HERE:
+
+http://172.16.3.35/webmail/
+
+==
+BEFORE ISPCONFIG INSTALL, IF USING EXTERNAL DB, NEED TO INSTALL MARIADB CLIENT
+==
+
+sudo yum install mariadb -y
+
+
+==
+INSTALL ISPCONFIG - ON MASTER ISPCONFIG MACHINE FIRST
+==
+
+cd /tmp 
+sudo wget -O ispconfig.tar.gz https://git.ispconfig.org/ispconfig/ispconfig3/repository/archive.tar.gz?ref=stable-3.1
+sudo tar xfz ispconfig.tar.gz
+cd ispconfig3*/install/
+
+sudo php -q install.php
+
+
+
+
+
+==
+WITH EXTERNAL DB, NEED TO FIX DB AFTER INSTALL 
+==
+
+IN ADMINER, CHANGE LOGIN FROM FOR ISPCONFIG USER, ALLOW FROM ALL
+
+GRANT ALL PRIVILEGES on dbispconfig1.* to 'ispconfig'@'%';
+FLUSH PRIVILEGES;
+
+==
+DONE, ISPCONFIG AVAILABLE
+==
+
+https://172.16.3.35:8080
+
+
+
+
+
+
+==
+MIRRORED INSTALL ISPCONFIG - ON SLAVE ISPCONFIG MACHINE
+==
+
+cd /tmp 
+sudo wget -O ispconfig.tar.gz https://git.ispconfig.org/ispconfig/ispconfig3/repository/archive.tar.gz?ref=stable-3.1
+sudo tar xfz ispconfig.tar.gz
+cd ispconfig3*/install/
+
+sudo php -q install.php
+
+==
+FAILED
+==
+
+NEEDED TO CLEAN UP ALL DB NODE MYSQL USERS TABLES
+REDO ALL GRANTS
+
+GRANT ALL PRIVILEGES on dbispconfig1.* to 'ispconfig'@'%';
+GRANT ALL PRIVILEGES on dbispconfig2.* to 'ispconfig'@'%';
+GRANT ALL PRIVILEGES on dbispconfig1.* to 'ispcsrv2'@'%';
+GRANT ALL PRIVILEGES on dbispconfig2.* to 'ispcsrv2'@'%';
+GRANT ALL PRIVILEGES on dbispconfig1.* to 'ispcsrv3'@'%';
+GRANT ALL PRIVILEGES on dbispconfig2.* to 'ispcsrv3'@'%';
+GRANT ALL PRIVILEGES on roundcubemail.* to 'roundcube'@'%';
+FLUSH PRIVILEGES;
+
+RAN UPDATE ON ISPCONF2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+==
+FAILED INSTALL NOTES - OLD NOW
+==
+
+INSTALLING MYSQL CLIENT
+
+sudo yum install mariadb -y
+
+WORKED
+
+WHEN ACCESS ADMIN PAGE, GET 500 ERROR, NOT WORKING, LIKE VERY FIRST TIME
+
+TRIED 
+
+sudo yum -y install php-ldap php-mysql php-odbc php-pear php php-devel php-gd php-imap php-xml php-xmlrpc php-pecl-apc php-mbstring php-mcrypt php-mssql php-snmp php-soap php-tidy curl curl-devel mod_fcgid php-cli httpd-devel php-fpm perl-libwww-perl ImageMagick libxml2 libxml2-devel python-devel
+
+NO CHANGE, NOTHING TO INSTALL, THIS WAS THE PHP INSTALL LINE FROM WORKING SECOND ATTEMPT ISPCONFIG MACHINE
+
+sudo cat /var/log/httpd/error_log
+
+g:  mysqli_real_connect(): (HY000/1045): Access denied for user 'ispconfig'@'webcl2dblb1' (using password: YES) in /usr/local/ispconfig/interface/lib/classes/db_mysql.inc.php on line 91
+[Sun May 05 17:58:27.818972 2019] [fcgid:warn] [pid 5250] [client 172.16.3.101:63754] mod_fcgid: stderr: PHP Warning:  mysqli_real_connect(): (HY000/1045): Access denied for user 'ispconfig'@'webcl2dblb1' (using password: YES) in /usr/local/ispconfig/interface/lib/classes/db_mysql.inc.php on line 91
+[Sun May 05 17:58:27.818980 2019] [fcgid:warn] [pid 5250] [client 172.16.3.101:63754] mod_fcgid: stderr: PHP Fatal error:  Uncaught Error: Call to a member function queryOneRecord() on boolean in /usr/local/ispconfig/interface/lib/app.inc.php:166
+
+CHECKED DB, WAS ONLY ABLE TO LOG IN FROM ISPCONF HOST
+
+CHANGED TO ALLOW LOGIN FROM ANYWHERE
+
+REBOOTED
+
+NO CHANGE
+
+RERAN INSTALLER - INSTALLER QUIT SAYING RUN UPDATE
+
+RAN
+
+sudo php -q update.php
+
+STILL NO CHANGE
+
+RESTORING MACHINES
+
+NEED TO USE EXPERT SETUP - I MISSED SOMETHING IN SETUP THERE - EXTRA DB SETUP
+
+STILL DIDNT WORK USING PHP 7
+
+SUCCESS WITH PHP 5.4 AGAIN + EXTERNAL DB - 050719 - HAD TO CHANGE DB LOGIN FROM, PERMS, FLUSH PRIVILEGES, THEN ADMIN PAGE LOADED - INITIALLY GOT 500s
+
+SUCCESS WITH PHP 7.2 + EXTERNAL DB - 050819 - HAD TO CHANGE DB LOGIN FROM, PERMS, FLUSH PRIVILEGES, THEN ADMIN PAGE LOADED - INITIALLY GOT 500s
+
+LATEST INFO - 050819
+
+EXTERNAL DB NOT SUPPORTED, WORKED WITH ONE ISPCONF MACHINE, COULDNT GET TO WORK WITH 2 ISPCONF AND MY DB CLUSTER WITH LB
+
+CREATING ONE SMALL ALL LOCAL BOX.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================================================================
+ISPCONFIG CENTOS SETUP - V1 - MISSING THINGS BUT DOES WORK - PHP5.4.16 - ONLY SUCCESSFUL INSTALL
+05-03-2019
+================================================================================================
+
+#https://www.rosehosting.com/blog/how-to-install-ispconfig-3-on-centos-7/
+
+INSTALL STUFF
+
+sudo yum -y install yum-priorities wget
+sudo yum -y groupinstall 'Development Tools'
+sudo yum install httpd mod_ssl mariadb-server php php-mysql php-mbstring
+
+START AND ENABLE MYSQL
+
+sudo systemctl start mariadb.service
+sudo systemctl enable mariadb.service
+
+SECURE INSTALL MYSQL
+
+sudo mysql_secure_installation
+
+DOVECOT
+
+sudo yum -y install dovecot dovecot-mysql dovecot-pigeonhole
+
+sudo touch /etc/dovecot/dovecot-sql.conf
+sudo ln -s /etc/dovecot/dovecot-sql.conf /etc/dovecot-sql.conf
+
+START AND ENABLE DOVECOT
+
+sudo systemctl restart dovecot.service
+sudo systemctl enable dovecot.service
+
+CLAMAV, SPAMASSASSIN
+
+sudo yum -y install amavisd-new spamassassin clamav clamd clamav-update unzip bzip2 unrar perl-DBD-mysql
+
+MORE PHP AND APACHE
+
+sudo yum -y install php-ldap php-mysql php-odbc php-pear php php-devel php-gd php-imap php-xml php-xmlrpc php-pecl-apc php-mbstring php-mcrypt php-mssql php-snmp php-soap php-tidy curl curl-devel mod_fcgid php-cli httpd-devel php-fpm perl-libwww-perl ImageMagick libxml2 libxml2-devel python-devel
+
+PUREFTPD
+
+sudo yum -y install pure-ftpd
+
+BIND - DNS
+
+sudo yum -y install bind bind-utils
+
+ISPCONFIG
+
+cd /opt/
+
+sudo wget https://ispconfig.org/downloads/ISPConfig-3.1.13p1.tar.gz
+
+sudo tar -zxvf ISPConfig-3.1.13p1.tar.gz
+
+cd ispconfig3_install/install/
+
+su root
+
+php -q install.php
+
+RUN THROUGH INSTALL
+
+FIREWALL OFF
+
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+
+https://ip:8080
+
+SEEMS TO BE WORKING THIS TIME

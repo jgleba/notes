@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  RSYSLOG LOG FILE TO FACILITY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-16[Nov-Sat]18-53PM 
+
+#used chatgpt
+
+module(load="imfile")
+
+# Read from a specific log file
+input(type="imfile"
+      File="/var/log/dnsquery.log"
+      Tag="named"
+      Severity="info"
+      Facility="local6")
+

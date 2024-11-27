@@ -1,0 +1,283 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KUBERNETES NFS DYNAMIC PROVISIONER, USING MINIKUBE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-04[Jan-Sat]15-10PM 
+
+##youtube.com/watch?v=AavnQzWDTEk
+##https://github.com/justmeandopensource/kubernetes/archive/master.zip
+
+sudo wget https://github.com/justmeandopensource/kubernetes/archive/master.zip
+sudo unzip master.zip
+
+[user@MKUBE1 nfs-provisioner]$ sudo cat rbac.yaml
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: nfs-client-provisioner
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-client-provisioner-runner
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: run-nfs-client-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: nfs-client-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-nfs-client-provisioner
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-nfs-client-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    # replace with namespace where provisioner is deployed
+    namespace: default
+roleRef:
+  kind: Role
+  name: leader-locking-nfs-client-provisioner
+  apiGroup: rbac.authorization.k8s.io
+[user@MKUBE1 nfs-provisioner]$ sudo cat deployment.yaml
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-client-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner
+      containers:
+        - name: nfs-client-provisioner
+          image: quay.io/external_storage/nfs-client-provisioner:latest
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: example.com/nfs
+            - name: NFS_SERVER
+              value: <<NFS Server IP>>
+            - name: NFS_PATH
+              value: /srv/nfs/kubedata
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: <<NFS Server IP>>
+            path: /srv/nfs/kubedata
+[user@MKUBE1 nfs-provisioner]$ sudo cat class.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: managed-nfs-storage
+provisioner: example.com/nfs
+parameters:
+  archiveOnDelete: "false"
+
+  
+  
+==
+
+[user@MKUBE1 nfs-provisioner]$ sudo cat deployment.yaml
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-client-provisioner
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner
+      containers:
+        - name: nfs-client-provisioner
+          image: quay.io/external_storage/nfs-client-provisioner:latest
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: example.com/nfs
+            - name: NFS_SERVER
+              value: 172.16.3.167
+            - name: NFS_PATH
+              value: /mnt/nfskube1
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            server: 172.16.3.167
+            path: /mnt/nfskube1
+
+
+			
+==
+
+CREATE ROLE BINDING AND SERVICE ACCOUNT
+
+sudo kubectl create -f rbac.yaml
+
+CREATE STORAGE CLASS
+
+sudo kubectl create -f class.yaml
+
+DEPLOYMENT
+
+sudo kubectl create -f deployment.yaml
+
+[user@MKUBE1 nfs-provisioner]$ sudo kubectl get all
+NAME                                          READY   STATUS              RESTARTS   AGE
+pod/nfs-client-provisioner-74f8fd6677-6pl76   0/1     ContainerCreating   0          14s
+
+NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   115m
+
+NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/nfs-client-provisioner   0/1     1            0           14s
+
+NAME                                                DESIRED   CURRENT   READY   AGE
+replicaset.apps/nfs-client-provisioner-74f8fd6677   1         1         0       14s
+
+==
+
+CREATE PVC
+
+[user@kube1haproxy1 yamls]$ sudo cat 4-pvc-nfs.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc1
+spec:
+  storageClassName: managed-nfs-storage
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 500Mi
+[user@kube1haproxy1 yamls]$
+
+sudo kubectl create -f 4-pvc-nfs.yaml
+
+WILL TRIGGER PV CREATE
+
+[user@MKUBE1 yamls]$ sudo kubectl get pv,pvc
+NAME                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+persistentvolumeclaim/pvc1   Pending                                      managed-nfs-storage   10s
+
+STILL STUCK AT PENDING LIKE OTHER METHODS, NOTICE ISSUE EARLIER WITH MAIN CONTAINERS NOT STARTING, BUT SHOULD, IS FRESH MINICUBE CLUSTER
+
+CREATE POD THAT CAN SEE VOLUME
+
+[user@MKUBE1 yamls]$ sudo cat 4-busybox-pv-hostpath.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  volumes:
+  - name: host-volume
+    persistentVolumeClaim:
+      claimName: pvc1
+  containers:
+  - image: busybox
+    name: busybox
+    command: ["/bin/sh"]
+    args: ["-c", "sleep 600"]
+    volumeMounts:
+    - name: host-volume
+      mountPath: /mydata
+
+sudo kubectl create -f 4-busybox-pv-hostpath.yaml
+
+[user@MKUBE1 yamls]$ sudo kubectl describe pod busybox
+Name:         busybox
+Namespace:    default
+Priority:     0
+Node:         <none>
+Labels:       <none>
+Annotations:  <none>
+Status:       Pending
+IP:
+IPs:          <none>
+Containers:
+  busybox:
+    Image:      busybox
+    Port:       <none>
+    Host Port:  <none>
+    Command:
+      /bin/sh
+    Args:
+      -c
+      sleep 600
+    Environment:  <none>
+    Mounts:
+      /mydata from host-volume (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-4qffj (ro)
+Conditions:
+  Type           Status
+  PodScheduled   False
+Volumes:
+  host-volume:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  pvc1
+    ReadOnly:   false
+  default-token-4qffj:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-4qffj
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason            Age        From               Message
+  ----     ------            ----       ----               -------
+  Warning  FailedScheduling  <unknown>  default-scheduler  error while running "VolumeBinding" filter plugin for pod "busybox": pod has unbound immediate PersistentVolumeClaims
+  Warning  FailedScheduling  <unknown>  default-scheduler  error while running "VolumeBinding" filter plugin for pod "busybox": pod has unbound immediate PersistentVolumeClaims

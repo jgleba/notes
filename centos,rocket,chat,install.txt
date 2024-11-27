@@ -1,0 +1,194 @@
+##CENTOS 7 + ROCKET CHAT INSTALl (MONGO DB, NODE JS)
+##07-23-18
+##JGleba
+
+##RESOURCES
+https://linuxize.com/post/how-to-deploy-rocket-chat-on-ubuntu-18-04/
+https://www.vultr.com/docs/how-to-install-rocket-chat-on-centos-7
+https://linuxize.com/post/how-to-deploy-rocket-chat-on-centos-7/
+https://hostpresto.com/community/tutorials/how-to-install-rocket-chat-server-on-centos-7/
+http://theterminallife.com/rocket-chat-on-centos-7/
+http://www.booglenow.com/index.php/2017/12/26/how-to-install-rocketchat-in-centos-7/
+https://github.com/RocketChat/Rocket.Chat/issues/9167
+https://www.admon.org/scripts/how-to-install-and-configure-rocket-chat-on-centos/
+
+##FULL INSTALL SCRIPT FOR CENTOS, HAVEN'T TRIED YET
+https://mangolassi.it/topic/8086/installing-rocket-chat-on-centos-7
+
+#CENTOS DEPS
+sudo yum install epel-release -y
+sudo yum update -y
+
+#ADD MONGO DB REPO
+sudo nano /etc/yum.repos.d/mongodb-org.repo
+
+[mongodb-org-3.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-3.4.asc
+
+#UPDATE REPOS
+sudo yum update -y
+
+#INSTALL MONGODB
+sudo yum install mongodb-org -y
+
+#START AND ENABLE ON BOOT
+sudo systemctl enable mongod
+sudo systemctl start mongod
+
+#SECURING MONGODB
+mongo
+use admin
+show dbs
+db.createUser({user: "dbuser", pwd: "pass", roles:[{role: "userAdminAnyDatabase", db: "admin"}]})
+#db.createUser({user: "admin", pwd: "pass", roles:[{role: "userAdminAnyDatabase", db: "admin"}]})
+
+ db.createUser(
+  {
+    user: "dbadmin",
+    pwd: "pass",
+    roles: [ { role: "root", db: "admin" } ]
+  })
+
+exit
+
+ db.createUser(
+  {
+    user: "dbuser",
+    pwd: "pass",
+    roles: [ { role: "root", db: "rocketchat" } ]
+  })
+
+exit
+  
+sudo nano /etc/mongod.conf
+ 
+#remove security section and add:
+ 
+security:
+ authorization: enabled
+  
+#RESTART MONGO AFTER CHANGES
+sudo systemctl restart mongod
+  
+mongo -u dbuser -p pass admin
+mongo -u dbadmin -p pass admin
+#mongo --port 27017 -u dbadmin -p pass admin
+
+#CREATE DATABASE, SAVE AND ASSIGN TO USER
+use rocketchat
+db.users.save( {username:"dbadmin"} )
+db.users.save( {username:"dbuser"} )
+
+#FIREWALL
+sudo firewall-cmd --zone=public --add-port=3000/tcp
+sudo firewall-cmd --zone=public --add-port=27017/tcp
+sudo firewall-cmd --reload
+
+#NODE V10
+sudo curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+sudo yum install nodejs -y
+
+#NODEJS DEPS
+sudo yum -y install curl GraphicsMagick
+
+#DOWNLOAD AND UNZIP ROCKETCHAT
+sudo curl -L https://rocket.chat/releases/latest/download -o rocket.chat.tgz
+cd /opt
+sudo wget https://filesfr.jgleba.com/util/rocket.chat-0.67.0.tgz
+sudo tar -xvf rocket.chat-0.67.0.tgz
+sudo mv bundle Rocket.Chat
+
+#MORE NODEJS DEPS AND VERSION CHANGE
+sudo npm install -g inherits n
+#sudo n 4.5
+#sudo n 8.11
+#sudo n 10.7.0
+
+#CREATE USER FOR ROCKETCHAT
+sudo useradd -m -U -r -d /opt/rocket rocket
+#sudo usermod -a -G rocket nginx
+sudo chmod 750 /opt/rocket
+sudo passwd rocket
+sudo chown -R user:wheel /opt/Rocket.Chat
+sudo chmod -R 770 /opt/Rocket.Chat
+
+##INSTALL ROCKETCHAT
+cd /opt/Rocket.Chat/programs/server
+sudo npm install
+
+sudo nano /etc/profile.d/rocket.chat.sh
+
+export PORT=3000
+export ROOT_URL=http://192.168.67.4:3000/
+export MONGO_URL=mongodb://localhost:27017/rocketchat
+
+cd /opt/Rocket.Chat
+sudo node main.js
+
+##ERROR
+
+sudo npm install -g node-gyp
+sudo /usr/bin/node /opt/Rocket.Chat/programs/server/node_modules/fibers/build
+
+
+
+#STUCK - GETTING ERROR - "Meteor requires Node v8.0.0 or later."
+
+#CREATE ROCKETCHAT SERVICE
+sudo nano /etc/systemd/system/rocketchat.service
+
+[Unit]
+Description=The Rocket.Chat server
+After=network.target remote-fs.target nss-lookup.target nginx.target mongod.target
+[Service]
+ExecStart=/usr/bin/node /opt/Rocket.Chat/main.js
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rocketchat
+User=root
+Environment=MONGO_URL=mongodb://localhost:27017/rocketchat ROOT_URL=http://localhost:3000/ PORT=3000
+[Install]
+WantedBy=multi-user.target
+
+#RELOAD AND START ROCKETCHAT SERVICE
+sudo systemctl daemon-reload
+sudo systemctl start rocketchat
+
+#TRYING THIS BECAUSE NOT WORKING
+#sudo yum install g++ build-essential -y
+sudo yum install -y make automake gcc gcc-c++ kernel-devel
+sudo npm install -g node-gyp
+cd /opt/Rocket.Chat/programs/server/node_modules/fibers/
+sudo node-gyp rebuild
+sudo cp build/Release/fibers.node bin/linux-x64-57/fibers.node
+sudo systemctl start rocketchat.service
+
+#SERVICE STILL FAILS TO START
+
+##TRYING THIS - 7-24-18 - 2pm
+cd /opt/Rocket.Chat/programs/server/
+sudo npm install inherits
+sudo npm install
+sudo npm install forever
+/opt/Rocket.Chat/node_modules/forever/bin/forever start /opt/Rocket.Chat/main.js
+
+#OLD, FIRST TRY
+sudo /usr/local/bin/node main.js
+sudo npm install -g node-gyp
+sudo /usr/local/bin/node /opt/Rocket.Chat/programs/server/node_modules/fibers/build
+
+sudo yum install -y make automake gcc gcc-c++ kernel-devel
+
+sudo /usr/local/bin/node /opt/Rocket.Chat/programs/server/node_modules/fibers/build
+
+sudo npm install fibers
+cd /opt/Rocket.Chat/programs/server/node_modules/fibers/
+sudo node-gyp rebuild
+sudo cp build/Release/fibers.node bin/linux-x64-57/fibers.node
+
+
+

@@ -1,0 +1,30 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS DOVECOT CONFIG - WITH POSTFIX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-31[Jan-Fri]18-22PM 
+
+##https://wiki.centos.org/HowTos/postfix
+
+sudo yum install dovecot
+
+sudo nano /etc/dovecot/dovecot.conf
+
+CHANGE, UNCOMMENT
+
+protocols = imap imaps pop3 pop3s
+mail_location = maildir:~/Maildir
+pop3_uidl_format = %08Xu%08Xv
+# Required on x86_64 kernels
+login_process_size = 64
+
+==
+
+protocols = imap
+mail_location = maildir:/var/mail/
+
+==
+
+sudo systemctl start dovecot
+sudo systemctl enable dovecot

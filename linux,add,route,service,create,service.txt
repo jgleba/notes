@@ -1,0 +1,39 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX CREATE SERVICE TO RUN SCRIPT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-07-06[Jul-Sat]13-10PM 
+
+#https://askubuntu.com/questions/1345376/how-to-add-persistent-ip-routes-in-ubuntu-20-04-server
+
+sudo nano /systemd/system/SERVICE_NAME.service
+
+#sudo nano /systemd/system/addroute.service
+
+sudo nano /usr/lib/systemd/system/addroute.service
+
+Description=addroute
+After=network.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=user
+ExecStart=/j/bin/addroute.sh
+
+[Install]
+WantedBy=multi-user.target
+
+==
+
+sudo systemctl daemon-reload
+
+sudo systemctl enable addroute.service
+sudo systemctl start addroute.service
+sudo systemctl status addroute.service
+
+sudo systemctl enable serviceName.service
+sudo systemctl start serviceName.service
+sudo systemctl status addroutes.service

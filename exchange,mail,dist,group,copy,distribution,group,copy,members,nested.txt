@@ -1,0 +1,15 @@
+##exchange, copy distribution group
+##04-01-19
+
+#create new group, below copies members of old group into new group, DOESNT DEAL WITH NESTED GROUPS
+
+#https://exchangeengine.wordpress.com/2011/11/08/how-to-copy-members-from-one-distribution-group-to-another-distribution-group/
+
+Get-DistributionGroupMember "groupname" | Get-Mailbox | Add-DistributionGroupMember "groupname2"
+Get-DistributionGroupMember "test1" | Get-Mailbox | Add-DistributionGroupMember "test2"
+
+#create new group, below copies members of old group into new group, WORKS WITH NESTED GROUPS
+
+#https://stackoverflow.com/questions/36015168/import-distribution-group-members-into-security-group-via-powershell
+
+Add-ADGroupMember -Identity 'securitygroup' -Members (Get-ADGroupMember -Identity 'distributiongroup' -Recursive)

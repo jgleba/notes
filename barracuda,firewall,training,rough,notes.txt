@@ -1,0 +1,117 @@
+==============================
+barracuda firewall
+rough notes from YRX training
+091819
+==============================
+
+most sites consist of 2 hardware boxes and virtual firewall
+virtual firewall is hosted on master, second hardware box is configured as slave
+
+actions for hardware box would be initial configuration of the firewall
+actions on firewall services are taken on the virtual firewall
+
+==
+
+use barracuda control center to manage
+
+cc is: 192.168.1.83
+
+control tab shows physical firewalls
+
+configuration tab shows both physical firewalls and virtual firewalls
+
+from configuration tree, expand virtual servers, find virtual server, expand, double click server properties
+
+==
+general internet
+==
+
+for internet, need to make sure 3 public ips, 1 for each physical and 1 for the virtual
+
+go to physical firewall from config tree, then network, to configure internet connection
+
+dsl internet is configured on physical box, network, xdsl
+if using dsl, must disable integrity check (consistency verification)
+
+==
+general firewall
+==
+
+rules are located on virtual server, expand, assigned services, expand, forwarding rules
+
+firewall objects are like address lists, but available globally, can access from config tree, global settings, firewall objects
+
+==
+general vpn
+==
+
+main vpn stuff is located in config tree, global, vpn gti editor, VPN-SUBS-2-HQ is main area where sites connect to HQ
+
+==
+ssl vpn (cudalaunch)
+==
+
+hq has licence
+
+need to make sure rights are correct for access to cudalaunch and to access services in cudalaunch
+
+main stuff is located: config tree, paris, virtual servers, hq f600, assigned services, vpn service, double click ssl-vpn
+
+users are controlled by ad group. located here: ssl-vpn, access control policies, verify ad group
+
+if trying to add service going from hq to another site, dirty firewall method is needed, go to: physical box, infrastructure services, host firewall rules, outbound-user rules - one rule per service, add to existing rules if service is already there
+
+==
+regular vpn
+==
+
+users are located: config tree, paris, virtual servers, f600, assigned services, bosvpn (vpn service), client to site
+
+subnets are located: config tree, paris, virtual servers, f600, assigned services, bosvpn (vpn service), client to site, templates, double click
+
+==
+logs, monitor, live traffic
+==
+
+best place for live traffic view is connect to physical firewall, then firewall tab
+
+
+==
+rules
+==
+
+map is like 1 to 1 nat - can do dst nat on multiple ports
+
+pass is an allow rule
+
+src nat can be done with pass 
+
+==
+general network
+==
+
+when make network change to physical box, change has to be confirmed on the physical box before config becomes active, have to restart network service from physical box, have failsafe if network mistake is made and firewall will be sidconnected
+
+==
+general ha
+==
+
+status of master firewall found on physical box, control tab
+
+to switch from 001 to 002, have to block the physical box that want to switch from
+
+==
+general allow things
+==
+
+example, wanted to allow yse dell data domain virtual to connect over nfs to esxi
+
+wasn't working, checked live traffic to see block
+
+need to add allow rule to firewall
+
+there was rule HQ IT INFRA rule, checked, used firewall object IT - DEVICES, allowed to connect to 10.100.0.0/24
+
+went into firewall objects, found IT - DEVICES, added reference which is named device, was already in there, added named device
+
+now nfs working

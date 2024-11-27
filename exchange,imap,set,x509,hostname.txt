@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EXCHANGE IMAP SET HOSTNAME
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-11[Aug-Sun]19-32PM 
+
+#https://learn.microsoft.com/en-us/answers/questions/1127257/wildcard-cert-for-on-premise-exchange-server
+
+Set-IMAPSettings -X509CertificateName mail.domain.com
+

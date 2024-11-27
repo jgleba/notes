@@ -1,0 +1,96 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS INSTALL TOR HIDDEN SERVICE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-08[May-Sat]12-48PM 
+
+#==
+#INSTALL TOR
+#==
+
+sudo yum install epel-release -y
+sudo yum install tor -y
+
+#==
+#CONFIGURE TOR HIDDEN SERVICE
+#==
+
+sudo nano /etc/tor/torrc
+
+#UNCOMMENT
+
+HiddenServiceDir /var/lib/tor/hidden_service/
+HiddenServicePort 80 127.0.0.1:80
+
+#==
+#ENABLE AND START TOR
+#==
+
+sudo systemctl restart tor
+sudo systemctl enable tor
+
+#==
+#GET ONION URL
+#==
+
+sudo cat /var/lib/tor/hidden_service/hostname
+url.onion
+
+#==
+#TOR SERVICE IS RUNNING ON PORT 80, WAITING FOR WEB SERVER TO BE ON THAT PORT
+#INSTALL HTTPD
+#==
+
+sudo yum install httpd 
+
+#==
+#ENABLE AND START HTTPD
+#==
+
+sudo systemctl enable httpd
+sudo systemctl restart httpd
+
+#==
+#FIREWALL
+#==
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+
+OR USE NGINX AS REVERSE PROXY
+
+INSTALL
+
+sudo yum install nginx
+
+START
+
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+[user@COSONION ~]$ cat /etc/nginx/sites-enabled/jgleba.com.onion.conf
+server {
+    listen 80;
+    server_name url.onion;
+
+    location / {
+            proxy_pass http://jgleba.com;
+            proxy_ssl_verify off;
+            proxy_buffering off;
+            proxy_http_version 1.1;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $http_connection;
+
+    }
+}
+
+[user@COSONION ~]$ cat /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+172.16.3.21 jgleba.com
+[user@COSONION ~]$

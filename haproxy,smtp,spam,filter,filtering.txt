@@ -1,0 +1,68 @@
+========================================
+HAPROXY SMTP, EMAIL SPAM FILTERING STUFF
+072419
+========================================
+
+##https://www.haproxy.com/blog/fight-spam-with-early-talking-detection/
+
+##NEED TO TRY, LOOKS COOL
+
+    frontend ft_smtp
+      mode tcp
+      bind :25
+      source 0.0.0.0 usesrc clientip
+      log global
+      option tcplog
+    # reject SMTP connection if client speaks first before 30s
+      tcp-request inspect-delay 30s
+      acl content_present req_len gt 0
+      tcp-request content reject if content_present
+      default_backend bk_smtp
+    backend bk_smtp
+      mode tcp
+      balance roundrobin
+      log global
+      option tcplog
+    # SMTP health check
+      option smtpchk HELO mydomain.com
+      default-server inter 3s rise 2 fall 3
+      server smtp1 10.0.0.1:25 check
+      server smtp2 10.0.0.2:25 check
+	  
+	  
+	  
+==
+==
+
+
+Synopsis
+
+A good way to improve efficiency against spammers is to use early talking detection:
+
+    you own a SMTP relay platform and you want to improve its efficiency on spam fighting
+    your current MTA has no early talking detection feature and you want to be able to add one.
+    you want to offload the early talking detection feature from your SMTP server to an other device in your architecture.
+
+What is early talking detection?
+
+The picture below shows the SMTP “hello phase”, in 4 steps:
+smtp_helo_phase
+
+    Step 1: the client gets connected to the SMTP server
+    Step 2: the server acknowledge the SMTP connection by a “220 service ready” message
+    Step 3: the client sends his identity (basicaly his domain name)
+    Step 4: the server welcomes the client and the client is now allowed to send a mail
+
+Usually, spammers have no time to waste, so they do the TCP connection then send directly the HELO packet to the server.
+The Aloha can hold the connection on the client side and monitors it for a few seconds.
+Then you have 2 options:
+
+    If the client “speaks” first, it means it’s a spammer, so the connection can be closed safely. No need to bother the server with it.
+    If the client waits for the SMTP banner during the observation period, it means it looks to be a regular user. So we may accept its connection and let the client and server speaks together.
+
+This way of listening on the connection to detect if client talks first is called early talking detection.
+Diagram
+
+In order to use the Aloha in front of a public SMTP relay platform, it’s recommanded to configure it in reverse-proxy transparent mode, also known as Destination NAT.
+That way, the SMTP servers will be aware of the client IP address.
+In that mode, the default gateway of the server must be the Aloha, or you must configure Policy Based Routing to redirect traffic from the SMTP server source port 25 to the Aloha.

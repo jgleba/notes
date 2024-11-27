@@ -1,0 +1,14 @@
+==================================
+CHANGE DOCKER0 MAIN DOCKER NETWORK
+111119
+==================================
+
+##https://success.docker.com/article/how-do-i-configure-the-default-bridge-docker0-network-for-docker-engine-to-a-different-subnet
+
+sudo nano /etc/docker/daemon.json
+
+ADD
+
+{
+  "bip": "10.252.0.1/16"
+}

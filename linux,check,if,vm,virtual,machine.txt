@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CHECK IF VM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-10-28[Oct-Thu]13-33PM 
+
+##https://ostechnix.com/check-linux-system-physical-virtual-machine/
+
+sudo dmidecode -s system-manufacturer

@@ -1,0 +1,47 @@
+============================================
+CENTOS CERTBOT CLOUDFLARE API INSTALL, SETUP
+090119
+============================================
+
+#https://bjornjohansen.no/wildcard-certificate-letsencrypt-cloudflare
+
+sudo yum install python-pip
+sudo pip install certbot-dns-cloudflare
+
+NO WORK
+
+#https://www.digitalocean.com/community/tutorials/how-to-retrieve-let-s-encrypt-ssl-wildcard-certificates-using-cloudflare-validation-on-centos-7
+
+sudo yum install -y epel-release
+sudo yum install -y certbot
+sudo yum install -y python2-cloudflare python2-certbot-dns-cloudflare
+
+sudo certbot
+
+sudo vi /etc/letsencrypt/cloudflareapi.cfg
+sudo chmod 600 /etc/letsencrypt/cloudflareapi.cfg
+
+dns_cloudflare_email = your_cloudflare_login
+dns_cloudflare_api_key = your_cloudflare_api_key
+
+putting mine in /path/to
+
+==
+OTHER THINGS NEEDED
+==
+
+sudo yum install -y nano rsync
+
+==
+NGINX
+==
+
+sudo yum install python-certbot-nginx -y
+sudo yum install nginx -y
+
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload

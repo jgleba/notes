@@ -1,0 +1,39 @@
+grav-resume-site-notes
+jan 31-2015
+==
+
+template changes
+./ns/user/themes/antimatter/templates/partials/
+base.html.twig - footer
+
+background of header
+
+./newsite/user/themes/antimatter/css-compiled/template.css
+
+
+==
+
+020621
+
+==
+
+grav new
+
+==
+
+##https://discourse.getgrav.org/t/theme-inheritance-background-color-of-all-the-pages/12890
+
+./jgleba-main/user/themes/quark/css/custom.css
+./jgleba-main/user/themes/antimatter/css/custom.css
+
+#header {
+  background-color: #00FF00;
+}
+
+
+##only changing header background colour when not scrolled, changes to white when scrolled, css direct not working
+
+
+./sites/user/themes/antimatter/css-compiled/template.css
+
+./jgleba-main/user/themes/antimatter/css-compiled/template.css

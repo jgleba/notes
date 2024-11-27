@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GRAV PHP NECESSARY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-08[May-Sat]13-18PM 
+
+sudo yum install -y php74-php php74-php-cli php74-php-fpm php74-php-common php74-php-mbstring php74-php-curl php74-php-gd php74-php-mysql php74-php-json php74-php-xml php74-php-zip

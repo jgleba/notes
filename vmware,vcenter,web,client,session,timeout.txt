@@ -1,0 +1,36 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VCENTER WEB CLIENT TIMEOUT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-07-02[Jul-Thu]19-16PM 
+
+##https://communities.vmware.com/thread/619390
+##https://vcloudvision.com/2019/02/04/vcenter-appliance-vcsa-web-client-timeout-settings/
+
+ENABLE SSH AND BASH ON VCENTER APPLIANCE FIRST
+
+vi /etc/vmware/vsphere-client/webclient.properties
+
+vi /etc/vmware/vsphere-ui/webclient.properties
+
+CHANGE
+
+session.timeout = 120
+
+TO
+
+session.timeout = 4320
+
+THEN
+
+On the vCenter Server Appliance, restart the vSphere-client service
+
+Restart VMware vSphere Web Client Service
+
+==
+
+service-control --stop vsphere-ui
+service-control --stop vsphere-client
+service-control --start vsphere-ui
+service-control --start vsphere-client

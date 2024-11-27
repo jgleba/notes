@@ -1,0 +1,76 @@
+##https://forum.mikrotik.com/viewtopic.php?t=113453
+
+I am not sure if this helps, but this configuration works well with Juniper.
+
+Std export:
+
+/interface bonding
+add comment="Primary Bonded Interface" name=bonding1 slaves=sfp1,sfp2 transmit-hash-policy=layer-2-and-3
+
+Verbose export:
+
+/interface bonding
+add arp=enabled arp-interval=100ms arp-ip-targets="" comment="Primary Bonded Interface" disabled=no down-delay=0ms lacp-rate=30secs link-monitoring=mii mii-interval=100ms min-links=0 mode=balance-rr mtu=1500 name=bonding1 primary=none slaves=sfp1,sfp2 transmit-hash-policy=layer-2-and-3 up-delay=0ms
+
+==
+
+If you're really using a MT Switch, you cannot use LACP (only option is balance-xor, don't know if synology supports that).
+CCR1009 should not be a problem, remember to use ether 5-8 and not 1-4 (1-4 are connected to CPU with 1Gbps in total).
+
+==
+
+##https://forum.mikrotik.com/viewtopic.php?t=85966
+
+Hi!
+
+I've got my CRS today and want to replace my RB and my HP Switch with just one device.
+I use 3 ISPs.
+So I configured 3 Ports for those ISPs, a 4th as LAN (with the local IP) and made all other ports slaves of this port (so LAN is master).
+Is this the way this is usually done?
+
+Now my problem: I have a FreeNAS that supports link aggreagtion using LACP. This worked flawlessly with the HP switch. But how do I configure this with the CRS?
+As I understand I have to add the 2 Ports the FreeNAS is connected to as a bonded port, something like:
+0 name="Data" mtu=1500 mac-address=4C:5E:0C:93:F1:4A arp=enabled slaves=ether23,ether24 mode=802.3ad primary=none link-monitoring=mii arp-interval=100ms
+arp-ip-targets="" mii-interval=100ms down-delay=0ms up-delay=0ms lacp-rate=30secs transmit-hash-policy=layer-2
+
+
+BUT: if I configure ports23 and 24 to this bonding, I can't make them slave of LAN port, so these ports become isolated.
+I won't have to make a bridge or something, do I?
+
+Regeards
+
+Patrick
+
+I don't know exactly about freeNAS, but this works with CRS switch hardware support and my Thecus.
+On the CRS use trunking on the switch chip (this is balance-xor, 802.3ad is not available yet):
+Code: Select all
+
+/interface ethernet switch trunk
+add member-ports=ether23,ether24 name=trunk-NAS
+
+On the NAS side, use balance-xor as the agregation type (if available).
+
+     On the NAS side, use balance-xor as the agregation type (if available).
+
+Thank you. Do you / does anybody know, if any of those options (and if so, which one :) ) corresponds to balance-xor?
+
+Failover
+FEC (Fast Ether Channel)
+LACP (Link Aggregation Control Protocol)
+Load Balancing
+Roundrobin
+
+(if any, one of the last two, I'd say...)
+Normally I'd just try, but I remember changing link aggregation on FreeNAS to be quite a ... thing.
+
+Ok. Tried it on my NAS. Load Balancing instead of balance-xor works ok as well (i dare to say even better). Probably round robin would also do.
+Last edited by docmarius on Fri Jun 13, 2014 7:28 am, edited 1 time in total. 
+
+==
+
+##https://wiki.mikrotik.com/wiki/Manual:CRS1xx/2xx_series_switches_examples#Trunking
+
+/interface bonding
+add name=bonding1 slaves=ether2,ether3,ether4 mode=balance-xor transmit-hash-policy=layer-2-and-3 \
+link-monitoring=mii mii-interval=100ms
+

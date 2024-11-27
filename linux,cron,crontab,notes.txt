@@ -1,0 +1,101 @@
+crontab
+===
+
+
+sudo crontab -e    -edits
+
+====
+
+good website, for time
+
+===
+
+ -- learned that number in place of star in second position is hour of day
+
+1. Execute a cron job every 5 Minutes
+
+The first field is for Minutes. If you specify * in this field, it runs every minutes. If you specify */5 in the 1st field, it runs every 5 minutes as shown below.
+
+*/5 * * * * /home/ramesh/backup.sh
+
+Note: In the same way, use */10 for every 10 minutes, */15 for every 15 minutes, */30 for every 30 minutes, etc.
+2. Execute a cron job every 5 Hours
+
+The second field is for hours. If you specify * in this field, it runs every hour. If you specify */5 in the 2nd field, it runs every 5 hours as shown below.
+
+0 */5 * * * /home/ramesh/backup.sh
+
+Note: In the same way, use */2 for every 2 hours, */3 for every 3 hours, */4 for every 4 hours, etc.
+3. Execute a job every 5 Seconds
+
+Cron job cannot be used to schedule a job in seconds interval. i.e You cannot schedule a cron job to run every 5 seconds. The alternative is to write a shell script that uses ‘sleep 5′ command in it.
+
+Create a shell script every-5-seconds.sh using bash while loop as shown below.
+
+$ cat every-5-seconds.sh
+#!/bin/bash
+while true
+do
+ /home/ramesh/backup.sh
+ sleep 5
+done
+
+Now, execute this shell script in the background using nohup as shown below. This will keep executing the script even after you logout from your session. This will execute your backup.sh shell script every 5 seconds.
+
+$ nohup ./every-5-seconds.sh &
+
+4. Execute a job every 5th weekday
+
+This example is not about scheduling “every 5 days”. But this is for scheduling “every 5th weekday”.
+
+The 5th field is DOW (day of the week). If you specify * in this field, it runs every day. To run every Friday, specify either 5 of Fri in this field.
+
+The following example runs the backup.sh every Friday at midnight.
+
+0 0 * * 5 /home/ramesh/backup.sh
+(or)
+0 0 * * Fri /home/ramesh/backup.sh
+
+You can either user number or the corresponding three letter acronym for the weekday as shown below.
+
+    0=Sun
+    1=Mon
+    2=Tue
+    3=Wed
+    4=Thu
+    5=Fri
+    6=Sat
+
+Note: Get into the habit of using Fri instead of 5. Please note that the number starts with 0 (not with 1), and 0 is for Sun (not Mon).
+5. Execute a job every 5 months
+
+There is no direct way of saying ‘every 5 months’, instead you have to specify what specific months you want to run the job. Probably you may want to run the job on 5th month (May), and 10th month (Oct).
+
+The fourth field is for Months. If you specify * in this field, it runs every month. To run for the specific month, you have to specify the number that corresponds to the month. For example, to run the job on May and Oct, you should specify 5,10 (or) you can simply use the 3 letter acronym of the month and specify May,Oct.
+
+The third field is for DOM (Day of the Month). If you specify * in this field, it runs every day of the month. If you specify 1 in this month, it runs 1st of the month.
+
+The following example runs the backup.sh twice a year. i.e 1st May at midnight, and 1st Oct at midnight.
+
+0 0 1 5,10 * /home/ramesh/backup.sh
+(or)
+0 0 1 May,Oct * /home/ramesh/backup.sh
+
+Note: Don’t make the mistake of specifying 5-10 in the 4th field, which means from 5th month until 10th month. If you want only 5th and 10th month, you should use comma.
+
+
+
+
+================
+
+
+
+
+
+https://stackoverflow.com/questions/4549542/cron-job-every-three-days
+
+I am not a cron specialist, but how about:
+
+0 */72 * * *
+
+It will run every 72 hours non-interrupted. 

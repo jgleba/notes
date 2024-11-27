@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SET SYSTEM WIDE PROXY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-07-31[Jul-Wed]23-09PM 
+
+##https://unix.stackexchange.com/questions/213737/how-do-i-set-systemwide-connection-over-a-proxy-server
+
+
+http_proxy=http://user:password@proxyserver.com:3128
+https_proxy=https://user:password@proxyserver.com:3128
+export http_proxy
+export https_proxy
+
+#for persistance use .bashrc
+#or /etc/profile
+

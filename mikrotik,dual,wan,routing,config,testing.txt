@@ -1,0 +1,75 @@
+=====================================================================
+MIKROTIK DUAL WAN - ROUTING INBOUND AND OUTBOUND TO AND FROM EACH ISP
+TAKING ANOTHER LOOK
+HAVENT GOTTENT WORKING YET
+071019
+=====================================================================
+
+NEED TO TRY
+
+#https://forum.mikrotik.com/viewtopic.php?t=83537
+
+/ip firewall mangle
+# mark incoming connections (same rules cover both traffic for router and traffic forwarded to LAN)
+add action=mark-connection chain=prerouting connection-mark=no-mark \
+    in-interface=ether1-primary new-connection-mark=conn_primary passthrough=no
+add action=mark-connection chain=prerouting connection-mark=no-mark \
+    in-interface=ether2-backup new-connection-mark=conn_backup passthrough=no
+# jump to another table for all potentially outgoing connections
+add action=jump chain=output jump-target=routing
+add action=jump chain=prerouting in-interface=LAN jump-target=routing
+add action=jump chain=prerouting in-interface=WIFI jump-target=routing
+# no need to process packets which are not going out through any ISP
+add action=return chain=routing dst-address-type=local,broadcast,multicast
+add action=return chain=routing dst-address-list="Internal LAN"
+# set routing marks for marked connections
+add action=mark-routing chain=routing connection-mark=conn_primary \
+    new-routing-mark=main passthrough=no
+add action=mark-routing chain=routing connection-mark=conn_backup \
+    new-routing-mark=backup passthrough=no
+# unmarked connections
+add action=mark-routing chain=routing connection-mark=no-mark disabled=yes \
+    new-routing-mark=backup passthrough=no comment="enable this to use backup isp"
+add action=mark-routing chain=routing connection-mark=no-mark \
+    new-routing-mark=main passthrough=no
+
+# routes
+/ip route
+add dst-address=0.0.0.0/0 gateway=1.1.1.1 routing-mark=backup
+add dst-address=0.0.0.0/0 gateway=2.2.2.2
+
+==
+MORE INFO, LOOKS GOOD - 090419
+==
+
+##https://forum.mikrotik.com/viewtopic.php?t=97877
+
+With default config, eth3,4,5 are slave ports to eth2.
+
+Using Winbox, go to Interfaces > Interface and edit eth2,3,4 and 5. In the "Master Port" dropdown, set it to None.
+
+Go to IP > Addresses, remove default entries.
+- Add entry, IP 192.168.1.1, interface Eth1
+- Add entry, IP 10.0.0.1, interface Eth2
+- Add entry, IP 192.168.2.1, interface Eth3
+- Add entry, IP 20.0.0.1, interface Eth4
+
+To make Lan #1 go out Wan #1, and Lan #2 go out Wan #2, you have to mark packets coming in on eth1 and eth3
+
+Go to IP > Firewall, Mangle
+- Add entry, Chain=prerouting, in-interface: eth1, action: mark routing, New Routing Mark: LAN1
+- Add entry, Chain=prerouting, in-interface: eth3, action: mark routing, New Routing Mark: LAN2
+
+Packets leaving a gateway must be masqueraded (so the outbound packets take on the wan interface's IP).
+
+Go to IP > Firewall, NAT
+- Remove default masquerade rule
+- Add entry, chain: srcnat, Out-Interface: Eth2, Action: Masquerade
+- Add entry, chain: srcnat, Out-Interface: Eth4, Action: Masquerade
+
+Because you use static IPs for your WANs, you need to manually create the routes
+Go to IP > Routes
+- Add Entry, Dst. Address: 0.0.0.0/0, Gateway: 10.0.0.254, Routing Mark: LAN1
+- Add Entry, Dst. Address: 0.0.0.0/0, Gateway: 20.0.0.254, Routing Mark: LAN2
+
+I believe that's it.

@@ -1,0 +1,13 @@
+CSV FILE NOT SPLITTING BY COLUMNS IN EXCEL
+==========================================
+
+Can just import and change delimiter
+
+Seems to be brought by excel file encoding
+
+OR
+
+open in notepad, add: sep=, to beginning of file, open in excel again
+
+https://stackoverflow.com/questions/17953679/how-to-correctly-display-csv-files-within-excel-2013
+

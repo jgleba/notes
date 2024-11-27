@@ -1,0 +1,34 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU LINUX CVLC
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-02[Nov-Sat]14-13PM 
+
+#INSTALL
+
+sudo apt install vlc-bin
+sudo apt install vlc-plugin-base vlc-plugin-pulse
+sudo apt install vlc-plugin-base
+sudo apt install vlc
+
+#AUDIO DEVICES
+
+##https://bbs.archlinux.org/viewtopic.php?id=181630
+
+alsa-audio-device=plughw:1,3
+
+#PLAY ON REPEAT
+
+cvlc --repeat file
+
+#DIDNT WORK
+cvlc alsa-audio-device=plughw:1,3 --repeat /home/tv/j/goforwalk.m4a
+
+
+#GOES OUT HDMI FULL VOLUME
+cvlc --aout alsa --alsa-audio-device hw:1,3 /home/tv/j/goforwalk.m4a
+
+##KILL BACKGROUND REPEATING AUDIO TRACK
+kill $(ps -ax | grep /home/tv/j/goforwalk.m4a | grep -v color | awk -F ' ' '{print $1}')
+

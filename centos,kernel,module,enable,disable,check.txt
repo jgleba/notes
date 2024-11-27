@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS KERNEL MODULE ENABLE / DISABLE / CHECK IF ENABLED
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-17[Dec-Tue]22-06PM 
+
+
+==
+CHECK IF ENABLED, IF NO OUTPUT THEN NOT ENABLED
+==
+
+sudo lsmod | grep dm_snapshot
+
+==
+ENABLE KERNEL MODULE "dm_snapshot"
+==
+
+sudo modprobe dm_snapshot
+
+==
+DISABLE KERNEL MODULE "dm_snapshot"
+==
+
+sudo modprobe -r dm_snapshot
+

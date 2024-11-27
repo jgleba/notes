@@ -1,0 +1,33 @@
+set up openfire on centos 7
+==
+
+yum update -y
+
+yum install -y zlib.i686 libstdc++.i686 java mariadb-server mariadb nano net-tools wget
+
+turn off selinux
+
+service mariadb start
+chkconfig mariadb on
+
+mysql_secure_installation
+
+mysql -u root -p
+create database openfire;
+create user 'openfire'@'localhost' identified by 'pass';
+grant all on openfire.* to 'openfire'@'localhost';
+FLUSH PRIVILEGES;
+
+cd /usr/src
+wget http://files.jgleba.com/util/openfire.rpm
+rpm -ivh openfire.rpm
+
+service openfire start
+chkconfig openfire on
+
+firewall-cmd --zone=public --add-port=9090/tcp --permanent
+firewall-cmd --zone=public --add-port=9091/udp --permanent
+firewall-cmd --reload
+
+make sure out of mysql
+cat /opt/openfire/resources/database/openfire_mysql.sql | mysql -u openfire openfire -p;

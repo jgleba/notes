@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERSHELL SEND EMAIL MANUALLY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-05-28[May-Thu]18-15PM 
+
+send-mailmessage -subject "test 92" -body "testing  email" -to "example@jgleba.com" -dno onFailure -smtpServer 172.19.0.10 -from "example@jgleba.com"
+
+
+==
+WITH AUTH, NOT WORKING
+==
+
+##https://rcmtech.wordpress.com/2016/03/03/send-smtp-email-with-authentication-from-powershell/
+##https://stackoverflow.com/questions/12460950/how-to-pass-credentials-to-the-send-mailmessage-command-for-sending-emails
+
+$SMTPClient.Credentials = New-Object System.Net.NetworkCredential("mailuser", "password"); 
+
+$EmailCredential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $SMTPUsername,$SecureStringPassword
+send-mailmessage -subject "test" -body "test" -to "example@jgleba.com" -dno onFailure -smtpServer 172.19.0.10 -from "example@jgleba.com" -UseSsl -Credential $EmailCredential

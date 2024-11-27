@@ -1,0 +1,53 @@
+ESOS
+====
+June 20,2017
+Justin Gleba
+
+
+
+
+sign into paradym portal
+Download rpc agent
+unzip
+install on nodes
+
+use host id in portal to license node
+
+
+==
+esos commander
+==
+
+
+download from portal
+install
+download Win64 OpenSSL v1.0.2L 
+install to default location
+
+create cluster
+add nodes to cluster
+activate
+
+configure scst
+
+iqn.2017-06.esos.esos1:f1121
+
+ESOS - INSTALL RPC AGENT ON NODE
+================================
+
+wget http://files.jgleba.com/util/rpc_agent-1.1.1.tar
+tar -xvf rpc_agent-1.1.1.tar
+
+cd rpc_agent-1.1.1
+
+./install.sh
+
+
+esos4 target
+iqn.2017-06.esos.esos4:62091
+
+esos3 target
+iqn.2017-06.esos.esos3:d50eb
+
+==
+

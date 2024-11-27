@@ -1,0 +1,43 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU NVIDIA GPU FAN CONTROL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-13[Nov-Wed]21-22PM 
+
+##https://blog.closex.org/posts/26a7c6ee/
+
+WORKED
+
+sudo mkdir fancontrol
+cd fancontrol/
+ls -la
+sudo apt install python3.10-venv
+sudo python3 -m venv fan
+
+source fan/bin/activate
+  
+sudo ./fan/bin/pip3 install pynvml
+  
+sudo wget https://raw.githubusercontent.com/RoversX/nvidia_fan_control_linux/main/nvidia_fan_control.py
+
+sudo nano nvidia_fan_control.py
+  
+sudo nano fan.sh
+
+cat fan.sh
+#!/bin/bash
+
+# Use sudo to elevate privileges and activate the virtual environment
+sudo bash <<EOF
+source ./fancontrol/fan/bin/activate
+python ./fancontrol/nvidia_fan_control.py
+deactivate
+EOF
+
+==
+
+./fan.sh
+
+./fan.sh > /dev/null &
+

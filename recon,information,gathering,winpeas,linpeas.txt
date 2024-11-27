@@ -1,0 +1,49 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINPEAS WINPEAS - RECON INFORMATION GATHERING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]23-13PM 
+
+##https://github.com/carlospolop/PEASS-ng
+
+curl -L https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh | sh
+
+LINPEAS
+
+user@kali:~/privilege-escalation-awesome-scripts-suite-master/linPEAS$ ls -la
+total 264
+drwxr-xr-x 3 user user   4096 Jul 24 12:19 .
+drwxr-xr-x 5 user user   4096 Jul 24 12:19 ..
+drwxr-xr-x 2 user user   4096 Jul 24 12:19 images
+-rwxr-xr-x 1 user user 229696 Jul 24 12:19 linpeas.sh
+
+==
+
+WINPEAS
+
+user@kali:~/privilege-escalation-awesome-scripts-suite-master/winPEAS/winPEASexe/w                                   inPEAS/bin/Release$ pwd
+/home/user/privilege-escalation-awesome-scripts-suite-master/winPEAS/winPEASexe/wi                                   nPEAS/bin/Release
+user@kali:~/privilege-escalation-awesome-scripts-suite-master/winPEAS/winPEASexe/w                                   inPEAS/bin/Release$ ls -laa
+total 1396
+drwxr-xr-x 10 user user   4096 Jul 24 12:19 .
+drwxr-xr-x  6 user user   4096 Jul 24 12:19 ..
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 de
+drwxr-xr-x  9 user user   4096 Jul 24 12:19 Dotfuscated
+-rwxr-xr-x  1 user user   2438 Jul 24 12:19 Dotfuscator1.xml
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 es
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 fr
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 it
+-rwxr-xr-x  1 user user 314880 Jul 24 12:19 Microsoft.Win32.TaskScheduler.dll
+-rwxr-xr-x  1 user user 541332 Jul 24 12:19 Microsoft.Win32.TaskScheduler.xml
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 pl
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 ru
+-rwxr-xr-x  1 user user 244224 Jul 24 12:19 winPEAS.exe
+-rwxr-xr-x  1 user user    226 Jul 24 12:19 winPEAS.exe.config
+-rwxr-xr-x  1 user user 273920 Jul 24 12:19 winPEAS.pdb
+drwxr-xr-x  2 user user   4096 Jul 24 12:19 zh-CN
+
+
+ANOTHER ONE LinEnum
+
+https://github.com/rebootuser/LinEnum

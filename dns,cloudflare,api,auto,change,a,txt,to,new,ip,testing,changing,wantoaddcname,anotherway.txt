@@ -1,0 +1,7 @@
+##testing auto change dns records,cloudflare,api
+##https://stackoverflow.com/questions/38832755/add-srv-record-cloudflare-api
+
+$post_data = array(
+        "type" => "CNAME",
+        "data" => "{"name":"b.dev.jgleba.com","target":"jgleba.com","ttl" :"1"}"
+        );

@@ -1,0 +1,71 @@
+{ echo "rclone backup finished" & cat $LOGFILE | grep ERROR;} | /bin/mail -s "Rclone $LOCALFOLDERTOCOPY $RCLONECONNECTOR $BOXDESTINATIONFOLDER" $DESTINATIONEMAIL
+
+echo "rclone backup started" | /bin/mail -s "Rclone $LOCALFOLDERTOCOPY $RCLONECONNECTOR $BOXDESTINATIONFOLDER" $DESTINATIONEMAIL
+
+WORKS IF MAIL INSTALLED - NOT POSTFIX
+
+echo "test" | /bin/mail -s "test" example@jgleba.com
+
+TO INSTALL MAIL? NEED TO CHECK
+
+sudo yum install -y postfix mailx
+
+==
+USING SENDMAIL
+==
+
+echo "Subject: test" | /usr/sbin/sendmail user@domain.com
+echo "Subject: test" | sendmail example@jgleba.com
+
+echo "test" | sendmail example@jgleba.com 
+
+==
+USING SENDMAIL, MANUAL FROM ADDRESS
+==
+
+echo "testing" | sudo sendmail -f "fromuser@domain.com" touser@domain.com
+
+echo "test" | sudo sendmail -f "abc@jgleba.com" example@jgleba.com
+
+MORE EXAMPLES
+
+
+##https://www.linuxquestions.org/questions/linux-general-1/sendmail-subject-configuration-603900/
+
+'(echo "Subject: Test"; echo; cat /etc/hosts) | /usr/sbin/sendmail -t user@host'
+
+'(echo "Subject: Test"; echo; body) | /usr/sbin/sendmail -t user@host'
+
+BEST WITH SUBJECT AND BODY
+
+'(echo "Subject: Test"; echo body) | /usr/sbin/sendmail -f "certbot@jgleba.com" -t example@jgleba.com'
+
+ANOTHER WAY, WITH MAIL, NOT WORKING
+
+##https://unix.stackexchange.com/questions/200222/set-sender-name-in-mail-function
+
+sudo yum install mailx
+
+mail -s 'Some Subject' -r 'First Last <you@example.com>' recipient@example.net
+
+mail -s 'test' -r 'test tester test@jgleba.com' example@jgleba.com
+
+mail -s "test" -r "test@jgleba.com" example@jgleba.com
+
+mail -s "test" example@jgleba.com
+
+==
+
+mail example@jgleba.com
+
+asks for subject
+
+test
+
+ctrl + d
+
+==
+
+mail -s 'test' -r 'test tester <test@jgleba.com>' example@jgleba.com
+
+ctrl + d

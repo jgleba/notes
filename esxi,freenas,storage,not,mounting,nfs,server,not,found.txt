@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@ ESXI NOT MOUNTING STORAGE FROM FREENAS - GETTING NFS SERVER NOT FOUND
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-08[Feb-Tue]16-26PM 
+
+##https://www.eehelp.com/question/a-solution-to-the-unable-to-connect-to-the-nfs-server-that-i-can-t-understand/
+
+solution was to add esxi hostname to freenas host file

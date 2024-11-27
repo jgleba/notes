@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OPEN METERPRETER SESSION IN LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-03-05[Mar-Sat]12-09PM 
+
+https://madcityhacker.com/2018/09/15/upgrade-netcat-shell-to-meterpreter/

@@ -1,0 +1,85 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS, NEXTCLOUD, NGINX, PHP-FPM, MYSQL INSTALL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-25[Feb-Tue]12-49PM 
+
+##https://www.howtoforge.com/tutorial/ubuntu-nginx-nextcloud/
+
+==
+INSTALL STUFF
+==
+
+sudo yum install nano wget unzip cifs-utils samba-client -y
+sudo yum install epel-release -y
+
+==
+INSTALL NGINX
+==
+
+sudo yum install nginx -y
+sudo systemctl enable nginx && sudo systemctl start nginx
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+PHP-FPM
+==
+
+sudo yum install yum-utils -y
+sudo yum install yum-utils http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum-config-manager --enable remi-php73
+
+sudo yum install php-fpm php-mcrypt php-curl php-cli php-mysql php-gd php-iconv php-xsl php-json php-intl php-pear php-imagick php-dev php-common php-mbstring php-zip php-soap php72-php-intl
+
+sudo sed -i '/expose_php*/c\expose_php = Off' /etc/php.ini
+sudo sed -i '/memory_limit*/c\memory_limit = 256M' /etc/php.ini
+sudo sed -i '/post_max_size*/c\post_max_size = 20G' /etc/php.ini
+sudo sed -i '/upload_max_filesize*/c\upload_max_filesize = 20G' /etc/php.ini
+sudo sed -i '/max_file_uploads*/c\max_file_uploads = 100000' /etc/php.ini
+
+date.timezone = America/Toronto
+cgi.fix_pathinfo=0
+
+sudo nano /etc/php-fpm.d/www.conf
+ 
+UNCOMMENT
+
+env[HOSTNAME] = $HOSTNAME
+env[PATH] = /usr/local/bin:/usr/bin:/bin
+env[TMP] = /tmp
+env[TMPDIR] = /tmp
+env[TEMP] = /tmp
+
+sudo systemctl restart php-fpm && sudo systemctl enable php-fpm
+sudo systemctl status php-fpm 
+
+==
+MYSQL
+==
+
+sudo yum install mariadb mariadb-server -y
+
+sudo systemctl enable mariadb && sudo systemctl start mariadb
+
+sudo mysql_secure_installation
+
+==
+NEXTCLOUD INSTALL
+==
+
+cd /var/www/html
+sudo wget https://download.nextcloud.com/server/releases/latest.zip
+sudo unzip latest.zip
+
+sudo chown -R nginx:root /var/www/html/nextcloud
+sudo chmod -R 570 /var/www/html/nextcloud
+sudo mkdir -p /j/nc
+

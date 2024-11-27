@@ -1,0 +1,46 @@
+====================================================
+CHECK AND CHANGE MTU ON CENTOS / ENABLE JUMBO FRAMES
+102619
+====================================================
+
+##https://linuxconfig.org/how-to-enable-jumbo-frames-in-linux
+
+==
+Check Your MTU size
+==
+
+ip link show | grep mtu
+
+OR
+
+ip addr show
+
+==
+Set A New Size
+==
+
+ip link set eth0 mtu 9000
+sudo ip link set ens160 mtu 9000
+
+==
+Make It Permanent
+==
+
+There are a couple of different ways you can make the new MTU size permanent. There is no specific utility for it, but the easiest thing you can do is create a script that runs at startup to set the MTU. If you're very comfortable working with systemd, you can change the network files it supplies to change the default MTU as well.
+
+Your script should look something like this:
+
+#! /bin/bash
+
+ip link set eth0 mtu 9000;
+ip link set wlan0 mtu 9000;
+
+==
+WORKS
+==
+
+sudo nano /etc/sysconfig/network-scripts/ifcfg-Wired_connection_2
+
+ADD
+
+MTU=9000

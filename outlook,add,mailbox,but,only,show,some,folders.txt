@@ -1,0 +1,9 @@
+give permissions to user from public folder set up in outlook in admin account
+
+go to control panel mail
+
+edit current profile
+
+go to more settings
+
+add mailbox there

@@ -1,0 +1,38 @@
+=====================
+CENTOS DELUGE INSTALL
+031920
+=====================
+
+##https://blog.flaunt7.com/install-deluge-torrent-client-centos-7/
+
+==
+INSTALL STUFF
+==
+
+sudo wget http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+sudo rpm -ivh nux-dextop-release-0-5.el7.nux.noarch.rpm
+sudo yum install epel-release
+##sudo wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-6.noarch.rpm
+##sudo rpm -ivh epel-release-7-6.noarch.rpm
+
+==
+INSTALL
+==
+
+sudo yum -y install deluge-web
+sudo yum install deluge-web
+
+==
+START AND ENABLE
+==
+
+sudo systemctl start deluge-web && sudo systemctl enable deluge-web
+sudo systemctl start deluge-daemon && sudo systemctl enable deluge-daemon
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=8112/tcp --permanent
+sudo firewall-cmd --reload
+

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+##AUTOMATE WORDPRESS SETUP
+##010620
+##JGleba
+
+
+
+##GET FILES, CHANGE PERMS
+cd $SITEPATH
+sudo wget https://en-ca.wordpress.org/latest-en_CA.tar.gz
+sudo tar -xvf latest-en_CA.tar.gz
+sudo mv wordpress $SITENAME
+sudo chown -R user:nginx $SITENAME
+sudo chmod -R 775 $SITENAME
+
+##SET VARIABLE VALUES
+SITENAME="wp-buddypress"
+SITEURL="bp.jgleba.com"
+SITEPATH="/var/www/html/"
+#SITECONFIG="/etc/nginx/sites-enabled/"
+SITECONFIG="/home/user/webtest/"
+

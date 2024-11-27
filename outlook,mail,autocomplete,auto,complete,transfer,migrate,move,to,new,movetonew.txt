@@ -1,0 +1,41 @@
+autocomplete transfer method, 2013+
+
+rough need to check again, doing from memory
+
+03122019
+
+go to app data
+
+outlook/roamcache?
+
+n2k
+
+C:\Users\%username%\AppData\Roaming\Microsoft\Outlook
+
+newer
+
+C:\Users\%username%\AppData\Local\Microsoft\Outlook\RoamCache
+
+backup current (which is old) numbered file with autocomplete in the name
+
+Stream_Autocomplete_0_XXAABBCC.dat
+
+send new email, there will be a new file
+
+copy name of the new file and rename the old file with that name
+
+close and reopen outlook
+
+if it doesn't work
+
+repeat
+
+sometimes need to delete all auto complete (except for backup) send new email, close and re-open outlook, leave open and do, sometimes need to have outlook closed
+
+==
+
+ANOTHER WAY 
+
+==
+
+in outlook, options, mail, scroll down, there is 'empty auto complete' option

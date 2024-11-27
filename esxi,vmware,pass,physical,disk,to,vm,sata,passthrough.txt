@@ -1,0 +1,40 @@
+vmkfstools -z /vmfs/devices/disks/t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV251504ZZ240CGN__ "/vmfs/volumes/hdd1/FNAS-test/ssd_rdm_1.vmdk"
+vmkfstools -z /vmfs/devices/disks/t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV305405CY240CGN__ "/vmfs/volumes/hdd1/FNAS-test/ssd_rdm_2.vmdk"
+vmkfstools -z /vmfs/devices/disks/t10.ATA_____INTEL_SSDSC2CW240A3_____________________CVCV3111055Y240CGN__ "/vmfs/volumes/hdd1/FNAS-test/ssd_rdm_3.vmdk"
+
+vmkfstools -z /vmfs/devices/disks/t10.ATA_____Hitachi_HDE721010SLA330_________________MS3G7VHS____________ "/vmfs/volumes/hdd1/FNAS-test/hitachi_1tb.vmdk"
+vmkfstools -z /vmfs/devices/disks/t10.ATA_____WDC_WD10EARS2D00MVWB0_________________________WD2DWMAZA0211054 "/vmfs/volumes/hdd1/FNAS-test/wd_1tb.vmdk"
+vmkfstools -z /vmfs/devices/disks/t10.ATA_____KINGSTON_SHFS37A120G____________________50026B777300D3E7____ "/vmfs/volumes/hdd1/FNAS-test/king_ssd_120gb.vmdk"
+
+t10.ATA_____KINGSTON_SHFS37A120G____________________50026B777300D3E7
+t10.ATA_____Hitachi_HDE721010SLA330_________________MS3G7VHS____________
+
+t10.ATA_____Hitachi_HDE721010SLA330_________________MS3G7VHS____________
+t10.ATA_____WDC_WD10EARS2D00MVWB0_________________________WD2DWMAZA0211054
+t10.ATA_____KINGSTON_SHFS37A120G____________________50026B777300D3E7____
+
+
+
+
+lrwxrwxrwx    1 root     root            73 Apr 24 03:06 vml.01000000002020202020202020202020203556593942375039535432353044 -> t10.ATA_____ST250DM0002D1BD141___________________________________5VY9B7P9
+lrwxrwxrwx    1 root     root            75 Apr 24 03:06 vml.01000000002020202020202020202020203556593942375039535432353044:1 -> t10.ATA_____ST250DM0002D1BD141___________________________________5VY9B7P9:1
+lrwxrwxrwx    1 root     root            72 Apr 24 03:06 vml.0100000000435643563235313530345a5a32343043474e2020494e54454c20 -> t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV251504ZZ240CGN__
+lrwxrwxrwx    1 root     root            74 Apr 24 03:06 vml.0100000000435643563235313530345a5a32343043474e2020494e54454c20:1 -> t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV251504ZZ240CGN__:1
+lrwxrwxrwx    1 root     root            74 Apr 24 03:06 vml.0100000000435643563235313530345a5a32343043474e2020494e54454c20:2 -> t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV251504ZZ240CGN__:2
+lrwxrwxrwx    1 root     root            72 Apr 24 03:06 vml.010000000043564356333035343035435932343043474e2020494e54454c20 -> t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV305405CY240CGN__
+lrwxrwxrwx    1 root     root            74 Apr 24 03:06 vml.010000000043564356333035343035435932343043474e2020494e54454c20:1 -> t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV305405CY240CGN__:1
+lrwxrwxrwx    1 root     root            74 Apr 24 03:06 vml.010000000043564356333035343035435932343043474e2020494e54454c20:2 -> t10.ATA_____INTEL_SSDSC2BW240A3H____________________CVCV305405CY240CGN__:2
+lrwxrwxrwx    1 root     root            72 Apr 24 03:06 vml.010000000043564356333131313035355932343043474e2020494e54454c20 -> t10.ATA_____INTEL_SSDSC2CW240A3_____________________CVCV3111055Y240CGN__
+lrwxrwxrwx    1 root     root            74 Apr 24 03:06 vml.010000000043564356333131313035355932343043474e2020494e54454c20:1 -> t10.ATA_____INTEL_SSDSC2CW240A3_____________________CVCV3111055Y240CGN__:1
+
+
+lrwxrwxrwx    1 root     root            73 Apr 24 04:17 vml.01000000002020202020202020202020203556593942375039535432353044 -> t10.ATA_____ST250DM0002D1BD141___________________________________5VY9B7P9
+lrwxrwxrwx    1 root     root            75 Apr 24 04:17 vml.01000000002020202020202020202020203556593942375039535432353044:1 -> t10.ATA_____ST250DM0002D1BD141___________________________________5VY9B7P9:1
+lrwxrwxrwx    1 root     root            74 Apr 24 04:17 vml.0100000000202020202057442d574d415a4130323131303534574443205744 -> t10.ATA_____WDC_WD10EARS2D00MVWB0_________________________WD2DWMAZA0211054
+lrwxrwxrwx    1 root     root            76 Apr 24 04:17 vml.0100000000202020202057442d574d415a4130323131303534574443205744:1 -> t10.ATA_____WDC_WD10EARS2D00MVWB0_________________________WD2DWMAZA0211054:1
+lrwxrwxrwx    1 root     root            76 Apr 24 04:17 vml.0100000000202020202057442d574d415a4130323131303534574443205744:2 -> t10.ATA_____WDC_WD10EARS2D00MVWB0_________________________WD2DWMAZA0211054:2
+lrwxrwxrwx    1 root     root            72 Apr 24 04:17 vml.010000000035303032364237373733303044334537202020204b494e475354 -> t10.ATA_____KINGSTON_SHFS37A120G____________________50026B777300D3E7____
+lrwxrwxrwx    1 root     root            74 Apr 24 04:17 vml.010000000035303032364237373733303044334537202020204b494e475354:1 -> t10.ATA_____KINGSTON_SHFS37A120G____________________50026B777300D3E7____:1
+lrwxrwxrwx    1 root     root            72 Apr 24 04:17 vml.01000000004d53334737564853202020202020202020202020486974616368 -> t10.ATA_____Hitachi_HDE721010SLA330_________________MS3G7VHS____________
+lrwxrwxrwx    1 root     root            74 Apr 24 04:17 vml.01000000004d53334737564853202020202020202020202020486974616368:1 -> t10.ATA_____Hitachi_HDE721010SLA330_________________MS3G7VHS____________:1
+lrwxrwxrwx    1 root     root            74 Apr 24 04:17 vml.01000000004d53334737564853202020202020202020202020486974616368:2 -> t10.ATA_____Hitachi_HDE721010SLA330_________________MS3G7VHS____________:2

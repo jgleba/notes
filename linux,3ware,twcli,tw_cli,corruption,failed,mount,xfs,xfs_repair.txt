@@ -1,0 +1,28 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX 3WARE RAID, CORRUPTION, FAILED MOUNT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-13[Mar-Wed]16-49PM 
+
+FOUND IN DMESG
+
+[Mon Mar 11 09:25:05 2024] XFS (sdb): Corruption of in-memory data detected.  Shutting down filesystem
+[Mon Mar 11 09:25:05 2024] XFS (sdb): Please umount the filesystem and rectify the problem(s)
+[Mon Mar 11 09:25:05 2024] XFS (sdb): Failed to recover intents
+[Mon Mar 11 09:25:05 2024] XFS (sdb): log mount finish failed
+
+XFS VOLUME WONT MOUNT
+
+sudo mount -a
+mount: mount /dev/sdb on /var/lib/backuppc failed: Structure needs cleaning
+
+==
+
+sudo xfs_repair -L /dev/sdb
+
+WORKED
+
+sudo mount -a
+
+NOW WORKING

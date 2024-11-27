@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OUTLOOK READING PANE, SUBJECT PLUS ONE LINE PREVIEW BY DEFAULT, CHANGE TO NO SUBJECT PREVIEW
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-11-19[Nov-Thu]11-12AM 
+
+IN OUTLOOK
+
+VIEW
+
+MESSAGE PREVIEW
+
+CHANGE TO OFF

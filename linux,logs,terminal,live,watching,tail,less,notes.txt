@@ -1,0 +1,16 @@
+logs - system
+
+tail -f /var/log/system.log
+
+will show live log in terminal - last entries, but updates
+
+
+tail /var/log/system.log
+
+shows last few entries
+
+less +f /file/
+
+ctrl + a to detach, arrow keys to move around ctrl + ?? can't remember
+
+edit dec 2, 2018

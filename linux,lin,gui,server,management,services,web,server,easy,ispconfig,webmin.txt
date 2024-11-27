@@ -1,0 +1,15 @@
+======================================================
+GUI LINUX SERVER MANGEMENT (RESELLER, WEB SITES, EASY)
+072419
+=======================================================
+
+webuzo
+http://demo.webuzo.com/enduser/index.php?
+
+ispconfig
+(running myself, need to get on public ip direct to do more)
+
+Webmin
+
+plesk
+plesk onyx

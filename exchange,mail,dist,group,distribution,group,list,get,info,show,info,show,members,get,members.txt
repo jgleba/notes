@@ -1,0 +1,170 @@
+============================================================================================
+EXCHANGE EMAIL DISTRIBUTION GROUPS / LISTS INFO - GET GROUPS, GET MEMBERS, BEST IS AT BOTTOM
+070219
+JGleba
+============================================================================================
+
+==
+DISPLAY ALL DISTRIBUTION GROUPS / LISTS
+==
+
+Get-DistributionGroup -ResultSize Unlimited
+Get-DistributionGroup -ResultSize Unlimited | select Name,PrimarySmtpAddress,SamAccountName
+
+==
+DISPLAY ALL DISTRIBUTION GROUP / LIST MEMBERS
+==
+
+==
+KIND OF WORKS, ERRORS, HAVE TO HIT ENTER TWICE, DOESNT DISPLAY OTHER INFO ABOUT GROUP/LIST, NOT SURE WHICH IS WHICH
+==
+
+#https://www.systoolsgroup.com/how-to/export-distribution-list-members-from-office-365/
+
+$groups = Get-DistributionGroup -ResultSize Unlimited
+$groups | ForEach-Object {
+$group = $_
+Get-DistributionGroupMember -Identity $group.Name -ResultSize Unlimited
+}
+
+==
+JEDIT, A BIT BETTER, BUT STILL NOT WORKING RIGHT
+==
+
+$groups = Get-DistributionGroup -ResultSize Unlimited | select Name,PrimarySmtpAddress,SamAccountName
+$groups | ForEach-Object {
+$group = $_
+Get-DistributionGroupMember -Identity $group.SamAccountName -ResultSize Unlimited
+}
+
+==
+CLOSER, BETTER, NOT QUITE
+==
+
+#https://www.interfacett.com/blogs/using-powershell-to-report-on-distribution-group-membership-in-exchange-server/
+
+$groupmembers = foreach($i in Get-DistributionGroup) {
+	Get-DistributionGroupMember $i | select Name,@{n='Member';e={$i.Name}}
+}
+Write-Host $groupmembers
+
+==
+EVEN CLOSER, EXPORTS TO CSV, ALMOST THERE
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup) {
+	Get-DistributionGroupMember $i | select Name,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+TRYING FROM SPECIFIC OU, WORKS, BEST SO FAR
+==
+
+#https://community.spiceworks.com/topic/2090936-powershell-all-members-in-a-dl-from-a-ou
+
+Get-DistributionGroup -OrganizationalUnit "domain/users/staff"
+
+$groupmembers = foreach($i in Get-DistributionGroup -OrganizationalUnit "domain.local/MailDomains/jgleba.com/Groups") {
+	Get-DistributionGroupMember $i | select Name,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+ANOTHER WAY - NOT AS GOOD AS ABOVE
+==
+
+#https://community.spiceworks.com/topic/2090936-powershell-all-members-in-a-dl-from-a-ou
+
+$Groups = Get-DistributionGroup
+$Groups | ForEach-Object {
+$group = $_.Name
+$members = ''
+Get-DistributionGroupMember $group | ForEach-Object {
+        If($members) {
+              $members=$members + ";" + $_.Name
+           } Else {
+              $members=$_.Name
+           }
+  }
+New-Object -TypeName PSObject -Property @{
+      GroupName = $group
+      Members = $members
+     }
+} | Export-CSV "c:\j\tmp\groupmembers.csv" -NoTypeInformation
+
+==
+BEST SO FAR, REPEATING FROM ABOVE
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup -OrganizationalUnit "domain.local/MailDomains/jgleba.com/Groups") {
+	Get-DistributionGroupMember $i | select Name,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+GETS SAM FOR BOTH USER AND GROUP NAME - WORKING - GOOD ONE
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup -OrganizationalUnit "domain.local/MailDomains/jgleba.com/Groups") {
+	Get-DistributionGroupMember $i | select SamAccountName,@{n='Member';e={$i.SamAccountName}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+GETS SAM FOR USER AND NAME OF GROUP - WORKS - IS WHAT IS WAS LOOKING FOR - BEST - BEST
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup -OrganizationalUnit "domain.local/MailDomains/jgleba.com/Groups") {
+	Get-DistributionGroupMember $i | select SamAccountName,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+TRYING FROM SPECIFIC DOMAIN, WORKING TO GET GROUPS AND GROUP MEMBERS FROM SPECIFIC DOMAIN - WORKS
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup | where {$_.emailaddresses -match "ab3w.com"}) {
+	Get-DistributionGroupMember $i | select Name,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+TRYING FROM SPECIFIC DOMAIN, WORKING TO GET GROUPS AND GROUP MEMBERS FROM SPECIFIC DOMAIN - WORKS - BEST - BEST - GETS USER SAM AND GROUP NAME
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup | where {$_.emailaddresses -match "ab3w.com"}) {
+	Get-DistributionGroupMember $i | select SamAccountName,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+
+
+
+
+
+
+
+
+
+==
+SHORT ANSWER, THESE ARE THE BEST
+==
+
+==
+SPECIFIC DOMAIN, GET GROUPS, GET MEMBERS
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup | where {$_.emailaddresses -match "ab3w.com"}) {
+	Get-DistributionGroupMember $i | select SamAccountName,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation
+
+==
+SPECIFIC OU, GET GROUPS, GET MEMBERS
+==
+
+$groupmembers = foreach($i in Get-DistributionGroup -OrganizationalUnit "domain.local/MailDomains/jgleba.com/Groups") {
+	Get-DistributionGroupMember $i | select SamAccountName,@{n='Member';e={$i.Name}}
+}
+$groupmembers | Export-Csv c:\j\tmp\groupmembers.csv -NoTypeInformation

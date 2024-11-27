@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SED BASICS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-05-07[May-Fri]12-41PM 
+
+sudo sed -i -e 's/listen 443;/listen 443 ssl;/g' /etc/nginx/sites-enabled/*
+sudo sed -i -e 's/ssl on;/#ssl on;/g' /etc/nginx/sites-enabled/*
+
+sudo sed -i -e 's/from string/to string/g' /path/to/file/to/modify

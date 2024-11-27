@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU LINUX POWERCLI INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-10[Aug-Sat]17-16PM 
+
+
+
+#https://www.reddit.com/r/PowerShell/comments/o7puj4/powercli_connectviserver_the_ssl_connection_could/
+#https://www.powershellgallery.com/packages/VMware.PowerCLI/13.3.0.24145081
+
+#RUN FROM ROOT
+
+Install-PSResource -Name VMware.PowerCLI 
+
+#ADD TO PATH
+
+sudo visudo
+
+/root/.local/share/powershell/Modules:home/jg/.local/share/powershell/Modules
+
+#IGNORE UNTRUSTED SSL
+
+Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false
+

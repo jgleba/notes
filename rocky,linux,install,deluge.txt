@@ -1,0 +1,37 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL DELUGE WEB
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-09-11[Sep-Wed]13-14PM 
+
+#https://snapcraft.io/install/deluge-lukewh/centos
+
+==
+INSTALL EPEL
+==
+
+sudo yum install epel-release
+
+==
+INSTALL SNAP
+==
+
+sudo yum install snapd
+
+sudo systemctl enable --now snapd.socket
+
+sudo ln -s /var/lib/snapd/snap /snap
+
+==
+SNAP INSTALL DELUGE
+==
+
+sudo snap install deluge-lukewh
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=8112/tcp --permanent
+sudo firewall-cmd --reload

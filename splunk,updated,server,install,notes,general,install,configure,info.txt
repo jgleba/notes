@@ -1,0 +1,216 @@
+=========================
+SPLUNK NOTES - 01-31-2019
+=========================
+
+=========================================================
+SPLUNK SERVER SINGLE INSTANCE INSTALL CENTOS - 03-28-2019
+=========================================================
+
+#https://docs.splunk.com/Documentation/Splunk/7.2.5/SearchTutorial/InstallSplunk#Linux_installation_instructions
+#https://www.splunk.com/en_us/download/splunk-enterprise
+
+move rpm file to machine
+
+##DIDT CHANGE USER FOR SPLUNK2
+
+sudo adduser splunk
+sudo passwd splunk
+
+nano /etc/sudoers
+#add to file:
+splunk  ALL=(ALL)       ALL
+
+cd /opt
+
+sudo chmod +x splunk-7.2.5.1-962d9a8e1586-linux-2.6-x86_64.rpm
+sudo yum install splunk-7.2.5.1-962d9a8e1586-linux-2.6-x86_64.rpm
+
+sudo chown -R splunk:wheel /opt/splunk/
+sudo chmod -R 770 /opt/splunk/
+
+START
+sudo /opt/splunk/bin/splunk start
+
+
+#NOT SURE IF NEEDED, WAS HAVING BROWSER ISSUES
+#sudo firewall-cmd --zone=public --add-port=8000/tcp --permanent
+#sudo firewall-cmd --reload
+
+ENABLE ON BOOT
+sudo /opt/splunk/bin/splunk enable boot-start
+
+=============================
+server splunk.secret location
+=============================
+
+/opt/splunk/etc/auth/splunk.secret
+
+=============================================
+universal forwarder setup, linux - PART 1
+=============================================
+
+#download from: https://www.splunk.com/en_us/download/universal-forwarder.html#tabs/linux
+
+#copy to machine
+
+yum install splunkforwarder-7.2.3-06d57c595b80-linux-2.6-x86_64.rpm
+
+sudo adduser splunk
+sudo passwd splunk
+
+nano /etc/sudoers
+
+#add to file:
+
+splunk  ALL=(ALL)       ALL
+
+sudo chown -R splunk:wheel /opt/splunkforwarder/
+sudo chmod -R 770 /opt/splunkforwarder/
+
+nano /opt/splunkforwarder/etc/auth/splunk.secret
+
+=============================================
+enable receiving from splunk server (indexer)
+=============================================
+
+#https://docs.splunk.com/Documentation/Forwarder/7.2.3/Forwarder/HowtoforwarddatatoSplunkEnterprise
+#https://docs.splunk.com/Documentation/Forwarder/7.2.3/Forwarder/Enableareceiver
+
+#$SPLUNK_HOME/etc/system/local/inputs.conf
+sudo nano /opt/splunk/etc/system/local/inputs.conf
+
+#add to file:
+
+[splunktcp://9997]
+disabled = 0
+
+#restart splunk - did from web gui - settings->server controls->restart
+
+#firewall
+
+sudo firewall-cmd --zone=public --add-port=9997/tcp --permanent
+sudo firewall-cmd --reload
+
+======================================
+universal forwarder configure - PART 2
+======================================
+
+#https://docs.splunk.com/Documentation/Forwarder/7.2.3/Forwarder/Configuretheuniversalforwarder
+
+cd /opt/splunkforwarder/etc/system/local/
+
+#http://docs.splunk.com/Documentation/Splunk/7.2.3/Admin/Inputsconf
+
+sudo nano /opt/splunkforwarder/etc/system/local/inputs.conf
+
+#http://docs.splunk.com/Documentation/Splunk/7.2.3/Admin/Outputsconf
+
+sudo nano /opt/splunkforwarder/etc/system/local/outputs.conf
+
+#http://docs.splunk.com/Documentation/Splunk/7.2.3/Admin/Serverconf
+
+sudo nano /opt/splunkforwarder/etc/system/local/server.conf
+
+##https://answers.splunk.com/answers/345870/how-to-configure-a-universal-forwarder-to-receive.html
+##https://www.function1.com/2012/05/syslog-collection-with-splunk
+
+##https://www.splunk.com/blog/2008/11/13/syslog-syslog-ng-and-splunk-forwarders.html
+
+===
+
+my files
+
+==
+
+cat /opt/splunkforwarder/etc/system/local/inputs.conf
+
+[monitor:///var/log/web/*/messages]
+index=web
+disabled = 0
+
+cat /opt/splunkforwarder/etc/system/local/outputs.conf
+
+[tcpout-server://172.16.0.8:9997]
+
+==
+
+SECRET FIRST
+
+==
+
+next, start splunk forwarder for first time?
+
+==
+
+/opt/splunkforwarder/bin/splunk start --accept-license --answer-yes
+
+admin
+pass in keypass
+
+==
+
+not working
+
+==
+
+https://answers.splunk.com/answers/55932/cant-login-when-setting-up-a-universal-forwarder.html
+
+/opt/splunkforwarder/bin/splunk add forward-server 172.16.0.8:9997
+
+==
+
+================
+TROUBLESHOOTING
+================
+
+cat /opt/splunkforwarder/var/log/splunk/splunkd.log
+
+cat /opt/splunkforwarder/var/log/splunk/splunkd_stderr.log
+
+cat /opt/splunkforwarder/var/log/splunk/metrics.log
+
+https://answers.splunk.com/answers/44391/where-to-start-debugging-why-splunk-receiver-is-not-getting-data-from-universal-forwarder.html
+
+https://docs.splunk.com/Documentation/Splunk/latest/Troubleshooting/Cantfinddata#Are_you_using_forwarders.3
+
+index=_internal source=*metrics.log* tcpin_connections | stats count by sourceIp
+
+index=_internal source=*metrics.log* group=queue tcpout | stats count by name
+
+==
+
+had outputs.conf wrong
+
+https://answers.splunk.com/answers/389174/getting-a-tcpoutputproc-lightweightforwarderuniver.html
+
+changed to:
+
+
+[tcpout]
+defaultGroup = splunk
+
+[tcpout:splunk]
+server = 172.16.0.8:9997
+
+==
+
+now seeing connected, but not seeing events from syslog
+
+==
+SAW MESSAGE LIKE THIS AT TOP OF MAIN SPLUNK INSTANCE IN WEB INTERFACE
+
+Received event for unconfigured/disabled/deleted index=freenas with source="source::/var/log/nas/172.16.2.16/freenas.log" host="host::zxlog" sourcetype="sourcetype::freenas". So far received events from 2 missing index(es).
+2/2/2019, 9:57:54 PM
+
+unconfigured/disabled/deleted index=wineventlog with source="source::web"
+
+https://answers.splunk.com/answers/323511/why-is-my-indexer-reporting-unconfigureddisabledde.html
+
+http://splunkgeek.blogspot.com/2015/05/received-event-for-unconfigureddisabled.html
+
+WAS MISSING AN INDEX for "web"
+
+ADDED, NOW WORKING
+
+ENABLE ON BOOT
+ sudo /opt/splunkforwarder/bin/splunk enable boot-start

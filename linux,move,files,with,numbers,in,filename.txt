@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MOVE FILES WITH NUMBERS IN FILE NAME
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-08-21[Aug-Sun]12-15PM 
+
+mv test{10..11}.txt ./test/
+
+mv files with 10 and 11 in end of file name

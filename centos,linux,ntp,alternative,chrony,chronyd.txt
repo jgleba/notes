@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS NTP - ALTERNATIVE - CHRONYD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-09-09[Sep-Mon]14-04PM 
+
+#https://www.liquidweb.com/help-docs/ntp-server-configuration-linux-centos-and-ubuntu/
+
+sudo service chronyd status
+
+sudo nano /etc/chrony.conf
+
+sudo service chronyd restart
+

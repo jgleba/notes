@@ -1,0 +1,490 @@
+============================
+WEBCL1 - FE - NODES - NGINX
+DIDNT WORK AS EXPECTED, WP WAS FINE, BUT OTHER THINGS WERE NOT
+071319
+============================
+
+==
+START - 210PM
+==
+
+INSTALL CENTOS ON 5 MACHINES
+
+REBOOT ALL, REMOVE CD
+
+223PM
+
+SSH CONNECT
+BASIC CONFIG, SE, UPDATE
+INSTALL TOOLS, EPEL
+INSTALL NGINX
+
+240PM
+
+PAUSE
+
+START 250PM
+
+HOSTS
+
+sudo nano /etc/hosts
+
+172.16.3.214 webcln1
+172.16.3.215 webcln2
+172.16.3.216 webcln3
+172.16.3.217 webcln4
+172.16.3.218 webcln5
+
+SSH
+
+sudo ssh-keygen
+
+sudo ssh-copy-id root@172.16.3.215
+sudo ssh-copy-id root@172.16.3.216
+sudo ssh-copy-id root@172.16.3.217
+sudo ssh-copy-id root@172.16.3.218
+
+sudo ssh-copy-id root@172.16.3.214
+sudo ssh-copy-id root@172.16.3.216
+sudo ssh-copy-id root@172.16.3.217
+sudo ssh-copy-id root@172.16.3.218
+
+sudo ssh-copy-id root@172.16.3.214
+sudo ssh-copy-id root@172.16.3.215
+sudo ssh-copy-id root@172.16.3.217
+sudo ssh-copy-id root@172.16.3.218
+
+sudo ssh-copy-id root@172.16.3.214
+sudo ssh-copy-id root@172.16.3.215
+sudo ssh-copy-id root@172.16.3.216
+sudo ssh-copy-id root@172.16.3.218
+
+sudo ssh-copy-id root@172.16.3.214
+sudo ssh-copy-id root@172.16.3.215
+sudo ssh-copy-id root@172.16.3.216
+sudo ssh-copy-id root@172.16.3.217
+
+259PM
+
+FIREWALL
+
+sudo firewall-cmd --zone=public --add-port=24007/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49155/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24007/udp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49155/udp --permanent
+sudo firewall-cmd --reload
+
+300PM
+
+GLUSTER
+
+sudo mkdir -p /home/gl/web/
+sudo mkdir -p /mnt/gl/
+
+sudo gluster peer probe webcln1
+sudo gluster peer probe webcln2
+sudo gluster peer probe webcln3
+sudo gluster peer probe webcln4
+sudo gluster peer probe webcln5
+
+sudo gluster volume create webclvol1 replica 5 webcln1:/home/gl/web webcln2:/home/gl/web webcln3:/home/gl/web webcln4:/home/gl/web webcln5:/home/gl/web force
+sudo gluster volume start webclvol1
+
+310PM
+
+sudo gluster volume set webclvol1 features.cache-invalidation on
+sudo gluster volume set webclvol1 features.cache-invalidation-timeout 600
+sudo gluster volume set webclvol1 performance.stat-prefetch on
+sudo gluster volume set webclvol1 performance.cache-samba-metadata on
+sudo gluster volume set webclvol1 performance.cache-invalidation on
+sudo gluster volume set webclvol1 performance.md-cache-timeout 600
+sudo gluster volume set webclvol1 network.inode-lru-limit 1000000
+sudo gluster volume set webclvol1 performance.client-io-threads on
+sudo gluster volume set webclvol1 nfs.disable on
+sudo gluster volume set webclvol1 transport.address-family inet
+sudo gluster volume set webclvol1 performance.cache-refresh-timeout 1
+sudo gluster volume set webclvol1 performance.io-cache on
+sudo gluster volume set webclvol1 performance.io-thread-count 32
+sudo gluster volume set webclvol1 auth.allow 172.16.3.*
+
+SWAP OFF
+
+320PM
+
+sudo nano /etc/fstab
+
+webcln1:webclvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webcln5,backupvolfile-server=webcln4,backupvolfile-server=webcln13,backupvolfile-server=webcln12,direct-io-mode=disable,_netdev  0       0
+webcln2:webclvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webcln5,backupvolfile-server=webcln4,backupvolfile-server=webcln13,backupvolfile-server=webcln11,direct-io-mode=disable,_netdev  0       0
+webcln3:webclvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webcln5,backupvolfile-server=webcln4,backupvolfile-server=webcln11,backupvolfile-server=webcln12,direct-io-mode=disable,_netdev  0       0
+webcln4:webclvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webcln5,backupvolfile-server=webcln1,backupvolfile-server=webcln13,backupvolfile-server=webcln12,direct-io-mode=disable,_netdev  0       0
+webcln5:webclvol1 /mnt/gl/  glusterfs  defaults,_netdev,backupvolfile-server=webcln1,backupvolfile-server=webcln4,backupvolfile-server=webcln13,backupvolfile-server=webcln12,direct-io-mode=disable,_netdev  0       0
+
+sudo reboot
+
+326PM
+
+172.16.3.21
+
+sudo mount -a
+
+334PM
+
+GLUSTER DIRS
+
+sudo mkdir -p /mnt/gl/webconf
+sudo mkdir -p /mnt/gl/webroot
+
+sudo mkdir -p /var/www
+cd /var/www
+sudo ln -s /mnt/gl/webroot html
+
+341PM
+
+NGINX CONF
+
+sudo mkdir -p /mnt/gl/webconf/sites-enabled
+sudo mkdir -p /mnt/gl/webconf/mainconf
+
+sudo nano /mnt/gl/webconf/mainconf/nginx.conf
+
+sudo rm /etc/nginx/nginx.conf
+sudo ln -s /mnt/gl/webconf/mainconf/nginx.conf /etc/nginx/nginx.conf
+
+sudo service nginx restart
+sudo service nginx status
+
+sudo systemctl enable nginx
+
+349PM
+
+cd /usr/share/nginx/html
+sudo rm nginx-logo.png
+sudo rm poweredby.png
+sudo rm index.html
+sudo touch index.html
+
+351PM
+
+cd /var/www/html
+sudo touch index.html
+sudo touch index.php
+
+ls -la /var/www/html/
+
+PHP
+
+TOUGH, WP WORKS BEST WITH 7.2 WANTED TO USE, BUT OSSN ONLY WORKS WITH 5.6, 7.0, 7.2
+HAD 7.0 INSTALLED ON OTHER
+THINKING JUST GO 7.0 FOR NOW
+THINKING STILL MAKE THIS ONE GENERIC, SEE HOW IT GOES, MAYBE THREE NODE FOR WP, GO VERY LIGHT, TRY 7.2??
+
+sudo rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum install yum-utils -y
+sudo yum-config-manager --enable remi-php70
+
+sudo yum-config-manager --enable remi-php73
+
+sudo yum install php php-bcmath php-cli php-common php-gd php-mbstring php-mysqlnd php-pdo php-xml php-zip php-pecl-zip php-fpm php-curl
+
+sudo systemctl enable php-fpm
+sudo systemctl start php-fpm
+sudo systemctl status php-fpm
+
+407PM
+
+PAUSE
+THINKING ABOUT PHP VERSION
+
+TODO
+
+WHAT'S MISSING?
+
+CHECKMK**
+FIREWALL***
+SYSLOG***
+PHP**
+WEB DIR PERMISSIONS
+VHOST**
+FILES
+MORE RAM?
+MOVE NODES TO OTHER HV***
+CRON TO CHECK WEB DIR FOR GLUSTER?
+DO TEST CONFIG AND TEST**
+
+START 440PM
+
+cd /var/www/html
+
+MORE FIREWALL
+
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+
+445PM
+
+SYSLOG
+
+sudo nano /etc/rsyslog.conf
+
+local6.* @172.16.3.14
+
+sudo service rsyslog restart
+
+cd /etc/nginx
+sudo ln -s /mnt/gl/webconf/sites-enabled /etc/nginx/sites-enabled
+
+sudo nano /etc/nginx/sites-enabled/testn.jgleba.com.conf
+
+456PM
+
+CHECKMK
+
+sudo nano /etc/xinetd.d/check_mk
+
+508PM
+
+TODO
+
+WHAT'S MISSING? - UPDATED - EASIER TO SEE
+
+CHECKMK**
+PHP***
+WEB DIR PERMISSIONS**
+VHOST**
+FILES
+MORE RAM?
+CRON TO CHECK WEB DIR FOR GLUSTER?
+DO TEST CONFIG AND TEST**
+CERTS***
+
+START 610PM
+
+PHP FIX
+
+sudo nano /etc/php.ini
+
+WEB PERMS
+
+sudo usermod -a -G nginx user
+
+sudo chown -R root:nginx /var/www/html
+sudo chmod -R 775 /var/www/html
+sudo chown -R nginx:nginx /mnt/gl/webroot/
+sudo chmod -R 775 /var/www/html
+
+sudo chown -R nginx:nginx /var/www/html
+sudo chmod -R 775 /var/www/html
+sudo chown -R nginx:nginx /mnt/gl/webroot/
+sudo chmod -R 775 /var/www/html
+
+ls -la /mnt/gl/webroot/
+
+CERTS
+
+sudo yum install rsync -y
+sudo yum remove yum-utils -y
+
+sudo ssh-copy-id root@172.16.3.214
+sudo ssh-copy-id root@172.16.3.215
+sudo ssh-copy-id root@172.16.3.216
+sudo ssh-copy-id root@172.16.3.217
+sudo ssh-copy-id root@172.16.3.218
+
+sudo rsync -aK --delete /etc/letsencrypt/live/jgleba.com root@172.16.3.214:/etc/letsencrypt/live/
+sudo rsync -aK --delete /etc/letsencrypt/archive/jgleba.com root@172.16.3.214:/etc/letsencrypt/archive/
+sudo rsync -aK --delete /etc/letsencrypt/live/jgleba.com root@172.16.3.215:/etc/letsencrypt/live/
+sudo rsync -aK --delete /etc/letsencrypt/archive/jgleba.com root@172.16.3.215:/etc/letsencrypt/archive/
+sudo rsync -aK --delete /etc/letsencrypt/live/jgleba.com root@172.16.3.216:/etc/letsencrypt/live/
+sudo rsync -aK --delete /etc/letsencrypt/archive/jgleba.com root@172.16.3.216:/etc/letsencrypt/archive/
+sudo rsync -aK --delete /etc/letsencrypt/live/jgleba.com root@172.16.3.217:/etc/letsencrypt/live/
+sudo rsync -aK --delete /etc/letsencrypt/archive/jgleba.com root@172.16.3.217:/etc/letsencrypt/archive/
+sudo rsync -aK --delete /etc/letsencrypt/live/jgleba.com root@172.16.3.218:/etc/letsencrypt/live/
+sudo rsync -aK --delete /etc/letsencrypt/archive/jgleba.com root@172.16.3.218:/etc/letsencrypt/archive/
+
+sudo mkdir -p /etc/letsencrypt/archive/jgleba.com
+sudo mkdir -p /etc/letsencrypt/live/jgleba.com
+
+624PM
+
+TODO
+
+WHAT'S MISSING? - UPDATED - EASIER TO SEE
+
+CHECKMK**
+WEB DIR PERMISSIONS**
+VHOST**
+FILES
+MORE RAM?
+CRON TO CHECK WEB DIR FOR GLUSTER?***
+DO TEST CONFIG AND TEST**
+
+sudo service nginx restart
+sudo service nginx status
+
+629PM
+
+GLUSTERCHECK
+
+sudo nano /j/bin/glustercheck.sh
+sudo chmod +x glustercheck.sh
+
+#!/bin/bash
+
+##CHECK IF GLUSTER WORKING PROPERLY, IF NOT, REBOOT
+##05/01/2018
+##JGleba
+
+#if ! pgrep -x "glusterfsd" > /dev/null
+#then
+#    /usr/sbin/reboot
+#fi
+
+if ! cd /mnt/gl/htmlroot > /dev/null
+then
+     /usr/sbin/reboot
+fi
+
+
+cd /j/bin
+
+GLUSTERCHECK CRON
+
+sudo crontab -e
+
+*/2 * * * * /bin/sh /path/to/glustercheck.sh
+
+635PM
+
+TODO
+
+WHAT'S MISSING? - UPDATED - EASIER TO SEE
+
+WEB DIR PERMISSIONS***
+VHOST***
+FILES
+MORE RAM?
+DO TEST CONFIG AND TEST***
+
+sudo systemctl restart php-fpm
+
+RECHECK PERMS
+
+sudo chown -R root:nginx /var/www/html
+sudo chmod -R 755 /var/www/html
+sudo chown -R root:nginx /mnt/gl/webroot/
+sudo chmod -R 755 /mnt/gl/webroot
+
+647PM
+
+TEST
+
+DONE
+
+655PM
+
+JUST COPY FILES AND REAL TEST
+
+TESTING WP
+
+112019 - ADDING NOTE - COPY WEB CONFIG FILES
+sudo scp -rv root@172.16.3.218:/etc/nginx/sites-enabled/* /etc/nginx/sites-enabled/
+
+703PM
+
+sudo chown -R root:nginx /var/www/html/wp
+sudo chmod -R 755 /var/www/html/wp
+
+sudo systemctl restart nginx
+
+sudo scp -rv root@172.16.3.210:/var/www/html/wptwothree /var/www/html/
+sudo chown -R root:nginx /var/www/html/wptwothree
+sudo chmod -R 755 /var/www/html/wptwothree
+
+730PM
+
+sudo scp -rv root@172.16.3.210:/var/www/html/wpgreeeninfo /var/www/html/
+sudo chown -R root:nginx /var/www/html/wpgreeeninfo
+sudo chmod -R 755 /var/www/html/wpgreeeninfo
+
+740PM
+
+804PM
+
+WP GOING WELL
+
+ADDING SECURITY FOR WP TO NGINX - FORGOT ABOUT THAT
+
+sudo scp -rv root@172.16.3.210:/var/www/html/microweber /var/www/html/
+sudo chown -R root:nginx /var/www/html/microweber
+sudo chmod -R 755 /var/www/html/microweber
+
+sudo scp -rv root@172.16.3.210:/var/www/html/cms-bludit /var/www/html/
+sudo scp -rv root@172.16.3.210:/var/www/html/cms-gpeasy /var/www/html/
+sudo scp -rv root@172.16.3.210:/var/www/html/cms-grav /var/www/html/
+sudo scp -rv root@172.16.3.210:/var/www/html/cms-gs /var/www/html/
+sudo scp -rv root@172.16.3.210:/var/www/html/cms-pico /var/www/html/
+sudo scp -rv root@172.16.3.210:/var/www/html/oxwall /var/www/html/
+sudo scp -rv root@172.16.3.210:/var/www/html/sitemaint /var/www/html/
+
+sudo chown -R root:nginx /var/www/html
+sudo chmod -R 755 /var/www/html
+
+825PM
+
+GOING FOR IT
+
+MOVING EVERYTHING FROM OTHER WEBCL OVER
+
+sudo chmod -R 775 /var/www/html/cms-grav/assets
+sudo chmod -R 775 /var/www/html/cms-grav/cache
+sudo chmod -R 775 /var/www/html/cms-grav/images
+sudo chmod -R 775 /var/www/html/cms-grav/logs
+sudo chmod -R 775 /var/www/html/cms-grav/user/data
+
+sudo chmod -R 775 /var/www/html/microweber/config
+sudo chmod -R 775 /var/www/html/microweber/src
+sudo chmod -R 775 /var/www/html/microweber/storage
+sudo chmod -R 775 /var/www/html/microweber/userfiles
+
+HMMM EVERYTHING ELSE SUCKS
+
+MOVING EVERYTHING ELSE BACK
+
+ONLY WP RUNNING
+
+SWITCHING WP BACK
+
+NOT GOING AS I HOPED
+
+GOOD TEST THOUGH
+
+917PM
+
+sudo shutdown -h now
+
+==
+TRYING AGAIN
+071719 - 10:50AM
+==
+
+JUST WANT TO GET WP AND MICROWEBER WORKING, THEN FINE FOR NOW
+
+UPDATE - 145PM
+
+ALL WP, MICROWEBER AND OSSN MOVED OVER, WORKING
+
+071819 - 239PM
+
+SEEMS FASTER, A BIT LESS RESOURCES TO WEB NODES, DB TAXING STILL THE SAME
+

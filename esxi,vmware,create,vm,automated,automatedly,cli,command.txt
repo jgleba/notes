@@ -1,0 +1,15 @@
+##ESXI CREATE VM AUTOMATEDLY
+##12/27/2018
+##JGleba
+
+#https://www.businessnewsdaily.com/11038-use-powercli-vsphere-deployment.html
+
+#CREATE NEW VM
+New-VM -Name 'TestVM' –VMHost 'VMHost-1' -Datastore 'TestDatastore' -DiskGB 40 -MemoryGB 8 -NumCpu 2 -NetworkName 'Virtual Machine Network'
+
+#MAKE TEMPLATE FROM VM
+New-Template -VM 'Win2012VM' -Name "Server2012R2Template" -Datastore 'TestDatastore' -Location 'TestLocation'
+
+##CREATE WINDOWS VM, WITH KEY AND LOCAL ADMIN PASS
+New-OSCustomizationSpec -Name 'WindowsServer2012' -FullName 'TestName' -OrgName 'TestOrg' -OSType Windows -ChangeSid -AdminPassword (Read-Host -AsSecureString) -Domain 'DOMAIN' -TimeZone 035 -DomainCredentials (Get-Credential) -ProductKey '1111-1111-1111-1111' -AutoLogonCount 1
+

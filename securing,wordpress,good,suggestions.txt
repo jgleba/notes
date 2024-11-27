@@ -1,0 +1,54 @@
+4. Rename your login URL
+
+To change the login URL is an easy thing to do. By default, the WordPress login page can be accessed easily via wp-login.php or wp-admin added to the site’s main URL.
+
+When hackers know the direct URL of your login page, they can try to brute force their way in. They try to log in with their GWDb (Guess Work Database, i.e. a database of guessed usernames and passwords; e.g. username: admin and password: p@ssword … with millions of such combinations).
+
+So, at this point – if you’ve been following along – we have already restricted the user login attempts and swapped usernames for email IDs. Now we can replace the login URL and get rid of 99% of direct brute force attacks.
+
+This little trick restricts an unauthorized entity from accessing the login page. Only someone with the exact URL can do it. Again, the iThemes Security plugin can help you change your login URLs. Like so:
+
+    Change wp-login.php to something unique; e.g. my_new_login
+    Change /wp-admin/ to something unique; e.g. my_new_admin
+    Change /wp-login.php?action=register to something unique; e.g. my_new_registeration
+	
+	
+6. Protect the wp-admin directory
+
+The wp-admin directory is the heart of any WordPress website. Therefore, if this part of your site gets breached then the entire site can get damaged.
+
+One possible way to prevent this is to password-protect the wp-admin directory. With such security measure, the website owner may access the dashboard by submitting two passwords. One protects the login page, and the other the WordPress admin area. If the website users are required to get access to some particular parts of the wp-admin, you may unblock those parts while locking the rest.
+
+You can use the AskApache Password Protect plugin for securing the admin area. It automatically generates a .htpasswd file, encrypts the password and configures the correct security-enhanced file permissions.
+
+10. Monitor your files
+
+If you want some extra added security, you can monitor the changes to the website’s files via plugins like Wordfence, or again, iThemes Security.
+
+11. Change the WordPress database table prefix
+
+If you have ever installed WordPress then you are familiar with the wp- table prefix that is used by the WordPress database. I recommend you change it to something unique.
+
+Using the default prefix makes your site database prone to SQL injection attacks. Such attack can be prevented by changing wp- to some other term, e.g. you can make it mywp-, wpnew-, etc.
+
+If you have already installed your WordPress website with the default prefix, then you can use a few plugins to change it. Plugins like WP-DBManager or iThemes Security can help you do the job with just a click of a button. (Make sure you back up your site before doing anything to the database).
+
+15. Disallow file editing
+
+If a user has admin access to your WordPress dashboard then they can edit any files that are part of your WordPress installation. This includes all plugins and themes.
+
+However, if you disallow file editing, even if a hacker obtains admin access to your WordPress dashboard, they still won’t be able to modify any file.
+
+Add the following to the wp-config.php file (at the very end):
+
+define('DISALLOW_FILE_EDIT', true);
+
+20. Remove your WordPress version number
+
+Your current WordPress version number can be found very easily. It’s basically sitting right there in your site’s source view.
+
+Here’s the thing, if the hackers know which version of WordPress you use, it’s easier for them to tailor-build the perfect attack.
+
+You can hide your version number with almost every security plugin that I mentioned above.
+
+However, if you’re in the unfortunate situation that you already got hacked, here’s how you can clean your WordPress site, with the help of a free plugin from Sucuri.

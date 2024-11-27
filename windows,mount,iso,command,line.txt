@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS MOUNT ISO FILE IN COMMAND LINE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-04-22[Apr-Mon]19-28PM 
+
+Mount-DiskImage -ImagePath "\\PATH\TO\ISOFILE"

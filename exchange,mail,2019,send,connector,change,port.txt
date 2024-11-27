@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EXCHANGE 2019 SEND CONNECTOR PORT CHANGE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-08-17[Aug-Thu]16-08PM 
+
+Set-SendConnector -Identity "SENDCONNECTORNAME" -port 587
+
+Set-SendConnector -Identity "Amazon SES Send Connector 587" -port 587 

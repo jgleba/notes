@@ -1,0 +1,8 @@
+=============================
+FREENAS HOSTS FILE PERSISTENT
+070822
+=============================
+
+https://www.truenas.com/community/threads/etc-hosts-doesnt-stay-saved-after-reboot.171/
+
+nano /conf/base/etc/hosts

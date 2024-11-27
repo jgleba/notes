@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ADD USER TO GROUP COMMAND LINE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-06[Jan-Wed]14-40PM 
+
+##https://docs.microsoft.com/en-us/windows-server/storage/storage-spaces/deploy-storage-spaces-direct
+
+Net localgroup Administrators <Domain\Account> /add

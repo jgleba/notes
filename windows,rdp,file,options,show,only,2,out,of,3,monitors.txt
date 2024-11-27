@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  RDP ONLY ON CERTAIN MONITORS, 1,2, or 2,3
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-07-14[Jul-Sun]15-19PM 
+
+#https://www.hanselman.com/blog/how-to-remote-desktop-fullscreen-rdp-with-just-some-of-your-multiple-monitors
+
+in rdp file
+
+shows 2nd and 3rd mon for jthink in the rdp
+
+use multimon:i:1
+selectedmonitors:s:0,1
+
+shows  1st and 2nd monitor for jthink in the rdp
+
+use multimon:i:1
+selectedmonitors:s:2,1
+

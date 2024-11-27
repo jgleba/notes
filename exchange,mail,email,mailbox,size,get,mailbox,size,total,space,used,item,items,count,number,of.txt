@@ -1,0 +1,45 @@
+EXCHANGE, GET MAILBOX SIZE
+==========================
+
+GET MAILBOX SIZE
+
+Get-Mailbox username | Get-MailboxStatistics | fl TotalItemSize
+
+GET TOTAL ITEMS IN MAILBOX
+
+Get-Mailbox username | Get-MailboxStatistics
+
+CAN GET LOTS OF INFO FROM
+
+\\172.16.0.107\j\softw\1win\0util\0scripts\exchange\Get-MailboxReport.ps1
+
+GET ALL MAILBOXES
+
+Get-Mailbox * | Get-MailboxStatistics
+
+GET MAILBOX AND INFO BY DOMAIN
+
+Get-Mailbox -Filter { WindowsEmailAddress -like "*@domain.com" }
+
+CHECK SIZE OF EXCHANGE DATABASE
+
+Get-MailboxDatabase -Status | select ServerName,Name,DatabaseSize
+
+ANOTHER ONE
+
+Get-Mailbox -DomainController dcname -ResultSize Unlimited | Get-MailboxStatistics | Add-Member -MemberType ScriptProperty -Name TotalItemSizeinKB -Value {$this.totalitemsize.value.ToKB()} -PassThru | Format-Table DisplayName,TotalItem*
+
+ANOTHER ONE TO GET ALL MAILBOXES
+
+Get-Mailbox * | Get-MailboxStatistics | ft -auto
+
+Get-Mailbox * | Get-MailboxStatistics | fl
+
+GOOD ONE
+
+Get-Mailbox * | Get-MailboxStatistics | ft -auto DisplayName,ItemCount,TotalItemSize,LastLogOnTime
+
+QUICK INFO ON DAG
+
+Get-DatabaseAvailabilityGroup DAG1 | %{ $_.Servers | %{ Get-MailboxDatabaseCopyStatus -Server $_ } }
+

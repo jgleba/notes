@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NETWORK PENETRATION COURSE V2
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-08[Feb-Sat]21-21PM 
+
+==
+MAC CHANGER
+==
+
+##LIST
+macchanger -s eth0
+
+##RANDOM
+macchanger -r eth0
+
+==
+NMAP GOOD
+==
+
+nmap iL file

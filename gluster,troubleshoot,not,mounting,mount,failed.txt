@@ -1,0 +1,66 @@
+GLUSTER TROUBLESHOOTING
+02-03-2019
+JGleba
+=======================
+
+#webcl-node2 broke, gluster not mounting, check making machine reboot
+#remove node from gluster cluster
+
+sudo gluster peer detach webclnode2
+#Detach successful
+
+WORSE THAN I THOUGHT
+
+ sudo gluster vol status
+Connection failed. Please check if gluster daemon is operational.
+
+==
+
+didn't try, need to look at next time
+
+==
+
+https://staged-gluster-docs.readthedocs.io/en/release3.7.0beta1/Features/heal-info-and-split-brain-resolution/
+
+==
+
+The following document explains the usage of volume heal info and split-brain resolution commands.
+gluster volume heal <VOLNAME> info [split-brain] commands
+volume heal info
+
+Usage: gluster volume heal <VOLNAME> info
+
+This lists all the files that need healing (either their path or GFID is printed).
+Interpretting the output
+
+All the files that are listed in the output of this command need healing to be done. Apart from this, there are 2 special cases that may be associated with an entry -
+a) Is in split-brain
+       A file in data/metadata split-brain will be listed with " - Is in split-brain" appended after its path/gfid. Eg., "/file4" in the output provided below. But for a gfid split-brain, the parent directory of the file is shown to be in split-brain and the file itself is shown to be needing heal. Eg., "/dir" in the output provided below which is in split-brain because of gfid split-brain of file "/dir/a".
+b) Is possibly undergoing heal
+       A file is said to be possibly undergoing heal because it is possible that the file was undergoing heal when heal status was being determined but it cannot be said for sure. It could so have happened that self-heal daemon and glfsheal process that is trying to get heal information are competing for the same lock leading to such conclusion. Another possible case could be multiple glfsheal processes running simultaneously (e.g., multiple users ran heal info command at the same time), competing for same lock.
+
+The following is an example of heal info command's output.
+Example
+
+Consider a replica volume "test" with 2 bricks b1 and b2; self-heal daemon off, mounted at /mnt.
+
+gluster volume heal test info
+
+Brick \<hostname:brickpath-b1>  
+<gfid:aaca219f-0e25-4576-8689-3bfd93ca70c2> - Is in split-brain
+<gfid:39f301ae-4038-48c2-a889-7dac143e82dd> - Is in split-brain
+<gfid:c3c94de2-232d-4083-b534-5da17fc476ac> - Is in split-brain
+<gfid:6dc78b20-7eb6-49a3-8edb-087b90142246> 
+
+Number of entries: 4
+
+Brick <hostname:brickpath-b2>
+/dir/file2 
+/dir/file1 - Is in split-brain
+/dir - Is in split-brain
+/dir/file3 
+/file4 - Is in split-brain
+/dir/a 
+
+
+Number of entries: 6

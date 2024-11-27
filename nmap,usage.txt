@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NMAP USAGE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-05[Aug-Wed]15-30PM 
+
+CURRENTLY USING
+
+nmap -sS -O -p1-65535 ip
+
+BETTER FROM IPPSEC
+
+nmap -sC -sV -oA scan.out ip
+
+BETTER FROM IPPSEC ALL PORTS
+
+nmap -p- -oA scan.out ip

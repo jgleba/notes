@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  TAILSCALE ROUTES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-22[Nov-Fri]17-20PM 
+
+#https://tailscale.com/kb/1019/subnets
+
+echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
+
+sudo firewall-cmd --permanent --add-masquerade
+sudo firewall-cmd --reload
+
+sudo tailscale up --advertise-routes=192.168.0.0/24

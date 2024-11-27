@@ -1,0 +1,31 @@
+docker run -v C:\j\docker:C:\j\docker --name win2016test1 -it microsoft/windowsservercore powershell
+
+net share Docs=C:\j\docker /grant:everyone,FULL
+
+
+
+docker run -d --ip 172.17.1.2 --dns 172.31.0.10 -h w16-d1 -v C:\j\docker:C:\j\docker  --name w16-d1 -it microsoft/windowsservercore boot.ps1
+
+docker network create -d bridge net1
+
+docker network create --driver=bridge --subnet=172.17.1.0/24 --gateway=172.17.1.254 new_subnet
+
+
+docker run -d -p 139:139 -p 445:445 -h w16-d1 -v C:\j\docker:C:\j\docker -w C:\j\docker --name w16-d1 -it microsoft/windowsservercore boot.ps1
+
+docker ps -a
+
+docker container *
+
+docker run *
+
+docker rm 
+
+docker run -d -h w16-d1 -v C:\j\docker:C:\j\docker -w C:\j\docker --name w16-d1 -it microsoft/windowsservercore boot.ps1
+
+docker network create --driver=bridge --subnet=172.16.3.0/24 --gateway=172.16.3.254 new_subnet
+
+
+==
+
+docker run -d ubuntu 

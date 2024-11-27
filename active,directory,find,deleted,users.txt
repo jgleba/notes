@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ACTIVE DIRECTORY FIND DELETED USERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]00-16AM 
+
+Get-ADObject -SearchBase "CN=Deleted Objects,DC=domain,DC=local" -Filter {ObjectClass -eq "user"} -IncludeDeletedObjects -Properties * | ft

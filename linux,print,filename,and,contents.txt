@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX PRINT FILENAME THEN CONTENTS THEN FILENAME ETC
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-05-31[May-Wed]09-38AM 
+
+##https://unix.stackexchange.com/questions/185072/display-filename-followed-by-content-without-interaction
+
+for fn in *; do printf "::::::\n$fn\n:::::\n"; cat "$fn"; done
+
+BETTER WAY
+
+sed -s 1F *
+

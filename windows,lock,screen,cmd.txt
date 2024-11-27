@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS CMD LOCK SCREEN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-02[Feb-Wed]10-23AM 
+
+##https://www.howtogeek.com/686575/how-to-lock-your-windows-10-pc-using-command-prompt/
+
+CASE MATTERS
+
+Rundll32.exe user32.dll,LockWorkStation

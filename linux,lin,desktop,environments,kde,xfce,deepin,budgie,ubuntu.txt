@@ -1,0 +1,22 @@
+===========================
+LINUX DESKTOP ENVIRONMENTS
+===========================
+FROM LINUX TECH TIPS VIDEO
+04 09 2019
+===========================
+
+WIN LIKE
+==
+
+KDE
+LXQt
+XFCE
+
+MAC LIKE
+==
+
+Deepin
+Pantheon
+Budgie
+
+Ubuntu Budgie

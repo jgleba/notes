@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS YUM PACKAGE LOCK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-04-01[Apr-Sat]09-31AM 
+
+##https://access.redhat.com/solutions/98873
+
+sudo yum install yum-plugin-versionlock
+
+sudo yum versionlock docker-ce*
+sudo yum versionlock containerd.io
+

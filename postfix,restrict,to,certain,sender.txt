@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POSTFIX RESTRICT ADDRESS TO CERTAIN SENDERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-07-22[Jul-Sat]10-57AM 
+
+https://www.linuxbabe.com/mail-server/block-email-spam-check-header-body-with-postfix-spamassassin
+
+https://serverfault.com/questions/828275/spamassasin-regex-body-and-header-check-not-working
+
+https://groups.google.com/g/list.postfix.users/c/HOflep-5Nms
+
+https://unix.stackexchange.com/questions/82832/restricting-who-can-send-to-an-email-address
+
+https://serverfault.com/questions/768005/restrict-sender-and-recipient-with-postfix
+

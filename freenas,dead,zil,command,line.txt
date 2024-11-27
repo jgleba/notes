@@ -1,0 +1,17 @@
+zil is dead
+nas is online
+nas has been restarted?
+pool is unknown?
+zpool status shows nothing about pool having issue?
+==
+
+zpool import -m poolname
+
+**now zpool status shows pool in degraded state
+**zil drive 'da' number shows up as string, string is important
+
+zpool remove poolname string
+
+zpool export poolname
+
+import pool from gui

@@ -1,0 +1,17 @@
+======================================
+S9+ ANDROID MS REMOTE DESKTOP KEYBOARD
+SYMBOLS NOT TYPING CORRECTLY
+111619
+======================================
+
+symbols through the rd gateway were not working right, couldn't use rdp properly because couldn't type any of my passwords
+
+found this somewhere but seems to be working
+
+in general settings
+
+use scancode input when available - was on - turn off
+
+==
+
+same problem is happening with apple phone but setting is not there

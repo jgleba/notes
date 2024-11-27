@@ -1,0 +1,56 @@
+https://www.howtogeek.com/125045/how-to-easily-send-emails-from-the-windows-task-scheduler/
+
+http://caspian.dotconf.net/menu/Software/SendEmail/
+
+Server Options
+
+    -f EMAIL – The email address you’re sending from.
+
+    -s SERVER:PORT – The SMTP server and port it requires.
+
+    -xu USERNAME – The username you need to authenticate with the SMTP server.
+
+    -xp PASSWORD – The password you need to authenticate with the SMTP server.
+
+    -o tls=yes – Enables TLS encryption. May be necessary for some SMTP servers.
+	
+Destination Options
+
+    -t EMAIL – The destination email address. You can send an email to multiple addresses by including a space between each address after the -t option.
+
+    -cc EMAIL – Any addresses you’d like to CC on the email. You can specify multiple addresses by placing a space between each email address, just as with the -t command above.
+
+    -bcc EMAIL – The BCC version of the CC option above.
+
+Email Options
+
+    -u SUBJECT – The subject of your email
+
+    -m BODY – The message body text of your email.
+
+    -a ATTACHMENT – The path of a file you’d like to attach. This is optional.
+
+For example, let’s say your email address is you@gmail.com and you’d like to send an email to person@example.com. You’d use the following options:
+
+    -f you@gmail.com -t person@example.com -u Subject -m This is the body text! -s smtp.gmail.com:587 -xu you@gmail.com -xp password -o tls=yes
+	
+	
+	
+	==
+	
+	
+	TEST USAGE - WORKED
+	
+	
+C:\j\softw\sendEmail-v156\sendEmail.exe
+
+-f you@gmail.com -t person@example.com -u Subject -m This is the body text! -s smtp.gmail.com:587 -xu you@gmail.com -xp password -o tls=yes
+
+-f f@jgleba.com -t example@jgleba.com -u test -m test -s 192.168.0.1:25
+
+C:\j\softw\sendEmail-v156\sendEmail.exe -f f@jgleba.com -t example@jgleba.com -u test -m test -s 192.168.0.1:25
+
+C:\j\softw\sendEmail-v156\sendEmail.exe -f example@jgleba.com -t jgleba@gmail.com -u test -m test -s 192.168.0.1:25
+
+
+

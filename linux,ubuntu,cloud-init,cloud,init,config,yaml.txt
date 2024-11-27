@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU CLOUD INIT FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-29[Mar-Fri]18-17PM 
+
+[ ubuntu2204]$ cat cloud-init.yaml
+
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+      layout: us
+  storage:
+      layout:
+          name: lvm
+  identity:
+      hostname: ubuntu2204
+      username: user
+      password: pass hash
+  ssh:
+      install-server: yes
+      allow-pw: yes
+  user-data:
+      disable_root: false

@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY TCP MODE RD GATEWAY WORKS WITH SERVER 2016
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-05[Feb-Sat]15-32PM 
+
+frontend http
+    bind *:80
+    default_backend             httpback
+
+backend httpback
+    balance     leastconn
+    server      static ip:80 check
+
+frontend https
+    bind *:443
+    default_backend             httpsback
+
+backend httpsback
+    balance     leastconn
+    server      static ip:443 check

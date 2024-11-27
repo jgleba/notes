@@ -1,0 +1,4 @@
+EXCHANGE FIND USER FROM EMAIL ADDRESS
+=====================================
+
+Get-Recipient user@emaildomain.com

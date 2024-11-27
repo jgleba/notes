@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CREATE SIMPLE NGINX POD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-06-04[Jun-Fri]13-18PM 
+
+kubectl create deployment nginx --image=nginx
+kubectl create service loadbalancer nginx --tcp=80:80
+
+==
+
+kubectl delete deployment nginx
+kubectl delete service nginx

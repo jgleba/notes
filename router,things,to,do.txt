@@ -1,0 +1,11 @@
+default route
+wpa2 key
+turn on wireless
+change sstp creds
+set dns
+
+things missed **
+set ntp - 192.95.20.208, 198.100.149.6
+set sstp route with interface, not ip
+CHECK admin pass!
+wireless must be ap bridge

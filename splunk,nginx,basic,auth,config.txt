@@ -1,0 +1,61 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SPLUNK NGINX CONFIG, ONLY ALLOWING FROM CERTAIN IPs
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-27[Jan-Wed]13-45PM 
+
+[user@splunk sites-enabled]$ cat splunk.conf
+##SHOULD TRY THIS FOR BASIC AUTH
+##NOT NEEDED RIGHT NOW BECAUSE OF ACL, ONLY ALLOWING MY IP, TS, PROX AND LB - ADDED MORE 092819 - WANT TO DOUBLE PROXY
+##https://www.seattleit.net/blog/splunk-http-authentication-with-the-nginx-proxy-module/
+
+#server {
+#        listen 80;
+#        server_name splunk-local.jgleba.com;
+#        return 301 https://splunk-local.jgleba.com$request_uri;
+#}
+
+
+server {
+    listen 443;
+    server_name splunk-local.jgleba.com;
+
+    ssl on;
+    ssl_certificate /etc/letsencrypt/live/jgleba.com/fullchain.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/jgleba.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/jgleba.com/privkey.pem;
+
+
+
+    location / {
+
+          auth_basic           "splunk.jgleba.com";
+          auth_basic_user_file /path/to/.htpasswd;
+
+          allow 172.16.3.190;
+          allow 172.16.3.191;
+          allow 172.16.3.192;
+          allow 172.16.3.180;
+          allow 172.16.3.181;
+          allow 172.16.3.182;
+          allow 172.16.3.15;
+          allow 172.16.0.15;
+          allow 172.16.0.15;
+          allow 172.31.0.15;
+          allow 172.16.0.101;
+          allow 172.16.3.101;
+          allow 172.16.0.250;
+          allow 172.16.3.250;
+          allow 172.16.0.249;
+          allow 172.16.3.249;
+          allow 172.16.0.8;
+          #allow splunk.jgleba.com;
+          #allow splunk-local.jgleba.com;
+          #allow splunk-jprox.jgleba.com;
+          #allow 172.16.3.254;
+          #allow 172.16.0.254;
+          deny all;
+          proxy_pass https://127.0.0.1:8000/;
+    }
+}

@@ -1,0 +1,79 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS NFS SERVER SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-03[Jan-Fri]13-42PM 
+
+##https://www.itzgeek.com/how-tos/linux/centos-how-tos/how-to-setup-nfs-server-on-centos-7-rhel-7-fedora-22.html
+##https://www.howtoforge.com/tutorial/setting-up-an-nfs-server-and-client-on-centos-7/
+
+==
+INSTALL
+==
+
+sudo yum install -y nfs-utils
+
+==
+ENABLE AND START
+==
+
+sudo systemctl enable nfs-server.service && sudo systemctl start nfs-server.service
+
+==
+MAKE DIR, CONFIG, PERMS
+==
+
+sudo mkdir /home/nfskube1
+sudo chown nfsnobody:nfsnobody /home/nfskube1
+sudo chmod 755 /home/nfskube1
+
+sudo nano /etc/exports
+
+/home/nfskube1        *(rw,sync,no_subtree_check)
+/mnt/ceph        *(rw,sync,no_subtree_check)
+##/home/nfskube1        ip(rw,sync,no_subtree_check)
+
+sudo exportfs -a
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --permanent --zone=public --add-service=nfs
+sudo firewall-cmd --reload
+
+==
+CLIENT CONNECT
+==
+
+==
+INSTALL
+==
+
+sudo yum install nfs-utils -y
+
+==
+MAKE DIR TO MOUNT
+==
+
+sudo mkdir -p /mnt/nfskube1
+
+
+==
+MOUNT 
+==
+
+sudo mount ip:/home/nfskube1 /mnt/nfskube1
+
+==
+UNMOUNT
+==
+
+sudo umount ip:/home/nfskube1
+
+==
+NOTE
+==
+
+MAKE SURE nfs-utils IS INSTALLED ON MACHINES THAT NEED TO MOUNT, EXAMPLE, KUBERNETES WORKER NODES NEED TO HAVE THIS PACKAGE INSTALLED, WAS STOPPING ME FROM MOVING FORWARD

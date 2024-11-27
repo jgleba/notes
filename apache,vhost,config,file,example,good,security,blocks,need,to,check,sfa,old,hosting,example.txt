@@ -1,0 +1,201 @@
+<VirtualHost *:8080>
+  ServerName              domain
+  ServerAlias             saniflo.co.za sfa-za.produweb.be www.saniflo.co.za www.domain www.sfa-za.produweb.be
+  DocumentRoot            /var/www/vhosts/domain/htdocs
+  ErrorLog                /var/www/vhosts/domain/logs/error.log
+  CustomLog               /var/www/vhosts/domain/logs/access.log combined_x_forwarded_for
+
+  # If this request came via an Nginx/SSL proxy, add the necessary HTTP headers
+  SetEnvIf X-Forwarded-Proto https HTTPS=on
+
+  <Directory "/var/www/vhosts/domain/htdocs">
+    Require all granted
+
+    # Don't allow file listing/indexes, don't allow CGI execution and don't allow Server-Side Includes
+    Options -Indexes +FollowSymLinks -ExecCGI -Includes
+    AllowOverride All
+  </Directory>
+
+  <Directory "/var/www/vhosts/domain/htdocs/cgi-bin/">
+    Options +ExecCGI
+    AllowOverride none
+  </Directory>
+
+  # Use SetHandler on Apache 2.4 to pass requests to PHP-PFM
+
+  <FilesMatch \.php$>
+    SetHandler "proxy:fcgi://127.0.0.1:9018"
+  </FilesMatch>
+
+  <Proxy fcgi://127.0.0.1:9018>
+    ProxySet timeout=30
+  </Proxy>
+
+  # Block requests with malicious query strings (sql-injection, remote file inclusion, ...).
+  # This contains only a limited subset of all possible blacklists. For a more complete
+  # set of protection, consider the use of the mod_security module.
+  <Directory "/var/www/vhosts/domain/htdocs">
+    <IfModule mod_rewrite.c>
+      RewriteEngine On
+      RewriteBase /
+      RewriteCond %{QUERY_STRING} (\"|%22).*(<|>|%3) [NC,OR]
+      RewriteCond %{QUERY_STRING} (javascript:).*(\;) [NC,OR]
+      RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3) [NC,OR]
+      RewriteCond %{QUERY_STRING} (\\|\.\./|`|=\'$|=%27$) [NC,OR]
+      RewriteCond %{QUERY_STRING} (\;|\'|\"|%22).*(union|select|insert|drop|update|md5|benchmark|or|and|if) [NC,OR]
+      RewriteCond %{QUERY_STRING} (base64_encode|localhost|mosconfig) [NC,OR]
+      RewriteCond %{QUERY_STRING} (boot\.ini|echo.*kae|etc/passwd) [NC,OR]
+      RewriteCond %{QUERY_STRING} (GLOBALS|REQUEST)(=|\[|%) [NC]
+      RewriteRule .* - [F]
+    </IfModule>
+
+    # Block User-Agents that are known to be bad.
+    <IfModule mod_setenvif.c>
+      SetEnvIfNoCase User-Agent (binlar|casper|cmsworldmap|comodo|diavol|dotbot|feedfinder|flicky|ia_archiver|jakarta|kmccrew|nutch|planetwork|purebot|pycurl|skygrid|sucker|turnit|vikspider|zmeu|sqlmap) keep_out
+
+            Require all granted
+
+      Deny from env=keep_out
+    </IfModule>
+
+    # Block (403 = Permission Denied) bad requests
+    # RedirectMatch acts as a regex match on the current URL
+    <IfModule mod_alias.c>
+      RedirectMatch 403 (https?|ftp|php)\://
+      RedirectMatch 403 /(https?|ima|ucp)/
+      RedirectMatch 403 /(Permanent|Better)$
+      RedirectMatch 403 (\=\\\'|\=\\%27|/\\\'/?|\)\.css\()$
+      RedirectMatch 403 (\,|\)\+|/\,/|\{0\}|\(/\(|\.\.\.|\+\+\+|\||\\\"\\\")
+      RedirectMatch 403 \.(cgi|asp|aspx|cfg|dll|exe|jsp|mdb|sql|ini|rar)$
+      RedirectMatch 403 /(contac|fpw|pingserver|register)\.php$
+      RedirectMatch 403 (base64|crossdomain|localhost|wwwroot|e107\_)
+      RedirectMatch 403 (eval\(|\_vti\_|\(null\)|echo.*kae|config\.xml)
+      RedirectMatch 403 \.well\-known/host\-meta
+      RedirectMatch 403 /function\.array\-rand
+      RedirectMatch 403 \)\;\$\(this\)\.html\(
+      RedirectMatch 403 proc/self/environ
+      RedirectMatch 403 msnbot\.htm\)\.\_
+      RedirectMatch 403 /ref\.outcontrol
+      RedirectMatch 403 com\_cropimage
+      RedirectMatch 403 indonesia\.htm
+      RedirectMatch 403 \{\$itemURL\}
+      RedirectMatch 403 function\(\)
+      RedirectMatch 403 labels\.rdf
+      RedirectMatch 403 /playing.php
+      RedirectMatch 403 muieblackcat
+    </IfModule>
+
+    # Block any TRACE or TRACK HTTP method calls
+    <ifModule mod_rewrite.c>
+      RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
+      RewriteRule .* - [F]
+    </IfModule>
+  </directory>
+  # Block requests with known bad User-Agents
+  # This contains only a limited subset of all possible blocks.
+
+  SetEnvIfNoCase User-Agent "^BOT/0.1" getout
+  SetEnvIfNoCase User-Agent "^BOT for JCE" getout
+  SetEnvIfNoCase User-Agent "^Atomic_Email_Hunter/4\.0" getout
+  SetEnvIfNoCase User-Agent "^atSpider/1\.0" getout
+  SetEnvIfNoCase User-Agent "^autoemailspider" getout
+  SetEnvIfNoCase User-Agent "^bwh3_user_agent" getout
+  SetEnvIfNoCase User-Agent "^China Local Browse 2\.6" getout
+  SetEnvIfNoCase User-Agent "^ContactBot/0\.2" getout
+  SetEnvIfNoCase User-Agent "^ContentSmartz" getout
+  SetEnvIfNoCase User-Agent "^DataCha0s/2\.0" getout
+  SetEnvIfNoCase User-Agent "^DBrowse 1\.4b" getout
+  SetEnvIfNoCase User-Agent "^DBrowse 1\.4d" getout
+  SetEnvIfNoCase User-Agent "^Demo Bot DOT 16b" getout
+  SetEnvIfNoCase User-Agent "^Demo Bot Z 16b" getout
+  SetEnvIfNoCase User-Agent "^DSurf15a 01" getout
+  SetEnvIfNoCase User-Agent "^DSurf15a 71" getout
+  SetEnvIfNoCase User-Agent "^DSurf15a 81" getout
+  SetEnvIfNoCase User-Agent "^DSurf15a VA" getout
+  SetEnvIfNoCase User-Agent "^EBrowse 1\.4b" getout
+  SetEnvIfNoCase User-Agent "^Educate Search VxB" getout
+  SetEnvIfNoCase User-Agent "^EmailSiphon" getout
+  SetEnvIfNoCase User-Agent "^EmailSpider" getout
+  SetEnvIfNoCase User-Agent "^EmailWolf 1\.00" getout
+  SetEnvIfNoCase User-Agent "^ESurf15a 15" getout
+  SetEnvIfNoCase User-Agent "^ExtractorPro" getout
+  SetEnvIfNoCase User-Agent "^Franklin Locator 1\.8" getout
+  SetEnvIfNoCase User-Agent "^FSurf15a 01" getout
+  SetEnvIfNoCase User-Agent "^Full Web Bot 0416B" getout
+  SetEnvIfNoCase User-Agent "^Full Web Bot 0516B" getout
+  SetEnvIfNoCase User-Agent "^Full Web Bot 2816B" getout
+  SetEnvIfNoCase User-Agent "^Guestbook Auto Submitter" getout
+  SetEnvIfNoCase User-Agent "^Industry Program 1\.0\.x" getout
+  SetEnvIfNoCase User-Agent "^ISC Systems iRc Search 2\.1" getout
+  SetEnvIfNoCase User-Agent "^IUPUI Research Bot v 1\.9a" getout
+  SetEnvIfNoCase User-Agent "^LARBIN-EXPERIMENTAL \(efp@gmx\.net\)" getout
+  SetEnvIfNoCase User-Agent "^LetsCrawl\.com/1\.0 +http\://letscrawl\.com/" getout
+  SetEnvIfNoCase User-Agent "^Lincoln State Web Browser" getout
+  SetEnvIfNoCase User-Agent "^LMQueueBot/0\.2" getout
+  SetEnvIfNoCase User-Agent "^LWP\:\:Simple/5\.803" getout
+  SetEnvIfNoCase User-Agent "^Mac Finder 1\.0\.xx" getout
+  SetEnvIfNoCase User-Agent "^MFC Foundation Class Library 4\.0" getout
+  SetEnvIfNoCase User-Agent "^Microsoft URL Control - 6\.00\.8xxx" getout
+  SetEnvIfNoCase User-Agent "^Missauga Locate 1\.0\.0" getout
+  SetEnvIfNoCase User-Agent "^Missigua Locator 1\.9" getout
+  SetEnvIfNoCase User-Agent "^Missouri College Browse" getout
+  SetEnvIfNoCase User-Agent "^Mizzu Labs 2\.2" getout
+  SetEnvIfNoCase User-Agent "^Mo College 1\.9" getout
+  SetEnvIfNoCase User-Agent "^MVAClient" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/2\.0 \(compatible; NEWT ActiveX; Win32\)" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/3\.0 \(compatible; scan4mail \(advanced version\) http\://www\.peterspages\net/?scan4mail\)" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/4\.0 \(compatible; Advanced Email Extractor v2\.xx\)" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/4\.0 \(compatible; Iplexx Spider/1\.0 http\://www\.iplexx\.at\)" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/4\.0 \(compatible; MSIE 5\.0; Windows NT; DigExt; DTS Agent" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/4\.0 efp@gmx\.net" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/5\.0 \(Version\: xxxx Type\:xx\)" getout
+  SetEnvIfNoCase User-Agent "^NameOfAgent \(CMS Spider\)" getout
+  SetEnvIfNoCase User-Agent "^NASA Search 1\.0" getout
+  SetEnvIfNoCase User-Agent "^Nsauditor/1\.x" getout
+  SetEnvIfNoCase User-Agent "^PBrowse 1\.4b" getout
+  SetEnvIfNoCase User-Agent "^PEval 1\.4b" getout
+  SetEnvIfNoCase User-Agent "^Poirot" getout
+  SetEnvIfNoCase User-Agent "^Port Huron Labs" getout
+  SetEnvIfNoCase User-Agent "^Production Bot 0116B" getout
+  SetEnvIfNoCase User-Agent "^Production Bot 2016B" getout
+  SetEnvIfNoCase User-Agent "^Production Bot DOT 3016B" getout
+  SetEnvIfNoCase User-Agent "^Program Shareware 1\.0\.2" getout
+  SetEnvIfNoCase User-Agent "^PSurf15a 11" getout
+  SetEnvIfNoCase User-Agent "^PSurf15a 51" getout
+  SetEnvIfNoCase User-Agent "^PSurf15a VA" getout
+  SetEnvIfNoCase User-Agent "^psycheclone" getout
+  SetEnvIfNoCase User-Agent "^RSurf15a 41" getout
+  SetEnvIfNoCase User-Agent "^RSurf15a 51" getout
+  SetEnvIfNoCase User-Agent "^RSurf15a 81" getout
+  SetEnvIfNoCase User-Agent "^searchbot admin@google\.com" getout
+  SetEnvIfNoCase User-Agent "^ShablastBot 1\.0" getout
+  SetEnvIfNoCase User-Agent "^snap\.com beta crawler v0" getout
+  SetEnvIfNoCase User-Agent "^Snapbot/1\.0" getout
+  SetEnvIfNoCase User-Agent "^Snapbot/1\.0 \(Snap Shots&#44; +http\://www\.snap\.com\)" getout
+  SetEnvIfNoCase User-Agent "^sogou develop spider" getout
+  SetEnvIfNoCase User-Agent "^Sogou Orion spider/3\.0\(+http\://www\.sogou\.com/docs/help/webmasters\.htm#07\)" getout
+  SetEnvIfNoCase User-Agent "^sogou spider" getout
+  SetEnvIfNoCase User-Agent "^Sogou web spider/3\.0\(+http\://www\.sogou\.com/docs/help/webmasters\.htm#07\)" getout
+  SetEnvIfNoCase User-Agent "^sohu agent" getout
+  SetEnvIfNoCase User-Agent "^SSurf15a 11 " getout
+  SetEnvIfNoCase User-Agent "^TSurf15a 11" getout
+  SetEnvIfNoCase User-Agent "^Under the Rainbow 2\.2" getout
+  SetEnvIfNoCase User-Agent "^User-Agent\: Mozilla/4\.0 \(compatible; MSIE 6\.0; Windows NT 5\.1\)" getout
+  SetEnvIfNoCase User-Agent "^VadixBot" getout
+  SetEnvIfNoCase User-Agent "^WebVulnCrawl\.unknown/1\.0 libwww-perl/5\.803" getout
+  SetEnvIfNoCase User-Agent "^Wells Search II" getout
+  SetEnvIfNoCase User-Agent "^WEP Search 00" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/5\.0 \(compatible; SISTRIX Crawler; http\://crawler\.sistrix\.net/\)" getout
+  SetEnvIfNoCase User-Agent "^Mozilla/5\.0 \(compatible; Nmap Scripting Engine; http\://nmap\.org/book/nse.html\)" getout
+  SetEnvIfNoCase User-Agent "^sqlmap/" getout
+  SetEnvIfNoCase User-Agent "GrapeshotCrawler/" getout
+  SetEnvIfNoCase User-Agent "DotBot/" getout
+  SetEnvIfNoCase User-Agent "MJ12bot" getout
+  SetEnvIfNoCase User-Agent "Semrush" getout
+
+  <Directory "/var/www/vhosts/domain/htdocs">
+        Require all granted
+
+     Deny from env=getout
+  </Directory>
+</VirtualHost>

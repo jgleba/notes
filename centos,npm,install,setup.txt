@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS NPM INSTALL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-25[Jan-Sat]16-38PM 
+
+##https://linuxize.com/post/how-to-install-node-js-on-centos-7/
+
+sudo curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+sudo yum install nodejs
+
+node --version

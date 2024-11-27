@@ -1,0 +1,52 @@
+======================================================
+TRYING TO MONITOR FOLDER AND COPY NEW FILES TO NEW DIR
+NOT WORKING
+05-12-2019
+======================================================
+
+##https://stackoverflow.com/questions/18692134/continuously-monitor-a-directory-in-linux-and-notify-when-a-new-file-is-availabl
+##https://unix.stackexchange.com/questions/24952/script-to-monitor-folder-for-new-files
+##https://askubuntu.com/questions/893019/monitor-folder-and-run-command-if-there-is-a-file-there
+##https://superuser.com/questions/678191/copy-new-files-from-a-monitored-folder-to-another-in-debian
+
+==
+ONE LINE
+==
+
+inotifywait -m -e create ./uguu/public/files/
+ 
+ 
+==
+LOOPING
+==
+
+inotifywait -r -m -e create ./uguu/public/files/ | while read line
+do
+    echo $line
+done
+
+
+==
+LOOPING USING MAIN MOUNT, NOT SYMLINK
+
+inotifywait -r -m -e create /mnt/fp/uguu/ | while read line
+do
+    echo $line
+done
+
+
+##http://positon.org/a-solution-to-the-umask-problem-inotify-to-force-permissions
+
+inotifywait -mrq -e CREATE --format %w%f ./uguu/public/files/ | while IFS= read -r FILE; do cp "$FILE" "/home/x/dat/short/j/jdat/1data/z,web/z,uguu,archive/" ; done
+
+##https://askubuntu.com/questions/819265/bash-script-to-monitor-file-change-and-execute-command
+
+inotifywait -qm --event modify --format '%w' /foo/bar/*.adoc
+
+inotifywait -qm --event create ./uguu/public/files/*
+
+inotifywait -m --event create ./uguu/public/files/
+
+inotifywait -m --format '%f' --event create /path/to/test1/ - WORKS
+
+SOMETHING WRONG WHEN USING SYMLINK / MOUNT / SHARE

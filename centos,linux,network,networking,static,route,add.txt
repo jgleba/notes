@@ -1,0 +1,18 @@
+===============================
+CENTOS ADD STATIC NETWORK ROUTE
+061119
+===============================
+
+#https://my.esecuredata.com/index.php?/knowledgebase/article/2/add-a-static-route-on-centos
+
+tl;dr
+To add a temporary route:
+
+ip route add 172.16.5.0/24 via 10.0.0.101 dev eth0
+
+To make it persist system or network settings restart, create a route-ifname file for an interface through which the subnet is accessed, in this case eth0:
+
+nano /etc/sysconfig/network-scripts/route-eth0
+
+Add the line with the network settings for the other subnet:
+172.16.5.0/24 via 10.0.0.101 dev eth0

@@ -1,0 +1,13 @@
+CHECK STATUS
+
+zfs get all pool1|grep sync
+
+DISABLE
+
+zfs set sync=disabled pool1
+
+ENABLE
+
+zfs set sync=standard tank/dataset
+
+zfs set sync=standard pool1

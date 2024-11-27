@@ -1,0 +1,496 @@
+[user@kube1haproxy1 ~]$ sudo wget ^C
+[user@kube1haproxy1 ~]$ sudo wget https://github.com/justmeandopensource/kubernetes/archive/master.zip
+[sudo] password for user:
+--2020-01-03 14:58:05--  https://github.com/justmeandopensource/kubernetes/archive/master.zip
+Resolving github.com (github.com)... 192.30.253.113
+Connecting to github.com (github.com)|192.30.253.113|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://codeload.github.com/justmeandopensource/kubernetes/zip/master [following]
+--2020-01-03 14:58:05--  https://codeload.github.com/justmeandopensource/kubernetes/zip/master
+Resolving codeload.github.com (codeload.github.com)... 192.30.253.121
+Connecting to codeload.github.com (codeload.github.com)|192.30.253.121|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [application/zip]
+Saving to: ‘master.zip.1’
+
+    [ <=>                                                                                                                            ] 48,077      --.-K/s   in 0.05s
+
+2020-01-03 14:58:05 (858 KB/s) - ‘master.zip.1’ saved [48077]
+
+[user@kube1haproxy1 ~]$ sudo unzip master.zip.1
+Archive:  master.zip.1
+93937b588a105f0a53d103d7c6d778570f021a41
+   creating: kubernetes-master/
+   creating: kubernetes-master/.github/
+   creating: kubernetes-master/.github/ISSUE_TEMPLATE/
+  inflating: kubernetes-master/.github/ISSUE_TEMPLATE/bug_report.md
+ extracting: kubernetes-master/.gitignore
+  inflating: kubernetes-master/README.md
+   creating: kubernetes-master/dashboard/
+  inflating: kubernetes-master/dashboard/dashboard.yaml
+  inflating: kubernetes-master/dashboard/heapster.yaml
+  inflating: kubernetes-master/dashboard/influxdb.yaml
+  inflating: kubernetes-master/dashboard/sa_cluster_admin.yaml
+   creating: kubernetes-master/docs/
+  inflating: kubernetes-master/docs/cert-manager-notes.md
+  inflating: kubernetes-master/docs/cheatsheet.md
+  inflating: kubernetes-master/docs/ingress-controller-notes.md
+  inflating: kubernetes-master/docs/install-cluster.md
+  inflating: kubernetes-master/docs/setup-helm-notes.md
+  inflating: kubernetes-master/docs/setup-metallb-notes.md
+  inflating: kubernetes-master/docs/setup-spinnaker.md
+  inflating: kubernetes-master/docs/setup-velero-notes.md
+   creating: kubernetes-master/kubespray-vagrant-env/
+  inflating: kubernetes-master/kubespray-vagrant-env/Vagrantfile
+  inflating: kubernetes-master/kubespray-vagrant-env/bootstrap.sh
+   creating: kubernetes-master/lxd-provisioning/
+  inflating: kubernetes-master/lxd-provisioning/bootstrap-kube.sh
+  inflating: kubernetes-master/lxd-provisioning/k8s-profile-config
+   creating: kubernetes-master/misc/
+   creating: kubernetes-master/misc/vagrant-provisioning-by-version/
+  inflating: kubernetes-master/misc/vagrant-provisioning-by-version/Vagrantfile
+  inflating: kubernetes-master/misc/vagrant-provisioning-by-version/bootstrap.sh
+  inflating: kubernetes-master/misc/vagrant-provisioning-by-version/bootstrap_kmaster.sh
+  inflating: kubernetes-master/misc/vagrant-provisioning-by-version/bootstrap_kworker.sh
+  inflating: kubernetes-master/misc/vagrant-provisioning-by-version/kube-flannel.yml
+   creating: kubernetes-master/rancher/
+  inflating: kubernetes-master/rancher/docker-compose.yml
+   creating: kubernetes-master/vagrant-provisioning/
+  inflating: kubernetes-master/vagrant-provisioning/Vagrantfile
+  inflating: kubernetes-master/vagrant-provisioning/bootstrap.sh
+  inflating: kubernetes-master/vagrant-provisioning/bootstrap_kmaster.sh
+  inflating: kubernetes-master/vagrant-provisioning/bootstrap_kmaster_calico.sh
+  inflating: kubernetes-master/vagrant-provisioning/bootstrap_kmaster_flannel.sh
+  inflating: kubernetes-master/vagrant-provisioning/bootstrap_kworker.sh
+  inflating: kubernetes-master/vagrant-provisioning/kube-flannel.yaml
+   creating: kubernetes-master/yamls/
+  inflating: kubernetes-master/yamls/1-nginx-daemonset.yaml
+  inflating: kubernetes-master/yamls/1-nginx-deployment.yaml
+  inflating: kubernetes-master/yamls/1-nginx-pod.yaml
+  inflating: kubernetes-master/yamls/1-nginx-replicaset.yaml
+  inflating: kubernetes-master/yamls/10-hpa-mem.yaml
+  inflating: kubernetes-master/yamls/10-hpa.yaml
+  inflating: kubernetes-master/yamls/11-pdb.yaml
+  inflating: kubernetes-master/yamls/12-podpreset-1.yaml
+  inflating: kubernetes-master/yamls/12-podpreset-2.yaml
+  inflating: kubernetes-master/yamls/12-podpreset-3.yaml
+  inflating: kubernetes-master/yamls/2-cronjob.yaml
+  inflating: kubernetes-master/yamls/2-job.yaml
+  inflating: kubernetes-master/yamls/3-init-container.yaml
+  inflating: kubernetes-master/yamls/4-busybox-pv-hostpath.yaml
+  inflating: kubernetes-master/yamls/4-nfs-nginx.yaml
+  inflating: kubernetes-master/yamls/4-pv-hostpath.yaml
+  inflating: kubernetes-master/yamls/4-pv-nfs.yaml
+  inflating: kubernetes-master/yamls/4-pvc-hostpath.yaml
+  inflating: kubernetes-master/yamls/4-pvc-nfs.yaml
+  inflating: kubernetes-master/yamls/5-pod-secret-env.yaml
+  inflating: kubernetes-master/yamls/5-pod-secret-volume.yaml
+  inflating: kubernetes-master/yamls/5-secrets.yaml
+  inflating: kubernetes-master/yamls/6-configmap-1.yaml
+  inflating: kubernetes-master/yamls/6-configmap-2.yaml
+  inflating: kubernetes-master/yamls/6-pod-configmap-env.yaml
+  inflating: kubernetes-master/yamls/6-pod-configmap-mysql-volume.yaml
+  inflating: kubernetes-master/yamls/6-pod-configmap-volume.yaml
+  inflating: kubernetes-master/yamls/7-pod-quota-mem-exceed.yaml
+  inflating: kubernetes-master/yamls/7-pod-quota-mem.yaml
+  inflating: kubernetes-master/yamls/7-quota-count.yaml
+  inflating: kubernetes-master/yamls/7-quota-limitrange.yaml
+  inflating: kubernetes-master/yamls/7-quota-mem.yaml
+  inflating: kubernetes-master/yamls/8-nginx-rolling-update.yaml
+  inflating: kubernetes-master/yamls/9-sts-nginx.yaml
+  inflating: kubernetes-master/yamls/9-sts-pv.yaml
+   creating: kubernetes-master/yamls/cert-manager-demo/
+  inflating: kubernetes-master/yamls/cert-manager-demo/ClusterIssuer.yaml
+  inflating: kubernetes-master/yamls/cert-manager-demo/haproxy.cfg
+  inflating: kubernetes-master/yamls/cert-manager-demo/ingress-resource.yaml
+  inflating: kubernetes-master/yamls/cert-manager-demo/nginx-deployment.yaml
+   creating: kubernetes-master/yamls/ingress-demo/
+  inflating: kubernetes-master/yamls/ingress-demo/haproxy.cfg
+  inflating: kubernetes-master/yamls/ingress-demo/ingress-resource-1.yaml
+  inflating: kubernetes-master/yamls/ingress-demo/ingress-resource-2.yaml
+  inflating: kubernetes-master/yamls/ingress-demo/ingress-resource-3.yaml
+  inflating: kubernetes-master/yamls/ingress-demo/nginx-deploy-blue.yaml
+  inflating: kubernetes-master/yamls/ingress-demo/nginx-deploy-green.yaml
+  inflating: kubernetes-master/yamls/ingress-demo/nginx-deploy-main.yaml
+   creating: kubernetes-master/yamls/istio-demo/
+  inflating: kubernetes-master/yamls/istio-demo/gateway.yaml
+  inflating: kubernetes-master/yamls/istio-demo/mydata-v1.yaml
+  inflating: kubernetes-master/yamls/istio-demo/mydata-v2.yaml
+  inflating: kubernetes-master/yamls/istio-demo/myweb.yaml
+  inflating: kubernetes-master/yamls/istio-demo/virtual-service.yaml
+   creating: kubernetes-master/yamls/misc/
+  inflating: kubernetes-master/yamls/misc/my.cnf
+   creating: kubernetes-master/yamls/mongodb/
+  inflating: kubernetes-master/yamls/mongodb/headless-service.yaml
+  inflating: kubernetes-master/yamls/mongodb/mongodb-statefulset.yaml
+   creating: kubernetes-master/yamls/nfs-provisioner/
+  inflating: kubernetes-master/yamls/nfs-provisioner/class.yaml
+  inflating: kubernetes-master/yamls/nfs-provisioner/default-sc.yaml
+  inflating: kubernetes-master/yamls/nfs-provisioner/deployment.yaml
+  inflating: kubernetes-master/yamls/nfs-provisioner/rbac.yaml
+[user@kube1haproxy1 ~]$ cd kubernetes-master/
+[user@kube1haproxy1 kubernetes-master]$ ls
+dashboard  docs  kubespray-vagrant-env  lxd-provisioning  misc  rancher  README.md  vagrant-provisioning  yamls
+[user@kube1haproxy1 kubernetes-master]$ cd cd yamls/
+-bash: cd: cd: No such file or directory
+[user@kube1haproxy1 kubernetes-master]$ ls
+dashboard  docs  kubespray-vagrant-env  lxd-provisioning  misc  rancher  README.md  vagrant-provisioning  yamls
+[user@kube1haproxy1 kubernetes-master]$ cd yamls/
+[user@kube1haproxy1 yamls]$ ls
+10-hpa-mem.yaml         1-nginx-deployment.yaml     4-nfs-nginx.yaml          5-secrets.yaml                     7-pod-quota-mem.yaml         cert-manager-demo
+10-hpa.yaml             1-nginx-pod.yaml            4-pvc-hostpath.yaml       6-configmap-1.yaml                 7-quota-count.yaml           ingress-demo
+11-pdb.yaml             1-nginx-replicaset.yaml     4-pvc-nfs.yaml            6-configmap-2.yaml                 7-quota-limitrange.yaml      istio-demo
+12-podpreset-1.yaml     2-cronjob.yaml              4-pv-hostpath.yaml        6-pod-configmap-env.yaml           7-quota-mem.yaml             misc
+12-podpreset-2.yaml     2-job.yaml                  4-pv-nfs.yaml             6-pod-configmap-mysql-volume.yaml  8-nginx-rolling-update.yaml  mongodb
+12-podpreset-3.yaml     3-init-container.yaml       5-pod-secret-env.yaml     6-pod-configmap-volume.yaml        9-sts-nginx.yaml             nfs-provisioner
+1-nginx-daemonset.yaml  4-busybox-pv-hostpath.yaml  5-pod-secret-volume.yaml  7-pod-quota-mem-exceed.yaml        9-sts-pv.yaml
+[user@kube1haproxy1 yamls]$ cd nfs-provisioner/
+[user@kube1haproxy1 nfs-provisioner]$ ls
+class.yaml  default-sc.yaml  deployment.yaml  rbac.yaml
+[user@kube1haproxy1 nfs-provisioner]$ cat rbac.yaml
+kind: ServiceAccount
+apiVersion: v1
+metadata:
+  name: nfs-client-provisioner
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nfs-client-provisioner-runner
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create", "update", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: run-nfs-client-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: nfs-client-provisioner-runner
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-nfs-client-provisioner
+rules:
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: leader-locking-nfs-client-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: nfs-client-provisioner
+    # replace with namespace where provisioner is deployed
+    namespace: default
+roleRef:
+  kind: Role
+  name: leader-locking-nfs-client-provisioner
+  apiGroup: rbac.authorization.k8s.io
+[user@kube1haproxy1 nfs-provisioner]$ ls-la
+-bash: ls-la: command not found
+[user@kube1haproxy1 nfs-provisioner]$ ls -al
+total 24
+drwxr-xr-x 2 root root 4096 Dec 29 11:46 .
+drwxr-xr-x 8 root root 4096 Dec 29 11:46 ..
+-rw-r--r-- 1 root root  155 Dec 29 11:46 class.yaml
+-rw-r--r-- 1 root root  226 Dec 29 11:46 default-sc.yaml
+-rw-r--r-- 1 root root  923 Dec 29 11:46 deployment.yaml
+-rw-r--r-- 1 root root 1526 Dec 29 11:46 rbac.yaml
+[user@kube1haproxy1 nfs-provisioner]$ kubectl create -f rbac.yaml
+serviceaccount/nfs-client-provisioner created
+clusterrole.rbac.authorization.k8s.io/nfs-client-provisioner-runner created
+clusterrolebinding.rbac.authorization.k8s.io/run-nfs-client-provisioner created
+role.rbac.authorization.k8s.io/leader-locking-nfs-client-provisioner created
+rolebinding.rbac.authorization.k8s.io/leader-locking-nfs-client-provisioner created
+[user@kube1haproxy1 nfs-provisioner]$ kubectl get all -A
+NAMESPACE        NAME                                             READY   STATUS    RESTARTS   AGE
+default          pod/nginx-5f78746595-t9vhx                       1/1     Running   3          19d
+default          pod/nginx2-5f7bf669dc-b2hkg                      1/1     Running   2          19d
+default          pod/nginxvol1                                    0/1     Pending   0          7d
+kube-system      pod/coredns-6955765f44-m55ds                     1/1     Running   3          19d
+kube-system      pod/coredns-6955765f44-x5s7g                     1/1     Running   3          19d
+kube-system      pod/kube-apiserver-kube1master1                  1/1     Running   4          19d
+kube-system      pod/kube-apiserver-kube1master2                  1/1     Running   2          19d
+kube-system      pod/kube-apiserver-kube1master3                  1/1     Running   3          19d
+kube-system      pod/kube-controller-manager-kube1master1         1/1     Running   4          19d
+kube-system      pod/kube-controller-manager-kube1master2         1/1     Running   4          19d
+kube-system      pod/kube-controller-manager-kube1master3         1/1     Running   3          19d
+kube-system      pod/kube-proxy-2pvbx                             1/1     Running   2          19d
+kube-system      pod/kube-proxy-42n9l                             1/1     Running   3          19d
+kube-system      pod/kube-proxy-8gkwv                             1/1     Running   3          19d
+kube-system      pod/kube-proxy-dfxkq                             1/1     Running   2          19d
+kube-system      pod/kube-proxy-hmsq6                             1/1     Running   2          19d
+kube-system      pod/kube-proxy-m2cbq                             1/1     Running   2          19d
+kube-system      pod/kube-scheduler-kube1master1                  1/1     Running   5          19d
+kube-system      pod/kube-scheduler-kube1master2                  1/1     Running   5          19d
+kube-system      pod/kube-scheduler-kube1master3                  1/1     Running   4          19d
+kube-system      pod/traefik-ingress-controller-5bdbcfc59-d95df   1/1     Running   3          19d
+kube-system      pod/traefik-ingress-controller-5bdbcfc59-dw4xr   1/1     Running   2          19d
+kube-system      pod/weave-net-7bljj                              2/2     Running   6          19d
+kube-system      pod/weave-net-8fb84                              2/2     Running   9          19d
+kube-system      pod/weave-net-8fnxc                              2/2     Running   6          19d
+kube-system      pod/weave-net-cbtdg                              2/2     Running   6          19d
+kube-system      pod/weave-net-s4qvv                              2/2     Running   6          19d
+kube-system      pod/weave-net-xjfnp                              2/2     Running   9          19d
+metallb-system   pod/controller-65895b47d4-92hx6                  1/1     Running   2          19d
+metallb-system   pod/speaker-blqhj                                1/1     Running   2          19d
+metallb-system   pod/speaker-hg4h5                                1/1     Running   2          19d
+metallb-system   pod/speaker-pwcgg                                1/1     Running   3          19d
+metallb-system   pod/speaker-tq8jl                                1/1     Running   3          19d
+metallb-system   pod/speaker-vl2vs                                1/1     Running   2          19d
+metallb-system   pod/speaker-vlfm8                                1/1     Running   2          19d
+
+NAMESPACE     NAME                                                             TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                       AGE
+default       service/glusterfs-dynamic-048ad453-3112-4d74-acf8-aed390dff175   ClusterIP      10.96.191.255   <none>         1/TCP                         11d
+default       service/glusterfs-dynamic-2d6710e2-e506-4645-9db3-f0f6c3b95058   ClusterIP      10.96.119.81    <none>         1/TCP                         11d
+default       service/glusterfs-dynamic-38654d23-c891-4dff-b3de-7d39053a29e2   ClusterIP      10.96.113.142   <none>         1/TCP                         7d1h
+default       service/glusterfs-dynamic-aa1bc99f-5372-406b-8c8d-c7821c2f361c   ClusterIP      10.96.189.250   <none>         1/TCP                         4d2h
+default       service/glusterfs-dynamic-aae81ef7-bd7e-4728-bf79-0c797d493ebc   ClusterIP      10.96.39.103    <none>         1/TCP                         7d1h
+default       service/glusterfs-dynamic-b502ab46-396c-420d-83ef-2d92235f16d2   ClusterIP      10.96.102.49    <none>         1/TCP                         3d23h
+default       service/glusterfs-dynamic-bd5407a3-15c0-4e38-a7a6-11446ef7253a   ClusterIP      10.96.32.47     <none>         1/TCP                         4d2h
+default       service/glusterfs-dynamic-d631c4a3-c321-441c-86dc-cd8c10e8b798   ClusterIP      10.96.33.167    <none>         1/TCP                         11d
+default       service/kubernetes                                               ClusterIP      10.96.0.1       <none>         443/TCP                       19d
+default       service/nginx                                                    ClusterIP      10.96.30.61     <none>         80/TCP                        19d
+default       service/nginx2                                                   ClusterIP      10.96.66.155    <none>         80/TCP                        19d
+kube-system   service/kube-dns                                                 ClusterIP      10.96.0.10      <none>         53/UDP,53/TCP,9153/TCP        19d
+kube-system   service/traefik-ingress-service                                  LoadBalancer   10.96.23.49     172.16.3.144   80:30613/TCP,8080:31921/TCP   19d
+
+NAMESPACE        NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system      daemonset.apps/kube-proxy   6         6         6       6            6           beta.kubernetes.io/os=linux   19d
+kube-system      daemonset.apps/weave-net    6         6         6       6            6           <none>                        19d
+metallb-system   daemonset.apps/speaker      6         6         6       6            6           beta.kubernetes.io/os=linux   19d
+
+NAMESPACE        NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+default          deployment.apps/nginx                        1/1     1            1           19d
+default          deployment.apps/nginx2                       1/1     1            1           19d
+kube-system      deployment.apps/coredns                      2/2     2            2           19d
+kube-system      deployment.apps/traefik-ingress-controller   2/2     2            2           19d
+metallb-system   deployment.apps/controller                   1/1     1            1           19d
+
+NAMESPACE        NAME                                                   DESIRED   CURRENT   READY   AGE
+default          replicaset.apps/nginx-5f78746595                       1         1         1       19d
+default          replicaset.apps/nginx2-5f7bf669dc                      1         1         1       19d
+kube-system      replicaset.apps/coredns-6955765f44                     2         2         2       19d
+kube-system      replicaset.apps/traefik-ingress-controller-5bdbcfc59   2         2         2       19d
+metallb-system   replicaset.apps/controller-65895b47d4                  1         1         1       19d
+[user@kube1haproxy1 nfs-provisioner]$ kubectl create -f class.yaml
+storageclass.storage.k8s.io/managed-nfs-storage created
+[user@kube1haproxy1 nfs-provisioner]$ kubectl get sc
+NAME                  PROVISIONER       RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+managed-nfs-storage   example.com/nfs   Delete          Immediate           false                  11s
+[user@kube1haproxy1 nfs-provisioner]$ kubectl create -f ^C
+[user@kube1haproxy1 nfs-provisioner]$ ^C
+[user@kube1haproxy1 nfs-provisioner]$ sudo nano de
+default-sc.yaml  deployment.yaml
+[user@kube1haproxy1 nfs-provisioner]$ sudo nano deployment.yaml
+[sudo] password for user:
+[user@kube1haproxy1 nfs-provisioner]$ sudo nano deployment.yaml
+[user@kube1haproxy1 nfs-provisioner]$ kubectl create -f deployment.yaml
+deployment.apps/nfs-client-provisioner created
+[user@kube1haproxy1 nfs-provisioner]$ kubectl get all -A
+NAMESPACE        NAME                                             READY   STATUS              RESTARTS   AGE
+default          pod/nfs-client-provisioner-74f8fd6677-qm85d      0/1     ContainerCreating   0          65s
+default          pod/nginx-5f78746595-t9vhx                       1/1     Running             3          19d
+default          pod/nginx2-5f7bf669dc-b2hkg                      1/1     Running             2          19d
+default          pod/nginxvol1                                    0/1     Pending             0          7d
+kube-system      pod/coredns-6955765f44-m55ds                     1/1     Running             3          19d
+kube-system      pod/coredns-6955765f44-x5s7g                     1/1     Running             3          19d
+kube-system      pod/kube-apiserver-kube1master1                  1/1     Running             4          19d
+kube-system      pod/kube-apiserver-kube1master2                  1/1     Running             2          19d
+kube-system      pod/kube-apiserver-kube1master3                  1/1     Running             3          19d
+kube-system      pod/kube-controller-manager-kube1master1         1/1     Running             4          19d
+kube-system      pod/kube-controller-manager-kube1master2         1/1     Running             4          19d
+kube-system      pod/kube-controller-manager-kube1master3         1/1     Running             3          19d
+kube-system      pod/kube-proxy-2pvbx                             1/1     Running             2          19d
+kube-system      pod/kube-proxy-42n9l                             1/1     Running             3          19d
+kube-system      pod/kube-proxy-8gkwv                             1/1     Running             3          19d
+kube-system      pod/kube-proxy-dfxkq                             1/1     Running             2          19d
+kube-system      pod/kube-proxy-hmsq6                             1/1     Running             2          19d
+kube-system      pod/kube-proxy-m2cbq                             1/1     Running             2          19d
+kube-system      pod/kube-scheduler-kube1master1                  1/1     Running             5          19d
+kube-system      pod/kube-scheduler-kube1master2                  1/1     Running             5          19d
+kube-system      pod/kube-scheduler-kube1master3                  1/1     Running             4          19d
+kube-system      pod/traefik-ingress-controller-5bdbcfc59-d95df   1/1     Running             3          19d
+kube-system      pod/traefik-ingress-controller-5bdbcfc59-dw4xr   1/1     Running             2          19d
+kube-system      pod/weave-net-7bljj                              2/2     Running             6          19d
+kube-system      pod/weave-net-8fb84                              2/2     Running             9          19d
+kube-system      pod/weave-net-8fnxc                              2/2     Running             6          19d
+kube-system      pod/weave-net-cbtdg                              2/2     Running             6          19d
+kube-system      pod/weave-net-s4qvv                              2/2     Running             6          19d
+kube-system      pod/weave-net-xjfnp                              2/2     Running             9          19d
+metallb-system   pod/controller-65895b47d4-92hx6                  1/1     Running             2          19d
+metallb-system   pod/speaker-blqhj                                1/1     Running             2          19d
+metallb-system   pod/speaker-hg4h5                                1/1     Running             2          19d
+metallb-system   pod/speaker-pwcgg                                1/1     Running             3          19d
+metallb-system   pod/speaker-tq8jl                                1/1     Running             3          19d
+metallb-system   pod/speaker-vl2vs                                1/1     Running             2          19d
+metallb-system   pod/speaker-vlfm8                                1/1     Running             2          19d
+
+NAMESPACE     NAME                                                             TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                       AGE
+default       service/glusterfs-dynamic-048ad453-3112-4d74-acf8-aed390dff175   ClusterIP      10.96.191.255   <none>         1/TCP                         11d
+default       service/glusterfs-dynamic-2d6710e2-e506-4645-9db3-f0f6c3b95058   ClusterIP      10.96.119.81    <none>         1/TCP                         11d
+default       service/glusterfs-dynamic-38654d23-c891-4dff-b3de-7d39053a29e2   ClusterIP      10.96.113.142   <none>         1/TCP                         7d1h
+default       service/glusterfs-dynamic-aa1bc99f-5372-406b-8c8d-c7821c2f361c   ClusterIP      10.96.189.250   <none>         1/TCP                         4d3h
+default       service/glusterfs-dynamic-aae81ef7-bd7e-4728-bf79-0c797d493ebc   ClusterIP      10.96.39.103    <none>         1/TCP                         7d1h
+default       service/glusterfs-dynamic-b502ab46-396c-420d-83ef-2d92235f16d2   ClusterIP      10.96.102.49    <none>         1/TCP                         3d23h
+default       service/glusterfs-dynamic-bd5407a3-15c0-4e38-a7a6-11446ef7253a   ClusterIP      10.96.32.47     <none>         1/TCP                         4d2h
+default       service/glusterfs-dynamic-d631c4a3-c321-441c-86dc-cd8c10e8b798   ClusterIP      10.96.33.167    <none>         1/TCP                         11d
+default       service/kubernetes                                               ClusterIP      10.96.0.1       <none>         443/TCP                       19d
+default       service/nginx                                                    ClusterIP      10.96.30.61     <none>         80/TCP                        19d
+default       service/nginx2                                                   ClusterIP      10.96.66.155    <none>         80/TCP                        19d
+kube-system   service/kube-dns                                                 ClusterIP      10.96.0.10      <none>         53/UDP,53/TCP,9153/TCP        19d
+kube-system   service/traefik-ingress-service                                  LoadBalancer   10.96.23.49     172.16.3.144   80:30613/TCP,8080:31921/TCP   19d
+
+NAMESPACE        NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system      daemonset.apps/kube-proxy   6         6         6       6            6           beta.kubernetes.io/os=linux   19d
+kube-system      daemonset.apps/weave-net    6         6         6       6            6           <none>                        19d
+metallb-system   daemonset.apps/speaker      6         6         6       6            6           beta.kubernetes.io/os=linux   19d
+
+NAMESPACE        NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+default          deployment.apps/nfs-client-provisioner       0/1     1            0           65s
+default          deployment.apps/nginx                        1/1     1            1           19d
+default          deployment.apps/nginx2                       1/1     1            1           19d
+kube-system      deployment.apps/coredns                      2/2     2            2           19d
+kube-system      deployment.apps/traefik-ingress-controller   2/2     2            2           19d
+metallb-system   deployment.apps/controller                   1/1     1            1           19d
+
+NAMESPACE        NAME                                                   DESIRED   CURRENT   READY   AGE
+default          replicaset.apps/nfs-client-provisioner-74f8fd6677      1         1         0       65s
+default          replicaset.apps/nginx-5f78746595                       1         1         1       19d
+default          replicaset.apps/nginx2-5f7bf669dc                      1         1         1       19d
+kube-system      replicaset.apps/coredns-6955765f44                     2         2         2       19d
+kube-system      replicaset.apps/traefik-ingress-controller-5bdbcfc59   2         2         2       19d
+metallb-system   replicaset.apps/controller-65895b47d4                  1         1         1       19d
+[user@kube1haproxy1 nfs-provisioner]$ kubectl get all -A
+NAMESPACE        NAME                                             READY   STATUS              RESTARTS   AGE
+default          pod/nfs-client-provisioner-74f8fd6677-qm85d      0/1     ContainerCreating   0          2m11s
+default          pod/nginx-5f78746595-t9vhx                       1/1     Running             3          19d
+default          pod/nginx2-5f7bf669dc-b2hkg                      1/1     Running             2          19d
+default          pod/nginxvol1                                    0/1     Pending             0          7d
+kube-system      pod/coredns-6955765f44-m55ds                     1/1     Running             3          19d
+kube-system      pod/coredns-6955765f44-x5s7g                     1/1     Running             3          19d
+kube-system      pod/kube-apiserver-kube1master1                  1/1     Running             4          19d
+kube-system      pod/kube-apiserver-kube1master2                  1/1     Running             2          19d
+kube-system      pod/kube-apiserver-kube1master3                  1/1     Running             3          19d
+kube-system      pod/kube-controller-manager-kube1master1         1/1     Running             4          19d
+kube-system      pod/kube-controller-manager-kube1master2         1/1     Running             4          19d
+kube-system      pod/kube-controller-manager-kube1master3         1/1     Running             3          19d
+kube-system      pod/kube-proxy-2pvbx                             1/1     Running             2          19d
+kube-system      pod/kube-proxy-42n9l                             1/1     Running             3          19d
+kube-system      pod/kube-proxy-8gkwv                             1/1     Running             3          19d
+kube-system      pod/kube-proxy-dfxkq                             1/1     Running             2          19d
+kube-system      pod/kube-proxy-hmsq6                             1/1     Running             2          19d
+kube-system      pod/kube-proxy-m2cbq                             1/1     Running             2          19d
+kube-system      pod/kube-scheduler-kube1master1                  1/1     Running             5          19d
+kube-system      pod/kube-scheduler-kube1master2                  1/1     Running             5          19d
+kube-system      pod/kube-scheduler-kube1master3                  1/1     Running             4          19d
+kube-system      pod/traefik-ingress-controller-5bdbcfc59-d95df   1/1     Running             3          19d
+kube-system      pod/traefik-ingress-controller-5bdbcfc59-dw4xr   1/1     Running             2          19d
+kube-system      pod/weave-net-7bljj                              2/2     Running             6          19d
+kube-system      pod/weave-net-8fb84                              2/2     Running             9          19d
+kube-system      pod/weave-net-8fnxc                              2/2     Running             6          19d
+kube-system      pod/weave-net-cbtdg                              2/2     Running             6          19d
+kube-system      pod/weave-net-s4qvv                              2/2     Running             6          19d
+kube-system      pod/weave-net-xjfnp                              2/2     Running             9          19d
+metallb-system   pod/controller-65895b47d4-92hx6                  1/1     Running             2          19d
+metallb-system   pod/speaker-blqhj                                1/1     Running             2          19d
+metallb-system   pod/speaker-hg4h5                                1/1     Running             2          19d
+metallb-system   pod/speaker-pwcgg                                1/1     Running             3          19d
+metallb-system   pod/speaker-tq8jl                                1/1     Running             3          19d
+metallb-system   pod/speaker-vl2vs                                1/1     Running             2          19d
+metallb-system   pod/speaker-vlfm8                                1/1     Running             2          19d
+
+NAMESPACE     NAME                                                             TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                       AGE
+default       service/glusterfs-dynamic-048ad453-3112-4d74-acf8-aed390dff175   ClusterIP      10.96.191.255   <none>         1/TCP                         11d
+default       service/glusterfs-dynamic-2d6710e2-e506-4645-9db3-f0f6c3b95058   ClusterIP      10.96.119.81    <none>         1/TCP                         11d
+default       service/glusterfs-dynamic-38654d23-c891-4dff-b3de-7d39053a29e2   ClusterIP      10.96.113.142   <none>         1/TCP                         7d1h
+default       service/glusterfs-dynamic-aa1bc99f-5372-406b-8c8d-c7821c2f361c   ClusterIP      10.96.189.250   <none>         1/TCP                         4d3h
+default       service/glusterfs-dynamic-aae81ef7-bd7e-4728-bf79-0c797d493ebc   ClusterIP      10.96.39.103    <none>         1/TCP                         7d1h
+default       service/glusterfs-dynamic-b502ab46-396c-420d-83ef-2d92235f16d2   ClusterIP      10.96.102.49    <none>         1/TCP                         3d23h
+default       service/glusterfs-dynamic-bd5407a3-15c0-4e38-a7a6-11446ef7253a   ClusterIP      10.96.32.47     <none>         1/TCP                         4d2h
+default       service/glusterfs-dynamic-d631c4a3-c321-441c-86dc-cd8c10e8b798   ClusterIP      10.96.33.167    <none>         1/TCP                         11d
+default       service/kubernetes                                               ClusterIP      10.96.0.1       <none>         443/TCP                       19d
+default       service/nginx                                                    ClusterIP      10.96.30.61     <none>         80/TCP                        19d
+default       service/nginx2                                                   ClusterIP      10.96.66.155    <none>         80/TCP                        19d
+kube-system   service/kube-dns                                                 ClusterIP      10.96.0.10      <none>         53/UDP,53/TCP,9153/TCP        19d
+kube-system   service/traefik-ingress-service                                  LoadBalancer   10.96.23.49     172.16.3.144   80:30613/TCP,8080:31921/TCP   19d
+
+NAMESPACE        NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system      daemonset.apps/kube-proxy   6         6         6       6            6           beta.kubernetes.io/os=linux   19d
+kube-system      daemonset.apps/weave-net    6         6         6       6            6           <none>                        19d
+metallb-system   daemonset.apps/speaker      6         6         6       6            6           beta.kubernetes.io/os=linux   19d
+
+NAMESPACE        NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+default          deployment.apps/nfs-client-provisioner       0/1     1            0           2m11s
+default          deployment.apps/nginx                        1/1     1            1           19d
+default          deployment.apps/nginx2                       1/1     1            1           19d
+kube-system      deployment.apps/coredns                      2/2     2            2           19d
+kube-system      deployment.apps/traefik-ingress-controller   2/2     2            2           19d
+metallb-system   deployment.apps/controller                   1/1     1            1           19d
+
+NAMESPACE        NAME                                                   DESIRED   CURRENT   READY   AGE
+default          replicaset.apps/nfs-client-provisioner-74f8fd6677      1         1         0       2m11s
+default          replicaset.apps/nginx-5f78746595                       1         1         1       19d
+default          replicaset.apps/nginx2-5f7bf669dc                      1         1         1       19d
+kube-system      replicaset.apps/coredns-6955765f44                     2         2         2       19d
+kube-system      replicaset.apps/traefik-ingress-controller-5bdbcfc59   2         2         2       19d
+metallb-system   replicaset.apps/controller-65895b47d4                  1         1         1       19d
+[user@kube1haproxy1 nfs-provisioner]$
+[user@kube1haproxy1 nfs-provisioner]$
+[user@kube1haproxy1 nfs-provisioner]$
+[user@kube1haproxy1 nfs-provisioner]$
+[user@kube1haproxy1 nfs-provisioner]$ cd ..
+[user@kube1haproxy1 yamls]$ sudo nano nfs-provisioner/
+class.yaml       default-sc.yaml  deployment.yaml  rbac.yaml
+[user@kube1haproxy1 yamls]$ sudo nano 4-
+4-busybox-pv-hostpath.yaml  4-nfs-nginx.yaml            4-pvc-hostpath.yaml         4-pvc-nfs.yaml              4-pv-hostpath.yaml          4-pv-nfs.yaml
+[user@kube1haproxy1 yamls]$ sudo nano 4-pv
+4-pvc-hostpath.yaml  4-pvc-nfs.yaml       4-pv-hostpath.yaml   4-pv-nfs.yaml
+[user@kube1haproxy1 yamls]$ sudo nano 4-pvc-
+4-pvc-hostpath.yaml  4-pvc-nfs.yaml
+[user@kube1haproxy1 yamls]$ sudo nano 4-pvc-
+4-pvc-hostpath.yaml  4-pvc-nfs.yaml
+[user@kube1haproxy1 yamls]$ sudo nano 4-pvc-nfs.yaml
+[user@kube1haproxy1 yamls]$ kubectl create -f 4-pv
+4-pvc-hostpath.yaml  4-pvc-nfs.yaml       4-pv-hostpath.yaml   4-pv-nfs.yaml
+[user@kube1haproxy1 yamls]$ kubectl create -f 4-pv
+4-pvc-hostpath.yaml  4-pvc-nfs.yaml       4-pv-hostpath.yaml   4-pv-nfs.yaml
+[user@kube1haproxy1 yamls]$ kubectl create -f 4-pvc-
+4-pvc-hostpath.yaml  4-pvc-nfs.yaml
+[user@kube1haproxy1 yamls]$ kubectl create -f 4-pvc-nfs.yaml
+persistentvolumeclaim/pvc1 created
+[user@kube1haproxy1 yamls]$ kubectl get pv,pvc
+NAME                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+persistentvolumeclaim/pvc1   Pending                                      managed-nfs-storage   11s
+[user@kube1haproxy1 yamls]$ kubectl get pv,pvc
+NAME                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+persistentvolumeclaim/pvc1   Pending                                      managed-nfs-storage   14s
+[user@kube1haproxy1 yamls]$ kubectl get pv,pvc
+NAME                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+persistentvolumeclaim/pvc1   Pending                                      managed-nfs-storage   20s
+[user@kube1haproxy1 yamls]$ kubectl get pv,pvc
+NAME                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+persistentvolumeclaim/pvc1   Pending                                      managed-nfs-storage   24s
+[user@kube1haproxy1 yamls]$ kubectl get pv,pvc
+NAME                         STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS          AGE
+persistentvolumeclaim/pvc1   Pending                                      managed-nfs-storage   38s

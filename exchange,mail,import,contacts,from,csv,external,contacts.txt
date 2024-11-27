@@ -1,0 +1,9 @@
+=======================================
+EXCHANGE IMPORT CONTACTS TO SPECIFIC OU
+101719
+=======================================
+
+##https://docs.microsoft.com/en-us/microsoft-365/compliance/bulk-import-external-contacts
+##https://social.technet.microsoft.com/Forums/windowsserver/en-US/8e76edb2-0178-4795-ba3c-1a126dbdadff/help-for-newmailcontact-and-setcontact?forum=winserverpowershell
+
+Import-Csv .\kingmktcontacts.csv|%{New-MailContact -OrganizationalUnit "OU=Users,OU=jgleba.com,OU=MailDomains,DC=domain,DC=local" -Name $_.Name -DisplayName $_.Name -ExternalEmailAddress $_.ExternalEmailAddress -FirstName $_.FirstName -LastName $_.LastName}

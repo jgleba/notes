@@ -1,0 +1,25 @@
+MIKROTIK FIREWALL - DROP ALL ON FORWARD
+092819
+
+TRYING TO ACHIEVE BEST FIREWALL - SHOULD BE DROP ALL ON INPUT, DROP ALL ON FORWARD AS LAST RULES
+
+EVERY TIME I TRIED TO IMPLEMENT, CONNECTIVITY WOULD BE LOST IN SOME WAY, HAD TO REVERT
+
+FOUND THIS:
+
+https://forum.mikrotik.com/viewtopic.php?t=14076
+
+THIS SEEMED TO BE THE IDEA I WAS MISSING
+
+you have to allowed clients src-addresses before the last drop rule.
+
+TRIED THIS:
+
+add action=accept chain=input comment="ALLOW ALL JGDC LOCAL NETWORKS - INPUT - TESTING 092719" src-address-list=JGDC1NetworksALL
+add action=accept chain=forward comment="ALLOW ALL JGDC LOCAL NETWORKS - FORWARD - TESTING 092719" src-address-list=JGDC1NetworksALL
+add action=drop chain=input comment="DROP EVERYTHING ELSE ON INPUT"
+add action=drop chain=forward comment="DROP EVERYTHING ELSE ON FORWARD - ENABLED 092719 - SEEMS TO BE WORKING"
+
+CREATED ADDRESS LIST WITH ALL LOCAL NETWORK SUBNETS
+
+WORKING SO FAR

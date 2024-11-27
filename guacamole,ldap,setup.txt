@@ -1,0 +1,41 @@
+guaca2
+
+                         Installation Menu
+         Guacamole Remote Desktop Gateway 0.9.13-incubating
+
+ Enter the root password for MariaDB: pass
+ Enter the Guacamole DB name: guaca2
+ Enter the Guacamole DB username: dbuser
+ Enter the Guacamole DB password: pass
+ Enter the Java KeyStore password (least 6 characters): pass
+ Do you wish to Install the Proxy feature (Nginx)?: n
+
+Checking CentOS version...
+...CentOS 7 found
+
+LDAP://dc1.pcl.local/CN=Users,DC=pcl,DC=local
+
+LDAP://dc1.pcl.local/OU=PCL,OU=Users,DC=pcl,DC=local
+
+
+
+TRY THIS IN GUAC CONFIG - /etc/guacamole/guacamole.properties
+
+# LDAP Properties
+ldap-hostname: dc.domain.com
+ldap-port: 389
+ldap-encryption-method: none
+ldap-user-base-dn: OU=users,DC=domain,DC=com
+ldap-search-bind-dn: CN=guacbind,OU=users,DC=domain,DC=com
+ldap-search-bind-password: guacpassword
+ldap-username-attribute: sAMAccountName
+
+# LDAP Properties
+ldap-hostname: dc1.pcl.local
+ldap-port: 389
+ldap-encryption-method: none
+ldap-user-base-dn: OU=PCL,OU=Users,DC=pcl,DC=local
+ldap-search-bind-dn: CN=guacbind,OU=users,DC=domain,DC=com
+ldap-search-bind-password: guacpassword
+ldap-username-attribute: sAMAccountName
+

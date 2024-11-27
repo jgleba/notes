@@ -1,0 +1,12 @@
+POSTFIX QUEUE DELETE FROM SENDER
+121622
+================================
+
+sudo postqueue -p | tail -n +2 | awk 'BEGIN { RS = "" } /ywang@windsormachine\.com/ { print $1 }' | sudo postsuper -d -
+
+ABOVE DIDNT WORK 020323
+
+THIS WORKED
+
+sudo postqueue -p | tail -n +2 | awk 'BEGIN { RS = "" } /arpwatch@windsormachine\.com/ { print $1 }' | tr -d '*!' | sudo postsuper -d -
+

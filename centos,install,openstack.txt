@@ -1,0 +1,54 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS INSTALL OPENSTACK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-04-08[Apr-Thu]19-24PM 
+
+##https://linuxhint.com/install_openstack_vmware_esxi/
+
+sudo systemctl disable firewalld
+sudo systemctl stop firewalld
+
+sudo yum install -y centos-release-openstack-rocky
+sudo yum update -y
+sudo yum install -y openstack-packstack
+
+packstack --allinone
+
+give root password
+
+==
+
+
+Preparing Redis entries                              [ DONE ]
+Preparing Ceilometer entries                         [ DONE ]
+Preparing Aodh entries                               [ DONE ]
+Preparing Puppet manifests                           [ DONE ]
+Copying Puppet modules and manifests                 [ DONE ]
+Applying 172.16.3.50_controller.pp
+172.16.3.50_controller.pp:                           [ DONE ]
+Applying 172.16.3.50_network.pp
+172.16.3.50_network.pp:                              [ DONE ]
+Applying 172.16.3.50_compute.pp
+172.16.3.50_compute.pp:                              [ DONE ]
+Applying Puppet manifests                            [ DONE ]
+Finalizing                                           [ DONE ]
+
+ **** Installation completed successfully ******
+
+Additional information:
+ * A new answerfile was created in: /home/user/packstack-answers-20210408-200229.txt
+ * Time synchronization installation was skipped. Please note that unsynchronized time on server instances might be problem for some OpenStack components.
+ * File /root/keystonerc_admin has been created on OpenStack client host 172.16.3.50. To use the command line tools you need to source the file.
+ * Copy of keystonerc_admin file has been created for non-root user in /home/user.
+ * To access the OpenStack Dashboard browse to http://172.16.3.50/dashboard .
+Please, find your login credentials stored in the keystonerc_admin in your home directory.
+ * The installation log file is available at: /var/tmp/packstack/20210408-200227-kAhO8n/openstack-setup.log
+ * The generated manifests are available at: /var/tmp/packstack/20210408-200227-kAhO8n/manifests
+ 
+==
+GET PASSWORD
+==
+
+cat keystonerc_admin | grep PASSWORD

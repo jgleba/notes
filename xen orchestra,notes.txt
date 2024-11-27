@@ -1,0 +1,47 @@
+single script install on ubuntu 15.10
+wget https://raw.githubusercontent.com/scottalanmiller/xenorchestra_installer/master/xo_install.sh 
+sudo ./xo_install.sh
+
+==
+nov 3, 2016
+ubnuntu 16.04
+using script from above
+worked
+
+
+xoa updates from somebody's script
+need to try
+==
+DustinB3403 4 months ago
+So I've made a super simple script file that will update your XO installation.
+I recommend that you shutdown the XO services while this runs.
+
+sudo mkdir /opt/xo-update
+cd /opt/xo-update
+wget https://gist.githubusercontent.com/Jarli01/4d32d4f1b8c5786c9299/raw/c1af91129bdbd4775653932aa957c2ea48889fe7/xo-update.sh
+chmod +x xo-update.sh
+To run it
+from /opt/xo-update
+sudo ./xo-update.sh
+
+==
+
+latest
+verion 5.1.X
+sept 9, 2017
+auto script still works, different one
+
+https://github.com/Jarli01/xenorchestra_installer
+wget https://raw.githubusercontent.com/Jarli01/xenorchestra_installer/master/xo_install.sh
+sudo chmod +x xo_install.sh
+sudo ./xo_install.sh
+
+==
+
+LATEST INSTALL - 021218
+using ubuntu 16.04, did all updates
+sudo wget https://raw.githubusercontent.com/Jarli01/xenorchestra_installer/master/xo_install.sh
+sudo chmod +x xo_install.sh
+sudo ./xo_install.sh
+WORKED! 021218 - XOA VERSION: xo-server 5.16.0, xo-web 5.16.1
+WORKED! 090818 - XOA VERSION: xo-server 5.26.0, xo-web 5.26.0

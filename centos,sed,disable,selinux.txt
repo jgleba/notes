@@ -1,0 +1,1 @@
+sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config

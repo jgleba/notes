@@ -1,0 +1,104 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ANSIBLE USAGE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-07-31[Jul-Fri]13-51PM 
+
+##https://serverfault.com/questions/672698/ansible-vault-encrypt-credentials
+##https://medium.com/@schogini/ansible-vault-variables-a-tiny-demonstration-to-handle-secrets-a36132971015
+##https://www.cloudsavvyit.com/3902/how-to-use-ansible-vault-to-store-secret-keys/
+
+##https://serverfault.com/questions/922172/in-ansible-how-do-i-specify-an-exclusion-set-of-hosts-in-a-playbook
+##https://github.com/hico-horiuchi/ansible-playbooks/blob/master/apt/shutdown.yml
+##https://docs.ansible.com/ansible/latest/cli/ansible-playbook.html
+##https://docs.ansible.com/ansible/latest/user_guide/vault.html
+
+==
+SINGLE COMMAND TO GROUP
+==
+
+ansible cj -m ping
+
+==
+SINGLE COMMAND TO ALL
+==
+
+ansible all -m ping
+
+==
+USING PLAYBOOK WITH SUDO PASS
+==
+
+ansible-playbook -u user ansibleshutdown.yml --extra-vars 'ansible_sudo_pass=pass'
+
+==
+USING PLAYBOOK WITH SUDO PASS IN PLAYBOOK
+==
+
+ansible-playbook -u user ansibleshutdown.yml
+
+==
+PLAYBOOK SHUTDOWN EXAMPLE
+==
+
+[user@zxcbot bin]$ cat ansibleshutdown.yml
+---
+- hosts: cj
+  become: true
+  become_method: sudo
+  gather_facts: no
+  vars:
+    ansible_sudo_pass: pass
+  tasks:
+    - command: /sbin/shutdown -h now
+	
+	
+==
+PLAYBOOK CREATE FILE EXAMPLE
+==
+
+user@zxcbot bin]$ cat ansiblecreatefiletest.yml
+---
+- hosts: cj
+  gather_facts: no
+  tasks:
+    - command: touch /j/ansibletestfile.txt
+
+==
+CREATE PASSWORD VAULT
+==
+
+ansible-vault create vault.yml
+
+==
+RUN PLAYBOOK USING PASSWORD FROM VAULT
+==
+
+ansible-playbook -u user ansibleshutdown.yml --vault-password-file ./vault-pass.txt
+
+ansible-playbook -u user shutdown-linux.yml --vault-password-file ./vault-pass.txt
+
+==
+RUN COMMAND WITH ENCRYPTED GROUP VARS, ASK VAULT PASS
+==
+
+ansible --ask-vault-pass -m win_ping win_*
+
+==
+RUN COMMAND WITH ENCRYPTED GROUP VARS, VAULT PASS IN FILE
+==
+
+ansible --vault-password-file /vault/pass/file -m win_ping win_*
+
+==
+RUN PLAYBOOK WITH VAULT FILE
+==
+
+ansible-playbook -u user shutdown-linux.yml --vault-password-file /vault/pass/file
+
+==
+ENCRYPT FILES WITH VAULT
+==
+
+sudo ansible-vault encrypt file1 file2

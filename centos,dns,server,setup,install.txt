@@ -1,0 +1,144 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS DNS SERVER SETUP
+#@  NEW JGDC1 PUBLIC DNS SERVER, USED AS FORWARDER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-10[Dec-Tue]19-52PM 
+
+##https://www.tecmint.com/install-configure-cache-only-dns-server-in-rhel-centos-7/
+##https://www.stephenrlang.com/2018/05/dns-setup-with-bind-on-centos-7/
+##https://www.tecmint.com/setup-master-slave-dns-server-in-centos/
+
+==
+INSTALL BIND FOR DNS
+==
+
+sudo yum install bind bind-utils bind-chroot -y
+
+==
+CONFIG
+==
+
+sudo nano /etc/named.conf
+
+[user@zxdnspub1 ~]$ sudo cat /etc/named.conf
+//
+// named.conf
+//
+// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+// server as a caching only nameserver (as a localhost DNS resolver only).
+//
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+// See the BIND Administrator's Reference Manual (ARM) for details about the
+// configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
+
+acl "dns-trusted" {
+        localhost;
+};
+
+options {
+        listen-on port 53 { 127.0.0.1;};
+        listen-on-v6 port 53 { ::1; };
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+        recursing-file  "/var/named/data/named.recursing";
+        secroots-file   "/var/named/data/named.secroots";
+        allow-query { dns-trusted; };
+        allow-query-cache { dns-trusted; };
+        allow-recursion { dns-trusted; };
+        allow-transfer { ip;};
+
+        /*
+         - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+         - If you are building a RECURSIVE (caching) DNS server, you need to enable
+           recursion.
+         - If your recursive DNS server has a public IP address, you MUST enable access
+           control to limit queries to your legitimate users. Failing to do so will
+           cause your server to become part of large scale DNS amplification
+           attacks. Implementing BCP38 within your network would greatly
+           reduce such attack surface
+        */
+        recursion yes;
+
+        dnssec-enable yes;
+        dnssec-validation yes;
+
+        /* Path to ISC DLV key */
+        bindkeys-file "/etc/named.root.key";
+
+        managed-keys-directory "/var/named/dynamic";
+
+        pid-file "/run/named/named.pid";
+        session-keyfile "/run/named/session.key";
+
+        forwarders {
+                208.67.222.222;
+                208.67.220.220;
+                1.1.1.1;
+                1.0.0.1;
+                8.8.8.8;
+                8.8.4.4;
+        };
+
+};
+
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+		channel querylog {
+                file "/var/log/dnsquery.log";
+                severity debug 3;
+        };
+
+};
+
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";
+
+==
+CREATE LOG FILE
+==
+
+sudo touch /var/log/dnsquery.log
+sudo chmod -R 777 /var/log/dnsquery.log
+
+==
+CHROOT SETUP
+==
+
+sudo ln -s /etc/named.conf /var/named/chroot/etc/named.conf
+
+==
+ENABLE AND START
+==
+
+sudo systemctl restart named
+sudo systemctl enable named
+sudo systemctl status named
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=53/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=53/udp --permanent
+sudo firewall-cmd --reload
+
+==
+TROUBLESHOOTING
+==
+
+CHECK CONFIG
+
+sudo named-checkconf -z /etc/named.conf

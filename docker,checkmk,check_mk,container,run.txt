@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DOCKER CHECK_MK CONTAINER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-02-04[Feb-Tue]16-59PM 
+
+##https://hub.docker.com/r/checkmk/check-mk-raw/
+##https://checkmk.com/cms_introduction_docker.html
+
+docker container run -dit -p 8080:5000 --ulimit nofile=1024 --tmpfs /opt/omd/sites/cmk/tmp:uid=1000,gid=1000 -v monitoring:/omd/sites --name monitoring -v /etc/localtime:/etc/localtime:ro --restart always checkmk/check-mk-raw:1.6.0-latest
+

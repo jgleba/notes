@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS LIST INSTALLED PACKAGES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-13[Apr-Mon]14-14PM 
+
+sudo yum list installed > zxcj,packages,installed,yum,list.txt
+rpm -qa --last > zxcj,packages,installed,rpm,list.txt

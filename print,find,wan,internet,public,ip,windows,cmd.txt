@@ -1,0 +1,40 @@
+=======================================
+PRINT / FIND PUBLIC IP FROM WINDOWS CMD
+091119
+=======================================
+
+==
+USING ON EXCHANGE, BUT NOT WORKING WHEN TESTING OPENVPN
+==
+
+nslookup myip.opendns.com. resolver1.opendns.com
+
+
+==
+MORE WAYS, WORKS ON EXCHANGE, NO WORK ON OPENVPN
+==
+
+##https://stackoverflow.com/questions/39836862/how-to-obtain-public-ip-address-using-windows-command-prompt
+Invoke-WebRequest ifconfig.me/ip
+
+##https://www.addictivetips.com/windows-tips/look-up-external-ip-address-from-command-prompt-windows-10/
+(Invoke-WebRequest ifconfig.me/ip).Content.Trim()
+
+
+==
+MORE WAYS, UNTESTED
+==
+
+##https://superuser.com/questions/165986/windows-command-that-returns-external-ip
+
+$tmp =Invoke-WebRequest -URI http://whatismyip.org/
+$tmp.Content
+
+##https://superuser.com/questions/165986/windows-command-that-returns-external-ip/722397
+TELNET
+
+##pkgmgr /iu:”TelnetClient”
+telnet curlmyip.com 80
+telnet whatismyip.org 80
+GET
+

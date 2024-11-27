@@ -1,0 +1,7 @@
+find folder, containing, case insensitive
+
+find / -type d -iname "*pool1*"
+
+find folder, containing, case sensitive
+
+find / -type d -name "*pool1*"

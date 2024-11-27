@@ -1,0 +1,40 @@
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=pool1 ranges=172.29.0.100-172.29.0.200
+/ip dhcp-server
+add address-pool=pool1 disabled=no interface=ether2 name=dhcp1
+/ip address
+add address=172.29.0.254/24 interface=ether2 network=172.29.0.0
+/ip dhcp-client
+add dhcp-options=hostname,clientid disabled=no interface=ether1
+/ip dhcp-server network
+add address=172.29.0.0/24 dns-server=172.29.0.254 gateway=172.29.0.254
+/ip dns
+set allow-remote-requests=yes
+/ip firewall filter
+add action=drop chain=input dst-port=53 in-interface=ether1 protocol=tcp
+add action=drop chain=input dst-port=53 in-interface=ether1 protocol=udp
+add action=accept chain=input in-interface=ether1 protocol=icmp
+add action=accept chain=input dst-port=8291 in-interface=ether1 protocol=tcp
+add action=accept chain=input dst-port=161 protocol=udp
+add action=accept chain=input comment="Accept broadcast" dst-address-type=broadcast in-interface=ether1
+add action=accept chain=input connection-state=established in-interface=ether1
+add action=accept chain=input connection-state=related in-interface=ether1
+add action=log chain=input in-interface=ether1 log-prefix=DENY:
+add action=drop chain=input in-interface=ether1
+/ip firewall nat
+add action=masquerade chain=srcnat dst-address=0.0.0.0/0 out-interface=ether1
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set www disabled=yes
+set ssh disabled=yes
+set api disabled=yes
+set api-ssl disabled=yes
+/system identity
+set name=JRBTest
+/system ntp client
+set enabled=yes
+/tool bandwidth-server
+set enabled=no

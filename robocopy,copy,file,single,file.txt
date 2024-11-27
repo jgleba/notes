@@ -1,0 +1,15 @@
+ROBOCOPY, COPY ONE FILE
+
+Folder copier, not file copier
+
+Robocopy syntax is markedly different from standard copy commands, as it accepts only folder names as its source and destination arguments. File names and wild-card characters (such as *.*) are not valid source or destination arguments. Files may be selected or excluded using the optional filespec filtering argument. Filespecs can only refer to the filenames relative to the folders already selected for copying. Fully-qualified path names are not supported.
+
+For example, in order to copy the file foo.txt from directory c:\bar to c:\baz, one could use the following syntax:
+
+robocopy c:\bar c:\baz foo.txt
+
+==
+
+robocopy "C:\Users\jgleba.CORP\Downloads" "C:\Users\jgleba.CORP\Box\CA - Justin GLEBA - Private\j\0\z,junk" example.pst
+
+STILL NOT WORKING, BUT NOT WORKING IN EXPLORER, SAYS PATH TOO LONG

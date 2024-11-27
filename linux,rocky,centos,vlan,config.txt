@@ -1,0 +1,63 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX VLAN CONFIG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-05[Aug-Mon]00-31AM 
+
+##https://www.snel.com/support/802-1q-vlan-tagging-in-centos-8/
+
+sudo nano /etc/sysconfig/network-scripts/ifcfg-eth0.453
+
+Add the following lines.
+DEVICE="eth0.453"
+BOOTPROTO="none"
+ONBOOT="yes"
+IPADDR="78.41.207.51"
+PREFIX="24"
+VLAN="yes"
+GATEWAY=ip
+DNS1="89.207.128.252"
+DNS2="89.207.130.252"
+
+==
+
+sudo ifup ens192.vlan
+
+sudo ifup vlan123
+
+==
+
+081124
+WORKED TO PASS VLAN TO VM
+
+made vmware vlan with vlan tag as 4095 all
+
+THEN
+
+cat /etc/sysconfig/network-scripts/ifcfg-VLAN123
+
+VLAN=yes
+TYPE=Vlan
+PHYSDEV=ens192
+VLAN_ID=123
+REORDER_HDR=yes
+GVRP=no
+MVRP=no
+HWADDR=
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=static
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=VLAN123
+DEVICE=ens192.123
+ONBOOT=yes
+IPADDR=ip
+PREFIX=24
+GATEWAY=gw

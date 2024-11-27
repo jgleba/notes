@@ -1,0 +1,37 @@
+##SMB ENUMERATION USING LINUX
+##12/27/2018
+##JGleba
+
+#https://www.hackingarticles.in/a-little-guide-to-smb-enumeration/
+
+Nmblookup
+
+nmblookup -A 192.168.1.103
+
+nbtscan
+
+nbtscan 192.168.1.1/24
+
+SMBMap
+
+smbmap -H 192.168.1.102
+smbmap -H 192.168.1.102 -d metasploitable -u msfadmin -p msfadmin
+
+Smbclient
+
+smbclient -L 192.168.1.102
+smbclient //192.168.1.102/tmp
+
+Rpcclient
+
+rpcclient -U "" -N 192.168.1.102
+enumdomusers
+queryuse 0x3e8
+
+Nmap
+
+nmap --script smb-vuln* -p 139,445 192.168.1.103
+
+Enum4linux
+
+enumlinux -a 192.168.1.102

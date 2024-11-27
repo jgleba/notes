@@ -1,0 +1,12 @@
+====================================
+CENTOS CREATE SUDO (ESCALATED) USER
+060419
+====================================
+
+##https://linuxize.com/post/create-a-sudo-user-on-centos/
+
+==
+JUST ADD TO WHEEL GROUP
+==
+
+usermod -aG wheel username

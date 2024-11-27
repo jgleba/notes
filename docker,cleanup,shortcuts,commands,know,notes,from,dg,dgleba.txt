@@ -1,0 +1,751 @@
+
+scratch..
+
+
+docker-compose up nginx
+
+
+ docker-compose -v
+ 
+http://192.168.88.58:8089/?server=maria&username=root&db=nextcloud
+
+http://192.168.88.60:6218
+
+
+
+ 19-04-03 21:29:28 
+ docker-compose up  maria adminer429 nextcl
+ 
+ docker-compose stop  maria adminer429 nextcl
+
+    rm -rf maria392dbm/
+    rm -rf nextcl429html/
+
+   cd maria392dbm/
+   #  ? chown -R mysql .
+
+ cd nextcl429html/
+ #chown -R albe /srv/dkr/datasys/nextcl429html/
+ #
+ chmod -R 777 /srv/dkr/datasys/nextcl429html/dat
+ 
+ chmod -R 777 /srv/dkr/datasys/nextcl429html/
+ 
+ 	docker-compose  -f docker-compose.yml exec maria /bin/bash
+ 	docker-compose  -f docker-compose.yml run maria /bin/bash
+ 	docker-compose  -f docker-compose.yml run nextcl /bin/bash
+ 	docker-compose  -f docker-compose.yml exec nextcl /bin/bash
+	
+  
+ 
+make clean
+dkd
+docker volume rm $(docker volume ls -qf dangling=true)
+docker network rm $(docker network ls | grep "bridge" | awk '/ / { print $1 }')
+ 
+
+
+docker-compose up adminer429 pgadmin
+
+docker-compose up pgadmin
+docker-compose up postgres429
+
+
+docker-compose up vpv445gb
+
+docker-compose restart caddy-gen
+
+docker-compose stop caddy-gen
+
+docker-compose up caddy-gen
+
+https://t.david23.tk
+
+
+_____________
+
+restart after new vpv445g build
+
+
+make rst
+
+ docker-compose stop caddy-gen
+
+ docker rm -f $(docker ps -a |    grep caddy-gen       | awk '{print $1}')
+
+ cd caddy-gen/certs
+ sudo chmod -R 775 .
+  
+ docker-compose up  --build  --force-recreate caddy-gen 
+
+
+
+----------------------------------------------------
+Title:  .  clean up
+-----------------------2019-04-04[Apr-Thu]18-21PM
+
+# ref.
+# C:\n\Dropbox\csd\serve\vamp206a\a3\alias21.sh
+# https://github.com/dgleba/listo429c/blob/master/Makefile
+
+make clean
+dkd
+docker volume rm $(docker volume ls -qf dangling=true)
+docker network rm $(docker network ls | grep "bridge" | awk '/ / { print $1 }')
+
+----------------------------------------------------
+ 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-09-14[Sep-Fri]12-02PM
+
+
+
+# CONTAINERS
+
+
+
+REMOVE containers by wildcard pattern..
+
+
+success..
+
+https://medium.freecodecamp.org/how-i-filter-and-grep-docker-containers-images-and-volumes-and-how-you-can-too-a60e52bf7784
+
+#example.. Remove all containers using the rabbitmq image:
+#docker rm $(docker ps -a | grep rabbitmq | awk '{print $1}')
+
+# Remove all containers using ... pattern in grep below...:
+docker rm -f $(docker ps -a |    grep z01         | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep adminer        | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep juan        | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep django      | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep mysql_dbm   | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep full         | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep mysql_         | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep dist_vue435a_1    | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep caddy-gen        | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep listo429c_nginx-proxy_1        | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep couchd      | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep pgcouch429      | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep listo429c_vpv445g_1      | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep rev-proxy      | awk '{print $1}')
+docker rm -f $(docker ps -a |    grep 000a2adc2917       | awk '{print $1}')
+
+docker-compose up vpv445g
+
+
+## KILL
+
+
+docker kill $(docker ps -a |    grep redis_         | awk '{print $1}')
+docker kill $(docker ps -a |    grep mysql_        | awk '{print $1}')
+docker kill $(docker ps -a |    grep grav        | awk '{print $1}')
+
+
+
+remove exclude 
+
+docker rm -f $(docker ps -a |   grep -vE '(mysql|ruby|php|python|alpine|nginx|postgres|elasticsearch|kibana|logstash|logspout)'         | awk '{print $1}')
+
+docker rm -f $(docker ps -a |   grep -vE '(ruby|php|python|alpine|nginx|postgres|elasticsearch|kibana|logstash|logspout)'         | awk '{print $1}')
+
+
+---------
+more...
+
+
+https://stackoverflow.com/questions/32490229/how-can-i-delete-docker-images-by-tag-preferably-with-wildcarding
+
+# Remove all images using ... pattern below (like "*php*")...:
+ docker rmi $(docker images --filter=reference="*nginx*" -q)
+ 
+ 
+# stronger.. 
+ 
+# You can also acomplish it using grep + args + xargs:
+  docker images | grep "nginx" | awk '{print $1 ":" $2}' | xargs docker rmi 
+ 
+ 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+# IMAGES
+
+
+
+docker images
+
+more strict..
+# Remove all images using ... pattern below (like "*php*")...:
+ docker rmi $(docker images --filter=reference="*php*" -q)
+ docker rmi $(docker images --filter=reference="*trak*" -q)
+
+ docker rm -f $(docker ps -a |    grep caddy-gen        | awk '{print $1}') # remove container
+ docker rmi $(docker images --filter=reference="*caddy*" -q) # remove image
+
+ 
+#
+# You can also acomplish it using grep + args + xargs:
+  
+less strict
+
+  docker images | grep "grav" | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep "wsv" | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep "juan" | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep "djang" | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep mysql_ | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep redis | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep superset | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep 563a026a151 | awk '{print $1 ":" $2}' | xargs docker rmi 
+  docker images | grep kataco | awk '{print $1 ":" $2}' | xargs docker rmi 
+  
+  docker images | grep caddy-gen | awk '{print $1 ":" $2}' | xargs docker rmi 
+  
+  
+docker images
+
+_____________
+
+
+ 
+## ALL  EXCept
+ 
+
+ 
+
+Remove all images except list...
+ 
+docker images  | grep -vE '(mysql|ruby|php|python|alpine|nginx|postgres|elasticsearch|kibana|logstash|logspout)' |  awk {' print $3 '} | xargs docker rmi -f
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+# VOLUMES
+
+
+
+remove volumes by pattern
+
+tbd
+
+dangling list
+
+  docker volume ls -f dangling=true
+
+rm dangling...
+
+  docker volume rm $(docker volume ls -qf dangling=true)
+
+
+
+https://serverfault.com/questions/683910/removing-docker-data-volumes
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+# NETWORKS
+
+
+
+remove networks unused..
+
+
+
+     docker network ls  
+     docker network ls | grep "bridge"   
+     docker network rm $(docker network ls | grep "bridge" | awk '/ / { print $1 }')
+    
+	
+	
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+----------------------------------------------------
+Title:  .
+-----------------------2018-09-28[Sep-Fri]15-13PM
+
+
+https://stackoverflow.com/questions/40744000/remove-all-docker-containers-except-one
+
+exclude multiple containers.
+
+You can try this, which will Filter out the unwanted item (grep -v), and then
+returns the first column, which contains the container id
+
+docker rm $(docker ps -a | grep -vE '(mysql|ruby|php|python|alpine)' | awk 'NR>1 {print $1}')
+
+To use cut instead of awk, try this:
+docker rm $(docker ps -a | grep -v "my_docker" | cut -d ' ' -f1)
+
+----------------------------------------------------
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2016-09-20[Sep-Tue]16-41PM
+
+
+ 
+
+#  EVERYTHING
+
+ 
+ 
+
+delete   ***  everything    images, containers, volumes, networks ..
+
+
+
+
+docker kill $(docker ps -q)
+
+docker rm --force $(docker ps -a -q)
+
+docker volume rm $(docker volume ls -qf dangling=true)
+
+
+docker network ls  
+docker network ls | grep "bridge"   
+docker network rm $(docker network ls | grep "bridge" | awk '/ / { print $1 }')
+
+
+docker volume rm $(docker volume ls -qf dangling=true)
+
+
+docker images -q | xargs docker rmi -f
+     
+docker ps 
+docker ps -a
+docker images |sort
+docker network ls  
+
+_____________
+
+
+
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+more notes  
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-09-15[Sep-Sat]22-59PM
+
+CLEANUP
+
+# Docker - How to cleanup (unused) resources
+
+# Once in a while, you may need to cleanup resources (containers, volumes, images, networks) ...
+    
+## delete volumes
+    
+    # // see: https://github.com/chadoe/docker-cleanup-volumes
+    
+     docker volume rm $(docker volume ls -qf dangling=true)
+     docker volume ls -qf dangling=true | xargs -r docker volume rm
+    
+## delete networks
+
+     docker network ls  
+     docker network ls | grep "bridge"   
+     docker network rm $(docker network ls | grep "bridge" | awk '/ / { print $1 }')
+    
+## remove docker images
+    
+    # // see: http://stackoverflow.com/questions/32723111/how-to-remove-old-and-unused-docker-images
+    
+     docker images
+     docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+    
+     docker images | grep "none"
+     docker rmi $(docker images | grep "none" | awk '/ / { print $3 }')
+
+## remove docker containers not running exited
+
+    # // see: http://stackoverflow.com/questions/32723111/how-to-remove-old-and-unused-docker-images
+    
+     docker ps
+     docker ps -a
+     docker rm $(docker ps -qa --no-trunc --filter "status=exited")
+    
+## Resize disk space for docker vm
+    
+     # docker-machine create --driver virtualbox --virtualbox-disk-size "40000" default
+
+ref.	 
+https://gist.github.com/bastman/5b57ddb3c11942094f8d0a97d461b430
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2016-09-20[Sep-Tue]16-42PM
+
+debug..
+
+docker-compose logs
+
+docker exec -it dock289b_mysql_1 /bin/bash
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2016-09-15[Sep-Thu]15-16PM
+
+# kill and remove.
+
+# https://gist.github.com/evanscottgray/8571828
+
+# kill....
+
+docker ps | awk {' print $1 '} | tail -n+2 > tmp.txt; for line in $(cat tmp.txt); do docker kill $line; done; rm tmp.txt
+
+# francolaiuppa commented on May 8 - hey I found your gist while doing a google search, thanks for sharing! I had the same problem and fixed it using some bash fu, maybe this will help?
+
+docker kill $(docker ps -q)
+
+# ktamas77 commented on Jul 20 • edited @francolaiuppa exactly, these are the best solutions:
+
+# stop all containers:
+docker kill  $(docker ps -q)
+
+# remove all containers...
+docker rm --force $(docker ps -a -q)
+
+
+
+docker ps -a
+docker images
+
+docker rmi
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+no..
+docker rmi $(docker images -q -f dangling=true) 
+
+
+yes..
+
+docker volume rm $(docker volume ls -qf dangling=true)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# delete all
+
+# good:
+
+docker images -q | xargs docker rmi -f
+
+# ==
+
+# https://gist.github.com/ngpestelos/4fc2e31e19f86b9cf10b
+
+# Another way of removing all images is:
+
+docker images -q | xargs docker rmi
+
+# If images have depended children, forced removal is via the -f flag:
+
+docker images -q | xargs docker rmi -f
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+remove stuff...
+
+https://gist.github.com/ngpestelos/4fc2e31e19f86b9cf10b
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-08-07[Aug-Tue]21-39PM
+
+https://gist.github.com/bastman/5b57ddb3c11942094f8d0a97d461b430
+
+
+remove docker containers
+
+
+docker rm $(docker ps -qa --no-trunc --filter "status=exited")
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+==
+
+EXPOSE (incoming ports)
+The following run command options work with container networking:
+
+--expose=[]: Expose a port or a range of ports inside the container.
+             These are additional to those exposed by the `EXPOSE` instruction
+-P=false   : Publish all exposed ports to the host interfaces
+-p=[]      : Publish a container?s port or a range of ports to the host
+
+               format: ip:hostPort:containerPort 		| ip::containerPort | hostPort:containerPort | containerPort
+
+               Both hostPort and containerPort can be specified as a range of ports. When specifying ranges for both, the
+               number of container ports in the range must match the number of host ports in the range, for example:
+                   -p 1234-1236:1234-1236/tcp
+
+https://docs.docker.com/engine/reference/run/
+
+==
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-06-26[Jun-Tue]19-17PM
+
+
+albe@pmdsdata4:~$ docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+3b5fcf9f2fe6        dkr378php6_php_c    "docker-php-entrypoi…"   About an hour ago   Up About an hour    0.0.0.0:6021->80/tcp     dkr378php6c
+08431f2e7792        dkr378php6_mysq_c   "docker-entrypoint.s…"   About an hour ago   Up About an hour    0.0.0.0:6022->3306/tcp   dkr378php6mysqc
+albe@pmdsdata4:~$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+dkr378php6_php_c    latest              c3a3da974e74        3 hours ago         398MB
+dkr378php6_mysq_c   latest              8907c77da7b4        3 hours ago         391MB
+mysql               5.7                 0d16d0a97dd1        7 weeks ago         372MB
+php                 7.2.2-apache        08685253e459        4 months ago        377MB
+albe@pmdsdata4:~$
+
+
+no
+docker rmi dkr378php6mysqc
+
+yes..
+docker kill  $(docker ps -q)
+docker rm --force $(docker ps -a -q)
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-09-14[Sep-Fri]09-37AM
+
+docker-compose dockerfile name named example
+
+
+  # The Application
+  app:
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=database"
+      
+https://gist.github.com/paulomcnally/79098436030682f836e8b9261b011180      
+      
+      
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+ff669aecbc7a        nginx:latest          "nginx -g 'daemon of…"   18 hours ago        Up 18 hours            80/tcp, 0.0.0.0:8000->8000/tcp   nz01
+4fb2d7009d63        ruddradjango_web      "/bin/sh -c 'python …"   18 hours ago        Up 18 hours            8000/tcp                         dz01
+cbad756bc822        redis:latest          "docker-entrypoint.s…"   18 hours ago        Up 18 hours            0.0.0.0:6379->6379/tcp           rz01
+
+lst=(
+ff669aecbc7a
+4fb2d7009d63
+1f9093bc107f
+)
+
+for a in $lst ; do  echo "${a[@]}" ;   done 
+
+for a in $lst ; do ( echo "${a[@]}" ; # docker -rmi "${a[@]}"  echo ; ) done 
+
+hmmm. no luck.
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-09-15[Sep-Sat]21-14PM
+
+[Docker] Remove all Docker volumes to delete the database
+
+Radu Raicea edited this page on Sep 30, 2017 · 1 revision
+
+If anything happens to the database and you can't seem to fix it, it might be best to completely delete the Docker volumes holding the database and recreating them.
+
+Deleting all the containers
+
+Before deleting the volumes, you need to delete all the existing containers using the following command (make sure the application is not running)
+
+docker rm $(docker ps -a -q) -f
+
+Deleting all the volumes
+
+Once all the containers are deleted, you can delete all the Docker volumes on your computer using the following command
+
+docker volume prune
+
+If you don't want to delete all the Docker volumes on your computer, you can search for a specific one and deleting it
+
+docker volume ls
+docker volume rm <name_of_volume>
+Recreating the volumes
+Recreating the volumes is as simple as restarting the application
+
+
+docker-compose up --build
+
+
+https://github.com/Radu-Raicea/Dockerized-Flask/wiki/%5BDocker%5D-Remove-all-Docker-volumes-to-delete-the-database
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-07-26[Jul-Thu]08-58AM
+
+
+how-to-run-docker-compose-up-d-at-system-start-up
+
+
+
+https://stackoverflow.com/questions/43671482/how-to-run-docker-compose-up-d-at-system-start-up
+
+
+
+As an addition to user39544's answer, one more type of syntax for crontab -e:
+
+@reboot sleep 26 && /usr/local/bin/docker-compose -f /path_to_your_project/docker-compose.yml up -d
+
+?? not sure if user is needed
+@reboot albe sleep 26 && /usr/local/bin/docker-compose -f /path_to_your_project/docker-compose.yml up -d
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-09-25[Sep-Tue]17-12PM
+
+Command for restarting all running docker containers?
+
+How to restart all running docker containers.. mainly looking for a shortcut instead doing docker restart containerid1 containerid2
+
+just run docker restart $(docker ps -q)
+
+Update
+
+For Docker 1.13.1 use docker restart $(docker ps -a -q) as in answer lower.
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2018-06-26[Jun-Tue]18-25PM
+
+list
+
+docker --version
+docker-compose -version
+#
+docker ps 
+docker ps -a
+docker images
+docker volume ls 
+docker network ls  
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+rebuild docker containers..
+
+docker-compose up  --build   --force-recreate   -d 
+
+file..
+
+docker-compose  -f docker-compose.prod.yml up 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+----------------------------------------------------
+Title:  .
+-----------------------2019-04-11[Apr-Thu]16-10PM
+
+https://medium.com/the-code-review/docker-run-vs-exec-deep-dive-into-their-differences-19a1041735a3
+
+run makes a new container. Use this to run a command in a new container.
+ 
+
+----------------------------------------------------
+
+=

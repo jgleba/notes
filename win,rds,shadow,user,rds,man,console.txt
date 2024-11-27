@@ -1,0 +1,5 @@
+RDS Shadow User
+
+Run this on the TS box
+
+wmic /namespace:\\root\CIMV2\TerminalServices PATH Win32_TSPermissionsSetting WHERE (TerminalName ="RDP-Tcp") CALL AddAccount "DOMAIN\GROUP",2

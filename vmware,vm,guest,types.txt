@@ -1,0 +1,1073 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE VM GUEST TYPES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-22[Mar-Fri]15-27PM 
+
+#https://vdc-repo.vmware.com/vmwb-repository/dcr-public/e1580753-930f-4c00-9105-77dd2e8913f8/98ce8e90-a51b-4e41-8dac-3e8fd5409f2b/vim.vm.GuestOsDescriptor.GuestOsIdentifier.html
+
+			
+Managed Object Types	Data Object Types	All Properties	All Methods
+
+Enum - VirtualMachineGuestOsIdentifier(vim.vm.GuestOsDescriptor.GuestOsIdentifier)
+
+Since
+    2.0
+
+
+Enum Description
+
+Guest operating system identifier.
+
+Enum Constants
+Name	Description
+almalinux_64Guest	
+
+Since
+amazonlinux2_64Guest	
+
+Since
+amazonlinux3_64Guest	
+
+Since
+asianux3_64Guest	
+
+Since
+asianux3Guest	
+
+Since
+asianux4_64Guest	
+
+Since
+asianux4Guest	
+
+Since
+asianux5_64Guest	
+
+Since
+asianux7_64Guest	
+
+Since
+asianux8_64Guest	
+
+Since
+asianux9_64Guest	
+
+Since
+centos6_64Guest	
+
+Since
+centos64Guest	
+
+Since
+centos6Guest	
+
+Since
+centos7_64Guest	
+
+Since
+centos7Guest	
+
+Since
+centos8_64Guest	
+
+Since
+centos9_64Guest	
+
+Since
+centosGuest	
+
+Since
+coreos64Guest	
+
+Since
+crxPod1Guest	
+
+Since
+darwin10_64Guest	
+
+Since
+darwin10Guest	
+
+Since
+darwin11_64Guest	
+
+Since
+darwin11Guest	
+
+Since
+darwin12_64Guest	
+
+Since
+darwin13_64Guest	
+
+Since
+darwin14_64Guest	
+
+Since
+darwin15_64Guest	
+
+Since
+darwin16_64Guest	
+
+Since
+darwin17_64Guest	
+
+Since
+darwin18_64Guest	
+
+Since
+darwin19_64Guest	
+
+Since
+darwin20_64Guest	
+
+Since
+darwin21_64Guest	
+
+Since
+darwin22_64Guest	
+
+Since
+darwin23_64Guest	
+
+Since
+darwin64Guest	
+
+Since
+darwinGuest	
+debian10_64Guest	
+
+Since
+debian10Guest	
+
+Since
+debian11_64Guest	
+
+Since
+debian11Guest	
+
+Since
+debian12_64Guest	
+
+Since
+debian12Guest	
+
+Since
+debian4_64Guest	
+
+Since
+debian4Guest	
+
+Since
+debian5_64Guest	
+
+Since
+debian5Guest	
+
+Since
+debian6_64Guest	
+
+Since
+debian6Guest	
+
+Since
+debian7_64Guest	
+
+Since
+debian7Guest	
+
+Since
+debian8_64Guest	
+
+Since
+debian8Guest	
+
+Since
+debian9_64Guest	
+
+Since
+debian9Guest	
+
+Since
+dosGuest	
+eComStation2Guest	
+
+Since
+eComStationGuest	
+
+Since
+fedora64Guest	
+
+Since
+fedoraGuest	
+
+Since
+freebsd11_64Guest	
+
+Since
+freebsd11Guest	
+
+Since
+freebsd12_64Guest	
+
+Since
+freebsd12Guest	
+
+Since
+freebsd13_64Guest	
+
+Since
+freebsd13Guest	
+
+Since
+freebsd14_64Guest	
+
+Since
+freebsd14Guest	
+
+Since
+freebsd64Guest	
+freebsdGuest	
+genericLinuxGuest	
+
+Since
+mandrakeGuest	
+
+Since
+mandriva64Guest	
+
+Since
+mandrivaGuest	
+
+Since
+netware4Guest	
+netware5Guest	
+netware6Guest	
+nld9Guest	
+oesGuest	
+openServer5Guest	
+
+Since
+openServer6Guest	
+
+Since
+opensuse64Guest	
+
+Since
+opensuseGuest	
+
+Since
+oracleLinux6_64Guest	
+
+Since
+oracleLinux64Guest	
+
+Since
+oracleLinux6Guest	
+
+Since
+oracleLinux7_64Guest	
+
+Since
+oracleLinux7Guest	
+
+Since
+oracleLinux8_64Guest	
+
+Since
+oracleLinux9_64Guest	
+
+Since
+oracleLinuxGuest	
+
+Since
+os2Guest	
+other24xLinux64Guest	
+other24xLinuxGuest	
+other26xLinux64Guest	
+other26xLinuxGuest	
+other3xLinux64Guest	
+
+Since
+other3xLinuxGuest	
+
+Since
+other4xLinux64Guest	
+
+Since
+other4xLinuxGuest	
+
+Since
+other5xLinux64Guest	
+
+Since
+other5xLinuxGuest	
+
+Since
+other6xLinux64Guest	
+
+Since
+other6xLinuxGuest	
+
+Since
+otherGuest	
+otherGuest64	
+otherLinux64Guest	
+otherLinuxGuest	
+redhatGuest	
+rhel2Guest	
+rhel3_64Guest	
+rhel3Guest	
+rhel4_64Guest	
+rhel4Guest	
+rhel5_64Guest	
+
+Since
+rhel5Guest	
+
+Since
+rhel6_64Guest	
+
+Since
+rhel6Guest	
+
+Since
+rhel7_64Guest	
+
+Since
+rhel7Guest	
+
+Since
+rhel8_64Guest	
+
+Since
+rhel9_64Guest	
+
+Since
+rockylinux_64Guest	
+
+Since
+sjdsGuest	
+sles10_64Guest	
+
+Since
+sles10Guest	
+
+Since
+sles11_64Guest	
+
+Since
+sles11Guest	
+
+Since
+sles12_64Guest	
+
+Since
+sles12Guest	
+
+Since
+sles15_64Guest	
+
+Since
+sles16_64Guest	
+
+Since
+sles64Guest	
+slesGuest	
+solaris10_64Guest	
+solaris10Guest	
+solaris11_64Guest	
+
+Since
+solaris6Guest	
+solaris7Guest	
+solaris8Guest	
+solaris9Guest	
+suse64Guest	
+suseGuest	
+turboLinux64Guest	
+
+Since
+turboLinuxGuest	
+ubuntu64Guest	
+ubuntuGuest	
+unixWare7Guest	
+
+Since
+vmkernel5Guest	
+
+Since
+vmkernel65Guest	
+
+Since
+vmkernel6Guest	
+
+Since
+vmkernel7Guest	
+
+Since
+vmkernel8Guest	
+
+Since
+vmkernelGuest	
+
+Since
+vmwarePhoton64Guest	
+
+Since
+win2000AdvServGuest	
+win2000ProGuest	
+win2000ServGuest	
+win31Guest	
+win95Guest	
+win98Guest	
+windows11_64Guest	
+
+Since
+windows12_64Guest	
+
+Since
+windows2019srv_64Guest	
+
+Since
+windows2019srvNext_64Guest	
+
+Since
+windows2022srvNext_64Guest	
+
+Since
+windows7_64Guest	
+
+Since
+windows7Guest	
+
+Since
+windows7Server64Guest	
+
+Since
+windows8_64Guest	
+
+Since
+windows8Guest	
+
+Since
+windows8Server64Guest	
+
+Since
+windows9_64Guest	
+
+Since
+windows9Guest	
+
+Since
+windows9Server64Guest	
+
+Since
+windowsHyperVGuest	
+
+Since
+winLonghorn64Guest	
+
+Since
+winLonghornGuest	
+
+Since
+winMeGuest	
+winNetBusinessGuest	
+winNetDatacenter64Guest	
+
+Since
+winNetDatacenterGuest	
+
+Since
+winNetEnterprise64Guest	
+winNetEnterpriseGuest	
+winNetStandard64Guest	
+winNetStandardGuest	
+winNetWebGuest	
+winNTGuest	
+winVista64Guest	
+winVistaGuest	
+winXPHomeGuest	
+winXPPro64Guest	
+winXPProGuest	
+
+Show WSDL type definition
+         <simpleType xmlns="http://www.w3.org/2001/XMLSchema" xmlns:sms="urn:sms" name="VirtualMachineGuestOsIdentifier">
+            <restriction base="xsd:string">
+               <enumeration value="dosGuest"/>
+               <enumeration value="win31Guest"/>
+               <enumeration value="win95Guest"/>
+               <enumeration value="win98Guest"/>
+               <enumeration value="winMeGuest"/>
+               <enumeration value="winNTGuest"/>
+               <enumeration value="win2000ProGuest"/>
+               <enumeration value="win2000ServGuest"/>
+               <enumeration value="win2000AdvServGuest"/>
+               <enumeration value="winXPHomeGuest"/>
+               <enumeration value="winXPProGuest"/>
+               <enumeration value="winXPPro64Guest"/>
+               <enumeration value="winNetWebGuest"/>
+               <enumeration value="winNetStandardGuest"/>
+               <enumeration value="winNetEnterpriseGuest"/>
+               <enumeration value="winNetDatacenterGuest"/>
+               <enumeration value="winNetBusinessGuest"/>
+               <enumeration value="winNetStandard64Guest"/>
+               <enumeration value="winNetEnterprise64Guest"/>
+               <enumeration value="winLonghornGuest"/>
+               <enumeration value="winLonghorn64Guest"/>
+               <enumeration value="winNetDatacenter64Guest"/>
+               <enumeration value="winVistaGuest"/>
+               <enumeration value="winVista64Guest"/>
+               <enumeration value="windows7Guest"/>
+               <enumeration value="windows7_64Guest"/>
+               <enumeration value="windows7Server64Guest"/>
+               <enumeration value="windows8Guest"/>
+               <enumeration value="windows8_64Guest"/>
+               <enumeration value="windows8Server64Guest"/>
+               <enumeration value="windows9Guest"/>
+               <enumeration value="windows9_64Guest"/>
+               <enumeration value="windows9Server64Guest"/>
+               <enumeration value="windows11_64Guest"/>
+               <enumeration value="windows12_64Guest"/>
+               <enumeration value="windowsHyperVGuest"/>
+               <enumeration value="windows2019srv_64Guest"/>
+               <enumeration value="windows2019srvNext_64Guest"/>
+               <enumeration value="windows2022srvNext_64Guest"/>
+               <enumeration value="freebsdGuest"/>
+               <enumeration value="freebsd64Guest"/>
+               <enumeration value="freebsd11Guest"/>
+               <enumeration value="freebsd11_64Guest"/>
+               <enumeration value="freebsd12Guest"/>
+               <enumeration value="freebsd12_64Guest"/>
+               <enumeration value="freebsd13Guest"/>
+               <enumeration value="freebsd13_64Guest"/>
+               <enumeration value="freebsd14Guest"/>
+               <enumeration value="freebsd14_64Guest"/>
+               <enumeration value="redhatGuest"/>
+               <enumeration value="rhel2Guest"/>
+               <enumeration value="rhel3Guest"/>
+               <enumeration value="rhel3_64Guest"/>
+               <enumeration value="rhel4Guest"/>
+               <enumeration value="rhel4_64Guest"/>
+               <enumeration value="rhel5Guest"/>
+               <enumeration value="rhel5_64Guest"/>
+               <enumeration value="rhel6Guest"/>
+               <enumeration value="rhel6_64Guest"/>
+               <enumeration value="rhel7Guest"/>
+               <enumeration value="rhel7_64Guest"/>
+               <enumeration value="rhel8_64Guest"/>
+               <enumeration value="rhel9_64Guest"/>
+               <enumeration value="centosGuest"/>
+               <enumeration value="centos64Guest"/>
+               <enumeration value="centos6Guest"/>
+               <enumeration value="centos6_64Guest"/>
+               <enumeration value="centos7Guest"/>
+               <enumeration value="centos7_64Guest"/>
+               <enumeration value="centos8_64Guest"/>
+               <enumeration value="centos9_64Guest"/>
+               <enumeration value="oracleLinuxGuest"/>
+               <enumeration value="oracleLinux64Guest"/>
+               <enumeration value="oracleLinux6Guest"/>
+               <enumeration value="oracleLinux6_64Guest"/>
+               <enumeration value="oracleLinux7Guest"/>
+               <enumeration value="oracleLinux7_64Guest"/>
+               <enumeration value="oracleLinux8_64Guest"/>
+               <enumeration value="oracleLinux9_64Guest"/>
+               <enumeration value="suseGuest"/>
+               <enumeration value="suse64Guest"/>
+               <enumeration value="slesGuest"/>
+               <enumeration value="sles64Guest"/>
+               <enumeration value="sles10Guest"/>
+               <enumeration value="sles10_64Guest"/>
+               <enumeration value="sles11Guest"/>
+               <enumeration value="sles11_64Guest"/>
+               <enumeration value="sles12Guest"/>
+               <enumeration value="sles12_64Guest"/>
+               <enumeration value="sles15_64Guest"/>
+               <enumeration value="sles16_64Guest"/>
+               <enumeration value="nld9Guest"/>
+               <enumeration value="oesGuest"/>
+               <enumeration value="sjdsGuest"/>
+               <enumeration value="mandrakeGuest"/>
+               <enumeration value="mandrivaGuest"/>
+               <enumeration value="mandriva64Guest"/>
+               <enumeration value="turboLinuxGuest"/>
+               <enumeration value="turboLinux64Guest"/>
+               <enumeration value="ubuntuGuest"/>
+               <enumeration value="ubuntu64Guest"/>
+               <enumeration value="debian4Guest"/>
+               <enumeration value="debian4_64Guest"/>
+               <enumeration value="debian5Guest"/>
+               <enumeration value="debian5_64Guest"/>
+               <enumeration value="debian6Guest"/>
+               <enumeration value="debian6_64Guest"/>
+               <enumeration value="debian7Guest"/>
+               <enumeration value="debian7_64Guest"/>
+               <enumeration value="debian8Guest"/>
+               <enumeration value="debian8_64Guest"/>
+               <enumeration value="debian9Guest"/>
+               <enumeration value="debian9_64Guest"/>
+               <enumeration value="debian10Guest"/>
+               <enumeration value="debian10_64Guest"/>
+               <enumeration value="debian11Guest"/>
+               <enumeration value="debian11_64Guest"/>
+               <enumeration value="debian12Guest"/>
+               <enumeration value="debian12_64Guest"/>
+               <enumeration value="asianux3Guest"/>
+               <enumeration value="asianux3_64Guest"/>
+               <enumeration value="asianux4Guest"/>
+               <enumeration value="asianux4_64Guest"/>
+               <enumeration value="asianux5_64Guest"/>
+               <enumeration value="asianux7_64Guest"/>
+               <enumeration value="asianux8_64Guest"/>
+               <enumeration value="asianux9_64Guest"/>
+               <enumeration value="opensuseGuest"/>
+               <enumeration value="opensuse64Guest"/>
+               <enumeration value="fedoraGuest"/>
+               <enumeration value="fedora64Guest"/>
+               <enumeration value="coreos64Guest"/>
+               <enumeration value="vmwarePhoton64Guest"/>
+               <enumeration value="other24xLinuxGuest"/>
+               <enumeration value="other26xLinuxGuest"/>
+               <enumeration value="otherLinuxGuest"/>
+               <enumeration value="other3xLinuxGuest"/>
+               <enumeration value="other4xLinuxGuest"/>
+               <enumeration value="other5xLinuxGuest"/>
+               <enumeration value="other6xLinuxGuest"/>
+               <enumeration value="genericLinuxGuest"/>
+               <enumeration value="other24xLinux64Guest"/>
+               <enumeration value="other26xLinux64Guest"/>
+               <enumeration value="other3xLinux64Guest"/>
+               <enumeration value="other4xLinux64Guest"/>
+               <enumeration value="other5xLinux64Guest"/>
+               <enumeration value="other6xLinux64Guest"/>
+               <enumeration value="otherLinux64Guest"/>
+               <enumeration value="solaris6Guest"/>
+               <enumeration value="solaris7Guest"/>
+               <enumeration value="solaris8Guest"/>
+               <enumeration value="solaris9Guest"/>
+               <enumeration value="solaris10Guest"/>
+               <enumeration value="solaris10_64Guest"/>
+               <enumeration value="solaris11_64Guest"/>
+               <enumeration value="os2Guest"/>
+               <enumeration value="eComStationGuest"/>
+               <enumeration value="eComStation2Guest"/>
+               <enumeration value="netware4Guest"/>
+               <enumeration value="netware5Guest"/>
+               <enumeration value="netware6Guest"/>
+               <enumeration value="openServer5Guest"/>
+               <enumeration value="openServer6Guest"/>
+               <enumeration value="unixWare7Guest"/>
+               <enumeration value="darwinGuest"/>
+               <enumeration value="darwin64Guest"/>
+               <enumeration value="darwin10Guest"/>
+               <enumeration value="darwin10_64Guest"/>
+               <enumeration value="darwin11Guest"/>
+               <enumeration value="darwin11_64Guest"/>
+               <enumeration value="darwin12_64Guest"/>
+               <enumeration value="darwin13_64Guest"/>
+               <enumeration value="darwin14_64Guest"/>
+               <enumeration value="darwin15_64Guest"/>
+               <enumeration value="darwin16_64Guest"/>
+               <enumeration value="darwin17_64Guest"/>
+               <enumeration value="darwin18_64Guest"/>
+               <enumeration value="darwin19_64Guest"/>
+               <enumeration value="darwin20_64Guest"/>
+               <enumeration value="darwin21_64Guest"/>
+               <enumeration value="darwin22_64Guest"/>
+               <enumeration value="darwin23_64Guest"/>
+               <enumeration value="vmkernelGuest"/>
+               <enumeration value="vmkernel5Guest"/>
+               <enumeration value="vmkernel6Guest"/>
+               <enumeration value="vmkernel65Guest"/>
+               <enumeration value="vmkernel7Guest"/>
+               <enumeration value="vmkernel8Guest"/>
+               <enumeration value="amazonlinux2_64Guest"/>
+               <enumeration value="amazonlinux3_64Guest"/>
+               <enumeration value="crxPod1Guest"/>
+               <enumeration value="rockylinux_64Guest"/>
+               <enumeration value="almalinux_64Guest"/>
+               <enumeration value="otherGuest"/>
+               <enumeration value="otherGuest64"/>
+            </restriction>
+         </simpleType>
+
+
+Top of page			
+Managed Object Types	Data Object Types	All Properties	All Methods
+
+© 2023 VMware, Inc. All rights reserved.
+Revision 14 March 2023  |  vSphere 8.0U1  |  vSphere vCenter SMS API 8.0U1 
+
+
+==
+
+
+
+
+
+#https://vdc-repo.vmware.com/vmwb-repository/dcr-public/fa5d1ee7-fad5-4ebf-b150-bdcef1d38d35/a5e46da1-9b96-4f0c-a1d0-7b8f3ebfd4f5/doc/vim.vm.GuestOsDescriptor.GuestOsIdentifier.html
+
+
+==
+
+
+
+
+
+
+
+
+			
+Managed Object Types	Data Object Types	All Properties	All Methods
+
+Enum - VirtualMachineGuestOsIdentifier(vim.vm.GuestOsDescriptor.GuestOsIdentifier)
+
+
+Enum Description
+
+Guest operating system identifier.
+
+Enum Constants
+Name	Description
+asianux3_64Guest	Asianux Server 3 (64 bit)
+
+Since vSphere API 4.0
+asianux3Guest	Asianux Server 3
+
+Since vSphere API 4.0
+asianux4_64Guest	Asianux Server 4 (64 bit)
+
+Since vSphere API 4.0
+asianux4Guest	Asianux Server 4
+
+Since vSphere API 4.0
+asianux5_64Guest	Asianux Server 5 (64 bit)
+
+Since vSphere API 6.0
+asianux7_64Guest	Asianux Server 7 (64 bit)
+
+Since vSphere API 6.5
+centos6_64Guest	CentOS 6 (64-bit)
+
+Since vSphere API 6.5
+centos64Guest	CentOS 4/5 (64-bit)
+
+Since vSphere API 4.1
+centos6Guest	CentOS 6
+
+Since vSphere API 6.5
+centos7_64Guest	CentOS 7 (64-bit)
+
+Since vSphere API 6.5
+centos7Guest	CentOS 7
+
+Since vSphere API 6.5
+centosGuest	CentOS 4/5
+
+Since vSphere API 4.1
+coreos64Guest	CoreOS Linux (64 bit)
+
+Since vSphere API 6.0
+darwin10_64Guest	Mac OS 10.6 (64 bit)
+
+Since vSphere API 5.0
+darwin10Guest	Mac OS 10.6
+
+Since vSphere API 5.0
+darwin11_64Guest	Mac OS 10.7 (64 bit)
+
+Since vSphere API 5.0
+darwin11Guest	Mac OS 10.7
+
+Since vSphere API 5.0
+darwin12_64Guest	Mac OS 10.8 (64 bit)
+
+Since vSphere API 5.5
+darwin13_64Guest	Mac OS 10.9 (64 bit)
+
+Since vSphere API 5.5
+darwin14_64Guest	Mac OS 10.10 (64 bit)
+
+Since vSphere API 6.0
+darwin15_64Guest	Mac OS 10.11 (64 bit)
+
+Since vSphere API 6.5
+darwin16_64Guest	Mac OS 10.12 (64 bit)
+
+Since vSphere API 6.5
+darwin64Guest	Mac OS 10.5 (64 bit)
+
+Since vSphere API 4.0
+darwinGuest	Mac OS 10.5
+debian10_64Guest	Debian GNU/Linux 10 (64 bit)
+
+Since vSphere API 6.5
+debian10Guest	Debian GNU/Linux 10
+
+Since vSphere API 6.5
+debian4_64Guest	Debian GNU/Linux 4 (64 bit)
+
+Since vSphere API 4.0
+debian4Guest	Debian GNU/Linux 4
+
+Since vSphere API 4.0
+debian5_64Guest	Debian GNU/Linux 5 (64 bit)
+
+Since vSphere API 4.0
+debian5Guest	Debian GNU/Linux 5
+
+Since vSphere API 4.0
+debian6_64Guest	Debian GNU/Linux 6 (64 bit)
+
+Since vSphere API 5.0
+debian6Guest	Debian GNU/Linux 6
+
+Since vSphere API 5.0
+debian7_64Guest	Debian GNU/Linux 7 (64 bit)
+
+Since vSphere API 5.5
+debian7Guest	Debian GNU/Linux 7
+
+Since vSphere API 5.5
+debian8_64Guest	Debian GNU/Linux 8 (64 bit)
+
+Since vSphere API 6.0
+debian8Guest	Debian GNU/Linux 8
+
+Since vSphere API 6.0
+debian9_64Guest	Debian GNU/Linux 9 (64 bit)
+
+Since vSphere API 6.5
+debian9Guest	Debian GNU/Linux 9
+
+Since vSphere API 6.5
+dosGuest	MS-DOS.
+eComStation2Guest	eComStation 2.0
+
+Since vSphere API 5.0
+eComStationGuest	eComStation 1.x
+
+Since vSphere API 4.1
+fedora64Guest	Fedora Linux (64 bit)
+
+Since vSphere API 5.1
+fedoraGuest	Fedora Linux
+
+Since vSphere API 5.1
+freebsd64Guest	FreeBSD x64
+freebsdGuest	FreeBSD
+genericLinuxGuest	Other Linux
+
+Since vSphere API 5.5
+mandrakeGuest	Mandrake Linux
+
+Since vSphere API 5.5
+mandriva64Guest	Mandriva Linux (64 bit)
+
+Since vSphere API 4.0
+mandrivaGuest	Mandriva Linux
+
+Since vSphere API 4.0
+netware4Guest	Novell NetWare 4
+netware5Guest	Novell NetWare 5.1
+netware6Guest	Novell NetWare 6.x
+nld9Guest	Novell Linux Desktop 9
+oesGuest	Open Enterprise Server
+openServer5Guest	SCO OpenServer 5
+
+Since vSphere API 4.0
+openServer6Guest	SCO OpenServer 6
+
+Since vSphere API 4.0
+opensuse64Guest	OpenSUSE Linux (64 bit)
+
+Since vSphere API 5.1
+opensuseGuest	OpenSUSE Linux
+
+Since vSphere API 5.1
+oracleLinux6_64Guest	Oracle 6 (64-bit)
+
+Since vSphere API 6.5
+oracleLinux64Guest	Oracle Linux 4/5 (64-bit)
+
+Since vSphere API 4.1
+oracleLinux6Guest	Oracle 6
+
+Since vSphere API 6.5
+oracleLinux7_64Guest	Oracle 7 (64-bit)
+
+Since vSphere API 6.5
+oracleLinux7Guest	Oracle 7
+
+Since vSphere API 6.5
+oracleLinuxGuest	Oracle Linux 4/5
+
+Since vSphere API 4.1
+os2Guest	OS/2
+other24xLinux64Guest	Linux 2.4x Kernel (64 bit) (experimental)
+other24xLinuxGuest	Linux 2.4x Kernel
+other26xLinux64Guest	Linux 2.6x Kernel (64 bit) (experimental)
+other26xLinuxGuest	Linux 2.6x Kernel
+other3xLinux64Guest	Linux 3.x Kernel (64 bit)
+
+Since vSphere API 5.5
+other3xLinuxGuest	Linux 3.x Kernel
+
+Since vSphere API 5.5
+otherGuest	Other Operating System
+otherGuest64	Other Operating System (64 bit) (experimental)
+otherLinux64Guest	Linux (64 bit) (experimental)
+otherLinuxGuest	Linux 2.2x Kernel
+redhatGuest	Red Hat Linux 2.1
+rhel2Guest	Red Hat Enterprise Linux 2
+rhel3_64Guest	Red Hat Enterprise Linux 3 (64 bit)
+rhel3Guest	Red Hat Enterprise Linux 3
+rhel4_64Guest	Red Hat Enterprise Linux 4 (64 bit)
+rhel4Guest	Red Hat Enterprise Linux 4
+rhel5_64Guest	Red Hat Enterprise Linux 5 (64 bit) (experimental)
+
+Since VI API 2.5
+rhel5Guest	Red Hat Enterprise Linux 5
+
+Since VI API 2.5
+rhel6_64Guest	Red Hat Enterprise Linux 6 (64 bit)
+
+Since vSphere API 4.0
+rhel6Guest	Red Hat Enterprise Linux 6
+
+Since vSphere API 4.0
+rhel7_64Guest	Red Hat Enterprise Linux 7 (64 bit)
+
+Since vSphere API 5.5
+rhel7Guest	Red Hat Enterprise Linux 7
+
+Since vSphere API 5.5
+sjdsGuest	Sun Java Desktop System
+sles10_64Guest	Suse Linux Enterprise Server 10 (64 bit) (experimental)
+
+Since VI API 2.5
+sles10Guest	Suse linux Enterprise Server 10
+
+Since VI API 2.5
+sles11_64Guest	Suse Linux Enterprise Server 11 (64 bit)
+
+Since vSphere API 4.0
+sles11Guest	Suse linux Enterprise Server 11
+
+Since vSphere API 4.0
+sles12_64Guest	Suse Linux Enterprise Server 12 (64 bit)
+
+Since vSphere API 5.5
+sles12Guest	Suse linux Enterprise Server 12
+
+Since vSphere API 5.5
+sles64Guest	Suse Linux Enterprise Server 9 (64 bit)
+slesGuest	Suse Linux Enterprise Server 9
+solaris10_64Guest	Solaris 10 (64 bit) (experimental)
+solaris10Guest	Solaris 10 (32 bit) (experimental)
+solaris11_64Guest	Solaris 11 (64 bit)
+
+Since vSphere API 5.0
+solaris6Guest	Solaris 6
+solaris7Guest	Solaris 7
+solaris8Guest	Solaris 8
+solaris9Guest	Solaris 9
+suse64Guest	Suse Linux (64 bit)
+suseGuest	Suse Linux
+turboLinux64Guest	Turbolinux (64 bit)
+
+Since vSphere API 4.0
+turboLinuxGuest	Turbolinux
+ubuntu64Guest	Ubuntu Linux (64 bit)
+ubuntuGuest	Ubuntu Linux
+unixWare7Guest	SCO UnixWare 7
+
+Since vSphere API 4.0
+vmkernel5Guest	VMware ESX 5
+
+Since vSphere API 5.0
+vmkernel65Guest	VMware ESX 6.5
+
+Since vSphere API 6.5
+vmkernel6Guest	VMware ESX 6
+
+Since vSphere API 6.0
+vmkernelGuest	VMware ESX 4
+
+Since vSphere API 5.0
+vmwarePhoton64Guest	VMware Photon (64 bit)
+
+Since vSphere API 6.5
+win2000AdvServGuest	Windows 2000 Advanced Server
+win2000ProGuest	Windows 2000 Professional
+win2000ServGuest	Windows 2000 Server
+win31Guest	Windows 3.1
+win95Guest	Windows 95
+win98Guest	Windows 98
+windows7_64Guest	Windows 7 (64 bit)
+
+Since vSphere API 4.0
+windows7Guest	Windows 7
+
+Since vSphere API 4.0
+windows7Server64Guest	Windows Server 2008 R2 (64 bit)
+
+Since vSphere API 4.0
+windows8_64Guest	Windows 8 (64 bit)
+
+Since vSphere API 5.0
+windows8Guest	Windows 8
+
+Since vSphere API 5.0
+windows8Server64Guest	Windows 8 Server (64 bit)
+
+Since vSphere API 5.0
+windows9_64Guest	Windows 10 (64 bit)
+
+Since vSphere API 6.0
+windows9Guest	Windows 10
+
+Since vSphere API 6.0
+windows9Server64Guest	Windows 10 Server (64 bit)
+
+Since vSphere API 6.0
+windowsHyperVGuest	Windows Hyper-V
+
+Since vSphere API 5.5
+winLonghorn64Guest	Windows Longhorn (64 bit) (experimental)
+
+Since VI API 2.5
+winLonghornGuest	Windows Longhorn (experimental)
+
+Since VI API 2.5
+winMeGuest	Windows Millenium Edition
+winNetBusinessGuest	Windows Small Business Server 2003
+winNetDatacenter64Guest	Windows Server 2003, Datacenter Edition (64 bit) (experimental)
+
+Since VI API 2.5
+winNetDatacenterGuest	Windows Server 2003, Datacenter Edition
+
+Since VI API 2.5
+winNetEnterprise64Guest	Windows Server 2003, Enterprise Edition (64 bit)
+winNetEnterpriseGuest	Windows Server 2003, Enterprise Edition
+winNetStandard64Guest	Windows Server 2003, Standard Edition (64 bit)
+winNetStandardGuest	Windows Server 2003, Standard Edition
+winNetWebGuest	Windows Server 2003, Web Edition
+winNTGuest	Windows NT 4
+winVista64Guest	Windows Vista (64 bit)
+winVistaGuest	Windows Vista
+winXPHomeGuest	Windows XP Home Edition
+winXPPro64Guest	Windows XP Professional Edition (64 bit)
+winXPProGuest	Windows XP Professional
+
+Show WSDL type definition
+
+Top of page			
+Managed Object Types	Data Object Types	All Properties	All Methods
+
+© 2006-2016 VMware, Inc. All rights reserved.
+Revision 15-Nov-2016  |  Version 6.5 

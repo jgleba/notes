@@ -1,0 +1,52 @@
+====================================
+MIKROTIK, ROUTEROS, ROS, CHR, UPDATE
+071619
+====================================
+
+NOT CORRECT FOR ME
+#https://forum.mikrotik.com/viewtopic.php?t=134691
+#https://www.reddit.com/r/mikrotik/comments/4lqv9e/cloud_hosted_router_keeps_crashing_on_esxi/
+
+download chr, vmdk
+
+#https://mikrotik.com/download
+
+place vmdk in vm folder
+turn off vm
+change hdd location to point to new vmdk
+boot vm
+will be blank mikrotik, no interfaces at all
+add main lan
+connect via winbox
+restore router from .backup file
+check
+
+SHOULD WORK, NOT WORKING
+
+ESXI 6.0 GETTING ERROR ABOUT SPACE
+NOTHING I DO WORKS TO RESTORE CONFIG AFTER ATTACHING NEW VMDK
+
+#https://forum.mikrotik.com/viewtopic.php?t=135883
+
+NO HELP RIGHT NOW
+HAVE DONE IN THE PAST, DIDNT MAKE NOTES, NOT SURE HOW I GOT IT TO WORK BEFORE
+
+#https://forum.mikrotik.com/viewtopic.php?t=105277
+
+vmkfstools -i chr-6.45.1.vmdk chr-6.45.1-new.vmdk -d thin
+vmkfstools -X 128M chr-6.45.1-new.vmdk
+
+HMM NOTHING WORKING
+KERNEL PANIC WHEN DO ANY RESIZING OR RESTORE BACKUP
+
+#https://forum.mikrotik.com/viewtopic.php?t=129376
+
+#https://wiki.mikrotik.com/wiki/Manual:CHR_VMWare_installation
+
+STILL NOT WORKING
+
+CANT FIND ANY GOOD ANSWER
+
+PAUSING, MAY JUST REBUILD FROM SCRATCH
+
+GAVE UP, REBUILT BOTH FROM SCRATCH, TOOK AN HOUR

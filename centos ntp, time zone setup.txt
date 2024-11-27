@@ -1,0 +1,56 @@
+CENTOS INSTALL NTP AND SET TIME ZONE
+====================================
+
+SET TIME ZONE
+==
+sudo cp /usr/share/zoneinfo/America/Toronto /etc/localtime
+
+INSTALL AND CONFIGURE NTP
+==
+sudo yum install ntp -y
+
+sudo nano /etc/ntpd.conf
+
+# With the default settings below, ntpd will only synchronize your clock.
+#
+# For details, see:
+# - the ntp.conf man page
+# - http://support.ntp.org/bin/view/Support/GettingStarted
+# - https://wiki.archlinux.org/index.php/Network_Time_Protocol_daemon
+
+# Associate to public NTP pool servers; see http://www.pool.ntp.org/
+server 0.pool.ntp.org
+server 1.pool.ntp.org
+server 2.pool.ntp.org
+
+# Only allow read-only access from localhost
+restrict default noquery nopeer
+restrict 127.0.0.1
+restrict ::1
+
+# Location of drift and log files
+driftfile /var/lib/ntp/ntp.drift
+logfile /var/log/ntp.log
+
+# NOTE: If you run dhcpcd and have lines like 'restrict' and 'fudge' appearing
+# here, be sure to add '-Y -N' to the dhcpcd_ethX variables in /etc/conf.d/net
+
+sudo systemctl enable ntpd && sudo service ntpd start 
+
+======================
+CENTOS CHANGE TIMEZONE
+======================
+
+https://ma.ttias.be/changing-the-time-and-timezone-settings-on-centos-or-rhel/
+
+Changing the time and timezone settings on CentOS or RHEL
+
+# mv /etc/localtime /etc/localtime.backup
+# ln -s /usr/share/zoneinfo/Europe/Brussels /etc/localtime
+
+==
+032521
+ANOTHER WAY, WORKED WELL
+==
+
+sudo timedatectl set-timezone America/Toronto

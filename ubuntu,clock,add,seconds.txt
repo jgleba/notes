@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU 22.04 CLOCK SECONDS ADD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-11-12[Nov-Tue]20-51PM 
+
+##https://askubuntu.com/questions/1405005/how-to-show-seconds-on-the-clock-in-22-04-lts-gnome/1405006
+
+gsettings set org.gnome.desktop.interface clock-show-seconds true

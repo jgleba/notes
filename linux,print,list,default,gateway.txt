@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX PRINT DEFAULT GATEWAY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-08-27[Aug-Sat]12-13PM 
+
+##https://www.unixmen.com/how-to-find-default-gateway-in-linux/
+
+route -n

@@ -1,0 +1,203 @@
+=================================================================================================================
+TRYING TO GET DOCKER ALPINE IMAGE WORKING WITH WEBAPPS, USING SED TO CHANGE/MANIPULATE DOCKER COMPOSE ROUGH NOTES
+=================================================================================================================
+
+===
+REF
+===
+
+https://www.golinuxhub.com/2017/12/sed-add-or-append-character-at.html
+https://stackoverflow.com/questions/15978504/add-text-at-the-end-of-each-line
+https://www.google.com/search?source=hp&ei=kod-XMbgH4ivUur0rKAC&q=sed+append+to+end+of+line&btnK=Google+Search&oq=sed+append+to+&gs_l=psy-ab.3.0.0l10.1049.4872..5445...4.0..0.152.2155.0j16......0....1..gws-wiz.....0..0i131j0i10j0i22i30.balzP56y204
+https://linuxconfig.org/add-character-to-the-beginning-of-each-line-using-sed
+https://unix.stackexchange.com/questions/99350/how-to-insert-text-before-the-first-line-of-a-file
+https://linux.die.net/man/1/sed
+https://www.gnu.org/software/sed/manual/sed.html
+https://backreference.org/2010/02/20/using-different-delimiters-in-sed/
+https://unix.stackexchange.com/questions/66115/multi-line-replace
+https://unix.stackexchange.com/questions/303644/how-can-i-use-sed-or-ex-to-replace-a-block-multi-line-code-with-new-block-of-t
+https://stackoverflow.com/questions/13043998/sed-replace-a-block-of-text
+https://www.cyberciti.biz/faq/sed-howto-remove-lines-paragraphs/
+https://superuser.com/questions/440013/how-to-replace-part-of-a-text-file-between-markers-with-another-text-file
+https://serverfault.com/questions/810510/how-to-replace-an-entire-nginx-block-with-sed
+https://unix.stackexchange.com/questions/303644/how-can-i-use-sed-or-ex-to-replace-a-block-multi-line-code-with-new-block-of-t/303665
+http://fahdshariff.blogspot.com/2012/12/sed-mutli-line-replacement-between-two.html
+https://superuser.com/questions/440013/how-to-replace-part-of-a-text-file-between-markers-with-another-text-file
+https://askubuntu.com/questions/533221/how-do-i-replace-multiple-lines-with-single-word-in-fileinplace-replace
+https://unix.stackexchange.com/questions/303644/how-can-i-use-sed-or-ex-to-replace-a-block-multi-line-code-with-new-block-of-t
+https://stackoverflow.com/questions/13043998/sed-replace-a-block-of-text
+https://unix.stackexchange.com/questions/303644/how-can-i-use-sed-or-ex-to-replace-a-block-multi-line-code-with-new-block-of-t/303665
+https://www.cyberciti.biz/faq/sed-howto-remove-lines-paragraphs/
+https://www.google.ca/search?q=sed+replace+block&ei=fON9XNfKFKTijwSar5-YBw&start=10&sa=N&ved=0ahUKEwjX-J_D_ungAhUk8YMKHZrXB3MQ8NMDCKQB&biw=1920&bih=966
+
+sed -i '/marker1/,/marker2/s/.*/new text (code)/' filename
+
+sed -i '/marker1/,/marker2/s/.*/new text (code)/' filename
+
+
+lead='^### BEGIN GENERATED CONTENT$'
+tail='^### END GENERATED CONTENT$'
+sed -e "/$lead/,/$tail/{ /$lead/{p; r insert_file
+        }; /$tail/p; d }"  existing_file
+		
+		
+lead='^DocumentRoot "/var/www/localhost/htdocs"$'
+tail='^    Require all granted$'
+sed -i "s|/$lead/,/$tail/| /$lead/{p; r insert_file
+        }; /$tail/p; d }"  existing_file
+
+
+		
+		
+sed -i '/location.*php/{:a;N;/fastcgi_pass/{N;N;d};/  }/b;ba}' <filename>
+cat >> <filename> << EOF
+location ~ .php$ {
+    fastcgi_pass   unix:/var/run/php5-fpm.sock ;
+    fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+    include        fastcgi_params;
+    access_log     /var/log/nginx/$SITE_URL.cache.log cache;
+    fastcgi_cache_key "$mobile$scheme$request_method$host$request_uri";
+    fastcgi_cache_bypass $skip_cache;
+    fastcgi_no_cache $skip_cache;
+    fastcgi_cache WORDPRESS;
+    add_header X-Cache-Status $upstream_cache_status ;
+}
+EOF
+
+
+
+
+
+
+
+
+sed -i '1i\
+This is a\
+new block of\
+code
+1,/$r = session_start();/d' file
+
+
+
+sed -i '1i\
+DocumentRoot "/var/www/localhost/htdocs"\
+<Directory "/var/www/localhost/htdocs">\
+    #\
+    # Possible values for the Options directive are "None", "All",\
+    # or any combination of:\
+    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews\
+    #\
+    # Note that "MultiViews" must be named *explicitly* --- "Options All"\
+    # doesn't give it to you.\
+    #\
+    # The Options directive is both complicated and important.  Please see\
+    # http://httpd.apache.org/docs/2.4/mod/core.html#options\
+    # for more information.\
+    #\
+    Options Indexes FollowSymLinks\
+\
+    #\
+    # AllowOverride controls what directives may be placed in .htaccess files.\
+    # It can be "All", "None", or any combination of the keywords:\
+    #   AllowOverride FileInfo AuthConfig Limit\
+    #\
+    AllowOverride None\
+\
+    #\
+    # Controls who can get stuff from this server.\
+    #\
+    Require all granted\
+</Directory>
+1,/DocumentRoot "/var/www/localhost/htdocs"/d' /etc/apache2/httpd.conf
+
+
+
+
+
+sed -i '1i\
+This is a\
+new block of\
+code
+1,/$r = session_start();/d' file 
+
+
+<Directory "/var/www/localhost/cgi-bin">
+    AllowOverride None
+
+
+sed -i '1i\
+<Directory "/var/www/localhost/cgi-bin">\
+    AllowOverride none\
+1,/<Directory "/var/www/localhost/cgi-bin">/d' /etc/apache2/httpd.conf
+
+
+
+sed -i '/marker1/,/marker2/c\
+New text 1\
+New text 2' filename
+
+
+
+
+sed '/<Directory "/var/www/localhost/cgi-bin">/ i /tmp/insert.txt' < /etc/apache2/httpd.conf
+
+
+
+
+sed -i '/marker1/,/marker2/c\
+New text 1\
+New text 2' filename
+
+
+sed -i '/DocumentRoot "/var/www/localhost/htdocs"/,/marker2/c\
+New text 1\
+New text 2' filename
+
+
+
+
+
+
+sed -n '/foo/{:a;N;/bar/!ba;N;s/.*\n/REPLACEMENT\n/};p' file
+
+
+
+
+sed -n '/DocumentRoot "/var/www/localhost/htdocs"/{:a;N;/bar/!ba;N;s/.*\n/REPLACEMENT\n/};p' /etc/apache2/httpd.conf
+
+
+
+
+sed -i '/marker1/c New text 1' filename
+
+
+
+sed -i '/MAXD 0.5/a SEIG' file
+
+
+Use sed's insert (i) option which will insert the text in the preceding line.
+
+sed '1 i\
+
+Question author's update:
+
+To make it edit the file in place - with GNU sed - I had to add the -i option:
+
+sed -i '1 i\anything' file
+
+Also syntax
+
+sed  -i '1i text' filename
+
+
+
+
+
+sed 's/^/#/' file.txt
+
+sed -i '264 s/^/##/' /etc/apache2/httpd.conf
+
+RUN echo $'All of your\n\
+multiline that you ever wanted\n\
+into a dockerfile\n'\
+>> /etc/example.conf

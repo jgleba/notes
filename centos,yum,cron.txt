@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS YUM CRON
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-04[Feb-Fri]14-57PM 
+
+##https://www.cyberciti.biz/faq/fedora-automatic-update-retrieval-installation-with-cron/
+##https://www.redhat.com/sysadmin/using-yum-cron

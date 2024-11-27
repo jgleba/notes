@@ -1,0 +1,30 @@
+dnscmd <dns server name> /zoneadd "yourzone.com" /primary /file yourzone.com.dns /load
+
+dnscmd localhost /zoneadd "jgleba.com" /primary /file jgleba.com.zone /load
+
+
+dnscmd /zoneexport jgleba.com jgleba.com.txt
+dnscmd /zoneexport jgleba.tk jgleba.tk.txt
+dnscmd /zoneexport ab3w.tk ab3w.tk.txt
+dnscmd /zoneexport ab3w.com ab3w.com.txt
+dnscmd /zoneexport myvdesktop.com myvdesktop.com.txt
+dnscmd /zoneexport twosheeep.com twosheeep.com.txt
+dnscmd /zoneexport twothreeee.com twothreeee.com.txt
+dnscmd /zoneexport web.local web.local.txt
+dnscmd /zoneexport hv.local hv.local.txt
+dnscmd /zoneexport greeen.info greeen.info.txt
+
+==
+121021
+==
+
+dnscmd localhost /zoneadd "jgleba.com" /primary /file jgleba.com.txt /load
+dnscmd localhost /zoneadd "ab3w.com" /primary /file ab3w.com.txt /load
+dnscmd localhost /zoneadd "gleba.ca" /primary /file gleba.ca.txt /load
+dnscmd localhost /zoneadd "greeen.info" /primary /file greeen.info.txt /load
+dnscmd localhost /zoneadd "hv.local" /primary /file hv.local.txt /load
+dnscmd localhost /zoneadd "myvdesktop.com" /primary /file myvdesktop.com.txt /load
+dnscmd localhost /zoneadd "twosheeep.com" /primary /file twosheeep.com.txt /load
+dnscmd localhost /zoneadd "twothreeee.com" /primary /file twothreeee.com.txt /load
+dnscmd localhost /zoneadd "web.local" /primary /file web.local.txt /load
+

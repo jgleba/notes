@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  IMPACKET SMB SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-03[Aug-Mon]23-45PM 
+
+sudo impacket-smbserver -smb2support share /path/to/share/dir
+
+sudo impacket-smbserver -smb2support share $(pwd)
+

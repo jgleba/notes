@@ -1,0 +1,3 @@
+wallabag db config location
+
+/var/www/html/wallabag/inc/poche/config.inc.php

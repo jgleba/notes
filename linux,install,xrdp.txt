@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL XDRP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-21[Nov-Sun]12-49PM 
+
+##INSTALL
+
+sudo yum install xrdp
+sudo apt-get install xrdp
+
+##START AND ENABLE
+
+sudo systemctl enable xrdp
+sudo systemctl restart xrdp
+
+##FIREWALL
+
+sudo ufw allow 3389/tcp

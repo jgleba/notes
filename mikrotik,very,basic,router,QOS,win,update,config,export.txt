@@ -1,0 +1,81 @@
+/interface wireless security-profiles
+set [ find default=yes ] supplicant-identity=MikroTik
+/ip pool
+add name=pool1 ranges=172.29.0.100-172.29.0.200
+/ip dhcp-server
+add address-pool=pool1 disabled=no interface=ether2 name=dhcp1
+/queue type
+add kind=pcq name=download pcq-classifier=dst-address pcq-dst-address6-mask=64 pcq-rate=50M pcq-src-address6-mask=64
+add kind=pcq name=upload pcq-classifier=src-address pcq-dst-address6-mask=64 pcq-rate=10M pcq-src-address6-mask=64
+/queue tree
+add max-limit=50M name=download parent=global queue=default
+add max-limit=10M name=upload parent=global queue=default
+add name=p1_in packet-mark=p1_in parent=download priority=1 queue=download
+add max-limit=45M name=p8_in packet-mark=other_in parent=download queue=download
+add name=p1_out packet-mark=p1_out parent=upload priority=1 queue=upload
+add max-limit=8M name=p8_out packet-mark=other_out parent=upload queue=upload
+add max-limit=100k name=p7_in packet-mark=p7_in parent=download priority=7 queue=download
+add max-limit=100k name=p7_out packet-mark=p7_out parent=upload priority=7 queue=upload
+/ip address
+add address=172.29.0.254/24 interface=ether2 network=172.29.0.0
+/ip dhcp-client
+add dhcp-options=hostname,clientid disabled=no interface=ether1
+/ip dhcp-server network
+add address=172.29.0.0/24 dns-server=172.29.0.254 gateway=172.29.0.254
+/ip dns
+set allow-remote-requests=yes
+/ip firewall address-list
+add address=104.193.69.0/24 list=MicrosoftUpdateIPs
+add address=13.107.4.50 list=MicrosoftUpdateIPs
+/ip firewall filter
+add action=drop chain=input dst-port=53 in-interface=ether1 protocol=tcp
+add action=drop chain=input dst-port=53 in-interface=ether1 protocol=udp
+add action=accept chain=input in-interface=ether1 protocol=icmp
+add action=accept chain=input dst-port=8291 in-interface=ether1 protocol=tcp
+add action=accept chain=input dst-port=161 protocol=udp
+add action=accept chain=input comment="Accept broadcast" dst-address-type=broadcast in-interface=ether1
+add action=accept chain=input connection-state=established in-interface=ether1
+add action=accept chain=input connection-state=related in-interface=ether1
+add action=log chain=input in-interface=ether1 log-prefix=DENY:
+add action=drop chain=input in-interface=ether1
+/ip firewall mangle
+add action=mark-packet chain=prerouting comment=youtube content=youtube dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=youtube dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=youtube dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=youtube dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=windowsupdate content=windowsupdate dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=windowsupdate dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=windowsupdate dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=windowsupdate dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=update.microsoft content=update.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=update.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=update.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=update.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=download.microsoft content=download.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=download.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=download.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=download.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=ntservicepack content=ntservicepack dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=ntservicepack dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=ntservicepack dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=ntservicepack dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=MicrosoftUpdateIPs new-packet-mark=p7_in passthrough=yes src-address-list=MicrosoftUpdateIPs
+add action=mark-packet chain=forward new-packet-mark=p7_in passthrough=yes src-address-list=MicrosoftUpdateIPs
+add action=mark-packet chain=postrouting dst-address-list=MicrosoftUpdateIPs new-packet-mark=p7_out passthrough=yes
+add action=mark-packet chain=output dst-address-list=MicrosoftUpdateIPs new-packet-mark=p7_out passthrough=yes
+/ip firewall nat
+add action=masquerade chain=srcnat dst-address=0.0.0.0/0 out-interface=ether1
+add action=netmap chain=dstnat dst-port=4000 in-interface=ether1 protocol=tcp to-addresses=172.29.0.200 to-ports=3389
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set www disabled=yes
+set ssh disabled=yes
+set api disabled=yes
+set api-ssl disabled=yes
+/system identity
+set name=JRBTest
+/system ntp client
+set enabled=yes
+/tool bandwidth-server
+set enabled=no

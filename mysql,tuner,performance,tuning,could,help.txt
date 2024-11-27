@@ -1,0 +1,274 @@
+============
+MYSQL TUNER
+111919
+============
+
+##https://github.com/major/MySQLTuner-perl
+
+sudo wget http://mysqltuner.pl/ -O mysqltuner.pl
+sudo wget https://raw.githubusercontent.com/major/MySQLTuner-perl/master/basic_passwords.txt -O basic_passwords.txt
+sudo wget https://raw.githubusercontent.com/major/MySQLTuner-perl/master/vulnerabilities.csv -O vulnerabilities.csv
+
+==
+jsql
+==
+
+[user@sql mysqltuner]$ ls
+basic_passwords.txt  mysqltuner.pl  vulnerabilities.csv
+[user@sql mysqltuner]$ sudo ./mysqltuner.pl
+ >>  MySQLTuner 1.7.19 - Major Hayden <major@mhtx.net>
+ >>  Bug reports, feature requests, and downloads at http://mysqltuner.com/
+ >>  Run with '--help' for additional options and output filtering
+
+[--] Skipped version check for MySQLTuner script
+Please enter your MySQL administrative login: jgleba
+Please enter your MySQL administrative password: [OK] Currently running supporte d MySQL version 10.1.40-MariaDB
+[OK] Operating on 64-bit architecture
+
+-------- Log file Recommendations ---------------------------------------------- --------------------
+[!!] Log file  doesn't exist
+
+-------- Storage Engine Statistics --------------------------------------------- --------------------
+[--] Status: +Aria +CSV +InnoDB +MEMORY +MRG_MyISAM +MyISAM +PERFORMANCE_SCHEMA  +SEQUENCE
+[--] Data in MyISAM tables: 347.7K (Tables: 47)
+[--] Data in InnoDB tables: 25.2M (Tables: 314)
+[OK] Total fragmented tables: 0
+
+-------- Analysis Performance Metrics ------------------------------------------ --------------------
+[--] innodb_stats_on_metadata: OFF
+[OK] No stat updates during querying INFORMATION_SCHEMA.
+
+-------- Security Recommendations ---------------------------------------------- --------------------
+[OK] There are no anonymous accounts for any database users
+[OK] All database users have passwords assigned
+[!!] User 'JWiki@%' does not specify hostname restrictions.
+[!!] User 'dbuser@%' does not specify hostname restrictions.
+[!!] User 'jgleba@%' does not specify hostname restrictions.
+[!!] User 'jipam@%' does not specify hostname restrictions.
+[!!] User 'jkanboard@%' does not specify hostname restrictions.
+[!!] User 'josticket@%' does not specify hostname restrictions.
+[!!] User 'jpaste@%' does not specify hostname restrictions.
+[!!] User 'jwallabag@%' does not specify hostname restrictions.
+[!!] User 'jwiki@%' does not specify hostname restrictions.
+[--] There are 620 basic passwords in the list.
+
+-------- CVE Security Recommendations -------------------------------------------
+[OK] NO SECURITY CVE FOUND FOR YOUR VERSION
+
+-------- Performance Metrics ----------------------------------------------------
+[--] Up for: 1d 22h 38m 56s (220K q [1.311 qps], 29K conn, TX: 126M, RX: 28M)
+[--] Reads / Writes: 86% / 14%
+[--] Binary logging is disabled
+[--] Physical Memory     : 739.5M
+[--] Max MySQL memory    : 3.3G
+[--] Other process memory: 0B
+[--] Total buffers: 425.0M global + 2.9M per thread (1000 max threads)
+[--] P_S Max memory usage: 0B
+[--] Galera GCache Max memory usage: 0B
+[OK] Maximum reached memory usage: 436.6M (59.05% of installed RAM)
+[!!] Maximum possible memory usage: 3.3G (451.00% of installed RAM)
+[!!] Overall possible memory usage with other process exceeded memory
+[OK] Slow queries: 0% (0/220K)
+[OK] Highest usage of available connections: 0% (4/1000)
+[OK] Aborted connections: 0.00%  (1/29351)
+[!!] Query cache may be disabled by default due to mutex contention.
+[!!] Query cache efficiency: 0.0% (0 cached / 103K selects)
+[OK] Query cache prunes per day: 0
+[OK] Sorts requiring temporary tables: 0% (0 temp sorts / 9K sorts)
+[OK] No joins without indexes
+[!!] Temporary tables created on disk: 39% (6K on disk / 15K total)
+[!!] Thread cache is disabled
+[OK] Table cache hit rate: 86% (822 open / 955 opened)
+[!!] table_definition_cache(400) is lower than number of tables(532)
+[OK] Open file limit used: 4% (216/5K)
+[OK] Table locks acquired immediately: 100% (139K immediate / 139K locks)
+
+-------- Performance schema -----------------------------------------------------
+[--] Performance schema is disabled.
+[--] Memory used by P_S: 0B
+[--] Sys schema isn't installed.
+
+-------- ThreadPool Metrics -----------------------------------------------------
+[--] ThreadPool stat is enabled.
+[--] Thread Pool Size: 1 thread(s).
+[--] Using default value is good enough for your version (10.1.40-MariaDB)
+
+-------- MyISAM Metrics ---------------------------------------------------------
+[!!] Key buffer used: 18.3% (24M used / 134M cache)
+[OK] Key buffer size / total MyISAM indexes: 128.0M/295.0K
+[OK] Read Key buffer hit rate: 99.0% (3K cached / 39 reads)
+
+-------- InnoDB Metrics ---------------------------------------------------------
+[--] InnoDB is enabled.
+[--] InnoDB Thread Concurrency: 0
+[OK] InnoDB File per table is activated
+[OK] InnoDB buffer pool / data size: 128.0M/25.2M
+[!!] Ratio InnoDB log file size / InnoDB Buffer pool size (75 %): 48.0M * 2/128.0
+[!!] InnoDB buffer pool <= 1G and Innodb_buffer_pool_instances(!=1).
+[--] InnoDB Buffer Pool Chunk Size not used or defined in your version
+[OK] InnoDB Read buffer efficiency: 99.92% (3310508 hits/ 3313176 total)
+[!!] InnoDB Write Log efficiency: 51.93% (14847 hits/ 28590 total)
+[OK] InnoDB log waits: 0.00% (0 waits / 13743 writes)
+
+-------- AriaDB Metrics ---------------------------------------------------------
+[--] AriaDB is enabled.
+[OK] Aria pagecache size / total Aria indexes: 128.0M/1B
+[!!] Aria pagecache hit rate: 92.9% (80K cached / 5K reads)
+
+-------- TokuDB Metrics ---------------------------------------------------------
+[--] TokuDB is disabled.
+
+-------- XtraDB Metrics ---------------------------------------------------------
+[--] XtraDB is disabled.
+
+-------- Galera Metrics ---------------------------------------------------------
+[--] Galera is disabled.
+
+-------- Replication Metrics ----------------------------------------------------
+[--] Galera Synchronous replication: NO
+[--] No replication slave(s) for this server.
+[--] Binlog format: STATEMENT
+[--] XA support enabled: ON
+[--] Semi synchronous replication Master: Not Activated
+[--] Semi synchronous replication Slave: Not Activated
+[--] This is a standalone server
+
+-------- Recommendations --------------------------------------------------------
+General recommendations:
+    Restrict Host for 'JWiki'@% to JWiki@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='JWiki' AND host ='%
+    Restrict Host for 'dbuser'@% to dbuser@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='dbuser' AND host ='
+    Restrict Host for 'jgleba'@% to jgleba@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jgleba' AND host ='
+    Restrict Host for 'jipam'@% to jipam@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jipam' AND host ='%
+    Restrict Host for 'jkanboard'@% to jkanboard@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jkanboard' AND host
+    Restrict Host for 'josticket'@% to josticket@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='josticket' AND host
+    Restrict Host for 'jpaste'@% to jpaste@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jpaste' AND host ='
+    Restrict Host for 'jwallabag'@% to jwallabag@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jwallabag' AND host
+    Restrict Host for 'jwiki'@% to jwiki@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jwiki' AND host ='%
+    Reduce your overall MySQL memory footprint for system stability
+    Dedicate this server to your database for highest performance.
+    When making adjustments, make tmp_table_size/max_heap_table_size equal
+    Reduce your SELECT DISTINCT queries which have no LIMIT clause
+    Set thread_cache_size to 4 as a starting value
+    Performance schema should be activated for better diagnostics
+    Consider installing Sys schema from https://github.com/mysql/mysql-sys for My
+    Consider installing Sys schema from https://github.com/good-dba/mariadb-sys f
+    Before changing innodb_log_file_size and/or innodb_log_files_in_group read th
+Variables to adjust:
+  *** MySQL's maximum memory usage is dangerously high ***
+  *** Add RAM before increasing MySQL buffer variables ***
+    query_cache_size (=0)
+    query_cache_type (=0)
+    query_cache_limit (> 1M, or use smaller result sets)
+    tmp_table_size (> 16M)
+    max_heap_table_size (> 16M)
+    thread_cache_size (start at 4)
+    table_definition_cache(400) > 532 or -1 (autosizing if supported)
+    performance_schema = ON enable PFS
+    innodb_log_file_size should be (=16M) if possible, so InnoDB total log files
+    innodb_buffer_pool_instances (=1)
+
+
+==
+webcl db3
+==
+
+OK] Binlog format is in ROW mode.
+[OK] InnoDB flush log at each commit is disabled for Galera.
+[--] Read consistency mode :OFF
+[OK] Galera WsREP is enabled.
+[OK] Galera Cluster address is defined: gcomm://172.16.3.220,172.16.3.221,172.16.3.222
+[--] There are 3 nodes in wsrep_cluster_address
+[OK] There are 3 nodes in wsrep_cluster_size.
+[OK] All cluster nodes detected.
+[OK] Galera Cluster name is defined: dbcl1
+[OK] Galera Node name is defined: webcldb3
+[!!] Galera Notify command is not defined.
+[!!] Galera SST method is not xtrabackup based.
+[OK] TOI is default mode for upgrade.
+[--] Max WsRep message : 2.0G
+[OK] Node is connected
+[OK] Node is ready
+[--] Cluster status :Primary
+[OK] Galera cluster is consistent and ready for operations
+[OK] Node and whole cluster at the same level: 5f4c081a-b0fe-11e7-83a6-2f1f31a026c7
+[OK] Node is synced with whole cluster.
+[!!] There is 25 certification failure(s)detected.
+
+-------- Replication Metrics -----------------------------------------------------------------------
+[--] Galera Synchronous replication: YES
+[--] No replication slave(s) for this server.
+[--] Binlog format: ROW
+[--] XA support enabled: ON
+[--] Semi synchronous replication Master: Not Activated
+[--] Semi synchronous replication Slave: Not Activated
+[--] This is a standalone server
+
+-------- Recommendations ---------------------------------------------------------------------------
+General recommendations:
+    Control warning line(s) into /var/lib/mysql/webcldb3.err file
+    Control error line(s) into /var/lib/mysql/webcldb3.err file
+    Set up a Secure Password for haproxy_check@172.16.3.231 user: SET PASSWORD FOR 'haproxy_check'@'SpecificDNSorIp' = PASSWORD('secure_password');
+    Set up a Secure Password for haproxy_check@172.16.3.232 user: SET PASSWORD FOR 'haproxy_check'@'SpecificDNSorIp' = PASSWORD('secure_password');
+    Restrict Host for 'cluster_user'@% to cluster_user@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='cluster_user' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'dbuser'@% to dbuser@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='dbuser' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'jgleba'@% to jgleba@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='jgleba' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'wp1'@% to wp1@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='wp1' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'wpcl'@% to wpcl@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='wpcl' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'wpgreeen'@% to wpgreeen@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='wpgreeen' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'wptwosheeep'@% to wptwosheeep@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='wptwosheeep' AND host ='%'; FLUSH PRIVILEGES;
+    Restrict Host for 'wptwothree'@% to wptwothree@SpecificDNSorIp
+    UPDATE mysql.user SET host ='SpecificDNSorIp' WHERE user='wptwothree' AND host ='%'; FLUSH PRIVILEGES;
+    1 CVE(s) found for your MySQL release. Consider upgrading your version !
+    Configure your accounts with ip or subnets only, then update your configuration with skip-name-resolve=1
+    When making adjustments, make tmp_table_size/max_heap_table_size equal
+    Reduce your SELECT DISTINCT queries which have no LIMIT clause
+    Set thread_cache_size to 4 as a starting value
+    Increase table_open_cache gradually to avoid file descriptor limits
+    Read this before increasing table_open_cache over 64: https://bit.ly/1mi7c4C
+    Read this before increasing for MariaDB https://mariadb.com/kb/en/library/optimizing-table_open_cache/
+    This is MyISAM only table_cache scalability problem, InnoDB not affected.
+    See more details here: https://bugs.mysql.com/bug.php?id=49177
+    This bug already fixed in MySQL 5.7.9 and newer MySQL versions.
+    Beware that open_files_limit (16364) variable
+    should be greater than table_open_cache (2000)
+    Performance schema should be activated for better diagnostics
+    Consider installing Sys schema from https://github.com/mysql/mysql-sys for MySQL
+    Consider installing Sys schema from https://github.com/good-dba/mariadb-sys for MariaDB
+    Before changing innodb_log_file_size and/or innodb_log_files_in_group read this: https://bit.ly/2TcGgtU
+    Ensure that all table(s) are InnoDB tables for Galera replication
+Variables to adjust:
+    query_cache_size (=0)
+    query_cache_type (=0)
+    query_cache_size (> 16M)
+    tmp_table_size (> 16M)
+    max_heap_table_size (> 16M)
+    thread_cache_size (start at 4)
+    table_open_cache (> 2000)
+    table_definition_cache(400) > 1719 or -1 (autosizing if supported)
+    performance_schema = ON enable PFS
+    innodb_buffer_pool_size (>= 7.5G) if possible.
+    innodb_log_file_size should be (=32M) if possible, so InnoDB total log files size equals to 25% of buffer pool size.
+    innodb_buffer_pool_instances (=1)
+    wsrep_slave_threads = 8
+    gcs.fc_limit= wsrep_slave_threads * 5
+    Set wsrep_slave_threads to 1 in case of HA_ERR_FOUND_DUPP_KEY crash on slave
+    gcs.fc_limit= wsrep_slave_threads * 5
+    gcs.fc_factor=0.8
+    set up parameter wsrep_notify_cmd to be notify
+    set up parameter wsrep_sst_method to xtrabackup based parameter

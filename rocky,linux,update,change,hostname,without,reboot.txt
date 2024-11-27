@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX UPDATE HOSTNAME WITHOUT REBOOT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-06[Mar-Wed]09-40AM 
+
+##https://wiki.crowncloud.net/?How_to_Change_Hostname_in_Rocky_Linux_9
+
+change hostname in /etc/hostname
+
+sudo nano /etc/hostname
+
+sudo systemctl restart systemd-hostnamed

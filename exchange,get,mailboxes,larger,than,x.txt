@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EXCHANGE GET MAILBOXES LARGER THAN X
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-03[Mar-Wed]15-10PM 
+
+##https://www.ntweekly.com/2017/07/28/powershell-code-get-mailboxes-with-size-greater-than-x/
+
+get-mailbox -resultsize unlimited | Get-MailboxStatistics | where {$_.TotalItemSize -ge 2GB} | Export-Csv -path C:\j\0\usersmore2gb.csv

@@ -1,0 +1,16 @@
+sudo systemctl restart php-fpm
+sudo systemctl restart nginx
+
+sudo nano /etc/php-fpm.d/www.conf
+
+
+sudo cat /var/log/php-fpm/error.log
+
+sudo ls -la /var/log/php-fpm/
+
+
+
+sudo cat /var/log/php-fpm/error.log-20190901
+
+
+pm.max_children = 20

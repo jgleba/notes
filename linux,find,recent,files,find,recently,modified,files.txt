@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX FIND - SHOW MOST RECENTLY MODIFIED FILES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-06-14[Jun-Sun]20-42PM 
+
+##https://unix.stackexchange.com/questions/33850/list-of-recently-modified-files
+
+find -type f -mtime -7

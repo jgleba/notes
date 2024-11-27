@@ -1,0 +1,32 @@
+/queue type
+add kind=pcq name=download pcq-classifier=dst-address pcq-dst-address6-mask=64 pcq-rate=50M pcq-src-address6-mask=64
+add kind=pcq name=upload pcq-classifier=src-address pcq-dst-address6-mask=64 pcq-rate=10M pcq-src-address6-mask=64
+/queue tree
+add max-limit=14M name=upload parent=global queue=upload
+add max-limit=60M name=download parent=global queue=download
+add max-limit=200k name=p7_in packet-mark=p7_in parent=download priority=7 queue=download
+add max-limit=50k name=p7_out packet-mark=p7_out parent=upload priority=7 queue=upload
+/ip firewall address-list
+add address=104.193.69.0/24 list=MicrosoftUpdateIPs
+add address=13.107.4.50 list=MicrosoftUpdateIPs
+/ip firewall mangle
+add action=mark-packet chain=prerouting comment=windowsupdate content=windowsupdate dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=windowsupdate dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=windowsupdate dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=windowsupdate dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=update.microsoft content=update.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=update.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=update.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=update.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=download.microsoft content=download.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=download.microsoft dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=download.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=download.microsoft dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=ntservicepack content=ntservicepack dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=forward content=ntservicepack dst-port=80,443 new-packet-mark=p7_in passthrough=yes protocol=tcp
+add action=mark-packet chain=postrouting content=ntservicepack dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=output content=ntservicepack dst-port=80,443 new-packet-mark=p7_out passthrough=yes protocol=tcp
+add action=mark-packet chain=prerouting comment=MicrosoftUpdateIPs new-packet-mark=p7_in passthrough=yes src-address-list=MicrosoftUpdateIPs
+add action=mark-packet chain=forward new-packet-mark=p7_in passthrough=yes src-address-list=MicrosoftUpdateIPs
+add action=mark-packet chain=postrouting dst-address-list=MicrosoftUpdateIPs new-packet-mark=p7_out passthrough=yes
+add action=mark-packet chain=output dst-address-list=MicrosoftUpdateIPs new-packet-mark=p7_out passthrough=yes

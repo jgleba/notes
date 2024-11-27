@@ -1,0 +1,17 @@
+worked on centos, pbx - sept 11, 2015
+
+==
+
+vi /etc/sysctl.conf
+
+add
+
+net.ipv6.conf.all.disable_ipv6 = 1
+
+can add
+
+net.ipv6.conf.default.disable_ipv6 = 1
+
+or specific adapter
+
+net.ipv6.conf.enp0s3.disable_ipv6 = 1

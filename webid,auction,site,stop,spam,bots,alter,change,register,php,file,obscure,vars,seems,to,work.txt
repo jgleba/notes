@@ -1,0 +1,27 @@
+====================
+WEBID SPAM BOTS STOP
+072319
+====================
+
+#http://www.webidsupport.com/forums/index.php?threads/spambot-blocker-block-spam-registered-users-that-list-ads.8311/
+
+==
+TRYING
+==
+
+Files:
+./register.php
+./Your theme template file >>> register.tpl
+
+Find anything that says "$TPL_name_hidden" or "$TPL_name" on both files and replace the part that says "name" with something unique like "$TPL_myusersoso_hidden" or "$TPL_myusersoso" . They must be the same regardless if it ends with _hidden or not.
+The spambot knows the form name field is named "$TPL_name_hidden" or "$TPL_name" because it was designed to breach free scripts like webid, wordpress, joomla, phpbb and so on.
+
+$TPL_name_hidden to $TPL_nameabc123_hidden
+$TPL_name to $TPL_nameabc123
+
+4 occurences in register.php for $TPL_name_hidden
+1 occurences in register.php for TPL_name
+2 occurences in register.tpl for TPL_name
+
+SEEMS TO WORK, DOESNT BREAK WEBID SO FAR
+

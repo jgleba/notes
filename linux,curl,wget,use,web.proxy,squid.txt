@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX ROCKY LINUX, CURL WGET USE PROXY SQUID
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-06-15[Jun-Sat]14-42PM 
+
+#https://www.server-world.info/en/note?os=Rocky_Linux_8&p=squid&f=2
+
+cat ~/.curlrc
+
+proxy=ip:3128
+
+==
+
+tail -n 4 /etc/wgetrc
+
+http_proxy = ip:3128
+https_proxy = ip:3128
+ftp_proxy = ip:3128
+

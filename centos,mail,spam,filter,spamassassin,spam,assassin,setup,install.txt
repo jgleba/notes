@@ -1,0 +1,97 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS SPAMASSASSIN AND POSTFIX SETUP AS SPAM FILTER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-15[Jan-Wed]12-29PM 
+
+##http://forums.sentora.org/showthread.php?tid=1118
+##https://janikarhunen.fi/tackle-spam-with-spamassassin-on-centos-7-and-postfix
+
+==
+INSTALL
+==
+
+sudo yum install -y spamassassin
+
+==
+CONFIGURE
+==
+
+sudo nano /etc/mail/spamassassin/local.cf
+
+#You have to add the following lines, if already there just uncoment #
+
+rewrite_header Subject ***SPAM***
+required_hits 5.0
+report_safe 0
+required_score 5
+
+==
+SPAMD USER
+==
+
+sudo groupadd spamd
+sudo useradd -g spamd -s /bin/false -d /var/log/spamassassin spamd
+sudo chown spamd:spamd /var/log/spamassassin
+
+==
+POSTFIX CONFIG
+==
+
+sudo nano /etc/postfix/master.cf
+
+MAKE LOOK LIKE THIS:
+
+About line 11 in top add after smtpd
+Code:
+-o content_filter=spamassassin
+Full line looks like that
+Code:
+smtp      inet  n       -       n       -       -       smtpd -o content_filter=spamassassin
+
+==
+
+And the end - bottom add
+
+spamassassin unix - n n - - pipe flags=R user=spamd argv=/usr/bin/spamc -e /usr/sbin/sendmail -oi -f ${sender} ${recipient}
+
+==
+UPDATE SPAMASSASSIN RULES
+==
+
+sudo sa-update --nogpg
+
+==
+RESTART SPAMASSASSIN AND POSTFIX
+==
+
+sudo systemctl restart spamassassin
+sudo systemctl restart postfix
+
+sudo systemctl enable spamassassin
+
+==
+AUTO UPDATE SPAM DEFS
+==
+
+Automate the spam definition updates
+Automatic definition updates with cron (run every night at 01.00)
+
+00 01 * * * root /bin/sa-update && /sbin/service spamassassin restart
+
+Check, that it has been run:
+
+grep "sa-update" /var/log/cron
+
+
+
+WAS HAVING ISSUES WITH RECEIVING MAIL FROM GMAIL
+
+THIS WHAT FIXED
+
+cat /etc/postfix/main.cf
+...
+
+relay_domains = jgleba.com,ab3w.com,myvdesktop.com
+smtpd_relay_restrictions = permit_mynetworks,permit_sasl_authenticated,reject_unauth_destination

@@ -1,0 +1,54 @@
+sudo ip link set ens160 mtu 9000
+
+sudo ip link set ens32 mtu 9000
+
+sudo ip link set eno16777984 mtu 9000
+
+
+valid_lft forever preferred_lft forever
+2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:0c:29:c2:45:92 brd ff:ff:ff:ff:ff:ff
+    inet 172.31.0.15/24 brd 172.31.0.255 scope global noprefixroute ens160
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fec2:4592/64 scope link
+       valid_lft forever preferred_lft forever
+3: eno16777728: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:c2:45:7e brd ff:ff:ff:ff:ff:ff
+    inet 172.16.3.15/24 brd 172.16.3.255 scope global noprefixroute eno16777728
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fec2:457e/64 scope link
+       valid_lft forever preferred_lft forever
+4: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:c2:45:88 brd ff:ff:ff:ff:ff:ff
+    inet 172.16.0.15/24 brd 172.16.0.255 scope global noprefixroute ens34
+       valid_lft forever preferred_lft forever
+    inet6 fe80::20c:29ff:fec2:4588/64 scope link
+       valid_lft forever preferred_lft forever
+
+	   
+sudo ip link set ens160 mtu 9000
+sudo ip link set eno16777728 mtu 9000
+sudo ip link set ens34 mtu 9000
+
+sudo ip link set eno16777984 mtu 9000
+sudo ip link set eno33557248 mtu 9000
+
+sudo nano /etc/sysconfig/network-scripts/ifcfg-Wired_connection_2
+sudo nano /etc/sysconfig/network-scripts/ifcfg-Wired_connection_1
+sudo nano /etc/sysconfig/network-scripts/ifcfg-eno16777728
+
+sudo nano /etc/sysconfig/network-scripts/ifcfg-eno16777984
+
+sudo nano /etc/sysconfig/network-scripts/ifcfg-eno16777984
+
+sudo ip link set ens160 mtu 9000
+sudo ip link set ens192 mtu 9000
+
+MTU=9000
+
+
+eno16777984
+
+eno33557248
+
+sudo ip link set eno33557248 mtu 9000

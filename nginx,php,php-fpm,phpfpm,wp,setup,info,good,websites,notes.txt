@@ -1,0 +1,19 @@
+https://bobcares.com/blog/php-fpm-tuning-high-load/
+https://dev.to/jake/configuring-php-fpm-for-high-network-traffic-47le
+
+https://tecadmin.net/setup-httpd-with-fastcgi-and-php-on-centos-redhat/
+https://www.stephenrlang.com/2018/02/centos-7-apache-2-4-with-php-fpm/
+https://www.server-world.info/en/note?os=CentOS_7&p=httpd&f=19
+
+https://ewan.im/900/10-million-hits-a-day-with-wordpress-using-a-15-server
+
+https://webhostinggeeks.com/howto/setup-wordpress-nginx-with-fastcgi-caching-in-centos-7/
+
+https://www.reddit.com/r/Wordpress/comments/9yeycx/server_setup_for_best_performance_wordpress_site/
+Currently best stack for WordPress:
+Ubuntu LTS + Nginx + Fastcgi Cache + PHP-FPM + PHP OPcache + MySQL/MariaDB + Redis object cache
+literally this stack cannot be beat when configured correctly and pretty simple to do
+there are LEMP stack auto-installers can do this....
+e.g. SlickStack or Centminmod (EasyEngine v3 / WordOps backup option)
+P.s. for shared server you can add Apache/control panel if *must*
+

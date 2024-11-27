@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GET WINDOWS VERSION FROM USB DRIVE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-11-10[Nov-Wed]15-11PM 
+
+dism /Get-WimInfo /WimFile:d:\sources\install.wim /index:1
+
+dism /Get-WimInfo /WimFile:d:\sources\install.esd

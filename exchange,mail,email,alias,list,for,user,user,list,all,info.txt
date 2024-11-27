@@ -1,0 +1,56 @@
+=====================================================
+EXCHANGE LIST ALL EMAIL ADDRESSES, AND ALIASES, INFO
+=====================================================
+
+get all email addresses, aliases, and who owns
+
+https://social.technet.microsoft.com/Forums/ie/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy
+
+get-mailbox | select -expand emailaddresses alias
+
+another one
+
+https://unlockpowershell.wordpress.com/2010/01/27/powershell-get-mailbox-display-smtp-addresses/
+
+Get-Mailbox -ResultSize Unlimited |Select-Object DisplayName,ServerName,PrimarySmtpAddress, @{Name=“EmailAddresses”;Expression={$_.EmailAddresses |Where-Object {$_.PrefixString -ceq “smtp”} | ForEach-Object {$_.SmtpAddress}}}
+
+CAME UP WITH BY MYSELF, BEST, GETS ALL ALIASES FOR USER - 031719
+
+Get-Mailbox j | fl | findstr smtp
+
+IMPROVING - 061619
+
+Get-Mailbox j | Select PrimarySmtpAddress,EmailAddresses | fl
+
+GET ALL MAILBOXES, WITH DATE LAST ACCESSED AND SIZE
+
+Get-Mailbox –identity * | select DisplayName,PrimarySmtpAddress,@{n="MailboxSize";e={(Get-MailboxStatistics $_.PrimarySmtpAddress.ToString()).TotalItemSize}},@{n="ItemCount";e={(Get-MailboxStatistics $_.PrimarySmtpAddress.ToString()).ItemCount}},@{n="Last Accessed";e={(Get-MailboxStatistics $_.PrimarySmtpAddress.ToString()).LastLogonTime}}|ft
+
+111321
+
+DOESNT OUTPUT CSV
+
+get-mailbox | ForEach-Object { 
+
+ $host.UI.Write("Blue", $host.UI.RawUI.BackGroundColor, "`nUser Name: " + $_.DisplayName+"`n")
+
+ for ($i=0;$i -lt $_.EmailAddresses.Count; $i++)
+ {
+    $address = $_.EmailAddresses[$i]
+    
+    $host.UI.Write("Blue", $host.UI.RawUI.BackGroundColor, $address.AddressString.ToString()+"`t")
+ 
+    if ($address.IsPrimaryAddress)
+    { 
+    $host.UI.Write("Green", $host.UI.RawUI.BackGroundColor, "Primary Email Address`n")
+    }
+   else
+   {
+    $host.UI.Write("Green", $host.UI.RawUI.BackGroundColor, "Alias`n")
+    }
+ }
+}  | Export-Csv -NoTypeInformation c:\tmp\alias.csv
+
+==
+
+ldifde -f c:\tmp\emailaddresses.txt -d “dc=domain,dc=local” -l proxyaddresses -r “(proxyaddresses=*smtp:*@*)”

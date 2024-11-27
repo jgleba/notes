@@ -1,0 +1,10 @@
+stream {
+upstream rds_udp {
+    server 172.16.3.11:3391;
+}
+server {
+    listen 3391;
+    proxy_pass rds_udp;
+    proxy_connect_timeout   2s;
+}
+}

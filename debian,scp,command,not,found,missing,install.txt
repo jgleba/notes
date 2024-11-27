@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INTSTALL SCP ON DEBIAN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-08-19[Aug-Fri]08-57AM 
+
+sudo apt-get update
+
+sudo apt-get install openssh-client
+
+jgleba@corplt106-10:/sbin$ scp
+usage: scp [-346ABCpqrTv] [-c cipher] [-F ssh_config] [-i identity_file]
+            [-J destination] [-l limit] [-o ssh_option] [-P port]
+            [-S program] source ... target

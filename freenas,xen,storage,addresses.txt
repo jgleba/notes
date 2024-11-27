@@ -1,0 +1,21 @@
+10.11.11.160:/mnt/pool1/testdata/ABCInsurance/PBX
+
+10.11.11.160:/mnt/pool1/testdata/ABCInsurance/W8-1
+
+10.11.11.160:/mnt/pool1/testdata/ABCInsurance/W8-2
+
+10.11.12.160:/mnt/pool1/testdata/ABCInsurance/W8-3
+
+10.11.11.160:/mnt/pool1/testdata/ABCInsurance/WS12-1
+
+10.11.11.160:/mnt/pool1/testdata/ISO
+
+10.11.11.150:/mnt/pool1-150/p1testvm/
+
+10.11.11.160:/mnt/pool1/testdata/DEFInsurance/TS1
+
+testing new primary nas 150
+
+10.11.11.150:/mnt/pool1-150/p1testvm/W8a
+
+10.11.11.150:/mnt/pool2-150/p2testvm/W8b

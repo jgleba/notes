@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU POSTFIX EMAIL ERROR
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-10-22[Oct-Tue]19-48PM 
+
+fresh install of postfix on ubuntu 2204
+
+not able to relay emails to postfix relay
+
+bouncing, no error, only says undeliverable
+
+no log at other postfix relay, not even a connect entry
+
+was these lines in config that were the issue:
+
+cat /etc/postfix/main.cf
+
+#default_transport = error
+#relay_transport = error
+

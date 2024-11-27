@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  How to Install z-push in Ubuntu 18.04
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-12-31[Dec-Thu]19-19PM 
+
+##https://www.howtoinstall.me/ubuntu/18-04/z-push/
+
+Install z-push by entering the following commands in the terminal:
+
+sudo apt update
+sudo apt install z-push

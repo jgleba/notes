@@ -1,0 +1,14 @@
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ESXi RESTART MANAGEMENT AGENTS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2019-12-22[Dec-Sun]13-01PM 
+
+##https://kb.vmware.com/s/article/1003490
+
+==
+USING SSH
+==
+
+/etc/init.d/hostd restart
+/etc/init.d/vpxa restart

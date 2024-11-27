@@ -1,0 +1,29 @@
+smb in linux
+==
+
+smb: \> recurse
+smb: \> prompt
+smb: \> mput trunk*
+
+=
+
+SEND FILE
+smb: \> put FILE
+
+SEND FOLDER
+smb: \> tarmode
+smb: \> recurse
+smb: \> prompt
+smb: \> mput FOLDER (without \ )
+
+GET FILE
+smb: \> get FILE
+
+GET FOLDER
+smb: \> tarmode
+smb: \> recurse
+smb: \> prompt
+smb: \> mget FOLDER\ (with \ ) 
+
+==
+

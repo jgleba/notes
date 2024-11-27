@@ -1,0 +1,3 @@
+find ./sourcedir/ -maxdepth 3 | zip -@ destinationfile.zip
+
+find ./sourcedir/ -maxdepth 3 -size -200k | zip -@ destinationfile.zip

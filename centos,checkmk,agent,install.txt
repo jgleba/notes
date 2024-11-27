@@ -1,0 +1,96 @@
+======================
+INSTALL CHECK MK AGENT
+======================
+
+UBUNTU
+==
+
+sudo scp -rv user@172.16.3.15:/home/x/dat/short/j/softw/1win/7checkmk/check_mk-agent-1.2.4p3-1.noarch.rpm ./
+
+sudo wget http://mathias-kettner.de/download/check-mk-agent_1.2.5i5p3-2_all.deb
+sudo dpkg -i check* 
+
+sudo wget http://mathias-kettner.com/download/check-mk-agent_1.2.4p3-2_all.deb
+sudo dpkg -i check* 
+
+sudo apt-get install -y xinetd check-mk-agent
+sudo nano /etc/xinetd.d/check_mk
+sudo /lib/systemd/systemd-sysv-install enable xinetd
+
+CENTOS
+==
+sudo wget http://mathias-kettner.com/download/check_mk-agent-1.2.4p3-1.noarch.rpm
+sudo wget http://mathias-kettner.com/download/check_mk-agent-1.2.4.noarch.rpm
+sudo yum install check_mk-agent-1.2.4p3-1.noarch.rpm
+
+==
+
+sudo scp -rv user@172.16.3.15:/home/x/dat/short/j/softw/1win/7checkmk/check_mk-agent-1.2.4p3-1.noarch.rpm ./
+
+sudo scp -rv user@172.16.3.15:/home/x/dat/short/j/softw/7checkmk/128/check-mk-agent-1.2.8p27-1.noarch.rpm ./
+
+==
+
+\\172.16.0.107\j\softw\7checkmk\128
+
+
+##MOST CURRENT, WORKS BEST
+
+sudo yum install -y epel-release
+sudo yum install -y xinetd check-mk-agent
+sudo nano /etc/xinetd.d/check-mk-agent
+sudo service xinetd start; sudo chkconfig xinetd on
+
+sudo wget http://mathias-kettner.de/download/check_mk-1.1.12p7.tar.gz
+
+sudo wget http://mathias-kettner.com/download/check_mk-agent-1.2.2p3-1.noarch.rpm
+
+sudo tar -xvzf check_mk-1.1.12p7.tar.gz
+
+sudo nano /etc/xinetd.d/check_mk
+
+FIREWALL TO ALLOW CHECKMK
+==
+sudo iptables -A INPUT -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 6556 -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport 6556 -j ACCEPT
+sudo /usr/sbin/iptables-save
+su root
+iptables-save > /etc/network/iptables.rules
+iptables-save > /etc/iptables/rules.v4
+
+**WORKED FOR iREDMAIL CHECKMK - DEC26, 2017
+sudo iptables -A IN_iredmail_allow -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 6556 -j ACCEPT
+sudo iptables-save
+
+sudo firewall-cmd --zone=iredmail --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=iredmail --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+
+**WORKED FOR CLOUDRON CHECKMK - DEC26, 2017 - KIND OF  - CREATED SCRIPT IN /j/bin AND USED CRON TO FORCE ON BOOT - WONT WORK ANYMORE DEC 31 2017
+sudo iptables -D CLOUDRON -p all -j DROP
+sudo iptables -A CLOUDRON -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A CLOUDRON -p udp --dport 6556 -j ACCEPT
+sudo iptables -A CLOUDRON -p all -j DROP
+sudo iptables-save
+
+sudo firewall-cmd --zone=public --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+sudo ufw allow 6556
+
+==
+042920
+
+INSTALL ON XENSERVER
+
+==
+
+sudo scp -rv user@172.16.3.15:/home/x/dat/short/j/softw/1win/7checkmk/128/check-mk-agent-1.2.8p27-1.noarch.rpm ./
+sudo scp -rv user@172.31.0.15:/home/x/dat/short/j/softw/7checkmk/128/check-mk-agent-1.2.8p27-1.noarch.rpm ./
+sudo scp -rv user@172.16.3.15:/home/x/dat/short/j/softw/7checkmk/128/check-mk-agent-1.2.8p27-1.noarch.rpm ./
+
+
+sudo yum install -y check-mk-agent-1.2.8p27-1.noarch.rpm 

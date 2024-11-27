@@ -1,0 +1,4 @@
+wallabag v2 install external sql
+
+sudo nano ./app/config/parameters.yml
+

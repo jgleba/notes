@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE CHANGE VMNIC NUMBERS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-03[Jan-Fri]21-58PM 
+
+##https://www.vladan.fr/how-to-rename-vmnic-in-vmware-esxi/
+
+Vmware change Vmnic numbering
+How-to rename VMNIC in VMware ESXi
+
+    Open Putty and type “cd /etc/vmware”
+    Then type “vi esx. conf”
+    scroll further down and untill you see Dev/ids which follow with a =vmnic#
+    Type i (for Insert)
+    Then you can go the VMnic you wish to modify and use Del or Backspace to modify the name.
+    Hit “ESC” key.
+    Type “:wq” to quit.
+    Type “reboot” to reboot the host.
+
+Apr 16, 2014
+How-to rename VMNIC in VMware ESXi | ESX Virtualization
+
+
+

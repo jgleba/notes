@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GET PUBLIC IP FROM IPINFO, THEN EXTRACT IP OUT OF RESULT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-15[Jan-Fri]13-38PM 
+
+PUBLICIPNEW=$(curl https://ipinfo.io | head -n2 | awk '{print $2}' | sed -e s:\"::g | sed s:,::)
+##echo $PUBLICIPNEW

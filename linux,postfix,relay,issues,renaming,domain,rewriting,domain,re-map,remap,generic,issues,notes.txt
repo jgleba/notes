@@ -1,0 +1,16 @@
+===============================================================================
+EMAIL RELAYING ISSUES
+TRYING TO RELAY ALL EMAILS THROUGH LINUX POSTFIX RELAY BEFORE GOING TO EXCHANGE
+WAS GETTING ISSUES WHERE DOMAIN WAS BEING REMAPPED
+071519
+===============================================================================
+
+WAS STUCK FOR A WHILE, LINK BELOW KIND OF HELPED
+
+#https://serverfault.com/questions/147921/forcing-the-from-address-when-postfix-relays-over-smtp
+
+USING mydomain DIRECTIVE AS jgleba.com
+
+NO MAPPINGS IN /etc/postfix/generic
+
+I HAD MAPPINGS, THAT WAS MESSING THINGS UP

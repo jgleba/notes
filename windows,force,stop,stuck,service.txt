@@ -1,0 +1,25 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS FORCE STOP STUCK SERVICE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-01[Sep-Tue]13-31PM 
+
+##https://support.threattracksecurity.com/support/solutions/articles/1000070698-how-to-manually-force-a-service-to-stop-if-not-responding
+
+
+    Click the Start menu
+    Click Run or in the search bar type 'services.msc'
+    Press Enter
+    Look for the service and check the Properties and identify its service name
+    Once found, open a command prompt. Type sc queryex [servicename].
+    Press Enter
+    Identify the PID
+    In the same command prompt type taskkill /pid [pid number] /f
+    Press Enter
+
+
+==
+
+sc queryex SNMP
+taskkill /pid 8300 /f

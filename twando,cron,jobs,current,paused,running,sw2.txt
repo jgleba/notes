@@ -1,0 +1,3 @@
+*/30 * * * * php /var/www/html/sites/twandotwo/cron_follow.php 4UXc2buW28
+*/15 * * * * php /var/www/html/sites/twandothreeee/cron_follow.php SDZu88qgke
+*/30 * * * * php /var/www/html/sites/twandogreeen/cron_follow.php MfxjK7BcmP

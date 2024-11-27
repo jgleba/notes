@@ -1,0 +1,15 @@
+=================
+EASY2BOOT INSTALL
+041020
+=================
+
+DOWNLOAD AND INSTALL ON A WIN PC
+
+##https://files.jgleba.com/util/Easy2Boot_v2.01.exe
+##https://www.fosshub.com/Easy2Boot.html
+
+OPEN EASY2BOOT
+
+CLICK ON "Make E2B Drive"
+
+THEN ADD ISOS TO _ISO FOLDER

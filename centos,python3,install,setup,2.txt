@@ -1,0 +1,74 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS INSTALL PYTHON3 AND PIP3
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-01[Oct-Thu]12-43PM 
+
+##https://linuxize.com/post/how-to-install-python-3-on-centos-7/
+
+sudo yum -y install centos-release-scl
+sudo yum -y install rh-python36
+
+scl enable rh-python36 bash
+
+sudo yum install rh-python36-python-pip
+
+sudo pip install --upgrade pip
+
+==
+
+[user@zxcj ~]$ pip3 install pythonping
+Collecting pythonping
+  Using cached https://files.pythonhosted.org/packages/77/5d/cdf08b432d3238f77ec44b448cbe1df99b2f4cb37feb67cbc6e7adb600c0/pythonping-1.0.14-py3-none-any.whl
+Installing collected packages: pythonping
+Exception:
+Traceback (most recent call last):
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/basecommand.py", line 215, in main
+    status = self.run(options, args)
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/commands/install.py", line 351, in run
+    strip_file_prefix=options.strip_file_prefix,
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/req/req_set.py", line 784, in install
+    **kwargs
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/req/req_install.py", line 854, in install
+    strip_file_prefix=strip_file_prefix
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/req/req_install.py", line 1069, in move_wheel_files
+    strip_file_prefix=strip_file_prefix,
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/wheel.py", line 345, in move_wheel_files
+    clobber(source, lib_dir, True)
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/wheel.py", line 316, in clobber
+    ensure_dir(destdir)
+  File "/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pip/utils/__init__.py", line 83, in ensure_dir
+    os.makedirs(path)
+  File "/opt/rh/rh-python36/root/usr/lib64/python3.6/os.py", line 220, in makedirs
+    mkdir(name, mode)
+PermissionError: [Errno 13] Permission denied: '/opt/rh/rh-python36/root/usr/lib/python3.6/site-packages/pythonping'
+You are using pip version 9.0.1, however version 20.2.3 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+
+==
+
+[user@zxcj ~]$ sudo pip install pythonping
+DEPRECATION: Python 2.7 reached the end of its life on January 1st, 2020. Please upgrade your Python as Python 2.7 is no longer maintained. pip 21.0 will drop support for Python 2.7 in January 2021. More details about Python 2 support in pip can be found at https://pip.pypa.io/en/latest/development/release-process/#python-2-support pip 21.0 will remove support for this functionality.
+Requirement already satisfied: pythonping in /usr/lib/python2.7/site-packages (1.0.14)
+
+
+==
+
+[user@zxcj ~]$ pip install python3-ping
+Collecting python3-ping
+  Could not find a version that satisfies the requirement python3-ping (from versions: 2014.05.01.022aa83, 2014.05.02.805ee25, 2014.05.02.16245f0)
+No matching distribution found for python3-ping
+You are using pip version 9.0.1, however version 20.2.3 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+
+
+[user@zxcj ~]$ pip3 install python3-ping
+Collecting python3-ping
+  Could not find a version that satisfies the requirement python3-ping (from versions: 2014.05.01.022aa83, 2014.05.02.805ee25, 2014.05.02.16245f0)
+No matching distribution found for python3-ping
+You are using pip version 9.0.1, however version 20.2.3 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.
+
+==
+

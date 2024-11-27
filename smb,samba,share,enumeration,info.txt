@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SMB SHARE ENUMERATION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-03[Aug-Mon]20-46PM 
+
+smbclient -L \\ip
+
+crackmapexec smb ip --shares
+crackmapexec smb ip -u '' -p '' --shares
+crackmapexec smb ip --pass-pol
+
+smbmap -H ip
+

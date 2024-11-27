@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS GITLAB INSTALL SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-04-02[Apr-Thu]15-37PM 
+
+##https://www.howtoforge.com/tutorial/how-to-install-and-configure-gitlab-ce-on-centos-7/
+
+curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+sudo yum -y install gitlab-ce
+
+sudo nano /etc/gitlab/gitlab.rb
+
+CHANGE EMAIL AND EXTERNAL URL
+
+sudo gitlab-ctl reconfigure
+
+ABANDON, GOT HELP FROM DG, DOCKER VERSION WORKING NOW

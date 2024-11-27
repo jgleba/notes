@@ -1,0 +1,4 @@
+recursively change permissions in osx, from gui
+
+https://support.apple.com/kb/PH25287?locale=en_US
+

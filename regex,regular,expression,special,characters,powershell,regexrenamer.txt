@@ -1,0 +1,43 @@
+
+## replace special character
+
+
+	echo  '20181109 New World Delivery Time Report-AQUA.xlsm' | sed  's/\x7f/~zz~/g'
+
+replace hex 07f character with nothing.
+
+ref. http://unix.stackexchange.com/questions/6516/filtering-invalid-utf8
+
+
+## regexrenamer
+
+in match field  --  \x7f
+
+will replace that character with nothing for all the files.
+
+## Powershell
+
+### rename all files with regex
+
+
+	https://stackoverflow.com/questions/5574648/use-regex-powershell-to-rename-files
+
+
+### powershell regex replace hexadecimal
+	
+	
+	https://serverfault.com/questions/313695/powershell-2-how-to-strip-a-specific-character-from-a-body-of-ascii-text
+		
+		
+		
+	tsmtime.ps1 example	
+		https://www.dropbox.com/sh/kmcjek5l3521a4l/AABH7Zf-4HydD2Lads4b1DMKa?dl=0
+		
+
+## hex editor
+
+	https://mh-nexus.de/en/hxd/
+	
+We used this to explore characters 
+ 
+ 

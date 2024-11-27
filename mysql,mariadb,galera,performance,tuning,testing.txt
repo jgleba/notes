@@ -1,0 +1,8 @@
+===================================================
+GALERA, MARIADB, MYSQL PERFORMANCE TESTING / TUNING
+070919
+JGleba
+===================================================
+
+#https://stackoverflow.com/questions/41610698/getting-a-very-bad-performance-with-galera-as-compared-to-a-standalone-mariadb-s
+

@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU CLOUDRON SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-24[Jan-Fri]15-13PM 
+
+##ONLY WORKS WITH UBUNTU
+
+##https://cloudron.io/documentation/installation/
+
+##EASY SETUP
+##MUST HAVE UBUNTU MACHINE PREPPED ALREADY
+
+sudo wget https://cloudron.io/cloudron-setup
+sudo chmod +x cloudron-setup
+sudo ./cloudron-setup --provider generic
+
+ONLY CAN RUN 2 APPS FOR FREE, DIDNT USED TO BE LIKE THAT
+
+DELETEING

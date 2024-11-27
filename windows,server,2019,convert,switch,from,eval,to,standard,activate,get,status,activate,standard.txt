@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SERVER 2019 ACTIVATE, CONVERT FROM EVAL TO STANDARD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-12-10[Dec-Fri]14-03PM 
+
+DISM /Online /Get-CurrentEdition
+
+DISM /online /Set-Edition: ServerStandard
+
+DISM /online /Set-Edition:ServerStandard /ProductKey:XXXXX-XXXXX-XXXXX-XXXXX-XXXXX /AcceptEula

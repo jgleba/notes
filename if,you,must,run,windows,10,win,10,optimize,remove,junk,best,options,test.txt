@@ -1,0 +1,81 @@
+==============================================================================
+WINDOWS 10
+JGLEBA - VERY RESISTENT TO WIN 10, IT'S GARBAGE, BUT I MIGHT TRY IT WITH THIS
+082719
+==============================================================================
+
+##https://tinyapps.org/blog/201811300700_windows_10_ltsc.html
+
+
+If you must run Windows 10... #
+
+Heaven help you:
+
+    Microsoft Has A Software Quality Problem
+    Windows 10 is a disaster, I'm bugging out, here is why
+    An open letter to Microsoft management re: Windows updating
+    Microsoft's Windows 10 October Update Has Turned Into A Huge Mess
+    Microsoft Is Talking About Windows 10's Quality, But Changing Nothing
+    Worst Windows 10 version ever? Microsoft's terrible, horrible, no good, very bad October
+
+Barring divine intervention, Windows 10 Enterprise LTSC 2019 (formerly LTSB) may be the least bad option:
+
+    no Cortana
+    no semiannual feature upgrades
+    not a single tile on the default Start menu
+    telemetry can be set to 0 (the lowest level)
+    no "Show suggestions occassionally in Start"
+    despite some misbelief, WSL and Hyper-V work just fine
+    receives security and stability updates for ten years (unlike Windows 10 Home & Pro versions, which reach "end of service" after just 18 months from their initial release)
+    no Metro/Windows 8-style/Modern/Windows Store/Universal/Windows apps like Store, Edge, Calendar, Camera, News, Weather, etc.
+    no zombie games like Candy Crush Soda Saga, Bubble Witch 3 Saga, March of Empires, etc. that refuse to die (part of Microsoft's plan for "post-license monetization opportunities beyond initial license revenues" much like the recent Mail app debacle)
+
+However, be aware that LTSC requires a volume license (VL) agreement, making onerous audits potentially more probable:
+
+    Rockin' on without Microsoft
+    The BSA's "nauseating" anti-piracy tactics
+    IT Software Audits Gone Bad: Beware the BSA
+    Microsoft licence cops kick in TWICE as many customers' doors as rivals
+    Can Microsoft audit you (your company) if you don't have a volume license contract with them?
+
+(despite Microsoft's own apparent need for a thorough inspection:
+
+    Microsoft used pirated music software - report
+    Pirated software used to create help content in Microsoft's Windows XP).
+
+While five licenses are required to enter into a new VL agreement, they need not all be for LTSC. According to a rep I spoke with at a Microsoft Partner, this combination would work as an upgrade from a Windows OEM license (i.e., it would allow a user who bought a PC with Windows 10 preinstalled to run Windows 10 LTSC instead):
+
+    1x Windows 10 Enterprise LTSC 2019 Single Upgrade Open Business (KW4-00190)
+    4x Microsoft Identity Manager - 1 User CAL - Open Business (NK7-00031)
+
+Here are links and prices from three well-known Microsoft Partners, though you should definitely confirm details with a rep before purchasing:
+
+    Provantage:
+        Windows Enterprise LTSC 2019 Single Upgrade Open License Program NL $269.04
+        Microsoft Identity Manager User CAL SA Open Business $7.81
+    Connection:
+        Microsoft Corp. MOB Windows Ent LTSC 2019 Upgrade License Only $294.93
+        Microsoft Corp. Open License Identity Manager User CAL Software Assurance Only $8.68
+    CDW:
+        Windows 10 Enterprise LTSC 2019 - upgrade license $295.99
+        Microsoft Identity Manager - software assurance - 1 user CAL $9.99
+
+For those hapless souls stuck on Windows 10 Home or Pro, see:
+
+    Optimize-Offline, a Windows Image (WIM) optimization script which aims for "the removal of unnecessary bloat, privacy and security enhancements, cleaner aesthetics, increased performance and a significantly better user experience."
+    O&O ShutUp10, a portable app for tweaking Windows 10 security, privacy, and many other settings.
+
+Further reading:
+
+    FAQ: Windows 10 LTSB explained
+    Make Windows 10 Pro as close to LTSB
+    Really impressed with Windows 10 LTSB
+    Advantages of Windows 10 IoT Ent LTSB over Win 10 Pro
+    Privacy Analysis of Windows 10 Enterprise at Telemetry Level 0
+    Explicit instructions for purchasing a Windows 10 LTSC license?
+    The best edition of Windows 10 - LTSB: how to get it and why should we?
+    Should I Use Windows 10 Enterprise With or Without Software Assurance?
+    Reload with Win 10 Enterprise LTSB, everything you need and none of the garbage
+    Windows 10 Without the Cruft: Windows 10 LTSB (Long Term Servicing Branch), Explained
+
+/windows | Nov 30, 2018

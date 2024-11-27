@@ -1,0 +1,57 @@
+prestashop install, changes to mysql galera
+02-14-2019
+
+set to 1 because prestashop wanted value to be 1
+
+37 rows in set (0.00 sec)
+
+MariaDB [(none)]> SHOW VARIABLES LIKE 'auto_inc%';
++--------------------------+-------+
+| Variable_name            | Value |
++--------------------------+-------+
+| auto_increment_increment | 3     |
+| auto_increment_offset    | 1     |
++--------------------------+-------+
+2 rows in set (0.00 sec)
+
+MariaDB [(none)]> set auto_increment_increment = 1;
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> SHOW VARIABLES LIKE 'auto_inc%';
++--------------------------+-------+
+| Variable_name            | Value |
++--------------------------+-------+
+| auto_increment_increment | 3     |
+| auto_increment_offset    | 1     |
++--------------------------+-------+
+2 rows in set (0.00 sec)
+
+MariaDB [(none)]> set global auto_increment_increment = 1;
+Query OK, 0 rows affected (0.00 sec)
+
+MariaDB [(none)]> SHOW VARIABLES LIKE 'auto_inc%';
++--------------------------+-------+
+| Variable_name            | Value |
++--------------------------+-------+
+| auto_increment_increment | 1     |
+| auto_increment_offset    | 1     |
++--------------------------+-------+
+2 rows in set (0.00 sec)
+
+
+
+
+Configure your database by filling out the following fields
+To use PrestaShop, you must create a database to collect all of your store's data-related activities.	
+Please complete the fields below in order for PrestaShop to connect to your database.
+
+Database server address   
+172.16.3.230
+The default port is 3306. To use a different port, add the port number at the end of your server's address i.e ":4242".
+Database name   
+prestashopdocker
+
+Tables prefix  
+ps_
+
+The values of auto_increment increment and offset must be set to 1

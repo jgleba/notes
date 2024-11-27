@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SPLUNK CHANGE WEB PORT ENABLE SSL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-27[Jan-Wed]13-50PM 
+
+##https://docs.splunk.com/Documentation/Splunk/8.1.1/Admin/Webconf
+
+==
+
+sudo nano /opt/splunk/etc/system/local/web.conf
+==
+
+[root@splunk nginx]# cat /opt/splunk/etc/system/local/web.conf
+[settings]
+enableSplunkWebSSL = 1
+server.socket_host = 127.0.0.1

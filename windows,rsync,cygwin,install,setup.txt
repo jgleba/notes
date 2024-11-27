@@ -1,0 +1,67 @@
+======================================================
+INSTALL RSYNC ON WINDOWS - USING BACKUPPC CYGWIN RSYNC
+061519
+JGleba
+======================================================
+
+#https://github.com/backuppc/cygwin-rsyncd
+
+downloaded from here:
+
+#https://github.com/backuppc/cygwin-rsyncd/releases
+
+run installer on win box
+
+create rsyncd user on win box
+
+edit rsyncd.secrets file, add user that was just created
+
+C:\rsyncd\rsyncd.secrets
+
+user:pass
+
+in C:\rsyncd\rsyncd.conf
+
+change:
+
+auth users = UUU
+
+to:
+
+auth users = rsyncd
+
+comment 'hosts allow'
+
+restart rsyncd service
+
+allow program: %SystemDrive%\rsyncd\bin\rsync.exe through firewall
+
+UNINSTALLING
+
+#https://cygwin.fandom.com/wiki/Uninstalling_Cygwin
+
+To remove Cygwin sshd in the cleanest possible way:
+
+cygrunsr -E sshd and cygrunsrv -R sshd
+
+OR
+
+open command prompt and run below command.
+
+>sc delete sshd
+
+Press enter.
+
+delete the folder c:\cygwin and all its sub-folders
+
+remove the Environment Variable 'CYGWIN'
+
+edit the Environment path accordingly
+
+Start...Run... regedit and delete these two registry trees
+
+"HKEY_CURRENT_USER" --> Software --> Cygwin
+
+"HKEY_LOCAL_MACHINE"--> Software --> Cygwin
+
+Go to Control Panel, Category View, Performance and Maintenance, Administrative Tools, Computer Management.or click Start...Run...compmgmt.msc delete the sshd user if it exists in the "System Tools" - "Local Users and Groups" - "Users" section. 

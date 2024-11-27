@@ -1,0 +1,27 @@
+===========================================================
+CENTOS SED / ECHO SET STATIC NETWORKING FOR NETWORK SCRIPTS
+CAN CHANGE HOSTNAME AS WELL
+USING FOR PXE INSTALL
+111619
+===========================================================
+
+echo "webcln1-1" | sudo tee /etc/hostname
+
+sudo sed -i '/BOOTPROTO*/c\BOOTPROTO=static' /etc/sysconfig/network-scripts/ifcfg-ens192
+sudo sed -i '/IPV6INIT*/c\IPV6INIT=no' /etc/sysconfig/network-scripts/ifcfg-ens192
+sudo sed -i '/NETBOOT*/c\NETBOOT=no' /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "IPADDR=172.16.3.210" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "PREFIX=24" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "GATEWAY=172.16.3.254" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "DNS1=172.16.3.10" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+echo "DNS2=172.16.3.11" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-ens192
+
+sudo reboot
+
+##https://askubuntu.com/questions/103643/cannot-echo-hello-x-txt-even-with-sudo
+
+#sudo bash -c echo "IPADDR=172.16.3.210" >> /etc/sysconfig/network-scripts/ifcfg-ens192
+#sudo bash -c echo "PREFIX=24" >> /etc/sysconfig/network-scripts/ifcfg-ens192
+#sudo bash -c echo "GATEWAY=172.16.3.254" >> /etc/sysconfig/network-scripts/ifcfg-ens192
+#sudo bash -c echo "DNS1=172.16.3.10" >> /etc/sysconfig/network-scripts/ifcfg-ens192
+#sudo bash -c echo "DNS2=172.16.3.11" >> /etc/sysconfig/network-scripts/ifcfg-ens192

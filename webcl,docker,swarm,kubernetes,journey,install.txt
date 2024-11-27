@@ -1,0 +1,1709 @@
+======================================================
+JGLEBA WEB SYSTEM + KUBERNETES + DOCKER SWARM JOURNEY
+======================================================
+02-06-2019
+JGleba
+======================================================
+
+==============
+CURRENT SYSTEM
+==============
+
+(2) (2 vCPU) (1.5GB RAM) front end load balancers with virtual ip
+(4) (2 vCPU) (5GB RAM) apache + php nodes synced with gluster volume
+(2) (2 vCPU) (384MB RAM) back end load balancers with virtual ip
+(3) (2 vCPU) (6GB RAM) mariadb nodes in a galera cluster
+
+2 hypervisors cpu ~2% - ~50%
+
+======
+GOALS
+======
+
+less complicated management
+easier to scale
+less RAM usage
+less cpu spikes, where when this occurs either most apache nodes are taxed or most db nodes are taxed or all taxed
+
+======
+PLAN
+======
+
+create kubernetes system made up of two docker hosts that could replace apache+php nodes
+
+
+
+======
+START
+======
+
+
+
+prep vms (3) (2 vCPU) (4GB RAM) (CENTOS)
+
+sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+sudo reboot
+sudo yum update -y
+sudo yum install nano wget net-tools -y
+
+sudo systemctl stop postfix 
+sudo systemctl disable postfix 
+sudo yum remove postfix -y
+
+sudo nano /etc/hosts
+
+172.16.3.215 webclkube1
+172.16.3.216 webclkube2
+172.16.3.217 webclkube3
+
+==================================================================
+==================================================================
+
+https://www.linuxtechi.com/install-kubernetes-1-7-centos7-rhel7/
+https://www.howtoforge.com/tutorial/centos-kubernetes-docker-cluster/
+https://www.techrepublic.com/article/how-to-install-a-kubernetes-cluster-on-centos-7/
+
+==================================================================
+==================================================================
+
+==
+FIREWALL ON MASTER
+==
+
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=2379-2380/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo firewall-cmd --permanent --add-port=10251/tcp
+sudo firewall-cmd --permanent --add-port=10252/tcp
+sudo firewall-cmd --permanent --add-port=10255/tcp
+sudo firewall-cmd --zone=public --add-port=6443/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=2379-2380/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=10250-10252/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=10255/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+NETWORK STUFF ON ALL
+==
+
+sudo modprobe br_netfilter
+#sudo echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+#sudo sed -i -e 's/=1/=0/g' "/proc/sys/net/bridge/bridge-nf-call-iptables"
+sudo nano /proc/sys/net/bridge/bridge-nf-call-iptables
+add: 1
+
+==
+SWAP OFF ON ALL
+==
+
+sudo swapoff -a
+sudo nano /etc/fstab
+# /dev...swap
+
+==
+ADD REPO ON ALL
+==
+
+sudo nano /etc/yum.repos.d/kubernetes.repo
+
+sudo cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+==
+INSTALL AND START KUBERNETES AND DOCKER ON ALL
+==
+
+sudo yum install kubelet kubeadm kubectl docker -y
+
+==
+CHANGE CGROUP
+==
+
+sudo sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+sudo systemctl daemon-reload
+
+sudo systemctl restart docker && sudo systemctl enable docker
+sudo systemctl restart kubelet && sudo systemctl enable kubelet
+
+
+==
+sudo reboot
+==
+
+==
+KUBERNETES CLUSTER INIT ON MASTER ONLY
+==
+
+sudo kubeadm init --apiserver-advertise-address=192.168.3.215 --pod-network-cidr=172.16.3.0/24
+
+==
+JOIN NODES 2, 3
+==
+
+sudo kubeadm join 172.16.3.15:6443 --token TOKEN --discovery-token-ca-cert-hash DISCOVERY_TOKEN
+
+===============
+
+control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests                                                                                                                                                             "
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as sta                                                                                                                                                             tic Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[kubelet-check] Initial timeout of 40s passed.
+
+Unfortunately, an error has occurred:
+        timed out waiting for the condition
+
+This error is likely caused by:
+        - The kubelet is not running
+        - The kubelet is unhealthy due to a misconfiguration of the node in some                                                                                                                                                              way (required cgroups disabled)
+
+If you are on a systemd-powered system, you can try to troubleshoot the error wi                                                                                                                                                             th the following commands:
+        - 'systemctl status kubelet'
+        - 'journalctl -xeu kubelet'
+
+Additionally, a control plane component may have crashed or exited when started                                                                                                                                                              by the container runtime.
+To troubleshoot, list all containers using your preferred container runtimes CLI                                                                                                                                                             , e.g. docker.
+Here is one example how you may list all Kubernetes containers running in docker                                                                                                                                                             :
+        - 'docker ps -a | grep kube | grep -v pause'
+        Once you have found the failing container, you can inspect its logs with                                                                                                                                                             :
+        - 'docker logs CONTAINERID'
+error execution phase wait-control-plane: couldn't initialize a Kubernetes clust                                                                                                                                                             er
+
+====
+
+https://github.com/kubernetes/kubeadm/issues/700
+
+Trying with **--ignore-preflight-errors=all**
+SAME ERRORS
+
+====
+
+
+
+
+
+
+
+
+
+====================================================================================================================
+====================================================================================================================
+====================================================================================================================
+
+
+RESTARTING  --- TRYING DOCKER SWARM  ---  02-06-2019
+
+
+https://www.bretfisher.com/10-minutes-to-highly-available-docker/
+
+
+====================================================================================================================
+====================================================================================================================
+====================================================================================================================
+
+
+
+
+
+
+
+
+==
+MACHINE PREP
+==
+
+prep vms (3) (2 vCPU) (4GB RAM) (CENTOS)
+
+sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+sudo reboot
+sudo yum update -y
+sudo yum install nano wget net-tools -y
+
+sudo systemctl stop postfix 
+sudo systemctl disable postfix 
+sudo yum remove postfix -y
+
+sudo nano /etc/hosts
+
+172.16.3.215 webcldock1
+172.16.3.216 webcldock2
+172.16.3.217 webcldock3
+
+172.16.3.215 webcld1
+172.16.3.216 webcld2
+172.16.3.217 webcld3
+172.16.3.218 webcld4
+
+==
+INSTALL AND START DOCKER
+==
+
+https://github.com/NaturalHistoryMuseum/scratchpads2/wiki/Install-Docker-and-Docker-Compose-(Centos-7)
+
+get new version of docker-ce
+
+https://docs.docker.com/install/linux/docker-ce/centos/
+
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+#sudo yum install docker ##not complete
+sudo yum install -y docker-ce docker-ce-cli containerd.io
+
+==
+ANOTHER WAY TO INSTALL DOCKER
+==
+
+https://docs.docker.com/install/linux/docker-ce/centos/
+
+sudo curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+==
+OLD DOCKER INSTALL
+==
+
+sudo yum install docker -y
+sudo systemctl restart docker && sudo systemctl enable docker
+
+==
+DOCKER COMPOSE INSTALL
+==
+
+https://docs.docker.com/compose/install/
+sudo curl -L "https://github.com/docker/compose/releases/download/1.23.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+
+==
+COMPOSE FILE VERSION 3 REFERENCE
+==
+
+https://docs.docker.com/compose/compose-file/
+
+==
+START AND ENABLE DOCKER
+==
+
+sudo systemctl restart docker && sudo systemctl enable docker
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --permanent --add-port=2376-2377/tcp
+sudo firewall-cmd --permanent --add-port=7946/tcp
+sudo firewall-cmd --permanent --add-port=7946/udp
+sudo firewall-cmd --permanent --add-port=4789/udp
+sudo firewall-cmd --reload
+
+https://docs.docker.com/engine/swarm/ingress/
+
+Use swarm mode routing mesh
+Estimated reading time: 8 minutes
+
+Docker Engine swarm mode makes it easy to publish ports for services to make them available to resources outside the swarm. All nodes participate in an ingress routing mesh. The routing mesh enables each node in the swarm to accept connections on published ports for any service running in the swarm, even if there’s no task running on the node. The routing mesh routes all incoming requests to published ports on available nodes to an active container.
+
+To use the ingress network in the swarm, you need to have the following ports open between the swarm nodes before you enable swarm mode:
+
+    Port 7946 TCP/UDP for container network discovery.
+    Port 4789 UDP for the container ingress network.
+
+
+==
+START SWARM ON MASTER
+==
+
+sudo docker swarm init
+#sudo docker swarm init --advertise-addr 172.16.3.215
+
+==
+JOIN WORKER TO MASTER
+==
+
+sudo docker swarm join
+#sudo docker swarm join --token SWMTKN-1-4h1pxikdnddi862o9cn7ivh8py8bjfjp0i8nmde0gdkm0wme5l-9i229jtatl5zfh4009noct0ii 172.16.3.215:2377
+
+sudo docker swarm join --token SWMTKN-1-4lykv4f9c7dmesjp9bdttzdlh2bwhuslcgl276lx8dy5alw9sg-epfr8vbbnce0nypdl9otzs6cr 172.16.3.215:2377
+
+==
+OUTPUT OF START SWARM
+==
+
+[sudo] password for user:
+Swarm initialized: current node (b4lita1q2jt27dy8wmxmzkoo6) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    sudo docker swarm join \
+    --token SWMTKN-1-4v9mji91ahnr0kd71jccri20iw8t5u0q5v21urwgoukyntzkrr-1ub8375kc95mrvzcmqswqbm7f \
+    172.16.3.215:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+==
+CHECK TO MAKE SURE RUNNING, ON MASTER
+==
+
+sudo docker node ls
+sudo docker info
+
+==
+MORE / EXTRA REFERENCE / RESOURCE JUNK
+==
+
+https://dccn-docker-swarm.readthedocs.io/en/latest/tutorial/swarm.html
+https://medium.com/@Grigorkh/docker-for-beginners-part-4-deploying-an-app-to-a-swarm-620b4d67e7c3
+https://blog.couchbase.com/deploy-docker-compose-services-swarm/
+https://www.google.com/search?safe=off&rlz=1C1GCEU_enCA821CA826&biw=1920&bih=938&tbs=qdr%3Ay&ei=SMlcXPl_mL2PBN30p4AN&q=centos+7+docker+swarm+tutorial&oq=centos+7+docker+swarm+tutorial&gs_l=psy-ab.3..0i8i30.9973.10077..10667...0.0..0.103.188.1user......0....1..gws-wiz.......0i8i7i30.NgBUL3k6UTA
+https://docs.docker.com/get-started/part3/
+
+http://karunsubramanian.com/uncategorized/creating-a-distributed-service-using-docker-a-beginners-guide/
+https://hackernoon.com/architecting-a-highly-available-and-scalable-wordpress-using-docker-swarm-traefik-glusterfs-a69186e9f0e
+
+https://codeblog.dotsandbrackets.com/migrate-wordpress-docker/
+
+docker,unison:
+https://github.com/leighmcculloch/docker-unison
+
+https://engineering.issuu.com/2018/09/12/confident-deployments
+
+minio info
+https://docs.minio.io/docs/deploy-minio-on-docker-swarm
+https://docs.minio.io/docs/rclone-with-minio-server.html
+
+loggly,logging info:
+https://www.loggly.com/blog/best-practices-for-logging-in-docker-swarm/
+
+galera info:
+https://www.binlogic.io/blog/galera-cluster-docker/
+https://docs.docker.com/compose/environment-variables/
+
+php extensions info, description of alpine vs standard image:
+https://github.com/orientechnologies/docker-docs/blob/master/php/README.md
+
+==
+SHARED VOLUME INFO
+==
+
+swarm does nothing different about volumes than docker does, not a good idea to just mount a volume from the docker host to every node though
+
+found this:
+
+https://stackoverflow.com/questions/47756029/how-docker-swarm-implements-a-volume-sharing
+
+https://www.digitalocean.com/community/tutorials/how-to-share-data-between-docker-containers
+
+https://ender74.github.io/Sharing-Volumes-With-Docker-Swarm/
+
+==
+
+https://stackoverflow.com/questions/48330969/persisting-data-in-a-docker-swarm-with-glusterfs
+
+You might want to take a look at flocker (a volume data manager) which has integration for several container cluster managers, including Docker Swarm.
+
+You will have to create a volume using flocker driver for each application as pointed by the tutorial:
+
+...
+volumes:
+  mysql:
+    driver: "flocker"
+    driver_opts:
+      size: "10GiB"
+      profile: "bronze"
+ ...
+
+
+
+==
+EXTRA INFO ABOUT SCALING AND LARGE DEPLOYMENTS -- OLD
+==
+
+https://blog.codeship.com/running-1000-containers-in-docker-swarm/
+
+In order for containers to be discoverable between hosts in a Docker swarm, we will need to create an overlay network on one of the manager nodes.
+
+# docker network create \
+  --driver overlay \
+  --subnet 10.0.0.0/20 \
+  --attachable \
+  party-swarm
+
+sysctl -w net.ipv4.neigh.default.gc_thresh1=8096
+sysctl -w net.ipv4.neigh.default.gc_thresh2=12288
+sysctl -w net.ipv4.neigh.default.gc_thresh3=16384
+
+===================================================================
+USING GLUSTER, CREATE SHARED VOLUME BETWEEN ALL DOCKER SWARM HOSTS
+===================================================================
+
+==
+INSTALL GLUSTER AND START
+==
+
+sudo yum install -y centos-release-gluster
+sudo yum install -y glusterfs-server
+
+sudo systemctl restart glusterd && sudo systemctl enable glusterd
+
+==
+GLUSTER CONFIG
+==
+
+sudo mkdir -p /home/gl/data /home/swarm/mnt/vol1
+
+sudo mkdir -p /home/gl/data /home/mnt/vol1
+
+sudo mkdir -p /home/gl/data /home/mnt/data /home/mnt/data/appdata /home/mnt/data/appconfig
+
+==
+FIREWALL, ON ALL
+==
+
+sudo firewall-cmd --zone=public --add-port=24007/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=24007/udp --permanent
+sudo firewall-cmd --zone=public --add-port=24008/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49152/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49153/udp --permanent
+sudo firewall-cmd --zone=public --add-port=49154/udp --permanent
+sudo firewall-cmd --reload
+
+==
+JOIN NODES TO GLUSTER CLUSTER ON MASTER (1)
+==
+
+sudo gluster peer probe webcldock2
+sudo gluster peer probe webcldock3
+
+sudo gluster peer probe webcld2
+sudo gluster peer probe webcld3
+sudo gluster peer probe webcld4
+
+sudo gluster peer status
+
+==
+CREATE AND START GLUSTER VOLUME
+==
+
+sudo gluster volume create swarm-vol1 replica 3 webcldock1:/home/gl/data webcldock2:/home/gl/data webcldock3:/home/gl/data force
+sudo gluster volume set swarm-vol1 auth.allow 127.0.0.1
+sudo gluster volume start swarm-vol1
+
+sudo gluster volume create swarm-vol1 replica 4 webcld1:/home/gl/data webcld2:/home/gl/data webcld3:/home/gl/data webcld4:/home/gl/data force
+
+==
+MOUNT GLUSTER ONCE
+==
+
+sudo mount.glusterfs localhost:/swarm-vol1 /home/swarm/mnt/vol1
+
+sudo mount.glusterfs localhost:/swarm-vol1 /home/mnt/data
+
+==
+MOUNT GLUSTER ON BOOT
+==
+
+sudo nano /etc/fstab
+
+localhost:/swarm-vol1 /home/mnt/vol1 glusterfs  defaults,_netdev, 0 0
+
+localhost:/swarm-vol1 /home/mnt/data glusterfs  defaults,_netdev, 0 0
+
+sudo mount -a
+
+==
+DONT USE -- NETWORK SETUP ON MASTER -- OLD
+==
+
+sudo docker network create \
+  --driver overlay \
+  --subnet 172.29.5.0/24 \
+  --attachable \
+  party-swarm
+  
+
+==
+LIST AND DELETE SWARM SERVICES
+==
+
+LIST ALL
+sudo docker service ls
+
+LIST ALL INSTANCES OF SERVICE
+sudo docker service ps *servicename*
+
+DELETE
+sudo docker service rm *servicename*
+
+==
+LIST AND STOP AND DELETE ALL CONTAINERS / IMAGES - DOCKER (NOT SWARM)
+==
+
+http://blog.baudson.de/blog/stop-and-remove-all-docker-containers-and-images
+
+List all containers
+docker ps -a
+
+List all containers (only IDs)
+docker ps -aq
+
+Stop all running containers
+docker stop $(docker ps -aq)
+
+Remove all containers
+docker rm $(docker ps -aq)
+
+Remove all images
+docker rmi $(docker images -q)
+
+ELEVATED
+sudo docker rm $(sudo docker ps -aq)
+sudo docker stop $(sudo docker ps -aq)
+
+DELETE / CLEAN UP CONTAINERS THAT ARE EXITED
+sudo docker rm $(sudo docker ps -qa --no-trunc --filter "status=exited")
+
+ANOTHER DELETE ALL, CONTAINER, IMAGES, ALL FOR A DOCKER-COMPOSE PROJECT
+docker-compose down -v --rmi all --remove-orphans
+
+==
+DELETE OLD IMAGES
+==
+
+https://docs.docker.com/engine/reference/commandline/image_prune/
+
+sudo docker image prune --all
+
+==
+DETACH FROM CONTAINER
+==
+
+Ctrl+p + Ctrl+q - NOT WORKING
+
+ctrl-z appears to work version 3
+
+==
+INFO ABOUT CONTAINER
+==
+
+sudo docker inspect *containerid*
+
+==
+ENTER CONTAINER AND RUN COMMAND
+==
+
+sudo docker exec -it <container_ID> bash
+
+==
+START DOCKER SWARM CONTAINER SERVICE (apache,nginx...container app)
+==
+
+sudo docker service create -p 80:80 --name webserver --replicas 2 httpd
+sudo docker service create --replicas 1000 --network party-swarm --update-parallelism 5 --name sonyflake -p 80:80 titpetric/sonyflake
+
+==
+SCALING
+==
+
+docker service scale webserver=1
+docker service scale webserver=10
+
+==
+SWARM SERVICES LOGS
+==
+
+https://docs.docker.com/engine/reference/commandline/service_logs/
+
+docker service logs [OPTIONS] SERVICE|TASK
+
+sudo docker service logs presta1_presta1
+
+https://github.com/moby/moby/issues/25332
+
+docker service ps --no-trunc *service*
+
+DRAIN NODE - MOVE SWARM SERVICES TO ANOTHER NODE
+
+https://docs.docker.com/engine/swarm/swarm-tutorial/drain-node/
+
+
+================================================================================================================================
+================================================================================================================================
+================================================================================================================================
+
+
+
+
+
+
+==
+DOCKER, DOCKER SWARM, DOCKER-COMPOSE USAGE AND TESTING START
+==
+
+TESTING THESE THINGS:
+
+docker swarm service create, delete, scale (up and down manually)
+docker compose file usage
+dockerfile usage
+docker swarm and volume usage
+visualizer example
+docker swarm master/leader failure
+docker swarm and custom images, local and from shared registry
+docker swarm networking (overlay)
+add another master/leader to the swarm
+**full test of system with shared gluster volume, custom networking, custom images, deploy full wordpress...+++
+
+==
+SOME REFERENCES
+==
+
+https://docs.docker.com/engine/swarm/stack-deploy/
+
+https://medium.com/@Grigorkh/docker-for-beginners-part-4-deploying-an-app-to-a-swarm-620b4d67e7c3
+
+https://blog.couchbase.com/deploy-docker-compose-services-swarm/
+
+docker stack deploy --compose-file=docker-compose.yml couchbase
+docker stack deploy --compose-file docker-stack.yml vote
+
+==
+FIRST TEST, START SOMETHING (APACHE,PHP)
+==
+sudo mkdir -p /home/swarm/mnt/vol1/apache-php-compose
+
+[user@webcldock1 apache-php-compose]$ sudo cat docker-compose.yml
+services:
+   apache-php:
+     image: php:5.6-apache-jessie
+     #build: ./php
+     volumes:
+       - /home/swarm/mnt/vol1/www:/var/www/html
+     ports:
+       - "8081:80"
+     restart: always
+     environment:
+         network:
+           - party-swarm
+
+
+sudo docker stack deploy --compose-file=docker-compose.yml apache-php
+
+sudo cat docker-compose.yml
+
+version: '3.3'
+
+services:
+   apache-php:
+     #image: php:5.6-apache-jessie
+     build: ./php
+     volumes:
+       - /home/swarm/mnt/vol1/www:/var/www/html
+     ports:
+       - "8081:80"
+    networks:
+      - party-swarm
+
+sudo docker stack deploy --compose-file=docker-compose.yml apache-php
+
+NOT WORKING
+
+[user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+[sudo] password for user:
+yaml: line 10: found character that cannot start any token
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+yaml: line 9: found a tab character that violate indentation
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+yaml: line 9: mapping values are not allowed in this context
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+unsupported Compose file version: 1.0
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+yaml: line 1: did not find expected key
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+unsupported Compose file version: 3.7
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+network Additional property network is not allowed
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+yaml: line 11: found a tab character that violate indentation
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+yaml: line 11: did not find expected key
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml
+[user@webcldock1 apache-php-compose]$ sudo docker stack deploy --compose-file=dock                                                                                        er-compose.yml apache-php
+yaml: line 10: did not find expected key
+[user@webcldock1 apache-php-compose]$ sudo nano docker-compose.yml                                                                                                        [user@webcldock1 apache-php-compose]$
+
+
+
+
+
+
+
+PAUSE
+GOT HELP FROM DGLEBA - 02-07-2019
+
+
+
+
+
+
+
+
+
+================================================================================================================================
+================================================================================================================================
+================================================================================================================================
+
+==
+TRYING SWARM WITH A COMPOSE FILE AGAIN
+==
+
+https://docs.docker.com/get-started/part5/
+
+following example from web
+
+Dockerfile
+
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
+docker-compose.yml
+
+version: "3"
+services:
+  web:
+    # replace username/repo:tag with your name and image details
+    image: username/repo:tag
+	php:5.6-apache-jessie
+    deploy:
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "80:80"
+    networks:
+      - webnet
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+networks:
+  webnet:
+
+
+**
+didn't work, because had build statement in yml file, doesn't build with stack
+sudo docker stack deploy -c docker-compose.yml flasktest1
+**
+
+https://docs.docker.com/get-started/part2/
+
+user@webcldock1 docker-app1]$ cat Dockerfile
+
+# Use an official Python runtime as a parent image
+FROM python:2.7-slim
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+
+# Make port 80 available to the world outside this container
+EXPOSE 80
+
+# Define environment variable
+ENV NAME World
+
+# Run app.py when the container launches
+CMD ["python", "app.py"]
+
+==
+
+[user@webcldock1 docker-app1]$ cat docker-compose.yml
+
+version: "3.6"
+services:
+  web:
+    image: dc47c1ae7158
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "8081:80"
+    networks:
+      - webnet
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+networks:
+  webnet:
+
+NEED TO BUILD IMAGE
+sudo docker build --tag=flask1 .
+
+sudo docker stack deploy -c docker-compose.yml flasktest
+
+==
+REPLICAS STAYS 0, CONTAINER DOESN'T START
+==
+
+https://stackoverflow.com/questions/42386266/replicas-remains-0-after-running-docker-stack-deploy-command-in-manager-machin
+
+can't even get this to work
+
+version: "3.6"
+services:
+  web:
+    image: php
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - /home/docker/docker-app-data/docker-app2-test:/var/www/html
+    ports:
+      - "8082:80"
+    #networks:
+    #  - webnet
+#networks:
+#  webnet:
+
+[user@webcldock1 docker-app2-test]$ sudo docker stack deploy -c docker-compose.yml apache-php1
+Creating network apache-php1_default
+Creating service apache-php1_web
+
+[user@webcldock1 docker-app2-test]$ sudo docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+xv8jep97yxv2        apache-php1_web     replicated          0/3                 php:latest          *:8082->80/tcp
+
+==
+GOT SOMETHING WORKING
+==
+
+[user@webcldock1 docker-app3-test]$ cat docker-compose.yml
+version: "3.6"
+
+services:
+
+  nginx:
+    image: nginx
+    ports:
+      - 8083:80
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+
+sudo docker stack deploy -c docker-compose.yml nginx1
+
+[user@webcldock1 docker-app3-test]$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+6945961fed66        nginx:latest        "nginx -g 'daemon of…"   5 minutes ago       Up 5 minutes        80/tcp              nginx1_nginx.3.1r8sy3vlfd6fsyjajrnnre4rg
+[user@webcldock1 docker-app3-test]$ sudo docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+rixsvs94dl3f        nginx1_nginx        replicated          3/3                 nginx:latest        *:8083->80/tcp
+
+[user@webcldock2 ~]$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+87bb23bb6611        nginx:latest        "nginx -g 'daemon of…"   6 minutes ago       Up 6 minutes        80/tcp              nginx1_nginx.2.z1icj3v0k1z49f2zzsf6i5hhj
+
+
+
+
+
+================================================================================================================================
+================================================================================================================================
+================================================================================================================================
+
+
+TESTING APACHE, NGINX WITHOUT VOLUME BECAUSE WITH VOLUME ISNT WORKING - 02-08-19
+
+
+================================================================================================================================
+================================================================================================================================
+================================================================================================================================
+
+==
+SEEMS LIKE VOLUME MAY NOT WORK WITH SWARM - NOT TRUE, GOT WORKING BELOW WITH RELATIVE PATH
+==
+
+https://docs.docker.com/v17.12/get-started/part5/#persist-the-data
+
+https://github.com/docker/swarm/issues/2663
+
+https://stackoverflow.com/questions/42672171/volume-is-not-shared-between-nodes-of-docker-swarm
+
+https://www.reddit.com/r/docker/comments/7p069n/docker_swarm_remote_volumes_best_practices/
+
+Volumes created in docker swarm via default driver are local to the node. So if you put both containers on the same host they will have a shared volume. But when you put your containers on different nodes, there will be a separate volume created on each node.
+
+Now in order to achieve bind mounts/volumes across multiple nodes you have these options:
+
+    Use a cluster filesystem like glusterfs, ceph and ... across swarm nodes, then use bind mounts in your service defenition pointing to shared fs.
+
+    Use one of the many storage drivers available to docker that provide shared storage like flocker, ...
+
+    Switch to Kubernetes and take advantage of automated volume provisioning using multiple backends via Storage classes and claims.
+
+==
+TESTING
+==
+
+==
+WORKS
+==
+
+[user@webcldock1 docker-app-config]$ sudo cat ./docker-app3-test/docker-compose.yml
+[sudo] password for user:
+version: "3.6"
+
+services:
+
+  nginx:
+    image: nginx
+    ports:
+      - 8083:80
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+	
+[user@webcldock1 docker-app-config]$ sudo cat ./docker-app2-test/docker-compose.yml
+version: "3.6"
+services:
+  web:
+    image: php
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    #volumes:
+    #  - /home/docker/docker-app-data/docker-app2-test:/var/www/html
+    ports:
+      - "8082:80"
+    #networks:
+    #  - webnet
+#networks:
+#  webnet:
+
+==
+NOT WORKING
+==
+
+[user@webcldock1 docker-app4-test]$ cat docker-compose.yml
+version: "3.6"
+
+services:
+
+  nginx:
+    image: httpd
+    ports:
+      - 8084:80
+    volumes:
+      - /home/docker/docker-app-data/docker-app4-test:/var/www/html
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+
+==
+WORKS
+==
+
+[user@webcldock1 docker-app4-test]$ cat docker-compose.yml
+version: "3.6"
+
+services:
+
+  nginx:
+    image: httpd
+    ports:
+      - 8084:80
+    #volumes:
+    #  - /home/docker/docker-app-data/docker-app4-test:/var/www/html
+    deploy:
+      mode: replicated
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+		
+==		
+TRYING WITH RELATIVE PATH, ALSO COPIED ALL DOCKER CONFIG FILES / FOLDER STRUCTURE TO ALL DOCKER NODES MANUALLY - WORKED
+==
+
+version: "3.6"
+
+services:
+
+  nginx:
+    image: httpd
+    ports:
+      - 8084:80
+    #volumes:
+    #  - /home/docker/docker-app-data/docker-app4-test:/var/www/html
+    volumes:
+      - ./../../docker-app-data/docker-app4-test:/var/www/html
+    deploy:
+      mode: replicated
+      replicas: 10
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+
+==		
+ENTER DOCKER CONTAINER, EXEC, BASH INTO CONTAINER, SWARM
+==
+
+https://stackoverflow.com/questions/39362363/execute-a-command-within-docker-swarm-service
+
+There is one liner for accessing corresponding instance of the service for localhost:
+docker exec -ti stack_myservice.1.$(docker service ps -f 'name=stack_myservice.1' stack_myservice -q --no-trunc | head -n1) /bin/bash
+
+https://medium.com/@iaincollins/how-to-run-a-command-on-every-node-in-a-docker-swarm-cluster-60b7f398d1ec
+
+Checking uptime and load on all nodes:
+docker node ls | cut -c 31-49 | grep -v HOSTNAME | xargs -I"SERVER" sh -c "echo SERVER; ssh SERVER uptime"
+
+==
+ENTER DOCKER CONTAINER, EXEC, BASH INTO CONTAINER, CHECK WEBROOT
+==
+docker exec -it <container_ID> bash
+
+root@e17f74252b0b:/usr/local/apache2# cat htdocs/index.html
+<html><body><h1>It works!</h1></body></html>
+root@e17f74252b0b:/usr/local/apache2#
+
+WEBROOT: /usr/local/apache2/htdocs/
+
+==
+TRYING AGAIN - DIFFERENT WEBROOT - WORKED
+==
+
+[user@webcldock1 docker-app4-test]$ cat docker-compose.yml
+version: "3.6"
+
+services:
+
+  nginx:
+    image: httpd
+    ports:
+      - 8084:80
+    #volumes:
+    #  - /home/docker/docker-app-data/docker-app4-test:/var/www/html
+    volumes:
+      - ./../../docker-app-data/docker-app4-test:/usr/local/apache2/htdocs
+    deploy:
+      mode: replicated
+      replicas: 10
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s	
+		
+[user@webcldock1 docker-app4-test]$ sudo docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+74sd3eue9r3b        apache2_nginx       replicated          10/10               httpd:latest        *:8084->80/tcp
+
+==
+TRYING AGAIN - TEST5
+==
+
+[user@webcldock1 docker-app5-test]$ cat docker-compose.yml
+version: "3.6"
+
+services:
+
+  httpd-cust1:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8084:80
+    volumes:
+      - ./../../docker-app-data/docker-app5-test:/usr/local/apache2/htdocs
+    deploy:
+      mode: replicated
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+		
+[user@webcldock1 docker-app5-test]$ cat Dockerfile
+FROM httpd
+
+RUN apt-get update -y && apt-get install -y nano
+
+==
+HAVE TO BUILD
+==
+
+sudo docker build --tag=httpdcust1 .
+
+==
+NEW COMPOSE
+==
+
+version: "3.6"
+
+services:
+
+  httpd-cust1:
+    image: httpdcust1
+    ports:
+      - 8084:80
+    volumes:
+      - ./../../docker-app-data/docker-app5-test:/usr/local/apache2/htdocs
+    deploy:
+      mode: replicated
+      replicas: 5
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+
+
+[user@webcldock1 docker-app5-test]$ sudo docker stack deploy -c docker-compose.yml apachecust1
+Creating network apachecust1_default
+Creating service apachecust1_httpd-cust1
+[user@webcldock1 docker-app5-test]$ sudo docker service ls
+ID                  NAME                      MODE                REPLICAS            IMAGE               PORTS
+oulrht726u6o        apachecust1_httpd-cust1   replicated          2/5                 httpdcust1:latest   *:8084->80/tcp
+
+[user@webcldock1 docker-app5-test]$ sudo docker ps -a
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS                     PORTS               NAMES
+d38b1053c7cd        httpdcust1:latest   "httpd-foreground"   51 seconds ago      Up 49 seconds              80/tcp              apachecust1_httpd-cust1.1.pyheuz0au7g5iu48od811hj3u
+a119a2297688        httpdcust1:latest   "httpd-foreground"   51 seconds ago      Up 49 seconds              80/tcp 
+
+==
+TESTING CUSTOM IMAGE
+==
+
+sudo docker exec -it d38b1053c7cd bash
+sudo nano ./conf/httpd.conf
+
+WORKED
+
+========================================================================================
+========================================================================================
+
+==
+DOCKER SWARM NETWORKING - TESTING - 02-09-19
+==
+
+https://docs.docker.com/network/overlay/
+
+https://docs.docker.com/compose/networking/
+
+To create an overlay network for use with swarm services, use a command like the following:
+docker network create -d overlay my-overlay
+
+To create an overlay network which can be used by swarm services or standalone containers to communicate with other standalone containers running on other Docker daemons, add the --attachable flag:
+docker network create -d overlay --attachable my-attachable-overlay
+
+ENCRYPTED, SHOULD TRY
+docker network create --opt encrypted --driver overlay --attachable my-attachable-multi-host-network
+
+LIST NETWORKS
+sudo docker network ls
+
+DELETE NETWORK
+sudo docker network rm **networkid**
+
+TRYING
+
+sudo docker network create -d overlay webcldockernet1 --subnet=10.1.0.0/16
+
+sudo docker network create -d overlay --attachable webcldock10100 --subnet=10.1.0.0/16
+
+[user@webcldock1 docker-app6-test]$ cat docker-compose.yml
+version: "3.6"
+
+services:
+
+  nginx:
+    image: httpd
+    ports:
+      - 8084:80
+    volumes:
+      - ./../../docker-app-data/docker-app6-test:/usr/local/apache2/htdocs
+    deploy:
+      mode: replicated
+      replicas: 1000
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+
+networks:
+  default:
+    external:
+      name: webcldockernet1
+
+
+TRYING THIS BECAUSE TRYING LOTS OF CONTAINERS - ARP cache increase limit
+https://blog.codeship.com/running-1000-containers-in-docker-swarm/
+
+sudo sysctl -w net.ipv4.neigh.default.gc_thresh1=8096
+sudo sysctl -w net.ipv4.neigh.default.gc_thresh2=12288
+sudo sysctl -w net.ipv4.neigh.default.gc_thresh3=16384
+
+sudo docker stack deploy -c docker-compose.yml httpd1
+
+[user@webcldock1 docker-app6-test]$ sudo docker stack deploy -c docker-compose.yml httpd1
+WARN[0015] network default: network.external.name is deprecated in favor of network.name
+Creating service httpd1_httpd1
+
+==
+WORKED FOR A WHILE, CRASHED AT 868/1000 CONTAINERS, HAD TO FORCE REBOOT ALL
+==
+
+NETWORK TESTING DONE
+
+tried with default network settings, stopped increasing at 249/1000 containers
+all was working but no new containers were being created
+this time much better after increasing subnet and arp limits (868/1000) containers
+increasing ram to 12gb per docker host, got to 937 containers before complete crash (out of memory fault, when not true) still more tuning needed for big deployment like that
+https://github.com/moby/moby/issues/35826
+https://github.com/moby/moby/issues/29941
+https://forums.docker.com/t/docker-swarm-resource-memory-leak/41823
+
+==
+VISUALIZER EXAMPLE, NEED TO TRY
+==
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
+	 
+================================================================================================
+================================================================================================
+
+==
+DOCKER REGISTRY FOR LOCALLY SHARED IMAGES
+==
+
+When you deploy a new service on a local swarm cluster, I recommend setting up a local Docker registry mirror so you can run all swarm nodes with the --registry-mirror option, pointing to your local Docker registry. By running a local Docker registry mirror, you can keep most of the redundant image fetch traffic on your local network and speedup service deployment.
+
+https://codefresh.io/docker-tutorial/deploy-docker-compose-v3-swarm-mode-cluster/
+
+https://www.ionos.com/digitalguide/server/know-how/docker-orchestration-with-swarm-and-compose/
+
+try version 3? sudo docker service create --name registry --publish 5000:5000 registry:3
+
+old? sudo docker service create --name registry --publish 5000:5000 registry:2
+
+https://docs.docker.com/engine/swarm/stack-deploy/
+
+sudo docker service create --name registry --publish published=5000,target=5000 registry:2 --registry-mirror 3?
+
+https://docs.docker.com/registry/recipes/mirror/
+
+self signed, insecure registry
+https://docs.docker.com/registry/insecure/
+
+TRYING - 02-11-19
+
+==
+CREATE REGISTRY
+==
+
+sudo docker service create --name registry --publish published=5000,target=5000 registry:2
+
+sudo firewall-cmd --zone=public --add-port=5000/tcp --permanent
+sudo firewall-cmd --reload
+
+[user@webcldock1 docker-app5-test]$ sudo docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+wybax5pzg4rr        registry            replicated          1/1                 registry:2          *:5000->5000/tcp
+[user@webcldock1 docker-app5-test]$ sudo docker service ps registry
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+xt7yiglvd4vd        registry.1          registry:2          webcldock2          Running             Running 9 minutes ago
+[user@webcldock1 docker-app5-test]$
+
+NEW TO TRY - ONLY RUN ON MANAGER, REPLICA 2 - TRYING - 02-15-19
+sudo docker service create --name registry --constraint 'node.role == manager' --replicas=2 --publish published=5000,target=5000 registry:2
+
+
+
+NEW DOCS FOUND
+https://docs.docker.com/registry/deploying/
+
+TRYING THIS
+sudo docker pull ubuntu:16.04
+
+sudo docker tag ubuntu:16.04 localhost:5000/jubuntu
+
+sudo docker push localhost:5000/jubuntu
+
+[user@webcldock1 docker-app5-test]$ sudo docker push localhost:5000/jubuntu
+The push refers to repository [localhost:5000/jubuntu]
+
+STUCK?
+
+[user@webcldock1 docker-app5-test]$ sudo docker push localhost:5000/jubuntu
+The push refers to repository [localhost:5000/jubuntu]
+Get http://localhost:5000/v2/: net/http: request canceled (Client.Timeout exceeded while awaiting headers)
+[user@webcldock1 docker-app5-test]$
+
+SOMETHING WRONG WITH REGISTRY CONFIG
+
+https://forums.docker.com/t/unable-to-get-private-docker-registry-to-work-locally-works-remotely/44144
+
+comment out /etc/hosts
+" # ::1 localhost "
+
+NO CHANGE, DIDNT WORK
+
+https://stackoverflow.com/questions/48298998/docker-unable-to-connect-to-push-to-local-registry-using-localhost5000
+
+MIGHT HELP
+https://github.com/moby/moby/issues/22635
+https://github.com/docker/kitematic/issues/2956
+https://github.com/docker/for-win/issues/611
+
+**good**
+https://github.com/docker/for-win/issues/611
+
+sudo service docker restart
+
+WORKING
+
+ sudo docker push localhost:5000/jubuntu
+The push refers to repository [localhost:5000/jubuntu]
+68dda0c9a8cd: Pushed
+f67191ae09b8: Pushed
+b2fd8b4c3da7: Pushed
+0de2edf7bff4: Pushed
+
+==
+
+[user@webcldock1 docker-app5-test]$ sudo docker build --tag=httpdcust1 .
+Sending build context to Docker daemon  3.072kB
+Step 1/2 : FROM httpd
+ ---> 0eba3d04566e
+Step 2/2 : RUN apt-get update -y && apt-get install -y nano
+ ---> Using cache
+ ---> 6237395126e0
+Successfully built 6237395126e0
+Successfully tagged httpdcust1:latest
+[user@webcldock1 docker-app5-test]$ sudo docker tag httpdcust1:latest localhost:5000/httpdcust1
+[user@webcldock1 docker-app5-test]$ sudo docker push localhost:5000/httpdcust1
+The push refers to repository [localhost:5000/httpdcust1]
+3f09999af712: Pushed
+8fb9d4da1d47: Pushed
+679b6a350e9d: Pushed
+bc313b7c45f1: Pushed
+7fb2893e5a45: Pushed
+0a07e81f5da3: Pushed
+
+[user@webcldock1 docker-app5-test]$ sudo docker stack deploy -c docker-compose.yml httpd1
+
+[user@webcldock1 docker-app5-test]$ sudo docker service ls
+ID                  NAME                 MODE                REPLICAS            IMAGE                              PORTS
+ogsdtkurj9mg        httpd1_httpd-cust1   replicated          5/5                 127.0.0.1:5000/httpdcust1:latest   *:8084->80/tcp
+wybax5pzg4rr        registry             replicated          1/1                 registry:2                         *:5000->5000/tcp
+
+WORKED
+
+==
+LIST IMAGES IN REGISTY
+==
+
+https://stackoverflow.com/questions/31251356/how-to-get-a-list-of-images-on-docker-registry-v2
+
+curl -X GET http://localhost:5000/v2/_catalog
+
+==
+BUILD AND PUSH CUSTOM IMAGE TO LOCAL/SHARED REGISTRY
+==
+
+sudo docker build --tag=apache-php-56-cust1 .
+sudo docker tag apache-php-56-cust1:latest localhost:5000/apache-php-56-cust1
+sudo docker push localhost:5000/apache-php-56-cust1
+
+sudo docker pull prestashop/prestashop
+sudo docker tag prestashop/prestashop:latest 127.0.0.1:5000/prestashopofficial
+sudo docker push 127.0.0.1:5000/prestashopofficial
+
+==
+MULTI-MANAGER (MULTI-MASTER, MULTI-LEADER) SWARM - TRIED - 02-11-19 - WORKED
+==
+
+https://docs.docker.com/swarm/reference/manage/
+
+To create a Swarm manager, use the following syntax:
+docker run swarm manage [OPTIONS] <discovery>
+
+For example, you can use manage to create a Swarm manager in a high-availability cluster with other managers:
+docker run -d -p 4000:4000 swarm manage -H :4000 --replication --advertise 172.30.0.161:4000 consul://172.30.0.165:8500
+
+Or, for example, you can use it to create a Swarm manager that uses Transport Layer Security (TLS) to authenticate the Docker Client and Swarm nodes:
+$ docker run -d -p 3376:3376 -v /home/ubuntu/.certs:/certs:ro swarm manage --tlsverify --tlscacert=/certs/ca.pem --tlscert=/certs/cert.pem --tlskey=/certs/key.pem --host=0.0.0.0:3376 token://$TOKEN
+
+TRYING ON docker host 2 - 02-11-19
+
+DIDNT WORK AT ALL, CREATED SOME CONTAINER
+sudo docker run -d -p 4000:4000 swarm manage -H :4000 --replication --advertise 172.16.3.216:4000 consul://172.16.3.215:8500
+
+SECOND TRY
+
+https://docs.docker.com/engine/swarm/manage-nodes/
+
+RUN ON MASTER
+
+sudo docker node promote webcldock2
+
+[user@webcldock1 docker-app5-test]$ sudo docker node promote webcldock2
+Node webcldock2 promoted to a manager in the swarm.
+[user@webcldock1 docker-app5-test]$ sudo docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE                                                    VERSION
+tnrqock2um0gwaku849ztbbv3 *   webcldock1          Ready               Active              Leader              18.09.1
+2zftyr2hwlrqbskpyz3m4i4es     webcldock2          Ready               Active              Reachable           18.09.1
+m6ioziewxsnwp7djz58adx9qh     webcldock3          Ready               Active                                  18.09.1
+
+WORKED
+
+========================================================================================
+========================================================================================
+
+==
+SHUTDOWN DOCKER SWARM MASTER TEST
+==
+
+webcldock1 is master, there is also webcldock2 and webcldock3
+shut down webcldock1
+containers on webcldock2 and webcldock3 continue to run
+when node1 is booted back up I see this:
+
+[user@webcldock1 ~]$ sudo docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+rixsvs94dl3f        nginx1_nginx        replicated          2/3                 nginx:latest        *:8083->80/tcp
+
+after about 1 minute:
+
+[user@webcldock1 ~]$ sudo docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+rixsvs94dl3f        nginx1_nginx        replicated          3/3                 nginx:latest        *:8083->80/tcp
+
+
+also see this:
+
+[user@webcldock1 ~]$ sudo docker service ps nginx1_nginx
+ID                  NAME                 IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR                         PORTS
+v9yq4y0zd5ig        nginx1_nginx.1       nginx:latest        webcldock3          Running             Running 2 minutes ago
+z1icj3v0k1z4        nginx1_nginx.2       nginx:latest        webcldock2          Running             Running 2 minutes ago
+pn17elwju3el        nginx1_nginx.3       nginx:latest        webcldock1          Running             Running 2 minutes ago
+1r8sy3vlfd6f         \_ nginx1_nginx.3   nginx:latest        webcldock1          Shutdown            Failed 2 minutes ago    "task: non-zero exit (255)"
+
+================================================================================================================================
+================================================================================================================================
+================================================================================================================================
+
+==
+INTERESTING STUFF ABOUT VIP
+==
+
+https://docs.docker.com/compose/compose-file/
+
+    Version 3.3 only.
+
+    endpoint_mode: vip - Docker assigns the service a virtual IP (VIP) that acts as the front end for clients to reach the service on a network. Docker routes requests between the client and available worker nodes for the service, without client knowledge of how many nodes are participating in the service or their IP addresses or ports. (This is the default.)
+
+    endpoint_mode: dnsrr - DNS round-robin (DNSRR) service discovery does not use a single virtual IP. Docker sets up DNS entries for the service such that a DNS query for the service name returns a list of IP addresses, and the client connects directly to one of these. DNS round-robin is useful in cases where you want to use your own load balancer, or for Hybrid Windows and Linux applications.
+
+version: "3.3"
+
+services:
+  wordpress:
+    image: wordpress
+    ports:
+      - "8080:80"
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: vip
+
+  mysql:
+    image: mysql
+    volumes:
+       - db-data:/var/lib/mysql/data
+    networks:
+       - overlay
+    deploy:
+      mode: replicated
+      replicas: 2
+      endpoint_mode: dnsrr
+
+volumes:
+  db-data:
+
+networks:
+  overlay:
+
+The options for endpoint_mode also work as flags on the swarm mode CLI command docker service create. For a quick list of all swarm related docker commands, see Swarm mode CLI commands.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ALPINE CONTAINER, RESTARTING SERVICE
+
+
+
+
+
+
+4# /usr/sbin/httpd
+.dockerenv  dev/        home/       media/      opt/        root/       sbin/       sys/        usr/
+bin/        etc/        lib/        mnt/        proc/       run/        srv/        tmp/        var/
+bash-4.4# /usr/sbin/httpd restart
+Usage: /usr/sbin/httpd [-D name] [-d directory] [-f file]
+                       [-C "directive"] [-c "directive"]
+                       [-k start|restart|graceful|graceful-stop|stop]
+                       [-v] [-V] [-h] [-l] [-L] [-t] [-T] [-S] [-X]
+Options:
+  -D name            : define a name for use in <IfDefine name> directives
+  -d directory       : specify an alternate initial ServerRoot
+  -f file            : specify an alternate ServerConfigFile
+  -C "directive"     : process directive before reading config files
+  -c "directive"     : process directive after reading config files
+  -e level           : show startup errors of level (see LogLevel)
+  -E file            : log startup errors to file
+  -v                 : show version number
+  -V                 : show compile settings
+  -h                 : list available command line options (this page)
+  -l                 : list compiled in modules
+  -L                 : list available configuration directives
+  -t -D DUMP_VHOSTS  : show parsed vhost settings
+  -t -D DUMP_RUN_CFG : show parsed run settings
+  -S                 : a synonym for -t -D DUMP_VHOSTS -D DUMP_RUN_CFG
+  -t -D DUMP_MODULES : show all loaded modules
+  -M                 : a synonym for -t -D DUMP_MODULES
+  -t -D DUMP_INCLUDES: show all included configuration files
+  -t                 : run syntax check for config files
+  -T                 : start without DocumentRoot(s) check
+  -X                 : debug mode (only one worker, do not detach)
+bash-4.4# /usr/sbin/httpd -k restart
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using 10.1.1.50. Set the 'ServerName' directive globally to suppress this message
+[user@webcld4 apache-php1]$
+[user@webcld4 apache-php1]$
+[user@webcld4 apache-php1]$ sudo docker exec -it b8e3c73a42f0 bash
+bash-4.4# ls
+bin    etc    lib    mnt    proc   run    srv    tmp    var
+dev    home   media  opt    root   sbin   sys    usr
+bash-4.4# cd /etc/
+TZ                    fstab                 logrotate.d/          passwd-               shadow-
+alpine-release        group                 modprobe.d/           periodic/             shells
+alternatives/         group-                modules               php7/                 ssl/
+apache2/              hostname              modules-load.d/       profile               sysctl.conf
+apk/                  hosts                 motd                  profile.d/            sysctl.d/
+ca-certificates/      init.d/               mtab                  prot

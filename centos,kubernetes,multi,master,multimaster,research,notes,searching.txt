@@ -1,0 +1,121 @@
+============================================
+CENTOS KUBERNETES MULTIMASTER SETUP RESEARCH
+ACTUALLY TRYING
+111519
+============================================
+
+LOOKS OK
+##https://www.kubeclusters.com/docs/How-to-Deploy-a-Highly-Available-kubernetes-Cluster-with-Kubeadm-on-CentOS7
+
+
+MIGHT BE HELP
+##https://phoenixnap.com/kb/how-to-install-kubernetes-on-centos
+##https://programmer.help/blogs/centos-7.5-builds-k8s1.11.2-multi-master-multi-node-high-availability-cluster.html
+
+ONLY SINGLE MASTER
+##https://medium.com/@hashithkarunarathne/create-a-kubernetes-cluster-from-the-scratch-on-centos-7-rhel-7-and-deploy-an-application-on-85a92997b565
+
+INTERESTING - READY TO GO, SINGLE KUBERNETES SETUP
+##https://microk8s.io/
+
+==
+SECOND LOOK
+==
+
+NOT COMPLETE
+##http://dockerlabs.collabnix.com/kubernetes/beginners/Install-and-configure-a-multi-master-Kubernetes-cluster-with-kubeadm.html
+
+MIGHT BE HELPFUL
+##https://syshunt.com/how-to-install-kubernetes-cluster-on-centos/
+
+CLOSE, BUT FOR UBUNTU
+##https://programmer.group/kubernetes-high-availability-cluster-multi-master-v1.15-official-latest-edition.html
+
+==
+THIRD LOOK
+==
+
+MIGHT BE OK - LOOKS LIKE THE BEST AND MOST COMPLETE SO FAR
+##https://blog.inkubate.io/install-and-configure-a-multi-master-kubernetes-cluster-with-kubeadm/
+##https://www.decandia.eu/linux/kubernetes-multi-master-multi-node-with-external-etcd/
+##https://blog.alexellis.io/kubernetes-in-10-minutes/
+
+MIGHT BE HELPFUL
+##https://blog.tekspace.io/setup-kubernetes-1-14-cluster-on-centos-7-6/
+##https://kazuhisya.netlify.com/2018/02/08/how-to-install-k8s-on-el7/
+##https://blog.scottlowe.org/2019/02/18/kubernetes-kubeadm-and-the-aws-cloud-provider/
+##https://blog.sourcerer.io/a-kubernetes-quick-start-for-people-who-know-just-enough-about-docker-to-get-by-71c5933b4633#1eac
+
+ONLY SINGLE MASTER
+##https://www.linuxtechi.com/install-kubernetes-1-7-centos7-rhel7/
+https://phuquoccuong.wordpress.com/2019/02/13/how-to-install-a-kubernetes-docker-cluster-on-centos-7/
+https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-cluster-using-kubeadm-on-ubuntu-18-04
+
+MIGHT BE HELPFUL, GOOD NETWORK COMPARE CHART - LOOKS LIKE SHOULD TRY CALICO OR CANAL IF POSSIBLE, NOT FLANNEL
+##https://medium.com/better-programming/build-your-own-multi-node-kubernetes-cluster-with-monitoring-346a7e2ef6e2
+
+NOT COMPLETE
+##https://www.tothenew.com/blog/how-to-setup-kubernetes-master-ha-on-centos/
+
+LOOKS HELPFUL AS OVERVIEW
+##https://www.weave.works/blog/running-highly-available-clusters-with-kubeadm
+
+
+
+==
+SHOULD LOOK AT
+NGINX INGRESS
+DYNAMIC LB?
+==
+
+https://github.com/kubernetes/ingress-nginx
+
+
+
+
+
+ALL DONE? THEN WHAT? DEPLOY SERVICE?
+
+##https://www.docker.com/blog/simplifying-kubernetes-with-docker-compose-and-friends/
+##https://kubernetes.io/docs/tasks/configure-pod-container/translate-compose-kubernetes/
+
+NEED THIS, SHOULD BE ABLE TO USE PRETTY CLOSE TO STOCK COMPOSE FILE
+##https://kompose.io/
+
+
+
+
+
+STUFF WHILE WORKING ON - 121019
+
+
+
+
+TRAEFIK REF
+##https://docs.traefik.io/providers/kubernetes-ingress/
+
+INGRESS REF
+##https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0
+##https://medium.com/@carlosedp/multiple-traefik-ingresses-with-letsencrypt-https-certificates-on-kubernetes-b590550280cf
+##https://stackoverflow.com/questions/50585616/kubernetes-metallb-traefik-how-to-get-real-client-ip
+##https://github.com/Thoorium/kubernetes-local-cluster-flannel-metallb-traefik
+##https://www.devtech101.com/2019/02/23/using-metallb-and-traefik-load-balancing-for-your-bare-metal-kubernetes-cluster-part-1/
+##https://www.devtech101.com/2019/03/02/using-traefik-as-your-ingress-controller-combined-with-metallb-on-your-bare-metal-kubernetes-cluster-part-2/
+##https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+##https://www.weave.works/blog/kubernetes-faq-how-can-i-route-traffic-for-kubernetes-on-bare-metal
+##https://lab.wallarm.com/choose-the-right-ingress-controller-for-your-kubernetes-environment/
+##https://medium.com/@chamilad/load-balancing-and-reverse-proxying-for-kubernetes-services-f03dd0efe80
+##https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/
+
+##https://medium.com/oracledevs/experimenting-with-ingress-controllers-on-oracle-container-engine-oke-part-1-5af51e6cdb85
+##https://docs.netapp.com/us-en/kubernetes-service/managing-ingresses-on-kubernetes.html#pod
+
+MIGHT HELP WITH EXTERNAL EXPOSE SERVICE, TALKS ABOUT HOSTNAME SOMETHING
+##https://medium.com/@ManagedKube/kubernetes-access-external-services-e4fd643e5097
+##https://cloud.google.com/blog/products/gcp/kubernetes-best-practices-mapping-external-services
+
+METALLB IN BGP MODE REF
+##https://medium.com/@futuredon/kubernetes-on-prem-demo-using-gns3-kubespray-nginx-ingress-frr-and-metallb-part-2-4f11ace36c00
+
+EXAMPLE WORDPRESS, SHOULD CHECK
+##https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/

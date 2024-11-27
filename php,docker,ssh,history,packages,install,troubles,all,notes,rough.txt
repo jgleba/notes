@@ -1,0 +1,458 @@
+[user@zxsw ~]$ history | grep php
+   16  sudo mv wp-config-sample.php wp-config.php
+   17  sudo nano wp-config.php
+  200  php --verison
+  201  php --help
+  202  php --version
+  549  php -version
+  550  php -v
+  565  php -v
+  593  sudo php -v
+  672  sudo php -v
+  673  sudo yum remove php*
+  677  sudo yum-config-manager --enable remi-php70
+  678  sudo yum install php -y
+  679  sudo yum install php
+  680  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache -y
+  691  sudo php -v
+  697  php --version
+  737  sudo yum install php-tidy
+  754  php artisan key:generate
+  770  php artisan migrate
+  778  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+  779  sudo yum install php-pdo
+  780  sudo yum install php-mbstring
+  781  sudo yum install php-gd
+  782  sudo yum install php-mysqlnd
+  783  sudo yum install php-xml
+  784  sudo yum install php-dom
+  802  php artisan key:generate
+  803  php artisan migrate
+  932  php -v
+  933  sudo yum install php-gd
+  962  php -v
+ 1001  php -m
+ 1002  sudo yum install php 72u-common
+ 1003  sudo yum install php72u-common
+ 1004  sudo yum install php-xmp
+ 1005  history | grep php
+
+ ==================
+ 
+ sudo yum-config-manager --disable remi-php70
+
+sudo yum-config-manager --enable remi-php72
+
+sudo yum remove php*
+
+sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache php-dom php-cli php-common php-json php-process php-tidy php-pecl-zip -y
+
+sudo yum install php72-php-gd php72-php-mbstring php72-php-pdo php72-php-mysqlnd php72-php-xml php72-php-zip php72-php-posix php72-php-opcache php72-php-dom php72-php-cli php72-php-common php72-php-json php72-php-process php72-php-tidy php72-zip -y
+
+sudo service httpd restart
+
+php --ini | grep "Loaded Configuration File"
+
+
+
+
+
+php                                    x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           8.2 M
+ php-cli                                x86_64                           7.0.33-2.el7.remi                                  @remi-php70                            12 M
+ php-common                             x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           7.9 M
+ php-gd                                 x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           204 k
+ php-json                               x86_64                           7.0.33-2.el7.remi                                  @remi-php70                            80 k
+ php-mbstring                           x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           2.8 M
+ php-mysqlnd                            x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           888 k
+ php-opcache                            x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           405 k
+ php-pdo                                x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           382 k
+ php-pecl-zip                           x86_64                           1.15.4-1.el7.remi.7.0                              @remi-php70                           177 k
+ php-process                            x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           188 k
+ php-tidy                               x86_64                           7.0.33-2.el7.remi                                  @remi-php70                           106 k
+ php-xml              
+ 
+ 
+ 
+ 
+ 
+ =======
+ 
+ 
+ 
+ 
+ 
+ Processing Dependency: php(api) = 20100412-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Processing Dependency: php(zend-abi) = 20100525-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+---> Package php-process.x86_64 0:7.2.16-1.el7.remi will be installed
+---> Package php-xml.x86_64 0:7.2.16-1.el7.remi will be installed
+
+Packages skipped because of dependency problems:
+    php-cli-7.2.16-1.el7.remi.x86_64 from remi-php72
+    php-fedora-autoloader-1.0.0-1.el7.noarch from epel
+    1:php-pear-1.10.8-1.el7.remi.noarch from remi-php72
+    php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64 from remi-safe
+    php-process-7.2.16-1.el7.remi.x86_64 from remi-php72
+    php-xml-7.2.16-1.el7.remi.x86_64 from remi-php72
+[user@zxsw ~]$ sudo yum install php-cli
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached host
+
+
+
+====
+
+
+
+
+
+  672  sudo php -v
+  673  sudo yum remove php*
+  674  sudo yum update -y
+  675  sudo rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+  676  sudo yum install yum-utils -y
+  677  sudo yum-config-manager --enable remi-php70
+  678  sudo yum install php -y
+  679  sudo yum install php
+  680  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache -y
+  681  sudo service httpd restart
+  682  sudo reboot
+
+  719  ls
+  720  sudo wget https://github.com/BookStackApp/BookStack/archive/master.zip
+  721  ls
+  722  sudo unzip master.zip
+  723  ls
+  724  sudo mv master.zip ./../
+  725  cd ..
+  726  sudo rm -r bookstack/
+  727  sudo unzip master.zip
+  728  sudo mv BookStack-master bookstack
+  729  sudo rm master.zip
+  730  ls -la
+  731  sudo chown -R user:apache bookstack/
+  732  sudo chmod -R 770 bookstack/
+  733  cd bookstack/
+  734  ls
+  735  composer install
+  736  sudo composer install
+  737  sudo yum install php-tidy
+  738  composer install
+  739  cp .env.example .env
+  740  nano .env
+  741  ls -al
+  742  sudo chown -R user:apache .env
+  743  sudo chmod -R 750 .env
+  744  ls -al
+  745  cd ..
+  746  ls -al
+  747  sudo chown -R user:apache bookstack
+  748  sudo chmod -R 750 bookstack
+  749  cd bookstack/
+  750  ls -al
+  751  sudo chmod -R 770 storage
+  752  sudo chmod -R 770 bootstrap/cache
+  753  sudo chmod -R 770 public/uploads
+  754  php artisan key:generate
+  755  ls -la
+  756  nano .htaccess
+  757  ls -al
+  758  sudo chown user:apache .htaccess
+  759  sudo chmod 750 .htaccess
+  760  ls
+  761  cd public/
+  762  ls
+  763  pwd
+  764  cd /etc/httpd/sites-enabled/
+  765  ls
+  766  sudo cp ip.addr.conf bookstack.jgleba.com.conf
+  767  sudo nano bookstack.jgleba.com.conf
+  769  cd bookstack/
+  770  php artisan migrate
+  771  sudo service apache restart
+  772  sudo service httpd restart
+  773  ls
+  774  sudo rm .htaccess
+  775  sudo service httpd restart
+  776  sudo nano /etc/httpd/sites-enabled/bookstack.jgleba.com.conf
+  777  sudo service httpd restart
+  778  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+  779  sudo yum install php-pdo
+  780  sudo yum install php-mbstring
+  781  sudo yum install php-gd
+  782  sudo yum install php-mysqlnd
+  783  sudo yum install php-xml
+  784  sudo yum install php-dom
+  785  sudo nano /etc/httpd/sites-enabled/bookstack.jgleba.com.conf
+  786  sudo service httpd restart
+  787  cd ..
+  788  ls
+  789  sudo mv bookstack bookstack-master-nocss
+  790  sudo wget https://github.com/BookStackApp/BookStack/archive/release.zip
+  791  sudo unzip release.zip
+  792  sudo mv BookStack-release/ bookstack
+  793  sudo rm release.zip
+  794  ls -al
+  795  sudo chown -R user:apache bookstack
+  796  sudo chmod -R 770 bookstack
+  797  cd bookstack
+  798  ls
+
+  
+  
+  ==========================
+  
+  
+  
+  sudo yum install php72-php-gd php72-php-mbstring php72-php-pdo php72-php-mysqlnd php72-php-xml php72-php-zip php72-php-posix php72-php-opcache -y
+
+sudo yum install php72-php-xmp
+
+sudo yum install php72-php-tidy  php72-php-cli  php72-php-pear 
+
+php72-php-dom
+php72-php-fedora-autoloader
+php72-php-common
+php72-php-pecl
+
+
+sudo yum remove php-*
+sudo yum clean all
+sudo yum remove epel-release
+sudo yum install epel-release
+
+sudo yum install php72-*
+
+
+
+==========================
+
+
+
+  history | grep php
+ 1060  sudo yum remove php-*
+ 1061  sudo yum-config-manager --enable remi-php72
+ 1062  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache -y
+ 1063  sudo yum install php-tidy
+ 1064  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+ 1065  sudo yum install php-pdo
+ 1066  sudo yum install php-mbstring
+ 1067  sudo yum install php-gd
+ 1068  sudo yum install php-mysqlnd
+ 1069  sudo yum install php-xml
+ 1070  sudo yum install php-dom
+ 1071  sudo yum install php-xmp
+ 1072  sudo yum install php-cli
+ 1073  sudo yum install php-fedora-autoloader
+ 1074  sudo yum install php-pear
+ 1075  sudo yum install php-xmp
+ 1076  sudo yum install php-common
+ 1077  sudo yum install php-pecl
+ 1078  sudo yum install php-pecl-xmp
+ 1079  sudo yum install php-api
+ 1080  sudo yum remove php-common-5.4.16-46.el7.x86_64
+ 1081  sudo yum remove php-common
+ 1082  sudo yum remove php-*
+ 1083  sudo yum remove php72-common
+ 1084  sudo yum install php72-common
+ 1085  sudo yum install php7*
+ 1086  sudo yum install php72-php-common
+ 1087  sudo yum install php72-php-gd php72-php-mbstring php72-php-pdo php72-php-mysqlnd php72-php-xml php72-php-zip php72-php-posix php72-php-opcache -y
+ 1088  sudo yum install php72-php-xmp
+ 1089  history
+[user@zxsw sites]$
+
+
+
+======
+
+
+
+
+mi-php72: mirror.bebout.net
+ * remi-safe: mirror.bebout.net
+ * updates: mirror.layeronline.com
+Resolving Dependencies
+--> Running transaction check
+---> Package php-pecl-xmp.x86_64 0:4.2.0-1.el7.remi.5.4 will be installed
+--> Processing Dependency: php(api) = 20100412-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Processing Dependency: php(zend-abi) = 20100525-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Processing Dependency: /usr/bin/pecl for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Processing Dependency: /usr/bin/pecl for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Running transaction check
+---> Package php-pear.noarch 1:1.10.8-1.el7.remi will be installed
+--> Processing Dependency: php-cli for package: 1:php-pear-1.10.8-1.el7.remi.noarch
+--> Processing Dependency: php-composer(fedora/autoloader) for package: 1:php-pear-1.10.8-1.el7.remi.noarch
+---> Package php-pecl-xmp.x86_64 0:4.2.0-1.el7.remi.5.4 will be installed
+--> Processing Dependency: php(api) = 20100412-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Processing Dependency: php(zend-abi) = 20100525-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Running transaction check
+---> Package php-cli.x86_64 0:7.2.16-1.el7.remi will be installed
+---> Package php-fedora-autoloader.noarch 0:1.0.0-1.el7 will be installed
+---> Package php-pecl-xmp.x86_64 0:4.2.0-1.el7.remi.5.4 will be installed
+--> Processing Dependency: php(api) = 20100412-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Processing Dependency: php(zend-abi) = 20100525-64 for package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64
+--> Finished Dependency Resolution
+Error: Package: php-pecl-xmp-4.2.0-1.el7.remi.5.4.x86_64 (remi-safe)
+           Requires: php(zend-abi) = 20100525-64
+           Installed: php-common-7.2.16-1.el7.remi.x86_64 (@remi-php72)
+               php(zend-abi) = 20170718-64
+           Available: php-common-5.4.16-46.el7.x86_64 (base)
+               php(zend-abi) = 20100525-64
+           Available: php-common-7.2.15-1.el7.remi.x86_64 (
+		   
+		   
+		   
+		   ====
+		   
+		   
+		   
+		   
+		   
+		   
+		   
+
+===============================================
+
+
+
+
+
+
+[user@zxsw sites]$ history | grep php
+  200  php --verison
+  201  php --help
+  202  php --version
+  549  php -version
+  550  php -v
+  565  php -v
+  593  sudo php -v
+  672  sudo php -v
+  673  sudo yum remove php*
+  677  sudo yum-config-manager --enable remi-php70
+  678  sudo yum install php -y
+  680  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache -y
+  679  sudo yum install php
+  691  sudo php -v
+  697  php --version
+  737  sudo yum install php-tidy
+  754  php artisan key:generate
+  770  php artisan migrate
+  778  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+  779  sudo yum install php-pdo
+  780  sudo yum install php-mbstring
+  781  sudo yum install php-gd
+  782  sudo yum install php-mysqlnd
+  783  sudo yum install php-xml
+  784  sudo yum install php-dom
+  802  php artisan key:generate
+  803  php artisan migrate
+  932  php -v
+  933  sudo yum install php-gd
+  962  php -v
+ 1010  php -v
+ 1011  history | grep php
+ 1012  sudo yum-config-manager --enable remi-php72
+ 1013  sudo yum remove php-*
+ 1014  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache php-dom php-xmp
+ 1015  sudo yum-config-manager --enable remi-php70
+ 1016  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache php-dom php-xmp
+ 1017  sudo yum-config-manager --disable remi-php70
+ 1018  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache php-dom php-xmp
+ 1019  sudo yum-config-manager --disable remi-php72
+ 1020  sudo yum-config-manager --enable remi-php71
+ 1021  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache php-dom php-xmp
+ 1022  sudo yum-config-manager --disable remi-php71
+ 1023  sudo yum-config-manager --enable remi-php72
+ 1024  sudo yum install php-common
+ 1025  sudo yum install php-gd php-mbstring php-pdo
+ 1026  sudo yum install php-mysqlnd php-xml php-zip php-posix php-opcache php-dom
+ 1027  sudo yum install php-xmp
+ 1028  php -v
+ 1030  sudo yum install php-cli
+ 1031  sudo yum install php-xmp
+ 1032  sudo yum install php-zend-abi
+ 1033  sudo rm php-common
+ 1034  sudo yum remove php-common
+ 1035  sudo yum install php-xmp
+ 1036  sudo yum install php-xmp --skip-broken
+ 1037  sudo yum install php-pear
+ 1038  sudo yum install php-xmp
+ 1040  sudo yum install php-xmp
+ 1052  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+ 1053  sudo yum install php-pecl-rdkafka
+ 1054  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+ 1056  sudo yum remove php-pecl-rdkafka
+ 1059  history | grep php
+
+ 
+ 
+ 
+ 
+ 
+ 
+========================
+
+
+
+
+
+  sudo php -v
+  673  sudo yum remove php*
+  677  sudo yum-config-manager --enable remi-php70
+  678  sudo yum install php -y
+  679  sudo yum install php
+  680  sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache -y
+  691  sudo php -v
+  697  php --version
+  737  sudo yum install php-tidy
+  754  php artisan key:generate
+  770  php artisan migrate
+  778  sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+  779  sudo yum install php-pdo
+  780  sudo yum install php-mbstring
+  781  sudo yum install php-gd
+  782  sudo yum install php-mysqlnd
+  783  sudo yum install php-xml
+  784  sudo yum install php-dom
+  802  php artisan key:generate
+  803  php artisan migrate
+  932  php -v
+  933  sudo yum install php-gd
+  962  php -v
+ 1010  php -v
+ 1011  history | grep php
+[user@zxsw ~]$ sudo yum-config-manager --enable remi-php72
+
+sudo yum-config-manager --disable remi-php70
+sudo yum-config-manager --disable remi-php72
+sudo yum-config-manager --disable remi-php70
+sudo yum-config-manager --enable remi-php71
+
+sudo yum install php-gd php-mbstring php-pdo php-mysqlnd php-xml php-zip php-posix php-opcache php-dom php-xmp -y
+
+
+ php                       x86_64              7.0.33-2.el7.remi                    @remi-php70              8.2 M
+ php-cli                   x86_64              7.0.33-2.el7.remi                    @remi-php70               12 M
+ php-common                x86_64              7.0.33-2.el7.remi                    @remi-php70              7.9 M
+ php-gd                    x86_64              7.0.33-2.el7.remi                    @remi-php70              204 k
+ php-json                  x86_64              7.0.33-2.el7.remi                    @remi-php70               80 k
+ php-mbstring              x86_64              7.0.33-2.el7.remi                    @remi-php70              2.8 M
+ php-mysqlnd               x86_64              7.0.33-2.el7.remi                    @remi-php70              888 k
+ php-opcache               x86_64              7.0.33-2.el7.remi                    @remi-php70              405 k
+ php-pdo                   x86_64              7.0.33-2.el7.remi                    @remi-php70              382 k
+ php-pecl-zip              x86_64              1.15.4-1.el7.remi.7.0                @remi-php70              177 k
+ php-process               x86_64              7.0.33-2.el7.remi                    @remi-php70              188 k
+ php-tidy                  x86_64              7.0.33-2.el7.remi                    @remi-php70              106 k
+ php-xml                   x8
+
+ 
+sudo yum install php-pdo php-mbstring php-gd php-xmp php-dom php-mysqlnd
+sudo yum install php-pdo
+sudo yum install php-mbstring
+sudo yum install php-gd
+sudo yum install php-mysqlnd
+sudo yum install php-xml
+sudo yum install php-dom
+
+  
+  

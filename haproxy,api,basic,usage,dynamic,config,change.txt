@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY API
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-03-12[Mar-Fri]15-08PM 
+
+##https://gist.github.com/haproxytechblog/f41c32952df3baa6536e95d515e03a20
+##https://www.haproxy.com/blog/dynamic-configuration-haproxy-runtime-api/
+
+==
+ADD TO GLOBAL SECTION
+==
+
+global
+    stats socket ipv4@127.0.0.1:9998 level admin
+    stats socket /var/run/hapee-lb.sock mode 666 level admin
+    stats timeout 2m
+
+==	
+INSTALL SOCAT	
+==
+
+sudo yum install socat -y
+
+==
+USE
+==
+
+echo "show stat" | socat stdio tcp4-connect:127.0.0.1:9998
+
+watch 'echo "show stat" | socat stdio tcp4-connect:127.0.0.1:9998 | cut -d "," -f 1-2,5-10,34-36 | column -s, -t'

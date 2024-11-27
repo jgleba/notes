@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL INSTALL POWERCLI
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-22[Mar-Fri]13-17PM 
+
+Install-Module -Name VMware.PowerCLI -SkipPublisherCheck -AllowClobber
+Install-Module -Name VMware.PowerCLI -SkipPublisherCheck

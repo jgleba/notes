@@ -1,0 +1,23 @@
+mikrotik qos - may 13, 2016
+==
+
+
+three main parts
+==
+mangle
+queue type
+queue tree
+
+
+ip->firewall->mangle
+used to mark traffic
+
+queues->queue type
+global download and upload definition
+use 90% of full internet speed
+pcq type used -> means will split traffic between hosts on network
+
+queues->queue tree
+most important
+global download should match queue type download
+usually use p1, p2, p8

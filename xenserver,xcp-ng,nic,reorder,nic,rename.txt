@@ -1,0 +1,105 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  XCP-NG XENSERVER REORDER NICS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-03-07[Mar-Sat]17-39PM 
+
+##https://www.practicalxenserver.org/tutorials/miscellaneous-tutorials/how-to-prepare-a-xenserver-hosts-network-interfaces/
+##https://www.jeffels.net/2016/10/02/changing-nic-order-xenserver/
+
+==
+
+interface-rename --update eth0=em4
+
+==
+
+interface-rename -l
+Name  MAC                PCI              ethN  Phys   SMBios  Driver  Version       Firmware
+eth0  00:e0:81:ce:80:ec  0000:02:00.0[0]  eth0  em1            e1000e  3.4.2.1-NAPI  1.8-0
+eth1  00:e0:81:ce:80:ed  0000:03:00.0[0]  eth1  em2            e1000e  3.4.2.1-NAPI  1.8-0
+eth2  00:e0:81:ce:7f:d4  0000:0d:00.0[0]  eth2  em3            igb     5.3.5.20      1.4.3
+eth3  00:e0:81:ce:7f:d5  0000:0d:00.1[0]  eth3  em4            igb     5.3.5.20      1.4.3
+eth4  00:1b:21:4c:72:64  0000:08:00.0[0]  eth4  p55p1          igb     5.3.5.20      1.77, 0x880e0000
+eth5  00:1b:21:4c:72:65  0000:08:00.1[0]  eth5  p55p2          igb     5.3.5.20      1.77, 0x880e0000
+eth6  00:1b:21:4c:72:60  0000:09:00.0[0]  eth6  p55p3          igb     5.3.5.20      1.77, 0x880c0000
+eth7  00:1b:21:4c:72:61  0000:09:00.1[0]  eth7  p55p4          igb     5.3.5.20      1.77, 0x880c0000
+eth8  00:1b:21:97:62:34  0000:0b:00.0[0]  eth8  p51p1          ixgbe   5.5.2         0x30030001
+eth9  00:1b:21:97:62:35  0000:0b:00.1[0]  eth9  p51p2          ixgbe   5.5.2         0x30030001
+
+==
+
+interface-rename --update eth0=em4
+interface-rename --update eth4=p55p4
+interface-rename --update eth3=p55p3
+
+==
+
+NOT WORKING ON HV2
+
+[21:16 HV2 ~]# kljfl;jwflkasjfsd;ofjaskl;fgj fcq3uth14[2j031r-
+2[i3j3 eth4=p55p4
+ERROR    [2020-03-07 21:17:13] No valid update rules after processing.  Doing nothing
+
+
+==
+
+[21:17 HV2 ~]# interface-rename --rename eth4=p55p4
+[21:17 HV2 ~]# interface-rename --rename 
+[21:18 HV2 ~]# interface-rename --rename eth3=p55p3
+[21:18 HV2 ~]# reboot
+
+DIDNT WORK
+
+CHANGED HERE, THEN REBOOTED, WORKED
+
+nano /etc/sysconfig/network-scripts/interface-rename-data/static-rules.conf
+
+REBOOT
+ 
+EMERGENCY NETWORK RESET TO CHANGE TO eth0
+
+
+nano /etc/sysconfig/network-scripts/interface-rename-data/static-rules.conf
+
+eth2: mac = "00:24:81:80:19:63"
+
+==
+
+HV2
+eth0 00:e0:81:ce:7f:ad
+eth3 00:1b:21:35:59:10 
+eth4 00:1b:21:35:59:11
+
+reboot
+
+eth10 00:0e:81:ce:80:c4
+
+==
+
+eth0: mac =  "00:e0:81:ce:7f:ad"
+eth3: mac =  "00:e0:81:ce:80:c4"
+
+
+==
+042120
+==
+
+interface-rename -l
+
+Name  MAC                PCI              ethN  Phys   SMBios  Driver  Version       Firmware        
+eth0  00:e0:81:ce:80:ec  0000:02:00.0[0]  eth0  em1            e1000e  3.4.2.1-NAPI  1.8-0           
+eth1  00:e0:81:ce:80:ed  0000:03:00.0[0]  eth1  em2            e1000e  3.4.2.1-NAPI  1.8-0           
+eth2  00:e0:81:ce:7f:d4  0000:0d:00.0[0]  eth2  em3            igb     5.3.5.20      1.4.3           
+eth3  00:e0:81:ce:7f:d5  0000:0d:00.1[0]  eth3  em4            igb     5.3.5.20      1.4.3           
+eth4  00:1b:21:4c:72:64  0000:08:00.0[0]  eth4  p55p1          igb     5.3.5.20      1.77, 0x880e0000
+eth5  00:1b:21:4c:72:65  0000:08:00.1[0]  eth5  p55p2          igb     5.3.5.20      1.77, 0x880e0000
+eth6  00:1b:21:4c:72:60  0000:09:00.0[0]  eth6  p55p3          igb     5.3.5.20      1.77, 0x880c0000
+eth7  00:1b:21:4c:72:61  0000:09:00.1[0]  eth7  p55p4          igb     5.3.5.20      1.77, 0x880c0000
+eth8  00:1b:21:97:62:34  0000:0b:00.0[0]  eth8  p51p1          ixgbe   5.5.2         0x30030001      
+eth9  00:1b:21:97:62:35  0000:0b:00.1[0]  eth9  p51p2          ixgbe   5.5.2         0x30030001     
+
+
+eth0: mac =  "00:e0:81:ce:7f:d5"
+eth3: mac =  "00:e0:81:ce:80:ec"
+

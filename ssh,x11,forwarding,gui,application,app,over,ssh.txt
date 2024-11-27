@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SSH X11 FORWARDING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-01-07[Jan-Thu]14-32PM 
+
+make sure enabled on destination machine
+
+if using windows, install xming
+
+open xming before putty connection
+
+in putty connection, go to ssh, then x11 section
+
+add display localhost:0.0
+
+then can connect via ssh and open gui application
+
+==
+101421
+==
+
+sudo yum install xorg-x11-xauth
+sudo yum install dbus-x11
+
+==
+
+xauth list empty
+https://access.redhat.com/solutions/3165011
+
+Change #AddressFamily any to AddressFamily inet in /etc/ssh/sshd_config

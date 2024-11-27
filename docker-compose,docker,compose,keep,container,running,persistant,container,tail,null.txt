@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DOCKER KEEP CONTAINER RUNNING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-29[Aug-Thu]15-16PM 
+
+#https://stackoverflow.com/questions/38546755/docker-compose-keep-container-running
+
+IN DOCKER-COMPOSE
+
+    command: tail -F /dev/null
+	
+OR TRY 
+
+tty: true 

@@ -1,0 +1,26 @@
+##SETUP CENTOS VM FRESH
+##JGLEBA
+##01-07-2018
+
+SE LINUX OFF, USUALLY NOT NEEDED ANYWAYS, SO JUST TURN OFF
+sudo sed -i -e 's/=enforcing/=disabled/g' /etc/selinux/config
+sudo reboot
+
+SOMETIMES
+##sudo yum install epel-release -y
+
+sudo yum update -y
+sudo yum install nano wget net-tools htop -y
+sudo yum install nano wget net-tools iftop nload htop unzip iotop -y
+
+ONLY SOMETIMES
+sudo service postfix status
+sudo systemctl stop postfix 
+sudo systemctl disable postfix 
+sudo yum remove postfix -y
+
+sudo nano /etc/hostname
+sudo nano /etc/hosts
+
+sudo passwd root
+

@@ -1,0 +1,59 @@
+setting up openvpn (ovpn) on mikrotik
+jan 29
+==
+
+http://unblockvpn.com/support/how-to-set-up-openvpn-on-router-mikrotik.php
+
+http://wiki.mikrotik.com/wiki/OpenVPN_Configuration_Step_by_Step
+
+==
+
+entered in linux, create certs
+==
+
+
+openssl genrsa -out ca.key 4096
+openssl req -new -x509 -days 1826 -key ca.key -out ca.crt
+
+==
+
+didn't work - mar 3 - had issues with certs
+
+==
+
+generated certs from mikrotik
+
+now working
+
+==
+
+strip passphrase from .key file
+
+openssl rsa -in cert_export_clientj.key -out clientj.key
+
+==
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-an-openvpn-server-on-ubuntu-14-04
+
+http://forum.mikrotik.com/viewtopic.php?t=96669
+
+http://unix.stackexchange.com/questions/213125/openvpn-connection-impossible-from-some-network
+
+http://forum.mikrotik.com/viewtopic.php?t=79959
+
+http://itsavedmyass.cyprusmania.net/remote-access/mikrotik-openvpn-server-windows-7-client/
+
+https://vpn.ac/knowledgebase/40/How-to-save-Username-and-Password-in-OpenVPN-GUI-Windows.html
+
+http://forum.mikrotik.com/viewtopic.php?t=65300
+
+http://forum.mikrotik.com/viewtopic.php?t=30108 - ***
+
+http://forum.mikrotik.com/viewtopic.php?t=61200
+
+http://forum.mikrotik.com/viewtopic.php?t=88372   ********** important!!!!
+
+https://community.openvpn.net/openvpn/wiki/BridgingAndRouting
+
+http://www.dr0u.com/mikrotik-setup-sstp-server-for-windows-10-client/  *** MIKROTIK CERTS ****
+

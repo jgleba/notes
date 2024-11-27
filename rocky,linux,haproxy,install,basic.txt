@@ -1,0 +1,38 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY BASIC INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-03[Feb-Thu]15-35PM 
+
+##INSTALL
+
+sudo yum install haproxy
+
+##CONFIG FILE
+
+sudo nano /etc/haproxy/haproxy.cfg
+
+##START AND ENABLE
+
+sudo systemctl enable haproxy && sudo systemctl start haproxy
+
+##FIREWALL
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+
+sudo firewall-cmd --zone=public --add-port=4433/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9999/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=9000/tcp --permanent
+
+sudo firewall-cmd --reload
+
+##RESTART SERVICE
+
+sudo systemctl restart haproxy
+
+##LOGGING
+
+cat /etc/rsyslog.d/haproxy.conf
+local0.*        /var/log/haproxy.log

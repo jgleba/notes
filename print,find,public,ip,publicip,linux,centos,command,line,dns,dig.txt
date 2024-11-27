@@ -1,0 +1,32 @@
+=======================================================
+PRINT / FIND PUBLIC IP FROM LINUX MACHINE, COMMAND LINE
+UPDATING NOTE - 071019
+=======================================================
+
+==
+DIFFERENT WAYS
+==
+
+#WORKS
+
+dig +short myip.opendns.com @resolver1.opendns.com
+
+#LOTS OF INFO
+
+curl ipinfo.io
+
+#STILL WORKS
+
+curl https://wtfismyip.com/text
+
+#MAIN ONE, WORKS PRETTY WELL
+
+curl ipecho.net/plain
+
+ANOTHER ONE
+
+curl ifconfig.me
+
+ANOTHER ONE 113021
+
+curl https://api64.ipify.org/

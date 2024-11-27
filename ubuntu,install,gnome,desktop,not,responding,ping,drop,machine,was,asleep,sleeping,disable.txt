@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PING DROPS AFTER INSTALL GNOME DESKTOP ON UBUNTU ARM IN ORACLE CLOUD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-08[Aug-Thu]13-06PM 
+
+##https://askubuntu.com/questions/1271282/how-to-stop-networkmanager-to-put-ubuntu-server-to-sleep
+
+
+
+Here is what works for me:
+
+systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+
+This command disables the sleep mode on the server.
+
+If we would like to enable it again:
+
+systemctl unmask sleep.target suspend.target hibernate.target hybrid-sleep.target
+

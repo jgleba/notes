@@ -1,0 +1,21 @@
+==============================
+CENTOS MAKE DISK, ADD NEW DISK
+031920
+==============================
+
+##https://www.tecmint.com/add-new-disk-to-an-existing-linux/
+
+sudo fdisk /dev/xvdb
+
+n – Create partition
+p
+enter
+enter
+w – write the changes and exit.
+
+sudo mkfs.ext4 /dev/xvdb1
+
+mount, fstab
+
+/dev/xvdb1 /mnt/disk2 ext4 defaults 1 2
+

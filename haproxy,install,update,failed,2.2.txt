@@ -1,0 +1,51 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HAPROXY UPDATE TO 2.2 ON CENTOS, FAILED
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-14[Oct-Wed]13-16PM 
+
+##https://cbs.centos.org/koji/buildinfo?buildID=30569
+
+sudo wget https://cbs.centos.org/kojifiles/packages/haproxy/2.2.2/1.el8/x86_64/haproxy-2.2.2-1.el8.x86_64.rpm
+sudo yum install haproxy-2.2.2-1.el8.x86_64.rpm
+
+Resolving Dependencies
+--> Running transaction check
+---> Package haproxy.x86_64 0:2.2.2-1.el8 will be installed
+--> Processing Dependency: libcrypt.so.1(XCRYPT_2.0)(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+Loading mirror speeds from cached hostfile
+ * base: less.cogeco.net
+ * centos-sclo-rh: less.cogeco.net
+ * centos-sclo-sclo: less.cogeco.net
+ * epel: d2lzkl7pfhq30w.cloudfront.net
+ * extras: less.cogeco.net
+ * updates: less.cogeco.net
+--> Processing Dependency: libcrypto.so.1.1(OPENSSL_1_1_0)(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libcrypto.so.1.1(OPENSSL_1_1_1)(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libssl.so.1.1(OPENSSL_1_1_0)(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libssl.so.1.1(OPENSSL_1_1_1)(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libcrypto.so.1.1()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: liblua-5.3.so()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libpcre2-8.so.0()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libpcre2-posix.so.2()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libssl.so.1.1()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Running transaction check
+---> Package haproxy.x86_64 0:2.2.2-1.el8 will be installed
+--> Processing Dependency: libcrypt.so.1(XCRYPT_2.0)(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: liblua-5.3.so()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+--> Processing Dependency: libpcre2-posix.so.2()(64bit) for package: haproxy-2.2.2-1.el8.x86_64
+---> Package openssl11-libs.x86_64 1:1.1.1c-2.el7 will be installed
+---> Package pcre2.x86_64 0:10.23-2.el7 will be installed
+--> Processing Conflict: rh-haproxy18-haproxy-syspaths-1.8.24-2.el7.x86_64 conflicts haproxy
+--> Finished Dependency Resolution
+Error: Package: haproxy-2.2.2-1.el8.x86_64 (/haproxy-2.2.2-1.el8.x86_64)
+           Requires: liblua-5.3.so()(64bit)
+Error: Package: haproxy-2.2.2-1.el8.x86_64 (/haproxy-2.2.2-1.el8.x86_64)
+           Requires: libpcre2-posix.so.2()(64bit)
+Error: rh-haproxy18-haproxy-syspaths conflicts with haproxy-2.2.2-1.el8.x86_64
+Error: Package: haproxy-2.2.2-1.el8.x86_64 (/haproxy-2.2.2-1.el8.x86_64)
+           Requires: libcrypt.so.1(XCRYPT_2.0)(64bit)
+ You could try using --skip-broken to work around the problem
+ You could try running: rpm -Va --nofiles --nodigest
+[user@FELB1-TEST ~]$

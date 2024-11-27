@@ -1,0 +1,3 @@
+download driver
+add printer in add or remove
+point to downloaded driver

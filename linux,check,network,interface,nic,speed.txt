@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX CHECK SPEED OF NETWORK INTERFACE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-08-17[Aug-Thu]17-04PM 
+
+cat /sys/class/net/ens224/speed
+10000
+
+cat /sys/class/net/vpns0/speed
+10

@@ -1,0 +1,3 @@
+$file1="C:\path\to\file1"
+$file2="C:\path\to\file2"
+powershell "Send-MailMessage -To a@a.com -Subject test -Body 'test' -Attachments $file1,$file2 -SmtpServer 192.168.0.1 -From a@a.com"

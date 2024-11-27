@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  BELL FIBER INTERNET RESEARCH BYPASS HH4000
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-12-26[Dec-Tue]18-16PM 
+
+#https://www.reddit.com/r/homelab/comments/18ljfms/compact_lowpower_10_gbe_router_build_complete/
+
+#https://github.com/vijays-tikka-masala/was-110-guide
+
+#https://azoresnetworks.com/product/pon-cpe-65.html
+

@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HYPERV LIVE MIGRATIONS FAILING, CANT USE CREDSSP, USE KERBEROS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-16[Feb-Tue]15-59PM 
+
+##http://strongitguy.com/live-migration-hyper-v-virtual-machine-fails-on-move-0x80090302/

@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OPENCONNECT WINDOWS NOT WORKING, DISABLE DTLS, DISABLE UDP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-09[Aug-Fri]16-50PM 
+
+#https://gitlab.com/openconnect/openconnect-gui/-/issues/40
+
+When editing the profile disable udp
+

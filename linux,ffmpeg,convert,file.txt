@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX USING FFMPEG TO CONVERT FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-03-27[Mar-Wed]16-29PM 
+
+#https://quantixed.org/2021/11/20/convertible-using-ffmpeg-to-convert-audio-files/
+
+ffmpeg -i filename.opus -ab 320k newfilename.mp3
+
+sudo ffmpeg -i 'Tate McRae - run for the hills.opus' -ab 320k "Tate McRae - run for the hills.mp3"

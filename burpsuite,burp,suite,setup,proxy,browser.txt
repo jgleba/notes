@@ -1,0 +1,34 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  BURPSUITE SETUP PROXY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]13-18PM 
+
+##https://portswigger.net/support/configuring-your-browser-to-work-with-burp
+
+OPEN BURP
+
+MAKE SURE PROXY/OPTIONS HAS ENTRY
+
+GO TO BROWSER
+
+SETTINGS
+
+PROXY
+
+ENABLE PROXY FOR ALL PROTO ON 127.0.0.1:8080
+
+==
+
+FIX CA CERT WARNING FOR HTTPS
+
+##https://portswigger.net/support/installing-burp-suites-ca-certificate-in-firefox
+
+http://burp/
+
+download ca cert
+
+settings/view certs/authorities
+
+import cacert.der

@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ADD SECOND NAME TO WINDOWS COMPUTER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-06-18[Jun-Fri]11-47AM 
+
+netdom computername myserver /add myothername.mydomain.local
+
+netdom computername ex1 /add mail.jgleba.com

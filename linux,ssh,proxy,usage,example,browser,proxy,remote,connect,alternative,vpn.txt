@@ -1,0 +1,92 @@
+========================================================================
+SSH PROXY AND PROXY CHAINS USAGE EXAMPLE
+090219
+JGLEBA
+SAW FROM LAWRENCE SYSTEMS YOUTUBE, SEEMS LIKE SOMETHING I SHOULD KNOW
+========================================================================
+
+ssh -D port user@host
+
+ssh -D port -N user@host
+
+==
+SSH PROXY EXAMPLE
+==
+
+using jcentos, 172.16.0.4, x11 forward on
+ssh into jcentos from win with x11
+
+open firefox
+
+go to 172.18.1.20:8112 - fr deluge
+
+doesn't work
+
+ssh from jcentos into jproxfr 172.18.1.15 using this:
+
+ssh -D 10001 user@172.18.1.15
+
+on x11 forwarded firefox, enable socks proxy, host is 127.0.0.1, socks5, port is 10001
+
+now go to 172.18.1.20:8112 - fr deluge
+
+does work
+
+==
+SSH PROXY CHAINS EXAMPLE
+==
+
+#https://centos.pkgs.org/7/puias-unsupported-x86_64/proxychains-ng-4.11-1.sdl7.x86_64.rpm.html
+
+cd
+sudo scp -rv user@172.16.0.15:/home/x/dat/short/j/softw/3linux/centos7/proxychains-ng-4.11-1.sdl7.x86_64.rpm ./
+sudo yum install proxychains-ng-4.11-1.sdl7.x86_64.rpm
+
+in one ssh session connected to jcentos
+
+ssh -D 9050 user@172.18.1.15
+
+in another ssh session connected to jcentos
+
+ proxychains4 curl ifconfig.co/country
+[proxychains] config file found: /etc/proxychains.conf
+[proxychains] preloading /usr/lib64/proxychains-ng/libproxychains4.so
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] Strict chain  ...  127.0.0.1:9050  ...  ifconfig.co:80  ...  OK
+France
+
+proxychains4 firefox&
+
+[user@zxcj ~]$ proxychains4 firefox
+[proxychains] config file found: /etc/proxychains.conf
+[proxychains] preloading /usr/lib64/proxychains-ng/libproxychains4.so
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+Failed to open connection to "session" message bus: /usr/bin/dbus-launch terminated abnormally without any error message
+Running without a11y support!
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] DLL init: proxychains-ng 4.11
+[proxychains] Strict chain  ...  127.0.0.1:9050  ...  127.0.0.1:6010 <--socket error or timeout!
+Error: cannot open display: localhost:10.0
+
+SHOULD WORK THOUGH, IDEA IS THERE, WILL PROXY FIREFOX APP THROUGH, PROXY IN FIREFOX DOESNT NEED TO BE ENABLED THIS WAY - BETTER
+
+==
+SSH CONFIG FILE FOR ALIAS, QUICKER CONNECT
+==
+
+cd
+sudo nano .ssh/config
+
+Host alias-for-connection
+	Hostname ip
+	user user
+	port remote-ssh-port
+	DynamicForward 9050
+	

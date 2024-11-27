@@ -1,0 +1,82 @@
+https://social.technet.microsoft.com/wiki/contents/articles/38044.exchange-how-does-autodiscover-service-work.aspx
+
+http://www.enowsoftware.com/solutions-engine/autodiscover-dilemma
+
+There are several ways for Outlook to find which Exchange server it must contact, and thatâ€™s is in this particular order:
+
+    SCP (Service Connection Point) in Active Directory.
+    Root Domain check.
+    Autodiscover DNS check.
+    Local Autodiscover.xml file.
+    HTTP Redirect.
+    SRV DNS records check.
+    Cached URL in the Outlook profile.
+    Direct connect to Office 365.
+
+But…. After the release of Outlook 2016 version 16.0.6741.2017 (C2R) things have changed... Microsoft has decided that, since everybody using C2R is using Exchange Online anyway, the order of Autodiscover must be changed. The order is changed in such a way that the Outlook 2016 client starts looking for a Mailbox in Exchange Online, regardless if there is a Mailbox or not.
+
+So, the order for Office 2016 C2R is now suddenly:
+
+    Check for restart scenarios (rare).
+    Local Autodiscover.xml file by using GPO
+    Last Known Good (LKG) data.
+    Check for Office 365 as priority.
+    SCP record in Active Directory.
+    Root Domain check.
+    Autodiscover DNS check.
+    Local Autodiscover.xml file (when GPO in step 2 fails)
+    HTTP Redirect.
+    SRV DNS records check.
+    Check for O365 as Failsafe (when all other options fail)
+
+
+##NEWER INFO
+##061119
+##https://support.microsoft.com/en-ca/help/2212902/unexpected-autodiscover-behavior-when-you-have-registry-settings-under
+
+
+Cause
+When Outlook tries to contact the Autodiscover service on the Exchange server with the Client Access Server (CAS) role, it can use several different methods to reach the service, depending on the client-server topology. The currently implemented methods used by Outlook are as follows:
+
+    SCP lookup
+    HTTPS root domain query
+    HTTPS Autodiscover domain query
+    Local XML file
+    HTTP redirect method
+    SRV record query
+    Cached URL in the Outlook profile (new for Outlook 2010 version 14.0.7140.5001 and later versions)
+    Direct Connect to Office 365 (new for Outlook 2016 version 16.0.6741.2017 and later versions)
+    
+
+Resolution
+To resolve this problem, please review the Autodiscover-related registry data you may have on your Outlook client to ensure the data is configured correctly. Also, if you are unsure if the registry data is needed, consider changing the data for any of these registry values to zero (0) and then test Outlook to see if you experience a difference in Autodiscover.
+
+Important This section, method, or task contains steps that tell you how to modify the registry. However, serious problems might occur if you modify the registry incorrectly. Therefore, make sure that you follow these steps carefully. For added protection, back up the registry before you modify it. Then, you can restore the registry if a problem occurs. For more information about how to back up and restore the registry, go to the following article in the Microsoft Knowledge Base:
+322756 How to back up and restore the registry in Windows
+
+    Start Registry Editor.
+    In Windows 10 and Windows 8, press the Windows Key + R to open a Run dialog box. Type regedit.exe and then press OK.
+    In Windows 7, click Start , type regedit in the Search programs and files box, and then press Enter.
+    Locate and then select the following registry subkey:
+
+    HKEY_CURRENT_USER\Software\Microsoft\Office\x.0\Outlook\AutoDiscover
+
+    Notex.0 in this registry path corresponds to the Outlook version (16.0 = Outlook 2016, 15.0 = Outlook 2013, 14.0 = Outlook 2010, 12.0 = Outlook 2007).
+    Review the following possible DWORD values that may be located under the \Autodiscover subkey.
+
+        PreferLocalXML
+        ExcludeHttpRedirect
+        ExcludeHttpsAutoDiscoverDomain
+        ExcludeHttpsRootDomain
+        ExcludeScpLookup
+        ExcludeSrvRecord
+        ExcludeLastKnownGoodURL (only applies to Outlook 2010 version 14.0.7140.5001 and later versions)
+        ExcludeExplicitO365Endpoint (only applies to Outlook 2016 version 16.0.6741.2017 and later versions)
+
+    Note Some documentation states that the ExcludeSrvLookup value is used by Outlook in this scenario. Unfortunately, this documentation is incorrect as the ExcludeSrvLookup value does not exist in Outlook code. Only the ExcludeSrvRecord registry value is used by Outlook to control the SRV record lookup for Autodiscover. Therefore, if you find a value called ExcludeSrvLookup under the \Autodiscover subkey, you can safely change its value to 0.
+
+    Repeat step 3 by using the following registry subkey:
+
+    HKEY_CURRENT_USER\Software\Policies\Microsoft\Office\x.0\Outlook\AutoDiscover
+
+    Note x.0 in this registry path corresponds to the Outlook version (16.0 = Outlook 2016, 15.0 = Outlook 2013, 14.0 = Outlook 2010, 12.0 = Outlook 2007).

@@ -1,0 +1,137 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OSTICKET CENTOS INSTALL, LAMP + OSTICKET PHP APP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-11-04[Nov-Wed]10-30AM 
+
+##https://computingforgeeks.com/how-to-install-osticket-on-ubuntu-linux/
+
+
+==
+INSTALL PHP 7.2
+==
+
+sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum-config-manager --enable remi-php72-php
+
+sudo yum install -y php72-php php72-php-cli php72-php-fpm php72-php-common php72-php-mbstring php72-php-curl php72-php-gd php72-php-mysql php72-php-json php72-php-xml php72-php-imap php72-php-intl php72-php-pecl-apcu php72-php-opcache
+
+==
+INSTALL PHP 7.4
+==
+
+sudo yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+sudo yum-config-manager --enable remi-php74-php
+
+sudo yum install -y php74-php php74-php-cli php74-php-fpm php74-php-common php74-php-mbstring php74-php-curl php74-php-gd php74-php-mysql php74-php-json php74-php-xml php74-php-imap php74-php-intl php74-php-pecl-apcu php74-php-opcache
+
+==
+INSTALL HTTPD
+==
+
+sudo yum install -y httpd
+
+sudo systemctl enable httpd && sudo systemctl start httpd
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+INSTALL MYSQL
+==
+
+sudo yum install mariadb-server -y
+
+sudo systemctl start mariadb && sudo systemctl enable mariadb
+
+#sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+#sudo firewall-cmd --reload
+
+sudo mysql_secure_installation
+
+mysql -u root -p
+
+create database osticket;
+GRANT ALL PRIVILEGES ON osticket.* TO 'osticket'@'localhost' IDENTIFIED BY 'pass';
+
+==
+OSTICKET INSTALL
+==
+
+cd /var/www/html/
+sudo wget https://github.com/osTicket/osTicket/releases/download/v1.14.3/osTicket-v1.14.3.zip
+sudo unzip osTicket-v1.14.3.zip
+sudo mv upload osticket
+sudo chown -R apache:root osticket
+sudo cp osticket/include/ost-sampleconfig.php osticket/include/ost-config.php
+
+##OPEN PERMS FOR INSTALL
+sudo chmod -R 777 /var/www/html/osticket
+
+##CLOSE PERMS WHEN DONE
+sudo chmod -R 575 /var/www/html/osticket
+
+==
+HTTPD VIRTUAL HOST 
+==
+
+sudo mkdir -p /etc/httpd/sites-enabled
+
+#echo "IncludeOptional sites-enabled/*.conf" >> /etc/httpd/conf/httpd.conf
+
+sudo nano /etc/httpd/conf/httpd.conf
+ADD TO BOTTOM
+IncludeOptional sites-enabled/*.conf
+
+sudo nano /etc/httpd/sites-enabled/osticket.conf
+
+<VirtualHost *:80>
+        ServerName tickets2.jgleba.com
+        ServerAlias tickets2.jgleba.com
+        DocumentRoot "/var/www/html/osticket"
+                <Directory "/var/www/html/osticket">
+                Require method GET POST HEAD
+                Options Indexes FollowSymLinks MultiViews
+         # AllowOverride controls what directives may be placed in .htaccess files.
+                        AllowOverride All
+        # Controls who can get stuff from this server file
+                        Order allow,deny
+                        Allow from all
+           </Directory>
+        <IfModule mpm_peruser_module>
+                ServerEnvironment apache apache
+        </IfModule>
+</VirtualHost>
+
+
+==
+HTTPD HARDENING
+==
+
+sudo nano /etc/httpd/conf/httpd.conf
+
+ADD AFTER SERVER EMAIL
+
+####HARDENING START - 05-24-2018
+
+ServerTokens Prod
+ServerSignature Off
+FileETag None
+TraceEnable off
+Header always append X-Frame-Options SAMEORIGIN
+#Header always set X-Frame-Options DENY
+Header always set X-Content-Type-Options nosniff
+Header set X-XSS-Protection "1; mode=block"
+Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure
+Timeout 180
+
+HostnameLookups off
+
+##NEW
+
+#Strict-Transport-Security max-age=31536000; includeSubDomains
+Header always set Strict-Transport-Security "max-age=63072000; includeSubdomains;"
+
+####HARDENING END

@@ -1,0 +1,23 @@
+##CENTOS7 + DOCKER INSTALL
+##07-21-2018
+##JGleba
+
+#ADD DEPS
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+#GET REPO
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+#ENABLE REPO
+sudo yum-config-manager --enable docker-ce-edge
+
+#INSTALL DOCKER
+sudo yum install docker-ce -y
+
+#START AND ENABLE ON BOOT
+sudo systemctl enable docker
+sudo systemctl start docker
+
+#TEST RUN
+sudo docker run hello-world
+

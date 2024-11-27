@@ -1,0 +1,19 @@
+==================================
+MIKROTIK MPLS / VPLS - LAYER 2 VPN
+02-11-19
+JGleba
+==================================
+
+SEEMS LIKE NEED OWN INFRA ALL THE WAY FROM SITE TO SITE TO SITE, CANT DO RIGHT NOW
+
+==
+REFERENCES
+==
+
+https://wiki.mikrotik.com/wiki/Manual:MPLSVPLS
+https://forum.mikrotik.com/viewtopic.php?t=129474
+https://wiki.mikrotik.com/wiki/Transparently_Bridge_two_Networks_using_MPLS
+https://wiki.mikrotik.com/wiki/Manual:Basic_MPLS_setup_example
+https://wiki.mikrotik.com/wiki/Manual:Layer2_misconfiguration
+https://www.manitonetworks.com/mikrotik/2016/5/24/mikrotik-mpls-with-vpls
+https://www.google.ca/search?q=mikrotik+mpls+vpn&ei=0-5DXP6AEoaJjwSA8begBQ&start=10&sa=N&ved=0ahUKEwi-tr6XufvfAhWGxIMKHYD4DVQQ8NMDCLoB&biw=1920&bih=1006

@@ -1,0 +1,251 @@
+==
+KUBERNETES HORIZONTAL POD AUTOSCALER
+LOAD TESTING BENCHMARKS
+120819
+==
+
+##https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+##https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/
+##https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##https://stackoverflow.com/questions/39856927/how-to-turn-off-autoscaling-in-kubernetes-with-the-kubectl-command
+##https://www.mirantis.com/blog/kubernetes-replication-controller-replica-set-and-deployments-understanding-replication-options/
+##https://medium.com/@snewman/kubernetes-pods-replicasets-and-deployments-edc8959f978c
+
+==
+NGINX TEST
+==
+
+kubectl run nginx --image=nginx --port=80
+kubectl expose deployment nginx --type=LoadBalancer --name=nginx-service
+
+[user@kube1haproxy1 ~]$ kubectl get services
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+kubernetes      ClusterIP      10.96.0.1       <none>         443/TCP        11d
+nginx-service   LoadBalancer   10.109.188.10   172.16.3.144   80:30816/TCP   43s
+
+##https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+
+[user@kube1haproxy1 ~]$ kubectl get rs
+NAME               DESIRED   CURRENT   READY   AGE
+nginx-5578584966   1         1         1       2m30s
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl describe rs/nginx-5578584966
+Name:           nginx-5578584966
+Namespace:      default
+Selector:       pod-template-hash=5578584966,run=nginx
+Labels:         pod-template-hash=5578584966
+                run=nginx
+Annotations:    deployment.kubernetes.io/desired-replicas: 1
+                deployment.kubernetes.io/max-replicas: 2
+                deployment.kubernetes.io/revision: 1
+Controlled By:  Deployment/nginx
+Replicas:       1 current / 1 desired
+Pods Status:    1 Running / 0 Waiting / 0 Succeeded / 0 Failed
+Pod Template:
+  Labels:  pod-template-hash=5578584966
+           run=nginx
+  Containers:
+   nginx:
+    Image:        nginx
+    Port:         80/TCP
+    Host Port:    0/TCP
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Events:
+  Type    Reason            Age    From                   Message
+  ----    ------            ----   ----                   -------
+  Normal  SuccessfulCreate  3m26s  replicaset-controller  Created pod: nginx-5578584966-58hp4
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl autoscale rs nginx-5578584966 --max=3
+horizontalpodautoscaler.autoscaling/nginx-5578584966 autoscaled
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl autoscale rs nginx-5578584966 --max=3 --min=3
+Error from server (AlreadyExists): horizontalpodautoscalers.autoscaling "nginx-5578584966" already exists
+
+##https://kubernetes.io/blog/2016/07/autoscaling-in-kubernetes/
+
+kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get hpa
+NAME               REFERENCE                     TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+nginx-5578584966   ReplicaSet/nginx-5578584966   <unknown>/80%   1         3         1          4m55s
+
+==
+DELETE HORIZONTAL AUTOSCALER
+==
+
+kubectl delete hpa nginx-5578584966
+
+==
+TRYING AGAIN
+==
+
+[user@kube1haproxy1 ~]$ kubectl autoscale rs nginx-5578584966 --cpu-percent=50 --min=5 --max=10
+horizontalpodautoscaler.autoscaling/nginx-5578584966 autoscaled
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get hpa
+NAME               REFERENCE                     TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+nginx-5578584966   ReplicaSet/nginx-5578584966   <unknown>/50%   5         10        1          26s
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS    RESTARTS   AGE
+default          nginx-5578584966-2z5pr                 0/1     Pending   0          0s
+default          nginx-5578584966-58hp4                 1/1     Running   0          27m
+default          nginx-5578584966-5gb47                 0/1     Pending   0          0s
+default          nginx-5578584966-9sjzp                 0/1     Pending   0          0s
+default          nginx-5578584966-t7lcv                 0/1     Pending   0          0s
+
+==
+MANUAL REPLICA SCALING
+==
+
+[user@kube1haproxy1 ~]$ kubectl scale --replicas=3 -f nginxlbconfig.yaml
+deployment.apps/nginx scaled
+Error from server (NotFound): the server could not find the requested resource
+
+==
+
+[user@kube1haproxy1 ~]$ kubectl get pods -A
+NAMESPACE        NAME                                   READY   STATUS    RESTARTS   AGE
+default          nginx-5578584966-58hp4                 1/1     Running   0          33m
+default          nginx-5578584966-9cpwl                 1/1     Running   0          8s
+default          nginx-5578584966-xc2x5                 1/1     Running   0          8s
+
+==
+AB BENCHMARK, 1 REPLICA NGINX VS 5 REPLICA
+==
+
+==
+1 REPLICA
+==
+
+[user@zxjprox ~]$  ab -c 500 -n 25000 http://172.16.3.144:80/
+This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 172.16.3.144 (be patient)
+Completed 2500 requests
+Completed 5000 requests
+Completed 7500 requests
+Completed 10000 requests
+Completed 12500 requests
+Completed 15000 requests
+Completed 17500 requests
+Completed 20000 requests
+Completed 22500 requests
+Completed 25000 requests
+Finished 25000 requests
+
+
+Server Software:        nginx/1.17.6
+Server Hostname:        172.16.3.144
+Server Port:            80
+
+Document Path:          /
+Document Length:        612 bytes
+
+Concurrency Level:      500
+Time taken for tests:   7.352 seconds
+Complete requests:      25000
+Failed requests:        0
+Write errors:           0
+Total transferred:      21125000 bytes
+HTML transferred:       15300000 bytes
+Requests per second:    3400.56 [#/sec] (mean)
+Time per request:       147.035 [ms] (mean)
+Time per request:       0.294 [ms] (mean, across all concurrent requests)
+Transfer rate:          2806.13 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0   30 193.0      0    3008
+Processing:    11   52 354.3     21    6221
+Waiting:        0   52 354.3     21    6221
+Total:         18   82 465.2     22    7225
+
+Percentage of the requests served within a certain time (ms)
+  50%     22
+  66%     23
+  75%     24
+  80%     25
+  90%     30
+  95%     78
+  98%   1023
+  99%   1226
+ 100%   7225 (longest request)
+ 
+==
+
+==
+5 REPLICA
+==
+
+[user@zxjprox ~]$  ab -c 500 -n 25000 http://172.16.3.144:80/
+This is ApacheBench, Version 2.3 <$Revision: 1430300 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 172.16.3.144 (be patient)
+Completed 2500 requests
+Completed 5000 requests
+Completed 7500 requests
+Completed 10000 requests
+Completed 12500 requests
+Completed 15000 requests
+Completed 17500 requests
+Completed 20000 requests
+Completed 22500 requests
+Completed 25000 requests
+Finished 25000 requests
+
+
+Server Software:        nginx/1.17.6
+Server Hostname:        172.16.3.144
+Server Port:            80
+
+Document Path:          /
+Document Length:        612 bytes
+
+Concurrency Level:      500
+Time taken for tests:   2.878 seconds
+Complete requests:      25000
+Failed requests:        0
+Write errors:           0
+Total transferred:      21125000 bytes
+HTML transferred:       15300000 bytes
+Requests per second:    8685.73 [#/sec] (mean)
+Time per request:       57.566 [ms] (mean)
+Time per request:       0.115 [ms] (mean, across all concurrent requests)
+Transfer rate:          7167.42 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0   28 127.6      9    1029
+Processing:     0   28  27.4     22     681
+Waiting:        0   24  26.1     17     680
+Total:          1   56 132.3     37    1228
+
+Percentage of the requests served within a certain time (ms)
+  50%     37
+  66%     50
+  75%     56
+  80%     61
+  90%     87
+  95%    115
+  98%    144
+  99%   1045
+ 100%   1228 (longest request)

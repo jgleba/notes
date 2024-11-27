@@ -1,0 +1,1 @@
+Ports 5060 and 5061, both on TCP and UDP, are associated to the Session Initiation Protocol (SIP) by IANA. In particular, port 5060 is assigned to clear text SIP, and port 5061 is assigned to encrypted SIP, also known as SIP-TLS (SIP over a TLS, Transport Layer Security, encrypted channel).

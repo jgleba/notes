@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DEBIAN CHECKMK SERVER INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-08-21[Aug-Sun]12-23PM 
+
+wget https://download.checkmk.com/checkmk/2.1.0p6/check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+sudo dpkg -i check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+dpkg -i check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+sudo apt-get update
+apt-get update
+apt-get -f install
+sudo dpkg -i check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+dpkg -i check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+export PATH=/usr/sbin:$PATH
+dpkg -i check-mk-raw-2.1.0p6_0.bullseye_amd64.deb
+apt-get -f install
+omd create jgdc
+omd start jgdc

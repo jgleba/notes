@@ -1,0 +1,48 @@
+NOT WORKING
+
+
+
+#!/bin/bash
+#Justin Gleba
+#May 4, 2017
+#Updated Aug 7, 2017 - added condition and too hot value, now automated, only notifies when too hot
+
+CPUTOOHOT="45"
+
+CPUTEMPS=$(sysctl -a | egrep -E "cpu\.[0-9]+\.temp" | awk -F " " '{print $2}' | awk -F "." '{print $1}')
+
+for i in $($CPUTEMPS())
+	
+done
+
+if [ ${CPUTEMPS[*]} >= $CPUTOOHOT ];
+then
+	echo "CPU TEMPS 
+	"> cputemp.txt
+	sysctl -a | egrep -E "cpu\.[0-9]+\.temp" >> cputemp.txt
+	cat cputemp.txt | /usr/bin/mail -s "CPU TEMPS" alerts@jgleba.com
+	rm cputemp.txt
+fi
+
+
+====
+
+
+TRY AGAIN - STILL NOT WORKING
+
+#!/bin/bash
+
+CPUTOOHIGH="45"
+
+mapfile -t cputemps < <(sysctl -a | egrep -E "cpu\.[0-9]+\.temp" | awk -F " " '{print $2}' | awk -F "." '{print $1}')
+
+for (( i=0; i<${#numbers[@]}; i++ )); do echo ${numbers[i]}; done
+
+if [ "$CPUTOOHIGH" >= "$cputemps[i]" ]
+then
+        echo "CPU TEMPS
+        "> cputemp.txt
+        sysctl -a | egrep -E "cpu\.[0-9]+\.temp" >> cputemp.txt
+        cat cputemp.txt | /usr/bin/mail -s "CPU TEMPS" alerts@jgleba.com
+        rm cputemp.txt
+fi

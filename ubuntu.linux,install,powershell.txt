@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU INSTALL POWERSHELL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-10[Aug-Sat]16-50PM 
+
+#https://askubuntu.com/questions/1274028/how-to-install-powershell-7-on-ubuntu-20-04
+
+sudo snap install powershell --classic
+

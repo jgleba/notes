@@ -1,0 +1,15 @@
+========================
+windows, create, symlink
+========================
+
+mklink /D C:\temp11111 \\server\share\foldername\
+
+mklink /D C:\j\jdat\1data \\ip\j\jdat\1data
+
+mklink /D "C:\j\jdat\z,web" "\\ip\j\jdat\z,web"
+
+mklink /D "C:\Users\jgleba.CORP\Nextcloud\1data\5,sfa\z,scripts\rclonej-local" "C:\scripts\rclonej"
+
+mklink /D "C:\scripts\rclonej" "C:\Users\jgleba.CORP\Nextcloud\1data\5,sfa\z,scripts\rclonej-local"
+
+##use admin cmd

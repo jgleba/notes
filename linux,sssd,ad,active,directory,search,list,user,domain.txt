@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SSSD ACTIVE DIRECTORY SEARCH/LIST USER ON DOMAIN CONNECTED MACHINE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-10[Aug-Sat]10-50AM 
+
+getent passwd username
+

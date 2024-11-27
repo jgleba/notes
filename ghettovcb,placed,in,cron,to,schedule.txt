@@ -1,0 +1,70 @@
+/var/spool/cron/crontabs/root
+
+/bin/echo "3 0 * * 0 /opt/ghettovcb/ghettoVCB.sh -f /opt/ghettovcb/vmlisth1 > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-backup-h1-$(date +\%s).log" >> /var/spool/cron/crontabs/root"
+
+
+
+manual run
+
+/opt/ghettovcb/ghettoVCB.sh -f /opt/ghettovcb/vmlisthmain > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-backup-h1-$(date +\%s).log&
+
+
+
+** updated, all, manual - july4
+
+/vmfs/volumes/dstore-vmback/ghvcb/util/hv1/bin/ghettoVCB.sh -a > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-backup-h1-$(date +\%s).log&
+
+
+===
+checked june 25, was erased
+==
+rev2
+==
+
+vi /etc/rc.local.d/local.sh
+
+write cron job to this
+
+==
+
+/bin/echo "3 0 * * 0 /opt/ghettovcb/ghettoVCB.sh -f /opt/ghettovcb/vmlisth1 > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-backup-h1-$(date +\%s).log" >> /var/spool/cron/crontabs/root
+
+
+june 25, rebooted, failed.
+==
+rev3
+==
+
+
+vi /etc/rc.local.d/local.sh
+
+added write perm to root cron
+
+/bin/kill $(cat /var/run/crond.pid)
+/bin/echo "0 3 * * * /vmfs/volumes/datastore2/scripts/ghettoVCB/ghettoVCB.sh -a > /vmfs/volumes/datastore2/backups/ghettoVCB-backup-\$(date +%Y-%m-%d-%H%M%S).log" >> /var/spool/cron/crontabs/root
+/usr/lib/vmware/busybox/bin/busybox crond
+
+still not working
+cron job not in /var/spool/cron/crontabs/root
+after restart
+june 25
+==
+
+==
+
+seems to be working... maybe... need final testing... is live though...
+
+july 4, 2016
+
+==
+
+/bin/kill $(cat /var/run/crond.pid)                                                                                                                                                                                                         
+/bin/echo "5 0 * * 0 /vmfs/volumes/dstore-vmback/ghvcb/util/hv2/bin/ghettoVCB.sh -f /vmfs/volumes/dstore-vmback/ghvcb/util/hv2/bin/hv2vms-core > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-backup-h2-$(date +\%s).log&" >> /var/spool/cron/crontabs/root                                        
+/usr/lib/vmware/busybox/bin/busybox crond                                                                                                                                                                                                   
+exit 0
+
+
+/bin/kill $(cat /var/run/crond.pid)                                                                                                                                                                                                         
+/bin/echo "5 0 * * 0 /vmfs/volumes/dstore-vmback/ghvcb/util/hv1/bin/ghettoVCB.sh -f /vmfs/volumes/dstore-vmback/ghvcb/util/hv1/bin/hv1vms-core > /vmfs/volumes/dstore-vmback/ghvcb/ghettoVCB-backup-h1-$(date +\%s).log&" >> /var/spool/cron/crontabs/root                                        
+/usr/lib/vmware/busybox/bin/busybox crond                                                                                                                                                                                                   
+exit 0

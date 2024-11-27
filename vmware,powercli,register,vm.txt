@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE POWERCLI REGISTER VM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-06-16[Jun-Wed]12-37PM 
+
+##https://subscription.packtpub.com/book/virtualization_and_cloud/9781782170167/5/ch05lvl1sec42/registering-a-virtual-machine
+##https://communities.vmware.com/t5/VMware-PowerCLI-Discussions/Add-VM-to-inventory-with-PowerCLI/td-p/2552622
+
+New-VM -Name UBUTEST -VMFilePath "[fnas] UBUTEST/UBUTEST.vmx" -VMHost ip
+
+New-VM -Name KUBE1MASTER1 -VMFilePath "[fnas] o/vm/test/kube1/KUBE1MASTER1/KUBE1MASTER1.vmx" -VMHost ip

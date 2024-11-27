@@ -1,0 +1,219 @@
+
+
+This shows a creative way of including variables in a curl call..
+
+https://stackoverflow.com/questions/17029902/using-curl-post-with-variables-defined-in-bash-script-functions
+
+
+generate_post_data()
+{
+  cat <<EOF
+{
+  "account": {
+    "email": "$email",
+  },
+  "firstName": "$firstName",
+  "heightUnit": "FT/INCHES"
+}
+EOF
+}
+curl -i -X POST --data "$(generate_post_data)"
+
+
+generate_post_data()
+{
+  cat <<EOF
+{
+  "Type": "$TYPE",
+  "Name": "$NAME",
+  "Content": "$CONTENT",
+  "proxied": "$PROXIED",
+  "ttl": "$TTL"
+}
+EOF
+}
+generate_post_data
+
+_____________
+
+        PUBLICIPNEW=68.69.143.99
+        EMAIL="example@jgleba.com"; 
+        KEY="abc"; 
+        ZONE_ID="9cef5f67e7f5034db973ea6dfbf47d79"; 
+        DNS_ID="5b7404c45588c8973262fc4de4cd67d6"; 
+        TYPE="A"; 
+        NAME="jgleba.com"; 
+        CONTENT="${PUBLICIPNEW}"; 
+        PROXIED="true"; 
+        TTL="120";
+generate_post_data()
+{
+  cat <<EOF
+{
+  "Type": "$TYPE",
+  "Name": "$NAME",
+  "Content": "$CONTENT",
+  "proxied": "$PROXIED",
+  "ttl": "$TTL"
+}
+EOF
+}
+generate_post_data
+
+        curl -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$DNS_ID" \
+                -H "X-Auth-Email: ${EMAIL}" \
+                -H "X-Auth-Key: ${KEY}" \
+                -H "Content-Type: application/json" \
+                --data "$(generate_post_data)"
+_____________
+
+
+        EMAIL="example@jgleba.com"; \
+        KEY="abc"; \
+        ZONE_ID="9cef5f67e7f5034db973ea6dfbf47d79"; \
+        DNS_ID="5b7404c45588c8973262fc4de4cd67d6"; \
+        TYPE="A"; \
+        NAME="jgleba.com"; \
+        CONTENT="${PUBLICIPNEW}"; \
+        PROXIED="true"; \
+        TTL="120";\
+        curl -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$DNS_ID" \
+                -H "X-Auth-Email: $EMAIL" \
+                -H "X-Auth-Key: $KEY" \
+                -H "Content-Type: application/json" \
+                --data '{"type":"'"$TYPE"'","name":"'"$NAME"'","content":"68.69.143.99","proxied":'"$PROXIED"',"ttl":'"$TTL"'}'
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2016-12-01[Dec-Thu]15-00PM
+
+https://stackoverflow.com/questions/8748831/when-do-we-need-curly-braces-around-shell-variables
+
+
+However, the {} in ${} are useful if you want to expand the variable foo in the string
+
+"${foo}bar"
+since "$foobar" would instead expand foobar.
+
+Curly braces are also unconditionally required when:
+      using parameter expansion operations, as in ${filename%.*} (remove extension)
+
+____________________
+
+
+
+
+http://stackoverflow.com/questions/6121091/get-file-directory-path-from-filepath
+
+$ VAR=/home/me/mydir/file.c
+
+$ DIR=$(dirname "${VAR}")
+
+$ echo "${DIR}"
+/home/me/mydir
+
+$ basename "${VAR}"
+file.c
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2016-12-01[Dec-Thu]15-00PM
+
+https://unix.stackexchange.com/questions/131766/why-does-my-shell-script-choke-on-whitespace-or-other-special-characters
+
+
+
+Always use double quotes around variable substitutions:   "$foo",  and
+command substitutions: "$(foo)"
+
+Always use double quotes around variable substitutions and command substitutions: "$foo", "$(foo)"
+
+If you use $foo unquoted, your script will choke on input or parameters (or command output, with $(foo)) containing whitespace or \[*?.
+
+There, you can stop reading. Well, ok, here are a few more:
+
+read — To read input line by line with the read builtin, use while IFS= read -r line; do …
+Plain read treats backslashes and whitespace specially.
+xargs — Avoid xargs. If you must use xargs, make that xargs -0. Instead of find … | xargs, prefer find … -exec ….
+xargs treats whitespace and the characters \"' specially.
+This answer applies to Bourne/POSIX-style shells (sh, ash, dash, bash, ksh, mksh, yash…). Zsh users should skip it and read the end of When is double-quoting necessary? instead. If you want the whole nitty-gritty, read the standard or your shell's manual.
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Title:  .
+-----------------------2017-12-01[Dec-Fri]17-58PM
+
+
+https://stackoverflow.com/questions/31707923/sed-replace-variable-in-double-quotes
+
+
+I've created a bash script that takes a parameter. I want to pass that parameter to sed to replace an existing string with another which is composed of the variable:
+
+variable=$1
+echo $variable
+sed -i -e 's/name="master"/name="$variable"/g' test
+The problem is that the script is not replacing $variable with the parameter, it's just replacing the string with "$variable":
+
+<host name=""$variable"" xmlns="urn:jboss:domain:3:0:>
+How can I replace a string in quotes with the variable?
+
+regex bash sed
+asked Jul 29 '15 at 18:03
+
+Ken J
+1,16742645
+accepted
+
+Variable expansion does not happen within single quotes. Do it in double quotes:
+
+sed -i -e 's/name="master"/name="'"$variable"'"/g' test
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_____________
+
+
+double quotes within double quotes
+
+
+https://stackoverflow.com/questions/26743722/use-variable-inside-double-quotes-inside-single-quotes-in-sed
+
+not works..
+
+ FOO=$0
+    sed -i 's/"${FOO}"/bar/m' file.txt
+
+
+ans..
+
+Use double quotes to quote the sed commands as
+
+sed -i "s/\"${FOO}\"/bar/m" file.txt
+
+Test:
+
+$ echo $b
+hello
+$ echo \"hello\" | sed "s/\"$b\"/asdf/"
+asdf
+
+--
+
+    
+see also..
+
+https://stackoverflow.com/questions/7680504/sed-substitution-with-bash-variables
+
+https://stackoverflow.com/questions/3834839/how-to-escape-a-double-quote-inside-double-quotes
+
+    
+    
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

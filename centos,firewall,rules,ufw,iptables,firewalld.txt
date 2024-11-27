@@ -1,0 +1,80 @@
+FIREWALL TO ALLOW CHECKMK
+==
+sudo iptables -A INPUT -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A INPUT -p udp --dport 6556 -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport 6556 -j ACCEPT
+sudo /usr/sbin/iptables-save
+su root
+iptables-save > /etc/network/iptables.rules
+iptables-save > /etc/iptables/rules.v4
+
+**WORKED FOR iREDMAIL CHECKMK - DEC26, 2017
+sudo iptables -A IN_iredmail_allow -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A IN_iredmail_allow -p udp --dport 6556 -j ACCEPT
+sudo iptables-save
+
+**WORKED FOR CLOUDRON CHECKMK - DEC26, 2017 - KIND OF  - CREATED SCRIPT IN /j/bin AND USED CRON TO FORCE ON BOOT - WONT WORK ANYMORE DEC 31 2017
+sudo iptables -D CLOUDRON -p all -j DROP
+sudo iptables -A CLOUDRON -p tcp --dport 6556 -j ACCEPT
+sudo iptables -A CLOUDRON -p udp --dport 6556 -j ACCEPT
+sudo iptables -A CLOUDRON -p all -j DROP
+sudo iptables-save
+
+sudo firewall-cmd --zone=public --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+
+012122 IREDMAIL CHECKMK
+
+sudo firewall-cmd --zone=iredmail --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=iredmail --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+
+==
+UFW
+==
+
+sudo ufw allow 6556
+sudo ufw allow 3389
+
+==
+SAVING RULES IN CENTOS - 02-20-2019
+==
+
+sudo iptables-save
+
+==
+SSL, 443
+==
+
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+HTTP, 80
+==
+
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+
+
+sudo firewall-cmd --zone=public --add-port=8084/tcp --permanent
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --zone=public --add-port=3391/udp --permanent
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --zone=public --add-port=2049/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=2049/udp --permanent
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --zone=public --add-port=25/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+SMTP
+==
+
+sudo firewall-cmd --zone=public --add-port=25/tcp --permanent
+sudo firewall-cmd --reload

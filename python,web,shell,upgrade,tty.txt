@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PYTHON UPGRADE WEB SHELL TO TTY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]18-38PM 
+
+##https://blog.ropnop.com/upgrading-simple-shells-to-fully-interactive-ttys/
+
+python -c 'import pty; pty.spawn("/bin/bash")'
+
+python -m 'import pty; pty.spawn("/bin/bash")'
+
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+==
+
+GET AUTO TAB COMPLETE
+
+stty raw -echo 
+
+fg
+
+enter
+
+enter
+
+==
+
+CLEAR SCREEN
+
+export TERM=xterm

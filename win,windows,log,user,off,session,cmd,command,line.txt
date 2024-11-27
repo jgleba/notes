@@ -1,0 +1,12 @@
+=====================
+LOG USER OFF FROM CMD
+071119
+=====================
+
+#https://www.howtogeek.com/402261/how-to-sign-other-users-out-of-windows-10/
+
+query session
+
+*note the ID of the user you want to log off*
+
+logoff [ID]

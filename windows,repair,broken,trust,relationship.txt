@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS REPAIR BROKEN TRUST
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-02-09[Feb-Wed]11-35AM 
+
+Test-ComputerSecureChannel -Verbose -Repair -Credential domain\username

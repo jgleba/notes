@@ -1,0 +1,5 @@
+#!/bin/bash
+
+##SPAM ASSASSIN BAYESIAN TRAINING MAILS SYNC
+
+rsync -avK --delete  /home/x/dat/short/j/jdat/1data/7,general/spamassassin/bayes /path/to/bayes

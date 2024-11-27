@@ -1,0 +1,49 @@
+===================================
+VMWARE POWERCLI CREATE MULTIPLE VMS
+111619
+===================================
+
+##http://notesofascripter.com/2016/03/28/using-powercli-build-multiple-vms/
+##https://thesleepyadmins.com/2018/09/08/deploy-multiple-vms-using-powercli-and-vmware-template/
+##https://www.vmadmin.co.uk/resources/48-vspherepowercli/272-vspherevmtemplatecsv
+##http://vcdx56.com/2014/02/create-multiple-vms-from-existing-vsphere-vm-using-powercli/
+
+##https://vmgagner.blog/2017/11/03/how-to-create-multiple-vms-using-powercli/
+
+
+connect-viserver vcenter01 -user administrator@vsphere.local -password VMware1!
+
+Write-host “No of VMs to deploy”
+$noofvms=Read-host
+write-host “Enter the naming convention”
+$vmaname=read-host
+for($count=0;$count -le ($noofvms-1);$noofvms++)
+{
+new-vm -name ($vmname+$count) -vmhost (get-cluster cluser01|get-vmhost|get-random) -disksizemb 100 -portgroup vlan100
+}
+
+
+
+
+==
+
+
+
+Write-host “No of VMs to deploy”
+$noofvms=Read-host
+write-host “Enter the naming convention”
+$vmaname=read-host
+for($count=0;$count -le ($noofvms-1);$noofvms++)
+{
+new-vm -name ($vmname+$count) -vmhost (get-cluster cluser01|get-vmhost|get-random) -disksizemb 100 -portgroup vlan100
+}
+
+
+
+==
+CREATE VM - WORKING - 111519
+==
+
+New-VM –Name "TEST1" -ResourcePool JGDC1Cluster1  –DiskGB 10 –DiskStorageFormat Thin –DataStore fnas –MemoryGB 2 -NumCpu 2 –NetworkName "VLAN"
+Get-VM -Name "TEST1" | Get-ScsiController | Set-ScsiController -Type Paravirtual
+Get-VM -Name "TEST1" | Get-NetworkAdapter | Set-NetworkAdapter -Type VMXNET3 -Confirm:$false

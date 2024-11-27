@@ -1,0 +1,23 @@
+mikrotik port forwarding - apr 4 16
+==
+
+if static:
+
+use public ip in dst. address in general tab
+
+if dynamic:
+
+use in. interface of wan interface
+
+** issues are if you want to access this from the lan
+
+use this if need to access from local lan:
+
+ip firewall mangle
+
+add action=mark-connection chain=prerouting comment="Mark local traffic trying to reach local (router IPs)" connection-mark=no-mark dst-address-type=local in-interface=local new-connection-mark=local
+
+ip firewall nat
+
+add action=masquerade chain=srcnat comment="Rule to allow LAN user to reach DSTNAT on LAN" connection-mark=local dst-address=10.115.191.0/24 dst-address-type=!local
+

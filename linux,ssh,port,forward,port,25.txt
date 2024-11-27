@@ -1,0 +1,6 @@
+WORKING TO REDIRECT SSH PORT FROM ORACLE BOX PORT 25 TO LOCAL PORT 25000
+081723
+==
+
+sudo ssh -v -4 -L 0.0.0.0:25:destserverip:25000 -C -N -l user destserverip
+ 

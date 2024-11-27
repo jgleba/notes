@@ -1,0 +1,29 @@
+##CENTOS NGINX INSTALL
+##07-14-18
+##JGleba
+
+##INSTALL NGINX
+sudo yum install epel-release -y
+sudo yum update -y
+sudo yum install nginx -y
+
+##ENABLE AND START SERVICE
+sudo systemctl enable nginx
+sudo systemctl start nginx
+
+##FIREWALL
+sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
+sudo firewall-cmd --reload
+
+##REMOVE WELCOME PAGE, DEFAULT PUBLIC DIR, AND CREATE BLANK INDEX
+sudo rm -r /usr/share/nginx/html/*
+sudo touch /usr/share/nginx/html/index.html
+
+##CREATE NEW WEB DIR
+sudo mkdir -p /var/www/html
+sudo chown -R nginx:apache /var/www/html
+sudo chmod -R 770 /var/www/html
+
+##CREATE CONF DIR
+sudo mkdir -p /etc/nginx/sites-enabled
+sudo echo "include /etc/nginx/sites-enabled/*.conf;" >> /etc/nginx/nginx.conf

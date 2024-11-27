@@ -1,0 +1,23 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS SHODAN CLI INSTALL 
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-30[Jan-Thu]12-02PM 
+
+##https://rakshatec.blogspot.com/2017/05/installing-shodan-cli.html
+##https://cli.shodan.io/
+
+sudo yum install python-pip
+
+sudo pip install shodan
+
+sudo shodan init YOUR_API_KEY
+
+##USAGE
+
+shodan host 189.201.128.250
+
+shodan parse --fields ip_str,port,org --separator , microsoft-data.json.gz
+
+shodan search --fields ip_str,port,org,hostnames microsoft iis 6.0

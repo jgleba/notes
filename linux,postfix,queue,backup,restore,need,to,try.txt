@@ -1,0 +1,10 @@
+TEST BACKING UP MAIL QUEUE AND RESTORING
+
+https://askubuntu.com/questions/728620/can-queued-messages-be-moved-between-postfix-servers
+
+==
+
+worked but only for new incoming messages
+
+https://unix.stackexchange.com/questions/244166/how-to-hold-mail-for-only-certain-users-with-postfix
+

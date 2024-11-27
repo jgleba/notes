@@ -1,0 +1,92 @@
+============================================
+SERVER 2012 RDS INSTALL - RD GATEWAY INSTALL
+061419
+============================================
+
+#https://ryanmangansitblog.com/2013/03/27/deploying-remote-desktop-gateway-rds-2012/
+#https://www.techieshelp.com/windows-server-2012-install-and-configure-remote-desktop-services/
+#2008
+#https://www.askme4tech.com/install-and-configure-remote-desktop-gateway-server
+#https://www.rayheffer.com/building-a-remote-desktop-gateway-rdg-rd-gateway-server/
+
+==
+ROUGH STEPS, MOST INSTRUCTIONS ARE SCREENSHOTS
+==
+
+server manager
+install roles and features
+roll based install
+remote desktop services
+
+==
+ROLES TO INSTALL
+==
+
+connection broker
+gateway
+session host
+
+next, next, next, install
+restart
+
+
+==
+LOG BACK INTO MACHINE, CONFIGURE RDS GATEWAY
+==
+
+open rd gateway manager
+
+right click on server name on left side
+properties
+ssl certificate
+import, importing pfx jgleba.com wildcard
+
+CREATE RD CAP
+expand server, policies, right click connection authorization policies, create new, custom
+give name, add group, save
+
+CREATE RD RAP
+expand server, policies, right click resource authorization policies, create new, custom
+give name, add 'domain users' group, all resources, save
+disable run
+create another, add rd group, add server ips, save
+
+add port forwards to 443 and 3391 forwarding to rd gateway (3391 for udp)
+
+==
+AUTO UPDATE, INSTALL SSL CERT, LETS ENCRYPT
+==
+
+#https://gist.github.com/anthonyeden/710d63247d9b6b9202a11bf00b146c01#file-rds_install_cert-ps1
+
+MODIFYING THIS TO WORK FOR ME
+
+#MIGHT BE USEFUL
+#https://community.letsencrypt.org/t/using-lets-encrypt-to-secure-windows-remote-desktop-connections/29964/5
+#https://mediarealm.com.au/articles/lets-encrypt-microsoft-remote-desktop-services/
+
+==
+070319
+IS WORKING, BUT CANNOT AUTO IMPORT CERT
+TOOK A RISK, WENT THROUGH SERVER MANAGER QUICK RDS SETUP, SESSIONED BASED
+NO CHANGE ON GATEWAY CONFIG
+WHEN RUNNING POWERSHELL AS ADMIN, CERT IMPORT SCRIPT SEEMS TO WORK BETTER
+KIND OF USED
+#https://community.spiceworks.com/topic/2008419-remote-desktop-services-deployment-doesn-t-see-itself
+#https://www.petri.com/remote-desktop-services-deployment-options-windows-server-2012-r2
+#https://www.markbrilman.nl/2013/06/a-remote-desktop-services-deployment-does-not-exist/
+
+SHOULD TRY
+
+Get-RDRemoteApp : A Remote Desktop Services deployment does not exist on server. This operation can be perfor
+med after creating a deployment. For information about creating a deployment, run “Get-Help Set-VDIDeployment” or “Get-
+Help Set-RDSHDeployment”.
+At line:1 char:1
++ Get-RDRemoteApp -DisplayName “Active*” -ConnectionBroker server
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ CategoryInfo : NotSpecified: (:) [Write-Error], WriteErrorException
++ FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,Get-RDRemoteApp
+
+The answer is easy tough. You need to runas Powershell as administrator. You can do this on the normal way or in powershell with the following command:
+Start-Process powershell -Verb runAs
+==

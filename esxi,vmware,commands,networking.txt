@@ -1,0 +1,76 @@
+ESXi CLI
+========
+
+Restart Management Agents
+==
+/etc/init.d/hostd restart
+
+
+Change VLAN of PortGroup on vSwitch
+==
+esxcfg-vswitch -p "MAN" -v 0 vSwitch0
+
+List all vSwitches
+==
+esxcfg-vswitch --list
+
+List all NICS
+==
+esxcfg-nics --list
+
+List all NICS and PortGroups through esxcli
+==
+esxcli network vswitch standard list 
+
+
+Remove NIC from vSwitch
+==
+esxcli network vswitch standard uplink remove -u vmnic6 -v vSwitch0
+
+Add NIC to vSwitch
+==
+esxcli network vswitch standard uplink add -u vmnic6 -v vSwitch0
+
+Add vSwitch (Not sure if correct) - came from: http://www.thegeekstuff.com/2015/01/vmware-esx-vswitch
+==
+esxcfg-vswitch -a vSwitch1
+
+
+
+========================================================
+
+don't know if correct or useful:
+https://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1003825
+
+
+To change the VLAN ID on a portgroup, run the command:
+
+[root@server root]# esxcfg-vswitch -p "portgroup_name" -v VLAN_IDvirtual_switch_name
+
+Where portgroup_name is the name of your portgroup, and virtual_switch_name is the name of your virtual switch.
+
+For example, using the configuration above, to add a VLAN ID of 10 to VM Network 1 (which resides on vSwitch1), you must run the command:
+
+[root@server root]# esxcfg-vswitch -p "VM Network 1" -v 10 vSwitch1
+
+To verify the new configuration, run the command:
+
+[root@server root]# esxcfg-vswitch -l
+
+The output appears similar to:
+
+Switch Name    Num Ports   Used Ports  Configured Ports  Uplinks
+vSwitch1       64          2           64                vmnic1
+
+  PortGroup Name      Internal ID    VLAN ID  Used Ports  Uplinks
+  VM Network 1        portgroup19    10       0           vmnic1
+
+To resolve connectivity and configuration issues, use these commands to link or unlink the vmnic on standard vSwitches:
+
+    To unlink an uplink:
+
+    esxcfg-vswitch -U vmnic vSwitch
+
+    To add an uplink:
+
+    esxcfg-vswitch -L vmnic vSwitch

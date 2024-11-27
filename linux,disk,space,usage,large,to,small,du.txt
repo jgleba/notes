@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SHOW DISK SPACE USAGE, LARGE TO SMALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-11-11[Nov-Sat]13-08PM 
+
+WORKS FOR DIRS, FROM DG
+
+sudo du .  -cxh  --max-depth=2  | sort -h 
+
+WORKS FOR FILES IN DIR
+
+#https://serverfault.com/questions/62411/how-can-i-sort-du-h-output-by-size
+
+sudo du -hs ./* | sort -rh

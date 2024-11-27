@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  NETPLAN STATIC IP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-09[Aug-Fri]21-58PM 
+
+#https://pimylifeup.com/ubuntu-static-ip-netplan/
+
+sudo cat /etc/netplan/00-installer-config.yaml
+# This is the network config written by 'subiquity'
+network:
+  ethernets:
+    interfacename:
+      dhcp4: no
+      addresses: [ip/24]
+      gateway4: gw
+      critical: true
+      dhcp-identifier: mac
+      dhcp4: true
+      nameservers:
+        addresses:
+        - dns1
+        - dns2
+  version: 2
+

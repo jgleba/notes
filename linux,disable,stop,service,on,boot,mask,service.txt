@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX FORCE STOP SERVICE FROM START ON BOOT, WHEN DISABLE NOT WORKING
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-02-09[Feb-Thu]09-44AM 
+
+systemctl mask <service_name>

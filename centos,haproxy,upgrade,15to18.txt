@@ -1,0 +1,39 @@
+=====================================
+HAPROXY UPGRADE FROM 1.5.18 to 1.8...
+=====================================
+
+#030319
+#https://pario.no/2018/07/17/install-haproxy-1-8-on-centos-7/
+
+[user@webclfelb1 bin]$ haproxy -v
+HA-Proxy version 1.5.18 2016/05/10
+Copyright 2000-2016 Willy Tarreau <willy@haproxy.org>
+
+sudo yum remove haproxy -y
+
+sudo yum install centos-release-scl -y
+
+sudo yum install rh-haproxy18-haproxy rh-haproxy18-haproxy-syspaths -y
+
+cd /etc/haproxy/
+sudo cp haproxy.cfg.v1518-030319 /etc/opt/rh/rh-haproxy18/haproxy/
+
+cd /etc/opt/rh/rh-haproxy18/haproxy/
+sudo mv haproxy.cfg new-orig-haproxy.cfg
+sudo mv haproxy.cfg.v1518-030319 haproxy.cfg
+
+sudo service haproxy status
+
+sudo service haproxy start
+
+sudo systemctl enable haproxy
+
+sudo service haproxy status
+
+SYM LINK TO NEW CONFIG - NOT TESTED BUT WAS MISSING - 05-24-2019
+
+cd /etc/haproxy
+sudo ln -s /etc/opt/rh/rh-haproxy18/haproxy/haproxy.cfg haproxy.cfg
+
+FROM STATS PAGE - 030319
+HAProxy version 1.8.4-1deb90d, released 2018/02/08

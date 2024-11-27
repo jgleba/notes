@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX FIREWALL-CMD BASIC OPEN PORT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-01-05[Jan-Fri]11-31AM 
+
+HTTPS
+sudo firewall-cmd --zone=public --add-port=443/tcp --permanent
+sudo firewall-cmd --reload
+
+CHECKMK
+sudo firewall-cmd --zone=public --add-port=6556/tcp --permanent
+sudo firewall-cmd --zone=public --add-port=6556/udp --permanent
+sudo firewall-cmd --reload
+
+SMB
+sudo firewall-cmd --zone=public --add-port=445/tcp --permanent
+sudo firewall-cmd --reload

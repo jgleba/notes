@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  DOCKER CREATE MACVLAN NETWORK, ATTACH TO EXISTING EXTERNAL NETWORK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-02-08[Feb-Wed]09-07AM 
+
+docker network create -d macvlan   --subnet=1.2.3.4/24   --gateway=1.1.1.1 -o parent=eno1.1234 vlan1234

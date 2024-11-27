@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  IPTABLES RESTORE FORMAT OF FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-07-28[Jul-Fri]10-04AM 
+
+*filter
+-A INPUT -p tcp --dport 80 -j ACCEPT
+COMMIT

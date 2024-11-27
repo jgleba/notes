@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU SSH KEY EXCHANGE FAILED
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-12-07[Dec-Tue]12-49PM 
+
+##https://askubuntu.com/questions/842604/ubuntu-after-upgrade-ssh-exchange-failed
+
+ADD
+
+KexAlgorithms=+diffie-hellman-group1-sha1
+
+to end of 
+
+sudo nano /etc/ssh/sshd_config
+
+sudo service ssh restart
+sudo service sshd restart

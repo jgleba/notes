@@ -1,0 +1,15 @@
+nov 25 notes
+
+Two gateways failover
+
+This example explains how to use multiple gateways with one taking over when first fails. It begins with adding the gateways. Set bigger distance value for the secondary one, and check-gateway for the first one:
+
+/ip route add gateway=192.168.1.1 check-gateway=ping
+/ip route add gateway=192.168.2.1 distance=2
+
+That's all, there are no more steps!
+
+The first gateway will begin as it's distance is smaller (default 0); the check-gateway will make sure it's up; when the ping will fail, it will disable the first gateway and the second will take over; when first one comes up, it will return to it's function. 
+
+** can deal with two wans, will fail-over to alternate wan
+

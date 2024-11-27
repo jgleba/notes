@@ -1,0 +1,30 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  HIDE FILE WITHIN ANOTHER FILE WINDOWS - ALTERNATE DATA STREAM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-14[Sep-Mon]20-03PM 
+
+##FROM NETWORKCHUCK YOUTUBE
+
+notepad hiddenfile.txt
+
+notepad file1.txt
+
+type hiddenfile.txt > file1.txt:hiddenfile.txt
+
+del hiddenfile.txt
+
+notepad file1.txt:hiddenfile.txt
+
+==
+TO SEE FILE
+==
+
+dir /r
+
+==
+EXTRA - HIDE FILE - STILL CAN SEE WITH WIN "SHOW HIDDEN FILES"
+==
+
+attrib +h file1.txt

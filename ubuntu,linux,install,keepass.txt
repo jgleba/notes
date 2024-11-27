@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU LINUX INSTALL KEEPASSXC
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-10[Aug-Sat]14-05PM 
+
+#https://keepassxc.org/download/#linux
+
+sudo add-apt-repository ppa:phoerious/keepassxc
+
+sudo apt update
+
+sudo apt install keepassxc

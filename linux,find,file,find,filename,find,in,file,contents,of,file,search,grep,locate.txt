@@ -1,0 +1,9 @@
+================================
+FIND FILE OR TEXT IN FILE, LINUX
+================================
+
+##finds filename
+locate *filename*
+
+##finds string in pathtosearch
+grep -rnw '/path/to/search' -e 'string'

@@ -1,0 +1,4 @@
+open pdf creator, select user settings
+go to auto save
+pick folder to auto save to
+go to email, make sure email and attach is selected, de-select open pdf creator

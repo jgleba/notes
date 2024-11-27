@@ -1,0 +1,68 @@
+centos7
+tasks - installing httpd/php/expengine/setting up
+nov 16, 2015
+==
+
+networking
+
+nmtui
+
+update
+
+sudo yum -y update
+sudo yum -y upgrade
+
+disable se perms
+
+sudo vi /etc/sysconfig/selinux
+
+change from enabled to disabled
+
+open 22 for ssh - iptables
+
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+
+create folder j in /
+
+copied web folder to that temp folder
+
+install apache (httpd)
+
+open 80 for ssh - iptables
+
+sudo iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+iptables rule wasn't letting webserver work in browser 
+
+sudo firewall-cmd --permanent --zone=public --add-service=http
+sudo firewall-cmd reload
+
+now can see empty index.html in /var/www/html/
+
+install mysql (mariadb)
+
+sudo yum install mariadb-server mariadb
+
+start mysql
+enable mysql (at system start)
+
+sudo systemctl start mariadb
+
+sudo systemctl enable mariadb
+
+set up mysql 
+
+sudo mysql_secure_installation
+
+sudo yum install wget
+
+sudo yum install php php-mysql
+
+in /j/
+
+**adminer not working
+
+#sudo wget https://www.adminer.org/static/download/4.2.3/adminer-4.2.3-mysql-en.php
+#sudo mkdir -p /var/www/html/adminer/
+#sudo cp adminer-4.2.3-mysql-en.php /var/www/html/adminer/index.php
+

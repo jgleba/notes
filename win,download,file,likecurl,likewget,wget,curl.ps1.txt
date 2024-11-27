@@ -1,0 +1,4 @@
+$url = "https://files.jgleba.com/t/rclone/
+
+$client = New-Object System.Net.WebClient
+$client.DownloadFile($url, $path)

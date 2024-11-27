@@ -1,0 +1,6 @@
+=================================
+MAC SPOTLIGHT FORCE REINDEX FILES
+04-28-19
+=================================
+
+sudo mdutil -i on /

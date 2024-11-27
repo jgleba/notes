@@ -1,0 +1,38 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SCCM, SYSTEM CENTER CONFIGURATION MANAGER, SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-11-25[Nov-Wed]13-51PM 
+
+##https://tamilkovan.com/2019/09/07/microsoft-sccm-current-branch-1902-step-by-step-installation-guide/
+##https://www.windows-noob.com/forums/topic/16618-how-can-i-install-system-center-configuration-manager-current-branch-version-1902-on-windows-server-2019-with-sql-server-2017-part-2/
+##https://jayrbarrios.com/2019/10/04/step-by-step-sccm-1902-installation-and-sccm-1906-upgrade-guide/
+##https://systemcenterdudes.com/complete-sccm-installation-guide-and-configuration/
+
+172.16.4.10 dc1
+172.16.4.11 sccm1
+172.16.4.12 hyperv1
+
+==
+
+create system management container
+assign sccmadmin rights to container
+Delegate control to the SCCM site server (SCCM01) to System Management container in AD Users and Computers
+
+create accounts
+
+CM_Build – For Imaging
+CM_Domain Join – For joining computers to the domain
+CM_Reporting, For Reporting Services.
+CM_Client Push, For SCCM Client Push.
+CM_NAA, (Network Access Account) For OSD
+
+SQL server services account – SCCM-SQLService
+SCCM Network Access Account – SCCM-NAA
+Domain user account for use SCCM client push install  – SCCM-ClientPush
+Domain user account for use with reporting services User – SCCM-SQLReporting
+Domain account used to join machine to the domain during OSD – SCCM-DomainJoin
+Domain group containing all SCCM Admins Group – SCCM-Admins
+Domain group containing all SCCM servers in the hierarchy Group – SCCM-SiteServers
+

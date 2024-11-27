@@ -1,0 +1,42 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WFUZZ SUBDOMAIN ENUMERATION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-04[Aug-Tue]12-56PM 
+
+wfuzz -w subdomains.txt -H 'Host: FUZZ.jgleba.com' -u https://jgleba.com
+
+user@kali:~$ wfuzz -w subdomains.txt -H 'Host: FUZZ.jgleba.com' -u https://jgleba.com
+
+Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+
+********************************************************
+* Wfuzz 2.4.5 - The Web Fuzzer                         *
+********************************************************
+
+Target: https://jgleba.com/
+Total requests: 3
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload
+===================================================================
+
+000000003:   301        0 L      0 W      0 Ch        "mail"
+000000001:   200        9 L      20 W     146 Ch      "abc"
+000000002:   200        9 L      20 W     146 Ch      "files"
+
+Total time: 0.216900
+Processed Requests: 3
+Filtered Requests: 0
+Requests/sec.: 13.83125
+
+
+==
+112420
+
+enum ips for dns
+
+[user@zxcj ~]$ host -t a jgleba.com
+jgleba.com has address 172.16.3.190
+jgleba.com has address 172.16.3.191

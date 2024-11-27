@@ -1,0 +1,75 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  XCP-NG NIC PERMISCUIOUS MODE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-03-25[Mar-Wed]15-39PM 
+
+##https://support.citrix.com/article/CTX121729
+
+HV1
+
+COSSEC
+
+NICS
+
+5,11
+
+5 - 7265
+11 - 7264
+
+82575GB
+
+eth5, xenbr5
+
+
+
+==
+
+PERMISCUIOUS MODE
+
+xe pif-list network-name-label=<name_of_network>
+xe pif-list network-name-label=eth5
+
+xe pif-param-set uuid=<uuid_of_pif> other-config:promiscuous="true"
+
+VERIFY
+
+xe pif-param-list uuid=<uuid_of_pif>
+
+
+==
+
+
+uuid ( RO)                  : 169ab2ba-4ca1-6d53-a118-eec5fd18e162
+                device ( RO): eth5
+    currently-attached ( RO): true
+                  VLAN ( RO): -1
+          network-uuid ( RO): a99c4db3-498d-5efe-0b61-919ccd27f66c
+
+
+uuid ( RO)                  : e5079c6c-cd25-e043-58fe-0bfb9a7219ce
+                device ( RO): eth5
+    currently-attached ( RO): true
+                  VLAN ( RO): -1
+          network-uuid ( RO): a99c4db3-498d-5efe-0b61-919ccd27f66c
+
+
+
+==
+
+
+uuid ( RO)                  : b3734474-7485-0042-89dc-e3037bc317f2
+                device ( RO): eth11
+    currently-attached ( RO): true
+                  VLAN ( RO): -1
+          network-uuid ( RO): 5571ce21-f97d-dcc5-7162-1f11eae1460f
+
+
+
+==
+
+xe pif-param-set uuid=b3734474-7485-0042-89dc-e3037bc317f2 other-config:promiscuous="true"
+
+xe pif-param-set uuid=b3734474-7485-0042-89dc-e3037bc317f2 other-config:promiscuous="true"
+

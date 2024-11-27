@@ -1,0 +1,40 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS QUIET AUTO INSTALL FIREFOX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-02-10[Feb-Wed]10-55AM 
+
+#https://www.mozilla.org/en-CA/firefox/all/#product-desktop-release
+
+msiexec /q /i \\dc1\software\Firefox-83.0-en-CA.msi
+msiexec /i \\dc1\software\Firefox-83.0-en-CA.msi
+
+QUIET INSTALL NOT WORKING, PROMPTS TO INSTALL, NEED TO FIND UNATTENDED
+
+==
+
+##https://www.get-itsolutions.com/silent-install-mozilla-firefox-msi/
+
+MsiExec.exe /i "Firefox Setup 81.0.1.msi" /qn
+MsiExec.exe /i "\\dc1\software\Firefox-83.0-en-CA.msi" /qn
+
+==
+
+MsiExec.exe /i "\\dc1\software\Firefox Installer.exe" /qn
+
+==
+
+https://www.get-itsolutions.com/silent-install-mozilla-firefox-msi/
+
+"\\dc1\software\Firefox Installer.exe" -ms -ma
+"\\dc1\software\Firefox Setup 85.0.2.exe" -ms -ma
+
+
+KIND OF WORKED
+
+"\\dc1\software\Firefox Installer.exe" -ms -ma
+
+WORKED - NOT UNATTENDED
+
+"\\dc1\software\Firefox Setup 85.0.2.exe" -ms -ma

@@ -1,0 +1,122 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS TEXTBELT SETUP INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-01-04[Jan-Sat]11-00AM 
+
+##https://lowendbox.com/blog/how-to-send-sms-messages-from-your-vps-using-textbelt/
+##https://github.com/typpo/textbelt
+##https://textbelt.com/
+
+==
+INSTALL STUFF
+==
+
+sudo curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+
+sudo yum install epel-release -y
+sudo yum install nodejs redis mutt
+
+sudo systemctl start redis && sudo systemctl enable redis
+
+==
+DOWNLOAD AND CONFIGURE TEXTBELT
+==
+
+sudo mkdir -p /j/textbelt
+cd /j/textbelt/
+sudo wget https://github.com/typpo/textbelt/archive/master.zip
+sudo unzip master.zip
+sudo mv textbelt-master textbelt
+sudo mv textbelt /etc/
+cd /etc/textbelt
+sudo touch server/torlist
+
+sudo nano lib/config.js
+
+const SENDMAIL_TRANSPORT = {
+  // This transport uses the local sendmail installation.
+  sendmail: true,
+  newline: 'unix',
+  path: '/usr/sbin/sendmail',
+};
+
+const SMTP_TRANSPORT = {
+  // This is a Nodemailer transport. It can either be an SMTP server or a
+  // well-known service such as Sengrid, Mailgun, Gmail, etc.
+  // See https://nodemailer.com/transports/ and https://nodemailer.com/smtp/well-known/
+  host: 'mailrelay',
+  port: 25,
+  //auth: {
+  //  user: 'textbelt@jgleba.com',
+  //  pass: '',
+  //},
+  secureConnection: 'false',
+  tls: {
+    ciphers: 'SSLv3',
+  },
+};
+
+module.exports = {
+  transport: SMTP_TRANSPORT,
+  mailOptions: {
+    from: '"jtextbelt" <textbelt@jgleba.com>',
+  },
+  debugEnabled: false,
+};
+
+
+
+sudo npm install 
+
+node server/app.js &
+
+==
+FIREWALL
+==
+
+sudo firewall-cmd --zone=public --add-port=9090/tcp --permanent
+sudo firewall-cmd --reload
+
+==
+AUTO START TEXTBELT NODE APP
+==
+
+cat “nodejs /etc/textbelt/textbelt-master/app.js &” >> /etc/rc.local
+
+==
+TEST
+==
+
+ curl -X POST https://textbelt.com/text \
+       --data-urlencode phone='5555555555' \
+       --data-urlencode message='Hello world' \
+       -d key=textbelt
+	   
+curl -X POST http://Z.Z.Z.Z:9090/text -d number=XXXXXXXXXX -d "message=I sent this message for free with my VPS"
+
+curl -X POST http://172.16.3.19:9090/text -d number=phonenumber -d "message=test"
+
+[user@ZXTBELT textbelt]$ curl -X POST http://172.16.3.19:9090/text -d number=5199927146 -d "message=test"
+txting phone 5199927146 : test
+{"success":true}
+
+GOT TEXT FROM ROGERS SAYING WELCOME TO EMAIL TO TEXT, SIMILAR TO WHEN I EMAILED 5199927146@fido.ca, MIGHT BE HOW THIS IS WORKING
+
+curl -X POST http://172.16.3.19:9090/text -d number=phonenumber -d "message=test"
+
+curl -X POST http://172.16.3.19:9090/text -d number=phonenumber -d "message=test"
+txting phone 3139150717 : test
+
+curl -X POST http://172.16.3.19:9090/text -d number=phonenumber -d "message=test"
+
+==
+KILL APP
+==
+
+[user@ZXTBELT textbelt]$ ps -auwxx | grep app.js
+user        3154  0.0  1.5 577164 29596 pts/0    Sl   11:42   0:00 node server/app.js
+user       30354  0.0  0.0 112712   968 pts/0    S+   12:01   0:00 grep --color=auto app.js
+
+sudo kill 3154

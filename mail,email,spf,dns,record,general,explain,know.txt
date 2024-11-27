@@ -1,0 +1,41 @@
+https://postmarkapp.com/blog/explaining-spf#how-spf-works
+
+How SPF protects you #
+The SMTP protocol, the literal definition of email, has no protections on the From field in an email. As long as it’s a valid email address, there is no further validation.
+A malevolent actor can impersonate your bank, your employer or anyone at all. This problem led to the creation of SPF.
+
+SPF is a relatively recent solution. Different variations of the idea were proposed in the early 2000s and these coalesced into the SPF specification as RFC 4408 in April 2006.
+SPF describes a DNS record in a special format to list all the domains allowed to send mail from the domain.
+This allows spam filters to easily check if the origin of an email is from an authorized domain.
+
+How SPF works #
+At a high level, here is the workflow of how a mail server checks SPF:
+
+the Postmark server with IP address of 1.2.3.4 sends a message FROM joe@foo.com TO jill@bar.com
+the bar.com mail server gets the DNS records of type TXT for foo.com, looking for the SPF record
+the bar.com mail server compares the 1.2.3.4 IP address against the parts of the foo.com SPF record (described below)
+the message is accepted or rejected based on which part of the SPF record it matches
+
+Let’s go over what qualifiers are available.
+
++ Pass, an IP that matches a mechanism with this qualifier will pass SPF.
+- Fail, an IP that matches a mechanism with this qualifier will fail SPF.
+~ SoftFail, an IP that matches a mechanism with this qualifier will soft fail SPF, which means that the host should accept the mail, but mark it as an SPF failure.
+? Neutral, an IP that matches a mechanism with this qualifier will neither pass or fail SPF.
+
+https://blog.returnpath.com/how-to-explain-spf-in-plain-english/
+
+Two “From” Addresses
+
+Email messages contain two “from” addresses: the “envelope from” (e.g., return path or mfrom) and the “header from” (e.g., the friendly from).
+
+The “envelope from” is the return address—it tells mail servers where to return, or bounce, the message back to.
+It’s contained in the hidden email message header, which includes technical details servers use to to understand who the message is for, what software was used to compose it, etc.
+
+SPF is an email authentication protocol that allows the owner of a domain to specify which mail servers they use to send mail from that domain.
+
+Brands sending email publish SPF records in the Domain Name System (DNS). These records list which IP addresses are authorized to send email on behalf of their domains.
+
+During an SPF check, email providers verify the SPF record by looking up the domain name listed in the “envelope from” address in the DNS.
+If the IP address sending email on behalf of the “envelope from” domain isn’t listed in that SPF record, the message fails SPF authentication.
+

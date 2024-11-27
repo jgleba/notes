@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  $PATH USAGE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-08-10[Aug-Mon]13-00PM 
+
+==
+DISPLAY $PATH
+==
+
+echo $PATH
+/sbin:/bin:/usr/sbin:/usr/bin
+
+==
+ADD PATH
+==
+
+export PATH=/tmp:$PATH
+export PATH=/sbin:$PATH
+
+==
+RESET PATH
+==
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin

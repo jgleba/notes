@@ -1,0 +1,7 @@
+checking files for virus
+
+virustotal.com
+
+domaintools.com
+
+https://exchange.xforce.ibmcloud.com/

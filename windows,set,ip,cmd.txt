@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS SET IP CMD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-12-17[Dec-Fri]19-56PM 
+
+##https://www.itingredients.com/how-to-change-ip-address-from-command-prompt/
+
+netsh
+
+interface ipv4
+
+set address name="Ethernet0" static ip 255.255.255.0 gw
+
+set dnsservers name=Ethernet0 static ip primary
+
+DOESNT WORK
+
+set dns name=”Ethernet0” static ip index=2

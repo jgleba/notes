@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CENTOS INSTALL NODEJS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2021-07-09[Jul-Fri]11-04AM 
+
+##https://linuxize.com/post/how-to-install-node-js-on-centos-7/
+
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo bash -
+ 
+sudo yum install nodejs -y
+
+[user@COSNODE1 ~]$ node --version
+v16.4.1

@@ -1,0 +1,35 @@
+/ip address
+
+add address=YOUR LAN IP interface=LAN
+add address=YOUR WAN1 IP interface=WAN1
+add address=YOUR WAN2 IP interface=WAN2
+
+/ip firewall mangle
+
+add chain=input in-interface=WAN1 action=mark-connection new-connection-mark=WAN1_conn
+add chain=input in-interface=WAN2 action=mark-connection new-connection-mark=WAN2_conn
+
+add chain=output connection-mark=WAN1_conn action=mark-routing new-routing-mark=to_WAN1
+add chain=output connection-mark=WAN2_conn action=mark-routing new-routing-mark=to_WAN2
+
+add chain=prerouting dst-address=YOUR WAN1 SUBNET action=accept in-interface=LAN
+add chain=prerouting dst-address=YOUR WAN2 SUBNET action=accept in-interface=LAN
+
+add chain=prerouting dst-address-type=!local in-interface=LAN per-connection-classifier=both-addresses-and-ports:2/0 action=mark-connection new-connection-mark=WAN1_conn passthrough=yes
+add chain=prerouting dst-address-type=!local in-interface=LAN per-connection-classifier=both-addresses-and-ports:2/1 action=mark-connection new-connection-mark=WAN2_conn passthrough=yes
+
+add chain=prerouting connection-mark=WAN1_conn in-interface=LAN action=mark-routing new-routing-mark=to_WAN1
+add chain=prerouting connection-mark=WAN2_conn in-interface=LAN action=mark-routing new-routing-mark=to_WAN2
+
+/ip route
+
+add dst-address=0.0.0.0/0 gateway=YOUR WAN1 GATEWAY routing-mark=to_WAN1 check-gateway=ping
+add dst-address=0.0.0.0/0 gateway=YOUR WAN2 GATEWAY routing-mark=to_WAN2 check-gateway=ping
+
+add dst-address=0.0.0.0/0 gateway=YOUR WAN1 GATEWAY distance=1 check-gateway=ping
+add dst-address=0.0.0.0/0 gateway=YOUR WAN2 GATEWAY distance=2 check-gateway=ping
+
+/ip firewall nat
+
+add chain=srcnat out-interface=WAN1 action=masquerade
+add chain=srcnat out-interface=WAN2 action=masquerade

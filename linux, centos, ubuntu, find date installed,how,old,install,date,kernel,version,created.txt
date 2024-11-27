@@ -1,0 +1,64 @@
+##LINUX, FIND SYSTEM INSTALL DATE
+##02-26-18
+##JGleba
+
+
+##UBUNTU
+
+ls -lt /var/log/installer
+total 1008
+drwxr-xr-x 2 root root   4096 Apr 16  2015 cdebconf
+-rw-r--r-- 1 root root  25095 Apr 16  2015 hardware-summary
+-rw-r--r-- 1 root root 138347 Apr 16  2015 initial-status.gz
+-rw-r--r-- 1 root root    105 Apr 16  2015 lsb-release
+-rw-r--r-- 1 root root     68 Apr 16  2015 media-info
+-rw------- 1 root root  78700 Apr 16  2015 partman
+-rw-r--r-- 1 root root  61047 Apr 16  2015 status
+-rw------- 1 root root 705684 Apr 16  2015 syslog
+
+ls -la /var/log/installer/syslog
+-rw------- 1 root root 705684 Apr 16  2015 /var/log/installer/syslog
+
+##NOT ACCURATE
+sudo dumpe2fs /dev/sda1 | grep 'Filesystem created:'
+dumpe2fs 1.42.9 (4-Feb-2014)
+Filesystem created:       Thu Feb 23 19:31:59 2017
+
+##NOT ACCURATE
+sudo ls -alct /|tail -1|awk '{print $6, $7, $8}'
+Feb 23 2017
+
+##CENTOS
+
+sudo ls -la /root
+-rw-------  1 root root      1103 Apr 14  2015 anaconda-ks.cfg
+
+
+## GOOD - but shows last time kernel was updated
+
+sudo rpm -qi setup | grep Install
+
+Install Date: Tue 14 Apr 2015 09:50:42 AM EDT
+
+sudo ls -la /var/log/anaconda
+
+total 456
+drwxr-xr-x 2 root root   4096 Apr 14  2015 .
+drwxr-xr-x 8 root root   4096 Feb 25 03:41 ..
+-rw------- 1 root root   5844 Apr 14  2015 anaconda.ifcfg.log
+-rw------- 1 root root  18865 Apr 14  2015 anaconda.log
+-rw------- 1 root root 121894 Apr 14  2015 anaconda.packaging.log
+-rw------- 1 root root  31978 Apr 14  2015 anaconda.program.log
+-rw------- 1 root root  90137 Apr 14  2015 anaconda.storage.log
+-rw------- 1 root root  19530 Apr 14  2015 anaconda.xlog
+-rw------- 1 root root      0 Apr 14  2015 ks-script-pCfle9.log
+-rw------- 1 root root      0 Apr 14  2015 ks-script-uW1ise.log
+-rw------- 1 root root      0 Apr 14  2015 ks-script-zXluQd.log
+-rw------- 1 root root 157569 Apr 14  2015 syslog
+
+
+010422
+
+CENTOS
+
+sudo rpm -qi basesystem

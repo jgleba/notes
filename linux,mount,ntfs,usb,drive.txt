@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX MOUNT NTFS USB DRIVE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2022-08-25[Aug-Thu]13-45PM 
+
+##https://phoenixnap.com/kb/mount-ntfs-linux
+
+CHECK FOR PARTITION, SHOWS sdX NUMBER
+
+sudo fdisk -l | grep NTFS
+
+MKDIR TO MOUNT TO
+
+sudo mkdir /mnt/usbdrive
+
+MOUNT
+
+sudo mount -t ntfs /dev/sdc1 /mnt/usbdrive

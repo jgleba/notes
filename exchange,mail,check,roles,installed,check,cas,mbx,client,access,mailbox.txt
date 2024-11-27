@@ -1,0 +1,15 @@
+=========================
+CHECK EXCHANGE 2013 ROLES
+062619
+=========================
+
+#https://www.codetwo.com/kb/how-to-list-exchange-servers/
+
+Get-ExchangeServer | select name, serverrole, edition, admindisplayversion, isClientAccessServer | fl
+
+
+Name                 : EX1
+ServerRole           : Mailbox, ClientAccess
+Edition              : Enterprise
+AdminDisplayVersion  : Version 15.0 (Build 847.32)
+IsClientAccessServer : True

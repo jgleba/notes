@@ -1,0 +1,42 @@
+git setup
+
+create repo in github
+  
+echo "# test2" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/jgleba/test2.git
+git push -u origin master
+
+https://github.com/jgleba/vamp206a/blob/master/bin1/gitali.sh
+
+first time, asks for this:
+
+git config --global user.email "example@jgleba.com"
+  git config --global user.name "justin.gleba"
+  git config --global github.user jgleba
+
+using dgleba gitali script
+==
+
+https://github.com/jgleba/vamp206a/blob/master/bin1/gitali.sh
+
+==
+
+git usage
+
+git s (git status)
+
+git d (git diff)
+
+git ldt (pretty format log)
+
+git cap
+
+git clone https://github.com/jgleba/test1.git
+
+git pull
+
+git r
+

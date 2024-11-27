@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUTS INSTALL APPS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-08-10[Aug-Sat]14-26PM 
+
+
+sudo sh -c 'echo "deb http://deb.opera.com/opera/ stable non-free" >> /etc/apt/sources.list.d/opera.list'
+sudo sh -c 'wget -O - http://deb.opera.com/archive.key | apt-key add -'
+sudo apt update
+sudo apt-get install opera-stable
+
+sudo apt install thunderbird
+
+sudo add-apt-repository ppa:phoerious/keepassxc
+sudo apt update
+sudo apt install keepassxc
+
+sudo apt install wine64
+sudo dpkg --add-architecture i386 && sudo apt-get update && sudo apt-get install wine32
+
+sudo apt install notepadqq
+
+sudo apt install remmina
+
+sudo snap install fsearch
+
+sudo wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+
+ 

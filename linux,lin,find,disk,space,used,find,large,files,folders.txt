@@ -1,0 +1,43 @@
+================================
+FIND SPACE USED ON LINUX MACHINE
+FIND LARGE FILES / FOLDERS
+072219
+================================
+
+==
+OLD STUFF
+==
+
+du -kscx *
+wrong
+du -hs <dir>
+yum install ncdu
+
+==
+UPDATED
+==
+
+#https://www.howtogeek.com/409611/how-to-view-free-disk-space-and-disk-usage-from-the-linux-terminal/
+
+==
+IF YOU KNOW WHERE YOU NEED TO LOOK, THIS SHOULD HELP
+==
+
+sudo du -hs <foldername>
+
+==
+IF YOU DONT KNOW AT ALL, START FROM ROOT
+==
+
+cd /
+sudo du -hs *
+
+==
+
+110122
+
+##https://unix.stackexchange.com/questions/125429/tracking-down-where-disk-space-has-gone-on-linux
+
+sudo du -h / | grep -P '^[0-9\.]+G'
+
+sudo du -h * | grep -P '^[0-9\.]+G'

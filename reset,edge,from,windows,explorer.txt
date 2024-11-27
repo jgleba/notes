@@ -1,0 +1,5 @@
+Edge being stupid
+
+To reset:
+
+Del %USERPROFILE%\AppData\Local\Packages\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\AC\MicrosoftEdge\User\Default\Recovery\Active\*.dat

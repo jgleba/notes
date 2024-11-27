@@ -1,0 +1,5 @@
+curl -X POST -F 'username=davidwalsh' -F 'password=something' 
+
+curl -d @test.txt https://cal.jgleba.com/
+
+curl -X POST -F "data=@C:\users\jg\documents\test.txt" https://cal.jgleba.com/

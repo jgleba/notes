@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE, ESXI, VCENTER, DOMAIN JOIN COMMAND
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2023-12-21[Dec-Thu]10-50AM 
+
+/opt/likewise/bin/domainjoin-cli join domain user pass

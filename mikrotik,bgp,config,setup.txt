@@ -1,0 +1,42 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK BGP CONFIG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2020-09-09[Sep-Wed]21-21PM 
+
+##https://thenetworkberg.com/configuring-bgp-on-mikrotik-ez-mode/
+##https://fastnetmon.com/mikrotik-bgp-configuration/
+
+#/routing bgp instance set default as=65001 redistribute-static=no
+
+==
+ROUTER1
+==
+
+/routing bgp instance add name=AS400 as=400 router-id=172.16.4.200
+/routing bgp peer add name=TO_MIKROTIK2 remote-as=300 remote-address=172.16.4.199 instance=AS400
+/routing bgp network add network=192.168.0.0/24 synchronize=no
+
+==
+ROUTER2
+==
+/routing bgp instance add name=AS300 as=300 router-id=172.16.4.199
+/routing bgp peer add name=TO_MIKROTIK1 remote-as=400 remote-address=172.16.4.200 instance=AS300
+/routing bgp network add network=192.168.0.0/24 synchronize=no
+
+==
+CHECK
+==
+
+routing bgp peer print
+ip route print where received-from=TO_MIKROTIK1
+
+==
+NOTES
+==
+
+AFTER synchronize=no ROUTE 192.168.0.0/24 192.168.4.200 SHOWED UP
+
+MISSING FILTER RULES TO DISALLOW BOGONS - CANT DO RIGHT NOW AS USING PRIVATE RANGES
+

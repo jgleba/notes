@@ -1,0 +1,19 @@
+create script called routerbackup
+
+/system backup save name=([/system identity get name] . "-" . \
+[:pick [/system clock get date] 7 11] . [:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6]); \
+/tool e-mail send to="email@email.com" subject=([/system identity get name] . " Backup " . \
+[/system clock get date]) file=([/system identity get name] . "-" . [:pick [/system clock get date] 7 11] . \
+[:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] . ".backup"); :delay 10; \
+/file rem [/file find name=([/system identity get name] . "-" . [:pick [/system clock get date] 7 11] . \
+[:pick [/system clock get date] 0 3] . [:pick [/system clock get date] 4 6] . ".backup")]; \
+:log info ("System Backup emailed at " . [/sys cl get time] . " " . [/sys cl get date])
+
+schedule
+
+
+
+/system scheduler
+add interval=1w name=e-mail-routerbackup on-event=routerbackup policy=\
+    ftp,reboot,read,write,policy,test,password,sniff,sensitive start-date=\
+    aug/14/2016 start-time=00:00:00

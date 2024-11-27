@@ -1,0 +1,161 @@
+MIGHT BE GOOD
+
+http://blog.cpisolutions.com/recovery-database
+
+
+How To Recover an Exchange 2013 Database
+Dec 08 2014
+0
+Recovery Database – Exchange 2013
+
+I had a situation in which my client had lost an Exchange Server and it wasn’t recoverable. They also lost a Database in the mix up and we had to recover the DB from Tape. This posting is the process I went through to recover the data and have it accessible on the new server.
+
+The Clients environment:
+
+MBX1 – bad email server, Exchange 2013 w/ CU4
+MBX2 – Good email server, Exchange 2013 w/ CU4
+BKUP – Backup Server, ArcServe 16.5
+DB01 – Lost DB
+RecoveryDB1 – the recovery db
+DB01-new – The new production DB
+
+So…. the MBX1 server was offline and the DB01 was lost. I needed to recover this DB from tape. I started by
+
+Creating a Recovery Database
+
+I chose a location with adequate space for the data I needed to recover. I then ran the command below to create the new recovery DB
+
+[PS] C:temp&gt;New-MailboxDatabase -Recovery -Name RecoveryDB1 -EdbFilePath "d:datarecoverydb1.edb" -LogFolderPath "d:datalogs" -Server MBX2
+
+Restart the Information Store Service
+
+Stop-Service MSExchangeIS
+
+Start-Service MSExchangeIS
+
+Mount the Recovery DB
+
+Mount-Database RecoveryDB1
+
+Dismount the Recovery DB
+
+Dismount-Database RecoveryDB1
+
+Set the “allowfilerestore” parameter to true
+
+ Get-MailboxDatabase RecoveryDB1 | Set-MailboxDatabase -AllowFileRestore:$true
+
+Restore the data
+
+Now that we have the Recovery database prepared we need to restore the data from (enter your favorite backup software here). In my case we are using ArcServe 16.5 connected to an HP tape carousel.
+
+Logging into the ArcServe Software I make sure I have the correct media loaded. I then go to restore. On the Source tab I select the database level restore option and select the DB I want to restore. I right click on the DB and select the Agent Options and choose only “Restore to Recovery Databases”
+Recoverydb1
+
+I click on the destination tab and since I am restoring data to a new server I select the “Microsoft Exchange Server – Database Level” and click submit.
+
+I choose the RecoveryDB1 from the existing recovery db dropdown menu and click ok to process the restore job.
+
+Now that I have my data restored the I need to check its status using eseutil /mh. (Databases restored from backups typically always have a Dirty Shutdown status)
+
+I then run the eseutil /P command to perform a repair on the database
+
+**NOTE: For more details on how to use the eseutil utility please visit my blog article entitled “A Lesson on Eseutil and Database Portability “
+
+The next step is to mount the Recovery DB. I ran the following command
+
+Mount-Database RecoveryDB1
+
+Lets take a quick second to visit our steps so far
+
+    Created the Recovery DB
+    Restarted MSExchangeIS
+    Mounted the Recovery DB
+    Dismounted the Recovery DB
+    Set the AllowFileRestore attribute to true on the Recovery DB
+    Restored the Data from tape to the Recovery DB
+
+Create a new Production DB
+
+The next step is to create another DB, but this time this is going to be the production DB. Keep in mind recovery DB’s cannot provide Client Access they are available only to the administrators for recovering data… Thus the name “Recovery Database” :)
+
+Creating the new DB
+
+[PS] C:temp&gt;New-MailboxDatabase -Name DB01-new -EdbFilePath "d:db01db01-new.edb" -LogFolderPath "d:db01logs" -Server MBX2
+
+Now we need to give the mailboxes from the Lost DB (DB01) a new home. Running this command will associate the mailboxes to the new mailbox database.
+
+Get-Mailbox -Database DB01 | Set-Mailbox -Database DB01-new
+
+also check to make sure that you don’t have any arbitration mailboxes, archive mailboxes or public folder mailboxes that may have been on DB01.
+
+Check for Arbitration mailboxes
+
+Get-Mailbox -Database DB01 -Arbitration
+
+Check for Archive mailboxes
+
+Get-Mailbox -Database DB01 -Archive
+
+Check for Public Folder mailboxes
+
+Get-Mailbox -Database DB01 -PublicFolder
+
+If you find any of these re-associate them similarly as we did above with the production mailboxes IE:
+
+Get-mailbox -Database DB01 -Arbitration | Set-Mailbox -Database DB01-new
+
+Giving the Mailboxes a home
+
+First lets mount RecoveryDB1
+
+Mount-Database RecoveryDB1
+
+Our next step is to run a script that will parse through the mailboxes in RecoveryDB1 and match them up with the newly associated mailboxes on DB01-new.
+
+ForEach($Mailbox in Get-MailboxStatistics -Database RecoveryDB1)
+
+{New-MailboxRestoreRequest -SourceDatabase RecoveryDb1 -SourceStoreMailbox $Mailbox.DisplayName -TargetMailbox $Mailbox.DisplayName}
+
+To view the Mailbox Restore Requests run the following commands
+
+Get-MailboxRestoreRequest 
+
+or for more details run
+
+Get-MailboxRestoreRequest | Get-MailboxRestoreRequestStatistics
+
+**NOTE: If you receive StalledDueToCI as a Status give the Content Index some time to catch up with the changes. If you feel that it is stalling for too long and doesn’t seem to be moving please check out this article for additional troubleshooting. 
+
+**NOTE: If you have a TransientFailure status you may need to run a mailbox export request against the mailbox in the recovery database and then import it manually. You can accomplish this by using the cmdlets New-MailboxExportRequest and New-MailboxImportRequest.
+
+After the restore requests have completed you can cleanup the requests by
+
+Get-MailboxRestoreRequest | Remove-MailboxRestoreRequest
+
+Lastly…
+
+You can now dismount RecoveryDB1 and dispose of it
+
+Dismount-Database RecoveryDB1
+
+navigate to the file path and Shift+Delete this DB
+
+After the mailboxes have been restored it is best practice to run them through the Mailbox Repair before placing them back into production. You can do this by
+
+$Mailboxes = Get-Mailbox –Database DB01-new
+
+New-MailboxRepairRequest –Mailbox $Mailboxes.Displayname –CorruptionType ProvisionedFolder,SearchFolder,AggregateCounts,Folderview
+
+To view the Repair Requests run the following commands
+
+Get-MailboxRepairRequest
+
+
+====================
+INFO, REF, REFERENCE
+====================
+
+CHECK SIZE OF EXCHANGE DATABASE
+
+Get-MailboxDatabase -Status | select ServerName,Name,DatabaseSize
