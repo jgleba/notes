@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX CONNECT TO CIFS SHARE 
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-13[Dec-Fri]10-16AM 
+
+sudo mount -t cifs -o username=username \\\\server\\path\\tofolder /mnt/folder
