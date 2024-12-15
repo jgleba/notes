@@ -355,3 +355,12 @@ w to save
 
 sudo resize2fs -p /dev/sda2
 
+
+==
+
+supposed to refresh partition table, but didnt work for me
+
+partprobe /dev/sdX
+
+
+
