@@ -362,5 +362,6 @@ supposed to refresh partition table, but didnt work for me
 
 partprobe /dev/sdX
 
+TO TRY
 
-
+hdparm -z /dev/sda
