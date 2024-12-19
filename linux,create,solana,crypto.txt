@@ -1,0 +1,110 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX CLI CREATE SOLANA CRYPTO CURRENCY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-19[Dec-Thu]10-40AM 
+
+#https://blog.networkchuck.com/posts/create-a-solana-token/
+
+sudo nano Dockerfile
+
+# Use a lightweight base image
+FROM debian:bullseye-slim
+
+# Set non-interactive frontend for apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install required dependencies and Rust
+RUN apt-get update && apt-get install -y \
+    curl build-essential libssl-dev pkg-config nano \
+    && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Add Rust to PATH
+ENV PATH="/root/.cargo/bin:$PATH"
+
+# Verify Rust installation
+RUN rustc --version
+
+# Install Solana CLI
+RUN curl -sSfL https://release.anza.xyz/stable/install | sh \
+    && echo 'export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"' >> ~/.bashrc
+
+# Add Solana CLI to PATH
+ENV PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
+
+# Verify Solana CLI installation
+RUN solana --version
+
+# Set up Solana config for Devnet
+RUN solana config set -ud
+
+# Set working directory
+WORKDIR /solana-token
+
+# Default command to run a shell
+CMD ["/bin/bash"]
+
+==
+
+CONTAINER DOESNt STAY RUNNING
+
+CHANGED THIS:
+
+CMD ["/bin/bash"]
+
+TO:
+
+CMD ["/bin/bash", "-c", "while true; do sleep 30; done"]
+
+==
+
+sudo nano docker-compose.yaml
+
+version: "3.6"
+
+networks:
+  docknet1:
+    external: true
+services:
+  jglebacoin:
+    build: .
+    stdin_open: true
+    tty: true
+    restart: always
+    volumes:
+      - ./data/solana-token:/solana-token
+      - ./data/solana-data:/root/.config/solana
+    networks:
+      docknet1:
+
+
+sudo podman-compose build .
+
+sudo podman-compose up -d
+
+==
+
+DIDNT WORK
+solana-keygen grind --starts-with jgleba:1
+
+solana-keygen grind --starts-with dad:1
+
+solana config set --keypair key.json
+
+solana config set --url devnet
+
+CHECK
+
+solana config get
+
+# Run this to find your solana address
+solana address
+
+#GET SOL FROM FAUCET, GO TO URL
+
+https://faucet.solana.com/
+
+solana balance
+
