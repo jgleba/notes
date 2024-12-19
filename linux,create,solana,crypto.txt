@@ -1,7 +1,7 @@
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@  
-#@  LINUX CLI CREATE SOLANA CRYPTO CURRENCY
+#@  LINUX CLI CREATE SOLANA CRYPTO CURRENCY, USING DOCKER CONTAINER
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-19[Dec-Thu]10-40AM 
 
@@ -107,4 +107,57 @@ solana address
 https://faucet.solana.com/
 
 solana balance
+
+MINT THE TOKEN
+
+solana-keygen grind --starts-with mnt:1
+
+==
+
+spl-token create-token \
+--program-id TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb \
+--enable-metadata \
+--decimals 9 \
+mint-address.json
+
+==
+
+nano metadata.json
+
+{
+  "name": "JGleba Coin",
+  "symbol": "JGL",
+  "description": "Just a cool little coin, just for me.",
+  "image": "https://files.jgleba.com/t/0/logo.png"
+}
+
+spl-token initialize-metadata \
+minttoken \
+"JGleba Coin" \
+"JGL" \
+https://files.jgleba.com/t/0/jglebacoinmeta.json
+
+==
+
+CREATE ACCOUNT
+
+spl-token create-account minttoken
+
+==
+
+CREATE TOKENS
+
+spl-token mint minttoken 1000000000
+
+spl-token balance minttoken
+
+==
+
+SWITCH TO PROD SERVER
+
+Going to Market
+
+spl-token authorize mntbDZof8kRCoSkjW6tR9J7mvBBM4FWLQ2ysEJowAyh mint --disable
+
+spl-token authorize mntbDZof8kRCoSkjW6tR9J7mvBBM4FWLQ2ysEJowAyh freeze --disable
 
