@@ -35,4 +35,5 @@ sudo systemctl restart haproxy
 ##LOGGING
 
 cat /etc/rsyslog.d/haproxy.conf
+sudo nano /etc/rsyslog.d/haproxy.conf
 local0.*        /var/log/haproxy.log
