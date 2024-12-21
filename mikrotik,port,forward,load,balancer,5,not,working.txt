@@ -1,35 +1,35 @@
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194 to-ports=45189
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.5.194
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195 to-ports=45189
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.5.195
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196 to-ports=45189
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.5.196
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP4 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP4 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP4 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP4 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP4 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP4 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197 to-ports=45189
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP4 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/5 protocol=tcp to-addresses=172.16.5.197
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198
-add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198
-add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198 to-ports=45189
-add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.5.198
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP1 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP1 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194 to-ports=45189
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP1 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/0 protocol=tcp to-addresses=172.16.3.194
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP2 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP2 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195 to-ports=45189
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP2 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/1 protocol=tcp to-addresses=172.16.3.195
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196 to-ports=45189
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/2 protocol=tcp to-addresses=172.16.3.196
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP4 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP4 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP4 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP4 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP4 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP4 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197 to-ports=45189
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP4 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/3 protocol=tcp to-addresses=172.16.3.197
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-port=80 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="HTTP to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=80 per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-port=443 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="HTTPS to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=443 per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=4433 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-port=45189 in-interface=bell_pppoe per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198 to-ports=45189
+add action=dst-nat chain=dstnat comment="VPN 4433 to HAPROXY LB VIP5 - NEW" dst-address-type=local dst-port=45189 per-connection-classifier=src-address:5/4 protocol=tcp to-addresses=172.16.3.198
