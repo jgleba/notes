@@ -25,6 +25,7 @@ net time \\192.168.106.1 /set /y
 
 net time \\dc /set /y
 net time \\dc1 /set /y
+net time \\dc3 /set /y
 net time \\dc-ca-001 /set /y
 
 SET TIME SERVERS: w32tm /config /manualpeerlist:"0.ca.pool.ntp.org 1.ca.pool.ntp.org 2.ca.pool.ntp.org" /syncfromflags:MANUAL /reliable:yes
@@ -35,13 +36,13 @@ USING MY OWN NTP SERVER FOR INTERNAL
 ==
 
 net stop w32time
-w32tm /config /manualpeerlist:"172.16.0.18" /syncfromflags:MANUAL /reliable:yes
+w32tm /config /manualpeerlist:"ip" /syncfromflags:MANUAL /reliable:yes
 net start w32time
 w32tm /resync
 
 SWITCHING TO DOCKER NTP
 
 net stop w32time
-w32tm /config /manualpeerlist:"172.16.0.30" /syncfromflags:MANUAL /reliable:yes
+w32tm /config /manualpeerlist:"ip" /syncfromflags:MANUAL /reliable:yes
 net start w32time
 w32tm /resync
