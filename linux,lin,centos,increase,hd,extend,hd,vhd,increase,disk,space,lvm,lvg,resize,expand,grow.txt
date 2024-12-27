@@ -337,13 +337,33 @@ sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 
 ==
 
+122724 UBUNTU 2204 WORKED - NO REBOOT
+
+vmware make bigger
+
+rescan
+
+echo 1 | sudo tee /sys/class/block/sda/device/rescan
+
+sudo fdisk /dev/sda
+
+delete sda3 partition
+
+create new primary 
+
+sudo pvresize /dev/sda3
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+
+==
+
 110324
 
 RESIZE DISK ON ROCKY
 
-shut down, make disk bigger
+vmware make disk bigger
 
-boot back up
+do rescan from below
 
 sudo fdisk /dev/sda
 
@@ -369,4 +389,13 @@ partprobe /dev/sdX
 
 TO TRY
 
+NO WORK 122724
 hdparm -z /dev/sda
+
+NO WORK 122724
+sudo blockdev --rereadpt /dev/sda
+
+RESCAN FDISK WORKED 122724
+echo 1 | sudo tee /sys/class/block/sdX/device/rescan
+echo 1 | sudo tee /sys/class/block/sda/device/rescan
+
