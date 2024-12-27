@@ -357,13 +357,15 @@ sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 
 ==
 
-110324
+110324 - updated 122724
 
 RESIZE DISK ON ROCKY
 
 vmware make disk bigger
 
-do rescan from below
+do rescan 
+
+echo 1 | sudo tee /sys/class/block/sda/device/rescan
 
 sudo fdisk /dev/sda
 
