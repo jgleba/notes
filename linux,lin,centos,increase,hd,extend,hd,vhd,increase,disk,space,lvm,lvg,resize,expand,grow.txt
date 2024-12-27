@@ -350,11 +350,16 @@ sudo fdisk /dev/sda
 delete sda2
 
 make new partition, extended use defaults for start and end
+WRONG
+use primary
 
 w to save
 
 sudo resize2fs -p /dev/sda2
 
+122624
+MACHINES WITH RESIZED DISKS NO BOOT
+FIXED BY USING DELETING PARTITION2 RECREATING AS PRIMARY
 
 ==
 
