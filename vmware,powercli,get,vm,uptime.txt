@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE POWERCLI GET VM UPTIME
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-28[Dec-Sat]20-01PM 
+
+#https://deangrant.me/2014/04/17/generate-system-uptime-report-of-vms-using-powercli/
+
+Get-Stat -Entity VM1 -Stat sys.uptime.latest -Realtime -MaxSamples 1
+

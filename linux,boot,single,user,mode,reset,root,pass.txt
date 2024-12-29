@@ -1,0 +1,29 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX SINGLE USER MODE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-28[Dec-Sat]20-37PM 
+
+#https://serverfault.com/questions/482079/debian-boot-to-single-user-mode
+
+
+First screen - grub - press e
+
+Modify kernel line: add single between ro  quiet and at the end of this line add init=/bin/bash
+
+Press F10
+
+When the prompt is root@(none):/#
+
+you have to remount the / partition to have read-write access: 
+
+THIS IS KEY TO REMOUNT WITH WRITE PERMS
+
+mount / -rw -o remount
+
+Now you are ready to modify the root password: type passwd and change it!
+
+==
+
+or edit shadow file to remove pass
