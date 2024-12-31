@@ -17,3 +17,7 @@ sudo firewall-cmd --reload
 SMB
 sudo firewall-cmd --zone=public --add-port=445/tcp --permanent
 sudo firewall-cmd --reload
+
+SQL
+sudo firewall-cmd --zone=public --add-port=3306/tcp --permanent
+sudo firewall-cmd --reload
