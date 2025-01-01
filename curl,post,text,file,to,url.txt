@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CURL POST TEXT FILE TO URL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-31[Dec-Tue]22-02PM 
+
+curl -X POST -H "Content-Type: text/plain" --data-binary @yourfile.txt https://example.com/endpoint
+
+curl -u user -X POST -H "Content-Type: text/plain" --data-binary @yourfile.txt https://example.com/endpoint
+
