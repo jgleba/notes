@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PLEX LOGS LOCATION LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-01[Jan-Wed]14-55PM 
+
+/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs
