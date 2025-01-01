@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SPAM ASSASSIN DNS RESOLVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2024-12-31[Dec-Tue]21-25PM 
+
+
+
+
+
+this is normally, because if you not config in spamassassin, it will use the server resolver.
+
+add this to "/etc/mail/spamassassin/local.cf"
+Code:
+
+dns_server 127.0.0.1
+
