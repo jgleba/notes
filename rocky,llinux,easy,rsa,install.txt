@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL EASY RSA
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-05[Jan-Sun]14-58PM 
+
+#https://www.howtoforge.com/how-to-install-and-configure-openvpn-server-on-rocky-linux-9/
+
+sudo dnf install easy-rsa

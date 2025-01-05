@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK ADD PUBLIC KEY TO SSH USER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-05[Jan-Sun]14-37PM 
+
+#https://help.mikrotik.com/docs/spaces/ROS/pages/132350014/SSH
+
+/user ssh-keys import public-key-file=id_rsa.pub user=admin
