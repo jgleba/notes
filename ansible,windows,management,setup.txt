@@ -68,7 +68,7 @@ TEST PING
 
 [user@ZXANS ~]$ ansible -m win_ping abc-ts
 [WARNING]: Invalid characters were found in group names but not replaced, use -vvvv to see details
-172.16.0.250 | SUCCESS => {
+ip | SUCCESS => {
     "changed": false,
     "ping": "pong"
 }
