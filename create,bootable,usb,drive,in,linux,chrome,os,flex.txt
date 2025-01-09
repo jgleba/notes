@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CREATE BOOTABLE USB WITH CHROME OS FLEX INSTALLER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-09[Jan-Thu]09-09AM 
+
+#https://support.google.com/chromeosflex/answer/11541904?hl=en
+
+sudo dd if=chromeos_16002.51.0_reven_recovery_stable-channel_mp-v6.bin of=/dev/sdb bs=4M status=progress
