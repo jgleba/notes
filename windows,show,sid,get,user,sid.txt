@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS GET USER SID
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-10[Jan-Fri]15-52PM 
+
+#https://www.lifewire.com/how-to-find-a-users-security-identifier-sid-in-windows-2625149
+
+wmic useraccount get name,sid
+
+whoami /user
