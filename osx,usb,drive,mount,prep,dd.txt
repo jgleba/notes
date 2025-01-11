@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  OSX USB DRIVE MOUNT UNMOUNT PREP FOR DD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-10[Jan-Fri]19-57PM 
+
+#https://thornelabs.net/posts/create-a-bootable-ubuntu-usb-drive-in-os-x/
+
+#LIST DISKS
+diskutil list
+
+#UNMOUNT FOR DD
+diskutil unmountDisk /dev/disk2
+
+#EJECT WHEN DONE
+diskutil eject /dev/disk2
