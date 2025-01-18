@@ -388,6 +388,16 @@ sudo firewall-cmd --direct --permanent --remove-rule ipv4 filter INPUT 0 --desti
 sudo firewall-cmd --direct --permanent --remove-rule ipv4 filter OUTPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
 
 ==
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --in-interface ens192 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 --out-interface ens192 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --reload
+
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter INPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --direct --permanent --add-rule ipv4 filter OUTPUT 0 --destination 224.0.0.18 --protocol vrrp -j ACCEPT
+sudo firewall-cmd --reload
+
+==
 120819
 LEARNED MORE
 ==
