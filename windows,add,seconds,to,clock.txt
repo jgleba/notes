@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS SERVER PER USER REG EDIT ENABLE SECONDS ON CLOCK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-26[Jan-Sun]14-16PM 
+
+#https://linustechtips.com/topic/1511657-i-dont-have-options-to-show-seconds-on-the-clock/
+
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced] 
+
+"ShowSecondsInSystemClock"=dword:00000001 
+

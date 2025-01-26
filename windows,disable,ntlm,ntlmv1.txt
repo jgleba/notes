@@ -1,0 +1,51 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  disable ntlm v1
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-01-26[Jan-Sun]14-41PM 
+
+
+No, using NTLMv1 for authentication is no longer considered safe and should be avoided, especially for sensitive services like Remote Desktop Gateway (RD Gateway). Here's why:
+Why NTLMv1 Is Unsafe
+
+    Weak Hashing Algorithm
+    NTLMv1 uses the outdated DES (Data Encryption Standard) algorithm for hashing, which is vulnerable to brute-force and cryptographic attacks. Modern computing power makes cracking NTLMv1 hashes relatively easy.
+
+    No Salting
+    NTLMv1 does not use salting, making password hashes susceptible to precomputed attacks, such as rainbow table attacks.
+
+    Pass-the-Hash Attacks
+    If an attacker intercepts an NTLMv1 hash, they can use it to authenticate to other systems without knowing the actual password.
+
+    Man-in-the-Middle (MITM) Vulnerabilities
+    NTLMv1 is more susceptible to MITM attacks, where an attacker intercepts authentication traffic and replays it to gain unauthorized access.
+
+    Lack of Modern Security Features
+    NTLMv1 lacks support for modern security protocols like channel binding and Extended Protection for Authentication (EPA), which protect against certain MITM attacks.
+
+Recommended Alternatives
+
+    NTLMv2
+    Use NTLMv2, which is much more secure than NTLMv1. It uses stronger hashing (HMAC-MD5) and includes additional security features like message integrity checks.
+
+    Kerberos
+    Kerberos is a more secure and modern authentication protocol than NTLM and should be preferred whenever possible. It is especially effective in environments with Active Directory.
+
+    Multi-Factor Authentication (MFA)
+    Add MFA to your RD Gateway configuration to provide an additional layer of protection, reducing reliance on NTLM altogether.
+
+    Certificate-Based Authentication
+    Use SSL/TLS certificates or smart cards for authentication to reduce the reliance on password-based protocols like NTLM.
+
+How to Disable NTLMv1
+
+To enforce stronger authentication methods:
+
+    Open Group Policy Editor (gpedit.msc).
+    Navigate to:
+    Computer Configuration > Windows Settings > Security Settings > Local Policies > Security Options
+    Set Network security: LAN Manager authentication level to:
+    Send NTLMv2 response only. Refuse LM & NTLM.
+
+This will block NTLMv1 (and LM, an even older protocol) while enforcing NTLMv2.
