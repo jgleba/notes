@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  LINUX CREATE ZEROED FILE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-06[Feb-Thu]19-12PM 
+
+#https://stackoverflow.com/questions/257844/quickly-create-a-large-file-on-a-linux-system
+
+dd if=/dev/zero of=/path/to/file bs=4k iflag=fullblock,count_bytes count=500M

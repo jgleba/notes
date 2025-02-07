@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#JGLEBA
+#020625
+#WORKS JGDC
+#USED CHATGPT.COM
+
+# Prompt for username
+read -p "Enter the username: " username
+
+# Define remote servers
+passwd_server="192.168.0.25"
+copy_server="192.168.0.26"
+remote_passwd="/etc/passwd"
+remote_shadow="/etc/shadow"
+remote_group="/etc/group"
+passwd_copy_path="/home/j/passwdcopy"
+shadow_copy_path="/home/j/shadowcopy"
+datenow="$(date +%m%d%y)"
+mailboxdest=""/home/j/$datenow/""
+mail_file="/var/spool/mail/$username"
+
+# Check if username exists in remote /etc/passwd
+if sudo ssh root@$passwd_server "grep -q '^$username:' $remote_passwd"; then
+    # Copy the line from remote /etc/passwd to local file on copy_server
+    sudo ssh root@$passwd_server "grep '^$username:' $remote_passwd" | sudo tee -a $passwd_copy_path
+    echo "Username $username line has been copied from /etc/passwd"
+    # Remove the line from remote /etc/passwd
+    sudo ssh root@$passwd_server "sed -i '/^$username:/d' $remote_passwd"
+	echo "Username $username line has been deleted from /etc/passwd"
+else
+    echo "User $username not found in remote /etc/passwd."
+fi
+
+# Check if username exists in remote /etc/shadow
+if sudo ssh root@$passwd_server "grep -q '^$username:' $remote_shadow"; then
+    # Copy the line from remote /etc/shadow to local file on copy_server
+    sudo ssh root@$passwd_server "grep '^$username:' $remote_shadow" | sudo tee -a $shadow_copy_path
+    echo "Username $username line has been copied from /etc/shadow"
+    # Remove the line from remote /etc/shadow
+    sudo ssh root@$passwd_server "sed -i '/^$username:/d' $remote_shadow"
+	echo "Username $username line has been deleted from /etc/shadow"
+else
+    echo "User $username not found in remote /etc/shadow."
+fi
+
+# Remove user from remote /etc/group
+if sudo ssh root@$passwd_server "grep -q '$username' $remote_group"; then
+    sudo ssh root@$passwd_server "sed -i 's/\b$username\b//g' $remote_group"
+    echo "User $username removed from remote /etc/group."
+else
+    echo "User $username not found in remote /etc/group."
+fi
+
+# Check if the mail file exists before proceeding
+if sudo ssh root@$passwd_server "[ -f '$mail_file' ]"; then
+    # Rsync the file to the local machine
+	sudo mkdir -p $mailboxdest
+    sudo rsync -avz --info=progress2 root@$passwd_server:"$mail_file" $mailboxdest
+    echo "Mailbox has been copied from router"
+    # Remove the original mail file after successful copy
+    if [ $? -eq 0 ]; then
+        sudo ssh root@$passwd_server "rm -f '$mail_file'"
+		echo "Mailbox has been deleted from router"
+    else
+        echo "Rsync failed. Mail file not deleted."
+    fi
+else
+    echo "Mail file for $username does not exist on remote server."
+fi
+
+echo "Operations completed."
