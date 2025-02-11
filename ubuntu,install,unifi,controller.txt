@@ -1,0 +1,31 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU 2204 INSTALL UNIFI CONTROLLER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-11[Feb-Tue]10-47AM 
+
+needed to do before install
+
+install unifi controller this worked for libssl1
+sudo wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+==
+
+#https://help.ui.com/hc/en-us/articles/220066768-Updating-and-Installing-Self-Hosted-UniFi-Network-Servers-Linux
+
+==
+
+START HERE
+
+sudo apt-get update && sudo apt-get install ca-certificates apt-transport-https
+
+echo 'deb [ arch=amd64,arm64 ] https://www.ui.com/downloads/unifi/debian stable ubiquiti' | sudo tee /etc/apt/sources.list.d/100-ubnt-unifi.list
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv 06E85760C0A52C50
+
+sudo wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+sudo apt-get update && sudo apt-get install unifi -y
