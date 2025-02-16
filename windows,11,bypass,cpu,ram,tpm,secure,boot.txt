@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS 11 BYPASS CPU RAM TPM SECURE BOOT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-16[Feb-Sun]12-18PM 
+
+#FROM CHATGPT
+
+#https://chatgpt.com/c/67b21c54-5410-800c-bb18-acf610f08284
+
+Windows 11 error:
+
+    Press Shift + F10 to open the command prompt.
+    Type regedit and press Enter.
+    Navigate to:
+
+    HKEY_LOCAL_MACHINE\SYSTEM\Setup\LabConfig
+
+    If LabConfig doesn't exist, right-click Setup, choose New > Key, and name it LabConfig.
+    Inside LabConfig, create the following DWORD (32-bit) Values:
+        BypassTPMCheck = 1
+        BypassSecureBootCheck = 1
+        BypassRAMCheck = 1
+        BypassCPUCheck = 1
+    Close Registry Editor and proceed with the installation.
