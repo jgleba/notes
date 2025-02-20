@@ -1,0 +1,84 @@
+#!/bin/bash
+
+##021925
+##JGLEBA
+##CREATED WITH CHATGPT
+##sudo yum install jq mailx -y
+##checks last ip in txt file, only executes if public ip changes, emails if changes
+
+# Load environment variables from .env file
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "Error: .env file not found!"
+    exit 1
+fi
+
+# Check if required variables are set
+if [[ -z "$CLOUDFLARE_API_TOKEN" || -z "$ZONE_ID" || -z "$DOMAIN" || -z "$STATIC_IP" || -z "$EMAIL_TO" || -z "$SMTP_SERVER" ]]; then
+    echo "Error: Missing required environment variables. Check your .env file."
+    exit 1
+fi
+
+# File to store last known public IP
+LAST_IP_FILE="last_ip.txt"
+
+# Get current public IP
+PUBLIC_IP=$(curl -s https://ipinfo.io/ip)
+
+if [[ -z "$PUBLIC_IP" ]]; then
+    echo "Failed to retrieve public IP."
+    exit 1
+fi
+
+echo "Current Public IP: $PUBLIC_IP"
+
+# Capture script output
+OUTPUT_FILE="script_output.log"
+exec > >(tee "$OUTPUT_FILE") 2>&1
+
+# Check if last_ip.txt exists and compare with the current IP
+if [[ -f "$LAST_IP_FILE" ]]; then
+    LAST_IP=$(cat "$LAST_IP_FILE")
+
+    if [[ "$PUBLIC_IP" == "$LAST_IP" ]]; then
+        echo "Public IP has not changed ($PUBLIC_IP). No update needed."
+        exit 0
+    fi
+fi
+
+# Save the new public IP
+echo "$PUBLIC_IP" > "$LAST_IP_FILE"
+
+# Function to add/update an A record with Cloudflare proxy enabled
+add_dns_record() {
+    local name=$1
+    local ip=$2
+
+    echo "Updating A record: $name -> $ip (Proxied: ON)"
+
+    RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
+         -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+         -H "Content-Type: application/json" \
+         --data "{\"type\":\"A\",\"name\":\"$name\",\"content\":\"$ip\",\"ttl\":120,\"proxied\":true}")
+
+    if echo "$RESPONSE" | jq -e '.success' >/dev/null; then
+        echo "Successfully updated: $name -> $ip (Proxied)"
+    else
+        echo "Failed to update $name -> $ip"
+        echo "$RESPONSE" | jq .
+    fi
+}
+
+# Update DNS records only if public IP has changed
+add_dns_record "$DOMAIN" "$STATIC_IP"
+add_dns_record "$DOMAIN" "$PUBLIC_IP"
+
+# Send email with script output using SMTP
+EMAIL_SUBJECT="Cloudflare DNS Update - New IP: $PUBLIC_IP"
+EMAIL_BODY=$(cat "$OUTPUT_FILE")
+
+echo "$EMAIL_BODY" | mailx -S smtp="$SMTP_SERVER" -s "$EMAIL_SUBJECT" "$EMAIL_TO"
+
+# Optional: Clean up log file
+rm -f "$OUTPUT_FILE"
