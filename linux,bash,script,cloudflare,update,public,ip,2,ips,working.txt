@@ -1,0 +1,54 @@
+#!/bin/bash
+
+##021925
+##JGLEBA
+##CREATED WITH CHATGPT
+##sudo yum install jq -y
+
+# Load environment variables from .env file
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+else
+    echo "Error: .env file not found!"
+    exit 1
+fi
+
+# Check if required variables are set
+if [[ -z "$CLOUDFLARE_API_TOKEN" || -z "$ZONE_ID" || -z "$DOMAIN" || -z "$STATIC_IP" ]]; then
+    echo "Error: Missing required environment variables. Check your .env file."
+    exit 1
+fi
+
+# Get public IP
+PUBLIC_IP=$(curl -s https://ipinfo.io/ip)
+
+if [[ -z "$PUBLIC_IP" ]]; then
+    echo "Failed to retrieve public IP."
+    exit 1
+fi
+
+echo "Public IP: $PUBLIC_IP"
+
+# Function to add an A record with Cloudflare proxy enabled
+add_dns_record() {
+    local name=$1
+    local ip=$2
+
+    echo "Adding A record: $name -> $ip (Proxied: ON)"
+
+    RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records" \
+         -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+         -H "Content-Type: application/json" \
+         --data "{\"type\":\"A\",\"name\":\"$name\",\"content\":\"$ip\",\"ttl\":120,\"proxied\":true}")
+
+    if echo "$RESPONSE" | jq -e '.success' >/dev/null; then
+        echo "Successfully added: $name -> $ip (Proxied)"
+    else
+        echo "Failed to add $name -> $ip"
+        echo "$RESPONSE" | jq .
+    fi
+}
+
+# Add both static and public IP A records with Cloudflare proxy enabled
+add_dns_record "$DOMAIN" "$STATIC_IP"
+add_dns_record "$DOMAIN" "$PUBLIC_IP"
