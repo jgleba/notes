@@ -1,0 +1,17 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS DISABLE IPV6 REGEDIT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-21[Feb-Fri]12-09PM 
+
+#FROM CHATGPT
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\TCPIP6\Parameters
+
+Right-click in the right pane → New → DWORD (32-bit) Value.
+Name it DisabledComponents and set its value to:
+
+    0x20 → Prefer IPv4 over IPv6
+    0xFF → Disable IPv6 completely (not recommended in some cases)
+	
