@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS ENABLE WINRM
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-23[Feb-Sun]23-49PM 
+
+#https://stackoverflow.com/questions/42384177/allowing-winrm-in-the-windows-firewall
+
+Enable-PSRemoting -force
