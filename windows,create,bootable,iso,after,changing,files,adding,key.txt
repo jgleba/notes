@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS CREATE ISO AFTER CHANGING FILES, ADDING KEY
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-23[Feb-Sun]21-48PM 
+
+oscdimg -m -o -u2 -bC:\j\0\SERVER_2022_Orig\boot\etfsboot.com C:\j\0\SERVER_2022_Orig C:\j\0\Server2022_jmod.iso

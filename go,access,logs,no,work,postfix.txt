@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GO ACCESS LOG ANALYIZE, CANT GET WORKING WITH POSTFIX LOGS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-23[Feb-Sun]21-50PM 
+
+awk '/postfix/ {print $1, $2, $3, $6, $7, $8, $9, $10, $11}' mail.log.1 > postfix_parsed.log
+
+
+goaccess postfix_parsed.log --log-format='%d %t %h %m' --date-format='%b %d' --time-format='%H:%M:%S'
+
+
+goaccess postfix_parsed.log --log-format='%d %t %m' --date-format='%b %d' --time-format='%H:%M:%S'
+
+goaccess mail.log.1 --log-format='%d %t %^ %^ %^: %m %U' --date-format='%b %d' --time-format='%H:%M:%S'
