@@ -8,3 +8,7 @@
 #https://operating-systems.wonderhowto.com/how-to/create-admin-user-account-using-cmd-prompt-windows-0125689/
 
 net user /add [*username] [password]
+
+#https://answers.microsoft.com/en-us/windows/forum/all/create-user-from-command-prompt/78768953-4cc0-4389-b9ef-314fb252d311
+
+net user "Jack" pass
