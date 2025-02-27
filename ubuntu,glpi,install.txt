@@ -1,7 +1,7 @@
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@  
-#@  UBUNTU GLPI INSTALL
+#@  UBUNTU 2204 GLPI INSTALL
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-27[Feb-Thu]13-29PM 
 
@@ -18,7 +18,7 @@ sudo nano /etc/php/8.1/apache2/php.ini
 CHANGE TO
 
 memory_limit = 512M
-date.timezone = UTC
+date.timezone = America/Toronto
 upload_max_filesize = 16M
 session.cookie_httponly = on
 
@@ -32,12 +32,12 @@ sudo mysql_secure_installation
 
 #LOGIN MYSQL
 
-sudo mysql -u root -p
+mysql -u root -p
 
 #CREATE DATABASE
 
 CREATE DATABASE glpidb;
-CREATE USER glpi@localhost IDENTIFIED BY 'password';
+CREATE USER glpi@localhost IDENTIFIED BY 'pass';
 
 #GRANT ALL
 
@@ -100,4 +100,23 @@ sudo systemctl restart apache2
 #FIREWALL
 
 sudo ufw allow 80
+
+==
+
+DONE
+
+http://ip/glpi
+
+DID THIS IN 000-default.cfg CONFIG TO GET RID OF /glpi REQUIREMENT
+
+DocumentRoot /var/www/html/glpi
+
+==
+
+ Default logins / passwords are:
+
+    glpi/glpi for the administrator account
+    tech/tech for the technician account
+    normal/normal for the normal account
+    post-only/postonly for the postonly account
 
