@@ -48,9 +48,56 @@ EXIT;
 
 #DOWNLOAD GLPI
 
+cd /var/www/html/
+
 sudo wget https://github.com/glpi-project/glpi/releases/download/10.0.18/glpi-10.0.18.tgz
 
 #UNPACK
 
 tar -xf glpi-10.0.18.tgz
+
+==
+
+#PERMS
+
+sudo chown -R www-data:www-data /var/www/html/glpi
+sudo chmod u+rw /var/www/html/glpi/{files,config}
+
+==
+
+#VIRTUAL HOST FILE
+
+sudo nano /etc/apache2/sites-available/glpi.conf
+
+<VirtualHost *:80>
+    ServerName glpi.jgleba.com
+
+    DocumentRoot /var/www/html/glpi/public
+
+    # If you want to place GLPI in a subfolder of your site (e.g. your virtual host is serving multiple applications),
+    # you can use an Alias directive:
+    # Alias "/glpi" "/var/www/glpi/public"
+
+    <Directory /var/www/html/glpi/public>
+        Require all granted
+
+        RewriteEngine On
+
+        # Redirect all requests to the GLPI router, unless file exists.
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteRule ^(.*)$ index.php [QSA,L]
+    </Directory>
+</VirtualHost>
+
+==
+
+#ENABLE SITE AND RESTART APACHE
+
+sudo a2ensite glpi.conf
+sudo a2enmod rewrite
+sudo systemctl restart apache2
+
+#FIREWALL
+
+sudo ufw allow 80
 
