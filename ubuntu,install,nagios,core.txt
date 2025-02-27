@@ -1,0 +1,104 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU 2204 NAGIOS INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-27[Feb-Thu]11-35AM 
+
+#https://support.nagios.com/kb/article/nagios-core-installing-nagios-core-from-source-96.html#Ubuntu
+
+Prereq
+
+sudo apt-get update
+sudo apt-get install -y autoconf gcc libc6 make wget unzip apache2 php libapache2-mod-php libgd-dev ufw
+sudo apt-get install -y openssl libssl-dev
+
+==
+
+Downloading the Source
+
+cd /tmp
+wget -O nagioscore.tar.gz $(wget -q -O - https://api.github.com/repos/NagiosEnterprises/nagioscore/releases/latest  | grep '"browser_download_url":' | grep -o 'https://[^"]*')
+tar xzf nagioscore.tar.gz
+
+==
+Compile
+
+cd /tmp/nagios-*
+sudo ./configure --with-httpd-conf=/etc/apache2/sites-enabled
+sudo make all
+
+==
+
+Create User And Group
+
+sudo make install-groups-users
+sudo usermod -a -G nagios www-data
+
+==
+
+Install Binaries
+
+sudo make install
+
+==
+
+Install Service / Daemon
+
+sudo make install-daemoninit
+
+==
+
+Install Command Mode
+
+sudo make install-commandmode
+
+==
+
+Install Configuration Files
+
+sudo make install-config
+
+==
+
+Install Apache Config Files
+
+sudo make install-webconf
+sudo a2enmod rewrite
+sudo a2enmod cgi
+
+==
+
+Configure Firewall
+
+sudo ufw allow Apache
+sudo ufw reload
+
+==
+
+Create nagiosadmin User Account
+
+sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+
+==
+
+Need to restart it because it is already running.
+
+sudo systemctl restart apache2.service
+
+==
+
+Start Service / Daemon
+
+sudo systemctl start nagios.service
+
+==
+install missing plugins
+
+sudo apt-get install nagios-plugins-basic
+
+==
+
+DONE
+
+http://10.25.5.143/nagios
