@@ -1,0 +1,56 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU GLPI INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-27[Feb-Thu]13-29PM 
+
+#https://www.atlantic.net/dedicated-server-hosting/how-to-install-glpi-it-inventory-management-on-ubuntu-22-04/
+
+#INSTALL STUFF
+
+sudo apt install apache2 mariadb-server php php-common php-mysql libapache2-mod-php php-gd php-curl php-json php-xmlrpc php-intl php-bcmath php-zip php-apcu php-mbstring php-fileinfo php-xml php-soap php-zip
+
+#CHANGE PHP CONFIG
+
+sudo nano /etc/php/8.1/apache2/php.ini
+
+CHANGE TO
+
+memory_limit = 512M
+date.timezone = UTC
+upload_max_filesize = 16M
+session.cookie_httponly = on
+
+#RESTART APACHE
+
+sudo systemctl restart apache2
+
+#MYSQL SECURE INSTALL
+
+sudo mysql_secure_installation
+
+#LOGIN MYSQL
+
+sudo mysql -u root -p
+
+#CREATE DATABASE
+
+CREATE DATABASE glpidb;
+CREATE USER glpi@localhost IDENTIFIED BY 'password';
+
+#GRANT ALL
+
+GRANT ALL PRIVILEGES ON glpidb.* TO glpi@localhost;
+
+FLUSH PRIVILEGES;
+EXIT;
+
+#DOWNLOAD GLPI
+
+sudo wget https://github.com/glpi-project/glpi/releases/download/10.0.18/glpi-10.0.18.tgz
+
+#UNPACK
+
+tar -xf glpi-10.0.18.tgz
+

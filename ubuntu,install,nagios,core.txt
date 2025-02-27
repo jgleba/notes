@@ -102,3 +102,14 @@ sudo apt-get install nagios-plugins-basic
 DONE
 
 http://10.25.5.143/nagios
+
+==
+
+HAD TO DO THIS TO GET PLUGINS TO WORK
+
+WORKED JUST FOR PING
+sudo ln -s /usr/lib/nagios/plugins/check_ping /usr/local/nagios/libexec/check_ping
+
+WORKS FOR ALL PLUGINS IN THIS DIR
+sudo ln -s /usr/lib/nagios/plugins /usr/local/nagios/libexec
+
