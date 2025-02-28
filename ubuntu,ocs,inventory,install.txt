@@ -23,7 +23,7 @@ sudo apt install perl libxml-simple-perl libcompress-zlib-perl libdbi-perl libdb
 
 sudo apt install apache2 libapache2-mod-perl2 libapache2-mod-perl2-dev libapache-dbi-perl libapache-db-perl libapache2-mod-php libarchive-zip-perl mariadb-server composer php-mbstring php-xml php-mysql php-zip php-pclzip php-gd php-soap php-curl php-json -y
 
-#INSTALL PERL STUFF
+#INSTALL PERL STUFF - TOOK LONG TIME, DID TONS OF THINGS
 
 sudo perl -MCPAN -e 'install Apache2::SOAP'
 sudo perl -MCPAN -e 'install XML::Entities'
@@ -95,7 +95,20 @@ CHANGE TO
 DB_SERVER_HOST="localhost"
 DB_SERVER_PORT="3306"
 DB_SERVER_USER="ocs"
-DB_SERVER_PWD="ocsP4ssw0rd"
+DB_SERVER_PWD="pass"
 
 sudo ./setup.sh
+
+PICKED ALL DEFAULTS
+
+==
+
+WHEN DONE GO TO WEB AND FINISH INSTALL
+
+==
+
+THEN PERMS AGAIN
+
+sudo chown -R root:www-data /var/www/html/OCSInventory-Server
+sudo chmod -R 750 /var/www/html/OCSInventory-Server
 

@@ -233,7 +233,7 @@ Starting apache...OK
 Initializing Crontab...OK
 
 
- http://172.16.0.9/jgdc/check_mk
+ http://ip/jgdc/check_mk
  
 
 ==

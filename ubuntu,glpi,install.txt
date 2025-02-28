@@ -120,3 +120,4 @@ DocumentRoot /var/www/html/glpi
     normal/normal for the normal account
     post-only/postonly for the postonly account
 
+
