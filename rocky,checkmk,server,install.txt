@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CHECKMK ROCKY LINUX INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-27[Feb-Thu]22-40PM 
+
+sudo wget https://download.checkmk.com/checkmk/2.2.0p12/check-mk-raw-2.2.0p12-el8-38.x86_64.rpm
+
+sudo yum install epel-release
+sudo dnf config-manager --set-enabled powertools
+
+sudo yum install graphviz
+
+sudo yum install graphviz-gd
+
+sudo yum install check-mk-raw-2.2.0p12-el8-38.x86_64.rpm
+
+FIREWALL
+
+sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+sudo firewall-cmd --reload
+
+CREATE SITE
+
+sudo omd create sitename
+sudo omd start sitename
