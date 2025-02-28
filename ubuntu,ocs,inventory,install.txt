@@ -33,6 +33,8 @@ sudo perl -MCPAN -e 'install Mojolicious'
 sudo perl -MCPAN -e 'install Switch'
 sudo perl -MCPAN -e 'install Plack::Handler'
 
+sudo perl -MCPAN -e 'MCompress::Zlib'
+
 #MYSQL SECURE ISNTALL
 
 sudo mariadb-secure-installation
