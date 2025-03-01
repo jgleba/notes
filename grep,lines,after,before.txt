@@ -1,0 +1,19 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  GREP LINES BEFORE AND AFTER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-01[Mar-Sat]01-49AM 
+
+#https://stackoverflow.com/questions/191364/quick-unix-command-to-display-specific-lines-in-the-middle-of-a-file
+
+10 lines after abc
+
+grep -A 10 abc
+
+==
+
+10 lines before abc
+
+grep -B 10 abc
+
