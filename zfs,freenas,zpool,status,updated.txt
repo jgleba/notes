@@ -1,0 +1,83 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UPDATED ZFS ZPOOL STATUS AND OTHER INFO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-01[Mar-Sat]00-51AM 
+
+nano zpoolstatus.sh
+
+#!/bin/bash
+
+#Justin Gleba
+#April 18, 2017
+#Updated 030125
+#FreeNAS daily zpool status run. Runs a bunch of ZFS info and status commands, outputs to a text file, emails contents of file and deletes file.
+#Schedule through cron
+#Uses FreeNAS email system
+
+#Get pool name
+poolname=$(zpool list | grep -v freenas-boot | grep -v NAME | awk '{print $1}')
+
+touch /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo "POOL BASIC INFO" >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+zfs get all $poolname | grep creation >> /tmp/zpooltemp.txt
+zfs get all $poolname | grep sync >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo "POOL SPACE" >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+zpool list >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+zfs get all $poolname | grep usedbydataset >> /tmp/zpooltemp.txt
+zfs get all $poolname | grep usedbysnapshots >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo "ZPOOL STATUS" >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+zpool status >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo "ADA/DA vs GPTID" >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+glabel status >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo "ADA/DA vs SERIAL" >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+geom disk list | grep -e descr -e Name -e ident >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo "SMART BASIC INFO OF ALL DRIVES" >> /tmp/zpooltemp.txt
+echo "==" >> /tmp/zpooltemp.txt
+echo " " >> /tmp/zpooltemp.txt
+/bin/bash ./smartctlalldrives.sh >> /tmp/zpooltemp.txt
+cat /tmp/zpooltemp.txt | /usr/bin/mail -s "daily zpool status" alerts@jgleba.com
+rm /tmp/zpooltemp.txt
+
+nano smartctlalldrives.sh
+chmod +x smartctlalldrives.sh
+
+#!/bin/bash
+
+##030125
+##JGLEBA
+##GETS HEADER OF SMARTCTL TO SHOW DRIVE INFO
+##HELP FROM CHATGPT
+
+# Loop through all drives matching /dev/ada*, /dev/da*, and /dev/nvd* with numeric suffix
+for drive in /dev/ada[0-9] /dev/da[0-9] /dev/nvd[0-9]; do
+    # Check if the drive exists
+    if [ -e "$drive" ]; then
+        echo "SMART info for: $drive"
+        smartctl -a "$drive" | head -n 19
+        echo "-----------------------------"
+    fi
+done

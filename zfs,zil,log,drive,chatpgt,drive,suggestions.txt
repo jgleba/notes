@@ -1,0 +1,127 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-02-28[Feb-Fri]23-00PM 
+
+
+
+
+
+
+
+Best SLOG Options for ZFS with VMware NFS
+
+For better performance, you should consider a high-end enterprise SSD with low latency and power loss protection (PLP):
+Best NVMe SLOG Options
+
+    Intel Optane P4800X / P5800X – The best option, extremely low latency.
+    Samsung PM9A3 – Enterprise-grade, good endurance and power-loss protection.
+    Micron 7400 PRO – High write endurance and PLP, better than consumer drives.
+
+Best SATA SLOG Options (If NVMe isn't an option)
+
+    Intel DC S3700 / S3710 – Enterprise SATA SSD with PLP, much better than consumer SSDs.
+    Samsung PM893 / PM883 – Enterprise-grade SATA SSD with stable performance.
+	
+=====
+
+
+ALL
+
+
+
+=====
+
+
+
+
+
+
+
+
+The **Crucial P3 Plus** is a budget NVMe drive that uses **QLC NAND** and lacks DRAM, which makes it **a poor choice for a ZFS SLOG**. QLC drives suffer from high write latency, especially with sustained writes, and can even perform worse than a good SATA SSD in write-heavy scenarios.  
+
+### **Why the Kingston SSD Performed Better**  
+Your **Kingston HyperX SATA SSD** likely has **TLC NAND and DRAM cache**, which helps maintain consistent write performance. The P3 Plus, on the other hand, **slows down significantly once its SLC cache fills up**.  
+
+### **Best SLOG Options for ZFS with VMware NFS**  
+For better performance, you should consider **a high-end enterprise SSD** with **low latency and power loss protection (PLP)**:  
+
+#### **Best NVMe SLOG Options**  
+1. **Intel Optane P4800X / P5800X** – The best option, extremely low latency.  
+2. **Samsung PM9A3** – Enterprise-grade, good endurance and power-loss protection.  
+3. **Micron 7400 PRO** – High write endurance and PLP, better than consumer drives.  
+
+#### **Best SATA SLOG Options** (If NVMe isn't an option)  
+1. **Intel DC S3700 / S3710** – Enterprise SATA SSD with PLP, much better than consumer SSDs.  
+2. **Samsung PM893 / PM883** – Enterprise-grade SATA SSD with stable performance.  
+
+### **Key Takeaways**  
+- Avoid consumer-grade **QLC NVMe drives** (like the P3 Plus) for ZFS SLOG.  
+- Use an **enterprise NVMe** (Optane, Samsung PM9A3, etc.) or at least a **high-end SATA SSD with PLP**.  
+- Consider increasing **ARC size** (RAM) if reads are also slow.  
+
+Would you like help checking your `zpool status` or testing write speeds with `fio` to confirm bottlenecks?
+
+
+====
+
+
+
+
+
+I have a truenas zfs server. I'm using hard drives in a raid 10. I'm using a kingston hyperx 240gb ssd as a zfs log drive. I have this connected to vmware via nfs. The write performance and even read performance is quite slow on the virtual machines. What log drive would make the performance better
+ChatGPT said:
+
+Your Kingston HyperX 240GB SSD is likely a SATA SSD, which can become a bottleneck for ZFS log writes. To improve performance, consider these upgrades:
+
+    NVMe SSD – A high-end NVMe SSD (e.g., Intel Optane P4800X, Samsung PM9A3, or Micron 7400 PRO) would significantly reduce latency and increase IOPS.
+    Enterprise-grade SSD – A proper enterprise SSD with power loss protection, such as an Intel DC P4610 or Samsung PM893, is better suited for ZFS logs (SLOG).
+    More RAM – If your system lacks RAM, increasing ARC (Adaptive Replacement Cache) could improve performance.
+    Check Sync Writes – If your workload doesn't require strict sync writes, consider disabling sync or tuning zfs set sync=disabled on less critical datasets.
+
+If your workloads are mostly read-heavy, adding an L2ARC (another NVMe SSD) may help with read performance. Would you like help checking your current ZFS statistics to analyze bottlenecks?
+You said:
+I tried a nvme drive and the performance was worse than the kingston ssd
+ChatGPT said:
+
+That’s interesting. If the NVMe drive performed worse, there could be a few possible reasons:
+
+    NVMe Drive Choice – Some consumer NVMe SSDs (e.g., DRAM-less or QLC-based) perform poorly under sustained write loads. Which NVMe model did you try?
+    PCIe Bandwidth or Slot Limitations – If the NVMe drive is in a lower-bandwidth PCIe slot (e.g., PCIe 3.0 x1 instead of x4), it may not reach full potential.
+    SLOG Configuration – If the NVMe drive was formatted with an inappropriate block size or partition alignment, it could negatively impact performance.
+    ZFS Tuning – Some ZFS settings, such as sync=always, recordsize, or ashift, might need adjustments to maximize NVMe performance.
+    VMware/NFS Settings – If your NFS settings (e.g., sync, no_wdelay, or fsid) are not optimized, they could be bottlenecking the system.
+
+Would you like help troubleshooting? If you can share the NVMe model, your zpool status output, and your NFS mount options in VMware, I can suggest specific improvements.
+You said:
+it was a crucial p3 plus
+ChatGPT said:
+
+The Crucial P3 Plus is a budget NVMe drive that uses QLC NAND and lacks DRAM, which makes it a poor choice for a ZFS SLOG. QLC drives suffer from high write latency, especially with sustained writes, and can even perform worse than a good SATA SSD in write-heavy scenarios.
+Why the Kingston SSD Performed Better
+
+Your Kingston HyperX SATA SSD likely has TLC NAND and DRAM cache, which helps maintain consistent write performance. The P3 Plus, on the other hand, slows down significantly once its SLC cache fills up.
+Best SLOG Options for ZFS with VMware NFS
+
+For better performance, you should consider a high-end enterprise SSD with low latency and power loss protection (PLP):
+Best NVMe SLOG Options
+
+    Intel Optane P4800X / P5800X – The best option, extremely low latency.
+    Samsung PM9A3 – Enterprise-grade, good endurance and power-loss protection.
+    Micron 7400 PRO – High write endurance and PLP, better than consumer drives.
+
+Best SATA SLOG Options (If NVMe isn't an option)
+
+    Intel DC S3700 / S3710 – Enterprise SATA SSD with PLP, much better than consumer SSDs.
+    Samsung PM893 / PM883 – Enterprise-grade SATA SSD with stable performance.
+
+Key Takeaways
+
+    Avoid consumer-grade QLC NVMe drives (like the P3 Plus) for ZFS SLOG.
+    Use an enterprise NVMe (Optane, Samsung PM9A3, etc.) or at least a high-end SATA SSD with PLP.
+    Consider increasing ARC size (RAM) if reads are also slow.
+
+Would you like help checking your zpool status or testing write speeds with fio to confirm bottlenecks?
