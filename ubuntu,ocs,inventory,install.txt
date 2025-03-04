@@ -114,3 +114,13 @@ THEN PERMS AGAIN
 sudo chown -R root:www-data /var/www/html/OCSInventory-Server
 sudo chmod -R 750 /var/www/html/OCSInventory-Server
 
+==
+
+THIS DIDNT WORK TO ADD CLIENT URLS NOT RIGHT, INSTALL BROKEN AFTER FOLLOWING THIS
+
+==
+
+TRYING THIS
+
+sudo apt install ocsinventory-server -y
+
