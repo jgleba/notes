@@ -124,3 +124,24 @@ TRYING THIS
 
 sudo apt install ocsinventory-server -y
 
+SET UP MYSQL 
+
+sudo nano /etc/apache2/conf-enabled/ocsinventory-server.conf
+sudo nano /etc/apache2/conf-enabled/ocsinventory-restapi.conf
+
+sudo nano /etc/ocsinventory/dbconfig.inc.php
+
+ALL DB CREDS NEED TO MATCH
+
+#GET AGENT TO SCAN SUBNET
+
+sudo nano /etc/ocsinventory/ocsinventory-agent.cfg
+
+server=http://url/ocsinventory
+ssl=0
+NETWORK_SCANNER=YES
+NETWORK_SUBNETS=ip/24
+
+THEN RUN
+
+sudo ocsinventory-agent
