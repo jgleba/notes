@@ -145,3 +145,8 @@ NETWORK_SUBNETS=ip/24
 THEN RUN
 
 sudo ocsinventory-agent
+sudo ocsinventory-agent --debug
+
+==
+
+sudo ipdiscover -i <interface> -s <subnet>
