@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PROXMOX ADD EXISTING DISK TO VM, TRIED WITH REPLICATED DISK
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-08[Mar-Sat]18-10PM 
+
+HAD TO MANUALLY CREATE THE VM SHELL
+
+NOT SURE IF WORK
+qm set 105 -scsi1 /dev/zvol/proxpool1/vm-103-disk-0
+
+WORKED
+qm set 105 -scsi0 proxpool1:vm-103-disk-0
+
