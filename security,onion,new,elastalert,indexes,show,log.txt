@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SECURITY ONION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-18[Mar-Tue]09-16AM 
+
+LIST INDEXES
+
+sudo so-elasticsearch-query _cat/indices
+
+LIST EVENTS IN INDEX ELASTALERT - HARD TO READ
+
+sudo so-elasticsearch-query elastalert/_search

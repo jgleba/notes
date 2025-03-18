@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  SECURITY ONION THRESHOLDS FILE NEW, GETS OVERWRITTEN ON RESTART
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-18[Mar-Tue]09-15AM 
+
+sudo nano /opt/so/conf/suricata/threshold.conf
