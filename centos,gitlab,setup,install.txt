@@ -51,3 +51,21 @@ NO GOOD
 
 curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 
+sudo yum install -y gitlab-ce
+
+set external url:
+
+sudo nano /etc/gitlab/gitlab.rb
+
+sudo gitlab-ctl reconfigure
+
+==
+
+Default admin account has been configured with following details:
+Username: root
+Password: You didn't opt-in to print initial root password to STDOUT.
+Password stored to /etc/gitlab/initial_root_password. This file will be cleaned up in first reconfigure run after 24 hours.
+
+NOTE: Because these credentials might be present in your log files in plain text, it is highly recommended to reset the password following https://docs.gitlab.com/ee/security/reset_user_password.html#reset-your-root-password.
+
+gitlab Reconfigured!
