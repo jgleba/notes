@@ -14,3 +14,8 @@ gitlab-runner register  --url http://gitlaburl --token token
 sudo gitlab-runner start
 
 gitlab-runner run
+
+==
+
+gitlab-runner bash
+
