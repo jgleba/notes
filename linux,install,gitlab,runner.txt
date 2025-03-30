@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL GITLAB RUNNER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-30[Mar-Sun]13-13PM 
+
+curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
+
+sudo yum install gitlab-runner -y
+
+gitlab-runner register  --url http://gitlaburl --token token
+
+sudo gitlab-runner start
+
+gitlab-runner run
