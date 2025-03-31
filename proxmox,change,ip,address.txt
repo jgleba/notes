@@ -32,3 +32,10 @@ systemctl restart pve-cluster
 SORT OF WORKS
 IP CHANGED, 1 works on 2, 2 no work on 1
 
+CHANGED IP IN HOSTS FILE
+
+nano /etc/hosts
+
+REBOOTED
+
+NOW FINE
