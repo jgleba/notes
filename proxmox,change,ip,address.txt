@@ -1,0 +1,34 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  PROXMOX NODE CHANGE IP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-03-31[Mar-Mon]13-35PM 
+
+ON NODE2
+
+change ip on node2 from web
+
+pvecm expected 1 on node2
+
+nano /etc/pve/corosync.conf
+
+change ip there
+
+systemctl restart corosync
+systemctl restart pve-cluster
+
+ON NODE1
+
+pvecm expected 1
+
+nano /etc/pve/corosync.conf
+
+update ip there
+
+systemctl restart corosync
+systemctl restart pve-cluster
+
+SORT OF WORKS
+IP CHANGED, 1 works on 2, 2 no work on 1
+
