@@ -24,7 +24,7 @@ pvecm expected 1
 
 nano /etc/pve/corosync.conf
 
-update ip there
+UPDATE IP IN COROSYNC FILE
 
 systemctl restart corosync
 systemctl restart pve-cluster
