@@ -17,5 +17,5 @@ gitlab-runner run
 
 ==
 
-gitlab-runner bash
+sudo -u gitlab-runner bash
 
