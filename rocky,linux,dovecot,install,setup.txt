@@ -1,0 +1,55 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX DOVECOT SETUP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-11[Apr-Fri]18-46PM 
+
+#https://www.perplexity.ai/search/can-you-give-me-step-by-step-i-jYjR1tbyRrisk732Qs1oug
+
+UPDATE AND INSTALL DOVECOT
+
+sudo dnf update -y
+sudo dnf install dovecot -y
+
+ENABLE PROTO
+
+sudo nano /etc/dovecot/dovecot.conf
+
+UNCOMMENT AND ADD 
+
+protocols = imap lmtp
+
+MAILDIR LOCATION
+
+sudo nano /etc/dovecot/conf.d/10-mail.conf
+
+UNCOMMENT AND ADD 
+
+mail_location = maildir:~/Maildir
+
+SSL CERTS - SELF SIGNED
+
+sudo openssl req -new -x509 -days 365 -nodes -out /etc/pki/dovecot/certs/dovecot.pem -keyout /etc/pki/dovecot/private/dovecot.key
+
+sudo nano /etc/dovecot/conf.d/10-ssl.conf
+
+CHECK THIS
+
+ssl = required  
+ssl_cert = </etc/pki/dovecot/certs/dovecot.pem  
+ssl_key = </etc/pki/dovecot/private/dovecot.key
+
+==
+
+sudo nano /etc/dovecot/conf.d/10-auth.conf
+
+CHECK THIS
+
+auth_mechanisms = plain login
+
+FIREWALL
+
+sudo firewall-cmd --permanent --add-service=imaps
+sudo firewall-cmd --reload
+
