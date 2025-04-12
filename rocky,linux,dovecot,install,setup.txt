@@ -1,7 +1,7 @@
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@  
-#@  ROCKY LINUX DOVECOT SETUP
+#@  ROCKY LINUX DOVECOT AND POSTFIX SETUP
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-11[Apr-Fri]18-46PM 
 
@@ -51,5 +51,30 @@ auth_mechanisms = plain login
 FIREWALL
 
 sudo firewall-cmd --permanent --add-service=imaps
+sudo firewall-cmd --reload
+
+ENABLE SERVICE
+
+sudo systemctl enable --now dovecot
+sudo systemctl start dovecot 
+
+INSTALL POSTFIX
+
+sudo yum install postfix -y
+
+sudo nano /etc/postfix/main.cf
+
+CHANGE PROTOCOLS FROM LOCALHOST TO ALL
+
+ADD MYNETWORKS
+
+ENABLE AND START
+
+sudo systemctl enable postfix
+sudo systemctl start postfix 
+
+FIREWALL
+
+sudo firewall-cmd --permanent --add-service=smtp
 sudo firewall-cmd --reload
 
