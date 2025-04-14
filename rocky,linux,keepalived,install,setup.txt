@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX KEEPALIVED RESTART
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-13[Apr-Sun]23-14PM 
+
+INSTALL
+
+sudo yum install keepalived
+
+ENABLE AND START
+
+sudo systemctl enable keepalived
+
+sudo systemctl start keepalived
+
+CONF FILE
+
+sudo nano /etc/keepalived/keepalived.conf
+
