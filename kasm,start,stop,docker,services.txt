@@ -1,0 +1,20 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  KASM RESTART DOCKER SERVICES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-14[Apr-Mon]23-48PM 
+
+#https://kasmweb.com/docs/1.12.0/guide/settings.html
+
+# restart all services on a server
+cd /opt/kasm/bin
+./stop
+./start
+
+# restart individual components
+sudo docker restart kasm_agent
+sudo docker restart kasm_api
+sudo docker restart kasm_manager
+sudo docker restart kasm_db
+sudo docker restart kasm_proxy
