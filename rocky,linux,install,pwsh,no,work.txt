@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL PWSH
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-17[Apr-Thu]19-34PM 
+
+#https://computingpost.medium.com/how-to-install-powershell-on-rocky-linux-8-dbe9025fa68e
+
+DID NOT WORK
+
+sudo dnf install -y https://packages.microsoft.com/config/rhel/8/packages-microsoft-prod.rpm
+
+sudo dnf install -y powershell
+

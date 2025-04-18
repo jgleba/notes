@@ -1,0 +1,53 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL CHECK PUBLIC IP UPDATE LOCAL DNS BUT REMOTE SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-17[Apr-Thu]21-38PM 
+
+#NEED TO INSTALL
+#Install-WindowsFeature DNS -IncludeManagementTools
+
+#NEED TO ALLOW ZOME TRANSFERS
+
+#NEED TO RUN AS ADMIN
+
+#==
+
+# Parameters
+$zoneName = "abc.com"           # Your DNS zone
+$recordName = "home"                # The A record to update (e.g., home.example.com)
+$dnsServer = "dnserver"            # DNS server (change if remote)
+
+# Step 1: Get current public IP
+try {
+    $publicIP = (Invoke-RestMethod -Uri "https://api.ipify.org?format=json").ip
+    Write-Output "Current public IP: $publicIP"
+} catch {
+    Write-Error "Failed to retrieve public IP."
+    exit 1
+}
+
+# Step 2: Get existing DNS A record
+$existingRecord = Get-DnsServerResourceRecord -ComputerName $dnsServer -ZoneName $zoneName -Name $recordName -ErrorAction SilentlyContinue | Where-Object { $_.RecordType -eq "A" }
+
+if ($existingRecord) {
+    $currentIP = $existingRecord.RecordData.IPv4Address.IPAddressToString
+    Write-Output "Current DNS IP: $currentIP"
+
+    if ($currentIP -ne $publicIP) {
+        # Remove the old record
+        Remove-DnsServerResourceRecord -ComputerName $dnsServer -ZoneName $zoneName -Name $recordName -RRType "A" -RecordData $currentIP -Force
+        Write-Output "Old record removed: $currentIP"
+
+        # Add the new record
+        Add-DnsServerResourceRecordA -ComputerName $dnsServer -ZoneName $zoneName -Name $recordName -IPv4Address $publicIP
+        Write-Output "New A record added: $recordName.$zoneName -> $publicIP"
+    } else {
+        Write-Output "No update needed. DNS record already matches public IP."
+    }
+} else {
+    # No existing record; create a new one
+    Add-DnsServerResourceRecordA -ComputerName $dnsServer -ZoneName $zoneName -Name $recordName -IPv4Address $publicIP
+    Write-Output "New A record created: $recordName.$zoneName -> $publicIP"
+}
