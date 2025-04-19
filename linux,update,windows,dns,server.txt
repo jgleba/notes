@@ -1,0 +1,61 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX UPDATE DNS ON WINDOWS DNS SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-18[Apr-Fri]23-18PM 
+
+#sudo yum install bind-utils
+
+#!/bin/bash
+
+# === CONFIGURATION ===
+DNS_SERVER="dnserver"        # Windows DNS server hostname or IP
+ZONE="zone"                  # DNS zone name
+RECORD="recordfullfqdn"       # Fully qualified domain name to update
+TTL=120                             # Time to live in seconds
+IP_FILE="/j/bin/last_ip_win.txt"      # Where to store the last known IP
+NSUPDATE_CMD="nsupdate"             # Or "nsupdate -g" if using Kerberos
+NSUPDATE_TMP="/j/bin/nsupdate.txt"
+
+# === GET CURRENT PUBLIC IP ===
+CURRENT_IP=$(curl -s https://ipinfo.io/ip)
+if [[ -z "$CURRENT_IP" ]]; then
+    echo "Failed to get current public IP."
+    exit 1
+fi
+
+# === COMPARE WITH LAST KNOWN IP ===
+if [[ -f "$IP_FILE" ]]; then
+    LAST_IP=$(cat "$IP_FILE")
+else
+    LAST_IP=""
+fi
+
+if [[ "$CURRENT_IP" == "$LAST_IP" ]]; then
+    echo "IP address hasn't changed. No update needed."
+    exit 0
+fi
+
+echo "IP address changed from $LAST_IP to $CURRENT_IP. Updating DNS..."
+
+# === GENERATE NSUPDATE SCRIPT ===
+cat > "$NSUPDATE_TMP" <<EOF
+server $DNS_SERVER
+zone $ZONE
+update delete $RECORD A
+update add $RECORD $TTL A $CURRENT_IP
+send
+EOF
+
+# === RUN NSUPDATE ===
+$NSUPDATE_CMD "$NSUPDATE_TMP"
+UPDATE_RESULT=$?
+
+if [[ $UPDATE_RESULT -eq 0 ]]; then
+    echo "$CURRENT_IP" > "$IP_FILE"
+    echo "DNS update successful."
+else
+    echo "DNS update failed."
+    exit 1
+fi
