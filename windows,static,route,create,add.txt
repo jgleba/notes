@@ -9,3 +9,4 @@
 
 route add destination_network MASK subnet_mask gateway_ip metric_cost
 
+route add -p destination_network MASK subnet_mask gateway_ip metric_cost
