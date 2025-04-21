@@ -1,0 +1,42 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS CMD VIEW RESOURCES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-21[Apr-Mon]12-12PM 
+
+CPU & Memory Usage
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 10
+
+MEMORY AND PROCESSOR
+Get-Counter '\Processor(_Total)\% Processor Time'
+Get-Counter '\Memory\Available MBytes'
+
+MORE MEMORY
+Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize,FreePhysicalMemory
+
+Or for easier reading:
+
+(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1MB
+
+Disk
+🔹 List Logical Drives and Free Space
+
+Get-PSDrive -PSProvider FileSystem
+
+🔹 Detailed Disk Info
+
+Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID,Size,FreeSpace
+
+🌐 Network Usage & Info
+🔹 View Interfaces
+
+Get-NetAdapter
+
+🔹 View IP Config
+
+Get-NetIPAddress
+
+🔹 Live Network Traffic Stats
+
+Get-Counter -Counter "\Network Interface(*)\Bytes Total/sec"
