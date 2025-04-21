@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CONNECT TO WINDOWS REMOTELY WINRM, REMOTE POWERSHELL SESSION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-21[Apr-Mon]10-59AM 
+
+CREATE REMOTE POWERSHELL SESSION
+Enter-PSSession -ComputerName <ServerName or IP> -Credential (Get-Credential)
+
+ALLOW CONNECT BY IP
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value "ip"
+
+FIREWALL
+New-NetFirewallRule -Name "WinRM-HTTP" -DisplayName "WinRM over HTTP" -Protocol TCP -LocalPort 5985 -Direction Inbound -Action Allow
