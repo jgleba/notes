@@ -1,0 +1,14 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL SET IP ADDRESS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-21[Apr-Mon]11-44AM 
+
+Get-NetAdapter
+
+SET IP
+New-NetIPAddress -InterfaceAlias "Ethernet0" -IPAddress ip -PrefixLength 24 -DefaultGateway 172.16.0.254
+
+DNS
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet0" -ServerAddresses ("8.8.8.8", "1.1.1.1")

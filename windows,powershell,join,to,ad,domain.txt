@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL JOIN TO DOMAIN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-21[Apr-Mon]13-21PM 
+
+Add-Computer -DomainName "yourdomain.local" -Credential "yourdomain\Administrator"
