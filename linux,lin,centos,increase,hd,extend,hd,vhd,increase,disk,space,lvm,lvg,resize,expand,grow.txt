@@ -357,6 +357,13 @@ sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 
 ==
 
+2025-04-24 21:34:26
+THIS WORKED FOR UBUNTU 2204 KS WHERE LVM DOESNT TAKE FULL SPACE, THIS EXPANDS TO USE ALL SPACE 
+sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+
+==
+
 110324 - updated 122724
 
 RESIZE DISK ON ROCKY
