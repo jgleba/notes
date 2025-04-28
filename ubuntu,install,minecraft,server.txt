@@ -1,0 +1,26 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU INSTALL MINECRAFT SERVER
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-04-28[Apr-Mon]16-52PM 
+
+UPDATE
+sudo apt update
+sudo apt upgrade
+
+INSTALL JAVA
+sudo apt install openjdk-17-jre-headless
+
+COPY
+copy minecraft server jar to server
+
+RUN
+java -Xms1G -Xmx3G -jar minecraft-server-1215.jar nogui
+
+first time will fail
+
+go to eula.txt
+
+start again
+
