@@ -9,8 +9,11 @@ UPDATE
 sudo apt update
 sudo apt upgrade
 
-INSTALL JAVA
+INSTALL JAVA (OLD NO WORK)
 sudo apt install openjdk-17-jre-headless
+
+INSTALL JAVA NEW
+sudo apt install -y openjdk-21-jre-headless
 
 COPY
 copy minecraft server jar to server
