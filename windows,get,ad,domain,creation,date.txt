@@ -1,0 +1,8 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS POWERSHELL GET AD DOMAIN CREATION DATE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-05-04[May-Sun]21-21PM 
+
+Get-ADObject (Get-ADDomain).DistinguishedName -Property whenCreated
