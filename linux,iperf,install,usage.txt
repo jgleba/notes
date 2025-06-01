@@ -1,0 +1,22 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  IPERF LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-06-01[Jun-Sun]12-48PM 
+
+#https://www.dell.com/support/kbdoc/en-ca/000139427/how-to-test-available-network-bandwidth-using-iperf
+
+#INSTALL
+
+sudo yum install iperf3
+
+#USAGE
+
+#SERVER
+
+iperf3 -s
+
+#CLIENT
+
+iperf3 -c x.x.x.x
