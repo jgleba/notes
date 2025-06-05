@@ -46,7 +46,7 @@ echo "deb http://security.ubuntu.com/ubuntu focal-security main" | sudo tee /etc
 
 sudo apt update
 
-sudo apt install libssl1.1
+sudo apt install -y libssl1.1
 
 sudo apt install -y ./wkhtmltox_0.12.6-1.focal_amd64.deb
 
@@ -54,15 +54,17 @@ sudo apt install -y ./wkhtmltox_0.12.6-1.focal_amd64.deb
 
 5. 👤 Create Odoo System User
 
-sudo useradd -m -U -r -d /opt/odoo17 -s /bin/bash odoo17
-sudo mkdir /opt/odoo17/custom_addons
+#sudo useradd -m -U -r -d /opt/odoo17 -s /bin/bash odoo17
+sudo mkdir -p /opt/odoo17
+sudo useradd -m -U -r -s /bin/bash odoo17
+#sudo mkdir /opt/odoo17/custom_addons
 sudo chown -R odoo17: /opt/odoo17
 
 6. 📥 Download Odoo 17 (Community)
 
 sudo -u odoo17 -H bash
 cd /opt/odoo17
-git clone https://github.com/odoo/odoo --depth 1 --branch 17.0 --single-branch odoo17
+git clone https://github.com/odoo/odoo --depth 1 --branch 17.0 --single-branch .
 exit
 
 7. 🐍 Set Up Python Virtual Environment
@@ -142,6 +144,14 @@ Enable + start:
 sudo systemctl daemon-reexec
 sudo systemctl daemon-reload
 sudo systemctl enable --now odoo17
+
+sudo chmod -R 755 /opt/odoo17
+
+sudo -u postgres psql
+
+CREATE ROLE odoo17 WITH LOGIN PASSWORD 'yourpassword';
+ALTER ROLE odoo17 CREATEDB;
+\q
 
 10. 🌍 Access Odoo
 
