@@ -70,7 +70,7 @@ exit
 7. 🐍 Set Up Python Virtual Environment
 
 sudo -u odoo17 -H bash
-cd /opt/odoo17/odoo17
+cd /opt/odoo17
 python3 -m venv venv
 source venv/bin/activate
 pip install wheel
@@ -96,25 +96,24 @@ exit
 
 8. ⚙️ Create Odoo Configuration File
 
-sudo nano /opt/odoo17/odoo17.conf
-nano /opt/odoo17/odoo17.conf
+sudo nano /opt/odoo17.conf
 
 Paste:
 
 [options]
-admin_passwd = your-master-password
+admin_passwd = abc
 db_host = False
 db_port = False
 db_user = odoo17
 db_password = False
-addons_path = /opt/odoo17/odoo/addons,/opt/odoo17/custom_addons
+addons_path = /opt/odoo17/addons,/opt/odoo17/custom_addons
 logfile = /var/log/odoo17/odoo.log
 
 Set up log dir:
 
 SWITCH TO ADMIN USER
 
-sudo mkdir /var/log/odoo17
+sudo mkdir -p /var/log/odoo17
 sudo chown odoo17: /var/log/odoo17
 
 9. 🔁 Set Up Odoo systemd Service
@@ -133,7 +132,7 @@ SyslogIdentifier=odoo17
 PermissionsStartOnly=true
 User=odoo17
 Group=odoo17
-ExecStart=/opt/odoo17/venv/bin/python3 /opt/odoo17/odoo-bin -c /etc/odoo17.conf
+ExecStart=/opt/odoo17/venv/bin/python3 /opt/odoo17/odoo-bin -c /opt/odoo17.conf
 StandardOutput=journal+console
 
 [Install]
