@@ -1,0 +1,12 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  EVERYTHING LIMIT WHAT IS SHOWN IN SEARCH
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-06-08[Jun-Sun]11-50AM 
+
+!\windows !\AppData !\ProgramData !.lnk !\tmp !\system !\intel dm:last365days dm:<=today !\.git txt
+
+!\windows !\AppData !\ProgramData !.lnk !\tmp !\system !\intel !\.git
+
+!\windows !\AppData !\ProgramData !.lnk !\tmp !\system !\intel !\.git !\"program files" 
