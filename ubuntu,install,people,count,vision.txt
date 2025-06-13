@@ -1,10 +1,11 @@
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 #@  
-#@  UBUNTU 2404 INSTALL PEOPLE COUNT VISION
+#@  UBUNTU 2404 INSTALL PEOPLE COUNT VISION ENVIRON
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-06-12[Jun-Thu]18-17PM 
 
+INSTALL MINICONDA
 
 mkdir -p /j/vision/
 wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.5.0-0-Linux-x86_64.sh -O /j/vision/miniconda.sh
@@ -12,7 +13,11 @@ wget https://repo.anaconda.com/miniconda/Miniconda3-py312_24.5.0-0-Linux-x86_64.
 
 exit
 
+SHOW MINICONDA ENV
+
 conda env list
+
+DISABLE AUTO ACTIVATE, DONT NEED
 
 conda config --set auto_activate_base false
 
@@ -20,23 +25,24 @@ exit
 
 ==
 
+SET VARS AND ENV NAME
+
 memenv=peoplecount
 echo $memenv
-
 conda deactivate
-
 conda create --name $memenv python=3.12 --yes
-
 conda activate $memenv
 
 ==
 
-REMOVE ENV
+REMOVE ENV, MADE MISTAKE, NEEDED, BUT SHOULDNT
 
 conda deactivate
 conda remove -n %memenv% --all
 
 ==
+
+THIS IS WHAT WAS INSTALLED
 
 @ubuvision:~$ conda env export
 name: peoplecount
@@ -76,11 +82,16 @@ dependencies:
 
 ==
 
+INSTALL TON OF STUFF
+
 pip install opencv-python ultralytics
 
 ==
+CD
 
 cd /j/vision/peoplecount
+
+RUN
 
 python peep22.py
 
@@ -88,11 +99,29 @@ GOT ERROR
 
 ==
 
-sudo apt install libgl1
+sudo apt install libgl1 -y
 
 ==
 
 python peep22.py
 
-Worked, gen output.jpg
+worked, generated output.jpg
 
+==
+
+python peep22.py
+
+Creating new Ultralytics Settings v0.0.6 file ✅
+View Ultralytics Settings with 'yolo settings' or at '/home/j1/.config/Ultralytics/settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/quickstart/#ultralytics-settings.
+Downloading https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8l.pt to 'yolov8l.pt'...
+100%|█████████████████████████████████████████████████| 83.7M/83.7M [00:01<00:00, 78.7MB/s]
+Running inference on the full image...
+WARNING ⚠️ imgsz=[2139] must be multiple of max stride 32, updating to [2144]
+Inference duration: 15.43 seconds
+Number of people detected: 11
+Saved output.jpg
+Start time:        Thu Jun 12 22:58:08 2025
+End time:          Thu Jun 12 22:58:31 2025
+Total duration:    23.11 seconds
+Inference duration:15.43 seconds
