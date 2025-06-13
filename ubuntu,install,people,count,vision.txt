@@ -5,6 +5,8 @@
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-06-12[Jun-Thu]18-17PM 
 
+#https://app.koofr.net/links/fdd829a2-2d01-4d37-9918-aa34406d6830
+
 INSTALL MINICONDA
 
 mkdir -p /j/vision/
