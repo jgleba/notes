@@ -90,3 +90,9 @@ GOT ERROR
 
 sudo apt install libgl1
 
+==
+
+python peep22.py
+
+Worked, gen output.jpg
+
