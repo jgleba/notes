@@ -392,6 +392,26 @@ FIXED BY USING DELETING PARTITION2 RECREATING AS PRIMARY
 
 ==
 
+2025-06-28 23:11:41
+
+WORKED ON CENTOS 7 WITHOUT REBOOT ON MOVIE DISK SDC
+
+GET DISK NUMBER
+
+lsscsi
+
+2:0:2:0
+
+sudo su
+
+echo 1 > /sys/class/scsi_device/2:0:2:0/device/rescan
+
+NOW FDISK SHOWS EXTENDED SIZE
+
+sudo resize2fs -p /dev/sdc
+
+==
+
 supposed to refresh partition table, but didnt work for me
 
 partprobe /dev/sdX
