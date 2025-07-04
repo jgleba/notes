@@ -5,6 +5,10 @@
 #@  
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-07-03[Jul-Thu]21-52PM 
 
+#https://support.auvik.com/hc/en-us/articles/209605153-How-to-enable-SNMP-on-Citrix-Xen-hypervisors
+
+==
+
 ssh into xcp-ng host
 
 mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
