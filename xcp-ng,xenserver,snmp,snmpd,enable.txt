@@ -1,0 +1,38 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  XCP-NG ENABLE SNMP
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-07-03[Jul-Thu]21-52PM 
+
+ssh into xcp-ng host
+
+mv /etc/snmp/snmpd.conf /etc/snmp/snmpd.conf.backup
+sudo mv snmpd.xs.conf snmpd.xs.conf.backup
+
+==
+
+sudo nano /etc/snmp/snmpd.conf
+
+rocommunity public 192.168.0.0/24
+
+==
+
+cp snmpd.conf snmpd.xs.conf
+
+sudo systemctl enable snmpd
+sudo systemctl start snmpd
+
+==
+
+sudo nano /etc/sysconfig/iptables
+
+add, near end of port forwards, 80,443
+
+-A RH-Firewall-1-INPUT -s 192.168.0.10 -p udp -m udp --dport 161 -j ACCEPT
+-A RH-Firewall-1-INPUT -s 192.168.0.10 -p tcp -m tcp --dport 161 -j ACCEPT
+
+==
+
+sudo service iptables restart
+
