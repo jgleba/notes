@@ -8,3 +8,10 @@
 #https://askubuntu.com/questions/323131/setting-timezone-from-terminal
 
 sudo cp /usr/share/zoneinfo/America/Toronto /etc/localtime
+
+OR
+
+WORKED ON UBUNTU 2025-07-08 14:48:51
+
+sudo timedatectl set-timezone America/Toronto
+
