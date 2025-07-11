@@ -1,0 +1,13 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU GUACAMOLE SCREEN RECORDING CONVERT TO VIDEO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-07-11[Jul-Fri]10-50AM 
+
+guacamole native on ubuntu
+
+sudo guacenc recording.file
+
+then you get m4v that can play
+
