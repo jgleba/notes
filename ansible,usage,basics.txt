@@ -92,13 +92,14 @@ RUN COMMAND WITH ENCRYPTED GROUP VARS, VAULT PASS IN FILE
 ansible --vault-password-file /vault/pass/file -m win_ping win_*
 
 ==
-RUN PLAYBOOK WITH VAULT FILE
+RUN PLAYBOOK WITH VAULT FILE TO USE SUDO
 ==
 
-ansible-playbook -u user shutdown-linux.yml --vault-password-file /vault/pass/file
+ansible-playbook -u user shutdown-linux.yml --vault-password-file /vault/pass/file/txt/pass/not/yml
 
 ==
 ENCRYPT FILES WITH VAULT
 ==
 
 sudo ansible-vault encrypt file1 file2
+
