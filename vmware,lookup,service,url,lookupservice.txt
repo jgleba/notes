@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  VMWARE SHOW LOOKUPSERVICE URL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-07-25[Jul-Fri]21-51PM 
+
+ssh to vcenter, run shell
+
+ /usr/lib/vmware-vmafd/bin/vmafd-cli get-ls-location --server-name localhost
+
