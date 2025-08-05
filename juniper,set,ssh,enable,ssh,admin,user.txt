@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  JUNIPER SSH ENABLE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-08-05[Aug-Tue]14-25PM 
+
+configure
+
+set security zones security-zone trust interfaces em1.32768 host-inbound-traffic system-services ssh
+
+set system services ssh
+
+commit
+
+THEN
+
+set system login user admin class super-user authentication plain-text-password
+
+set pass for admin
+
+commit
+
+exit
+
+now ssh should work from man interface
+
