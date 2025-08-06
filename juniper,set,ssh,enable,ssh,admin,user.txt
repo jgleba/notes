@@ -7,6 +7,9 @@
 
 configure
 
+HAD TO DO THIS TO SET ROOT BEFORE DO NEXT
+set system root-authentication plain-text-password
+
 set security zones security-zone trust interfaces em1.32768 host-inbound-traffic system-services ssh
 
 set system services ssh
