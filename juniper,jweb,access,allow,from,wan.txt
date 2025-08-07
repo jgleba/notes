@@ -1,0 +1,16 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  JUNIPER ACCESS JWEB FROM WAN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-08-07[Aug-Thu]09-24AM 
+
+configure
+set system services web-management https interface ge-0/0/0.0
+
+set security zones security-zone untrust interfaces ge-0/0/0.0 host-inbound-traffic system-services https
+
+set system services web-management https system-generated-certificate
+
+commit
+
