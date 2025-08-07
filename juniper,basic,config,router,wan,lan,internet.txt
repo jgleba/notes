@@ -396,3 +396,15 @@ set security zones security-zone untrust interfaces ge-0/0/0.0
 6. Commit the configuration:
 
 commit
+
+==
+
+DID THIS
+
+ALLOW SSH ON INTERFACE ge-0/0/1 WHICH IS LAN
+
+config
+
+set security zones security-zone trust interfaces ge-0/0/1.0 host-inbound-traffic system-services ssh
+
+commit
