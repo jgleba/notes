@@ -408,3 +408,4 @@ config
 set security zones security-zone trust interfaces ge-0/0/1.0 host-inbound-traffic system-services ssh
 
 commit
+

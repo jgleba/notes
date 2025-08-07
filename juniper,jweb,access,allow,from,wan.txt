@@ -26,3 +26,21 @@ restart web-management
 
 ==
 
+DISABLE FROM WAN
+
+config
+
+delete security zones security-zone untrust host-inbound-traffic system-services all
+
+commit
+
+==
+
+ONLY PING ON WAN
+
+LOGICAL BUT DIDNT WORK
+set system services ping/icmp interface ge-0/0/0.0
+
+WORKED
+set security zones security-zone untrust host-inbound-traffic system-services ping
+
