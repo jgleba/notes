@@ -1,0 +1,31 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  JUNIPER PORT FORWARD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-08-07[Aug-Thu]15-08PM 
+
+CANNOT DO UNSYMETRIC PORT FORWARD
+
+set security nat destination pool RDP-NAT address 192.168.150.100/32
+#set security nat destination pool RDP-NAT port 3389
+
+set security nat destination rule-set RDP-RS from zone untrust
+set security nat destination rule-set RDP-RS rule RDP-RULE match destination-address 172.16.4.92/24
+set security nat destination rule-set RDP-RS rule RDP-RULE match destination-port 3389
+set security nat destination rule-set RDP-RS rule RDP-RULE then destination-nat pool RDP-NAT
+
+set security policies from-zone untrust to-zone trust policy ALLOW-RDP match source-address any
+set security policies from-zone untrust to-zone trust policy ALLOW-RDP match destination-address 192.168.150.100
+set security policies from-zone untrust to-zone trust policy ALLOW-RDP match application junos-rdp
+set security policies from-zone untrust to-zone trust policy ALLOW-RDP then permit
+
+==
+
+set security zones security-zone trust address-book address RDP-SERVER 192.168.150.100/32
+
+THIS WAS WRONG, HAD TO DELETE TO CORRECT
+delete security policies from-zone untrust to-zone trust policy ALLOW-RDP match destination-address 192.168.150.100
+
+set security policies from-zone untrust to-zone trust policy ALLOW-RDP match destination-address RDP-SERVER
+
