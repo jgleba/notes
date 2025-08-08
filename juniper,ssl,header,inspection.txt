@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  JUNIPER SSL HEADER INSPECTION
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-08-08[Aug-Fri]11-26AM 
+
+Step 1: Enable App-ID and App-Firewall
+
+set security policies from-zone trust to-zone untrust policy WEB-POLICY match application junos-https
+set security policies from-zone trust to-zone untrust policy WEB-POLICY then permit application-services application-firewall
+
+Step 2: Enable App-Firewall Rule to Match SSL Handshake Data
+
+set security application-firewall rule-set SSL-HEADERS rule INSPECT-SSL match application junos-https
+set security application-firewall rule-set SSL-HEADERS rule INSPECT-SSL then permit
+
+Then bind the app-firewall policy to your security policy:
+
+set security policies from-zone trust to-zone untrust policy WEB-POLICY then permit application-services application-firewall rule-set SSL-HEADERS
+
