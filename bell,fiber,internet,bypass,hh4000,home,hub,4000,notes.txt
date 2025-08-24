@@ -11,3 +11,10 @@
 
 #https://azoresnetworks.com/product/pon-cpe-65.html
 
+==
+
+#https://ecin.ca/custom-xgs-pon-sfp-stick-module-xgspon-ont-w-t-mac-function-mounted-on-sfp-package/
+
+#https://www.reddit.com/r/Ubiquiti/comments/1lhulew/psa_if_you_order_the_sfp_was110_xgspon_from_eci/
+
+was-110 sfp
