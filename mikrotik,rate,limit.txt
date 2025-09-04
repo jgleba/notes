@@ -1,0 +1,27 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  MIKROTIK RATE LIMIT
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-08-23[Aug-Sat]19-14PM 
+
+
+
+
+
+
+5. Rate Limit Excessive Connection Attempts (Optional)
+
+If you're concerned about brute force attacks (like those on SSH or RDP), you can add a rate limit to prevent too many connection attempts from a single IP address. This can be done by limiting the number of connections per second or minute from the same source IP.
+
+For example, to limit new SSH connections (port 22) to 3 connections per second:
+
+/ip firewall filter add chain=input protocol=tcp dst-port=22 connection-limit=3,32 action=drop
+
+
+This will limit the number of new connections from the same source to 3 per second.
+
+
+
+/ip firewall filter add chain=input protocol=tcp dst-port=443 connection-limit=5,32 action=drop
+/ip firewall filter add chain=input protocol=tcp dst-port=80 connection-limit=5,32 action=drop
