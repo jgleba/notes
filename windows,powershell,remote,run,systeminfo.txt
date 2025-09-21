@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERSHELL REMOTE RUN SYSTEMINFO
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-09-20[Sep-Sat]19-41PM 
+
+powershell
+Invoke-Command { systeminfo } -ComputerName <remote_computer_name>
+
