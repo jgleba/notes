@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  UBUNTU 2204 NTP SET
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-10-04[Oct-Sat]12-12PM 
+
+sudo nano /etc/systemd/timesyncd.conf
+
+ADD
+
+[Time]
+NTP=time.nist.gov
+
+sudo systemctl restart systemd-timesyncd
