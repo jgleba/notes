@@ -1,0 +1,21 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CONNECT TO EXCHAGNE ONLINE FROM POWERSHELL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-11-05[Nov-Wed]14-12PM 
+
+INSTALL
+
+admin powershell
+
+Install-Module -Name ExchangeOnlineManagement -Force
+
+CONNECT
+
+Connect-ExchangeOnline
+
+CLOSE
+
+Disconnect-ExchangeOnline -Confirm:$false
+
