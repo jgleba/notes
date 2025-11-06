@@ -9,8 +9,15 @@
 
 INSTALL
 
+sudo yum install git
+
+NO WORK - REPO NO EXIST
 git clone https://github.com/pangolin/pangolin.git
+git clone https://github.com/fosrl/pangolin.git
 cd pangolin
+
+sudo yum install python3
+
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
