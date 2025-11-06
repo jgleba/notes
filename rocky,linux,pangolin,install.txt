@@ -1,0 +1,50 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL PANGOLIN
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-11-06[Nov-Thu]15-51PM 
+
+#from chatgpt
+
+INSTALL
+
+git clone https://github.com/pangolin/pangolin.git
+cd pangolin
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python pangolin.py serve --host 0.0.0.0 --port 8080
+
+SERVICE
+
+Enable as a systemd service (optional but recommended)
+
+sudo nano /etc/systemd/system/pangolin.service
+
+ADD
+
+[Unit]
+Description=Pangolin Service
+After=network.target
+
+[Service]
+Type=simple
+User=pangolin
+WorkingDirectory=/opt/pangolin
+ExecStart=/usr/bin/python3 -m pangolin serve --host 0.0.0.0 --port 8080
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+ENABLE SERVICE
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now pangolin
+sudo systemctl status pangolin
+
+FIREWALL
+
+sudo firewall-cmd --add-port=8080/tcp --permanent
+sudo firewall-cmd --reload
