@@ -1,0 +1,15 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-11-16[Nov-Sun]13-33PM 
+
+
+
+
+
+cat <<EOF >> $HOME/.bashrc
+# 
+# include commands with leading spaces in history. Solves lines pasted missing from history. 2024-01-02.
+export HISTCONTROL=""
