@@ -1,0 +1,25 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WINDOWS CREATE BOOTABLE USB FORCE TO PRO EDITION EVEN WHEN HOME KEY IN BIOS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-11-20[Nov-Thu]10-13AM 
+
+Option A — Add the “ei.cfg” file to force edition selection
+
+Create your USB with the Media Creation Tool.
+
+Open the USB drive → go to:
+
+\sources
+
+Create a new text file called ei.cfg with the following content:
+
+[EditionID]
+Professional
+
+[Channel]
+Retail
+
+[VL]
+0
