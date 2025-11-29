@@ -30,3 +30,11 @@ curl ifconfig.me
 ANOTHER ONE 113021
 
 curl https://api64.ipify.org/
+
+==
+
+2025-11-29
+
+from chatgpt
+
+resolvectl status
