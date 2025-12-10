@@ -1,0 +1,56 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  USE CLAUDE OR GEMINI AS MCP SERVER TO SEARCH OWN NOTES
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2025-12-10[Dec-Wed]16-04PM 
+
+claude desktop on windows is needed
+had to install node js
+
+create this file
+pdfs and notes seem to be the same
+
+==
+
+%APPDATA%\Claude\claude_desktop_config.json 
+
+{
+  "preferences": {
+    "legacyQuickEntryEnabled": false
+  },
+  "mcpServers": {
+    "textfiles": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\path\\to\\notes\\folder"
+      ]
+    },
+    "pdfs": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "C:\\different\\path"]
+    }
+  }
+}
+
+==
+
+gemini - not working
+
+sudo nano .gemini/settings.json
+
+{
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "mcpServers": {
+    "textfiles": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/folder"]
+    }
+  }
+}
