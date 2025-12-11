@@ -21,3 +21,14 @@ sudo npm install -g @google/gemini-cli
 
 gemini
 
+OLD
+
+==
+
+NEWER
+
+==
+
+2025-12-11 15:27:32
+
+sudo npm install -g @google/gemini-cli
