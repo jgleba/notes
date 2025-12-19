@@ -26,3 +26,7 @@ sudo firewall-cmd --reload
 MAIL
 sudo firewall-cmd --zone=public --add-port=25/tcp --permanent
 sudo firewall-cmd --reload
+
+NTP
+sudo firewall-cmd --zone=public --add-port=123/udp --permanent
+sudo firewall-cmd --reload
