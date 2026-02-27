@@ -24,3 +24,13 @@ sudo yum install epel-release -y
 #INSTALL PODMAN-COMPOSE
 sudo yum install podman-compose -y
 
+==
+
+2026-02-27 11:44:48
+
+sudo yum install podman
+sudo yum install podman-compose
+
+#ENABLE AND START
+sudo systemctl enable podman
+sudo systemctl start podman
