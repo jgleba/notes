@@ -34,3 +34,8 @@ sudo yum install podman-compose
 #ENABLE AND START
 sudo systemctl enable podman
 sudo systemctl start podman
+
+sudo yum install epel-release
+sudo yum update
+sudo yum install podman-compose
+
