@@ -40,3 +40,10 @@ git pull
 
 git r
 
+==
+
+2026-03-16 09:05:01
+
+cache creds
+
+git config --global credential.helper 'cache --timeout=9999999'
