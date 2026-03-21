@@ -1,0 +1,24 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  WIREGUARD CLIENT CONFIG
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-03-21[Mar-Sat]14-00PM 
+
+##from chatgpt
+
+sudo apt install wireguard wireguard-tools resolvconf
+
+If your config file is:
+
+/etc/wireguard/wg0.conf
+
+Run:
+
+sudo systemctl enable wg-quick@wg0
+
+ 2. Start it now (without reboot)
+sudo systemctl start wg-quick@wg0
+
+ 3. Check status
+sudo systemctl status wg-quick@wg0
