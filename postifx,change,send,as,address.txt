@@ -1,0 +1,41 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POSTFIX SERVER CHANGE SEND AS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-04-03[Apr-Fri]21-34PM 
+
+from chatgpt
+
+I have a postfix server with myorigin of domain.com, when I send an email through that server the receiver gets the email from user@domain.com. I want to change the user to be somethingelse@domain.com
+
+What you’re seeing is normal Postfix behavior: it builds the sender as:
+
+username@myorigin
+
+So if your system user is user and myorigin = domain.com, you get user@domain.com.
+
+To change it to somethingelse@domain.com, you have a few clean options depending on how you’re sending mail.
+
+✅ Option 1 (Best): Use sender_canonical_maps (rewrite sender globally or per-user)
+
+This is the most proper Postfix way.
+
+1. Edit /etc/postfix/main.cf
+
+Add:
+
+sender_canonical_maps = hash:/etc/postfix/sender_canonical
+2. Create /etc/postfix/sender_canonical
+
+Map your system user → desired email:
+
+user    somethingelse@domain.com
+
+Or force ALL users:
+
+/.+/    somethingelse@domain.com
+3. Build the map
+postmap /etc/postfix/sender_canonical
+4. Reload postfix
+systemctl reload postfix
