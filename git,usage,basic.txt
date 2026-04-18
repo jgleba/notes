@@ -47,3 +47,10 @@ git r
 cache creds
 
 git config --global credential.helper 'cache --timeout=9999999'
+
+==
+
+2026-04-17 21:46:42
+
+sudo -u user git config --global user.email "user@user.com"
+sudo -u user git config --global user.name "username"
