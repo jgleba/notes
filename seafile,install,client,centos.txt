@@ -41,8 +41,3 @@ seaf-cli status  # check status of ongoing downloads
 
 
 seaf-cli sync -l "the id of the library" -s  "the url + port of server" -d "the folder which the library will be synced with" -u "username on server" [-p "password"]
-
-seaf-cli sync -l "661367e7-891b-46f8-8c7f-9e620f3fc826" -s "https://seafile.jgleba.com" -d "/j/seafile/1data" -u "example@jgleba.com"
-
-seaf-cli sync -l "c51322fe-924b-4309-b650-456381bb9d50" -s "https://seafile.jgleba.com" -d "/j/seafile/softw-win" -u "example@jgleba.com"
-seaf-cli sync -l "eca42a01-e0cf-4ac9-a14a-3ad6c1c96cf4" -s "https://seafile.jgleba.com" -d "/j/seafile/softw-mac" -u "example@jgleba.com"
