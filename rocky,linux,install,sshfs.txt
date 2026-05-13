@@ -1,0 +1,10 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  ROCKY LINUX INSTALL SSHFS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-05-13[May-Wed]09-56AM 
+
+sudo dnf config-manager --set-enabled powertools
+sudo yum install sshfs
+
