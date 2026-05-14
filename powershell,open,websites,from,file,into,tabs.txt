@@ -1,0 +1,18 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERSHELL OPEN FILE WITH WEBSITES INTO TABS
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-05-14[May-Thu]14-39PM 
+
+NO WORK
+Get-Content domains.txt | ForEach-Object { start "" "chrome.exe" $_ }
+Get-Content C:\j\0\domains1.txt | ForEach-Object { start "" "chrome.exe" $_ }
+
+WORKED
+Get-Content 'C:\j\0\domains1.txt' |
+  Where-Object { $_.Trim() } |               # skip blank lines
+  ForEach-Object {
+      $url = if ($_.StartsWith('http')) { $_ } else { "https://$($_)" }
+      Start-Process -FilePath "chrome.exe" -ArgumentList $url
+  }
