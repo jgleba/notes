@@ -1,0 +1,32 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  POWERSHELL RD GATEWAY HTML5 WEBCLIENT INSTALL
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-05-16[May-Sat]15-06PM 
+
+#https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remote-desktop-web-client-admin
+
+Install-Module -Name PowerShellGet -Force
+
+Install-PackageProvider -Name NuGet -Force
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+Install-Module PowerShellGet -Force -AllowClobber
+
+close powershell, reopen
+
+Install-Module -Name RDWebClientManagement
+
+Install-RDWebClientPackage
+
+#Import-RDWebClientBrokerCert <.cer file path>
+Import-RDWebClientBrokerCert C:\cert\cert.crt
+
+Publish-RDWebClientPackage -Type Production -Latest
+
+https://gw.domain/rdweb/webclient
+
+==
+
+create collection with session host server
+
