@@ -26,3 +26,14 @@ sudo cscli alerts list
 
 sudo cscli decisions list
 
+==
+
+sudo cscli decisions add --ip YOUR.IP.ADDRESS
+
+==
+
+sudo cscli bouncers add firewall-bouncer
+API key for 'firewall-bouncer':
+Please keep this key since you will not be able to retrieve it!
+
+sudo systemctl restart crowdsec-firewall-bouncer
