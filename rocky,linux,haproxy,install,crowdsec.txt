@@ -1,0 +1,28 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL CROWDSEC HAPROXY ROCKY LINUX
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-05-23[May-Sat]22-34PM 
+
+ADD REPO
+curl -s https://install.crowdsec.net | sudo bash
+
+INSTALL
+#sudo dnf install crowdsec crowdsec-firewall-bouncer
+sudo dnf install crowdsec crowdsec-firewall-bouncer-iptables
+
+ENABLE
+sudo systemctl enable --now crowdsec
+sudo systemctl enable --now crowdsec-firewall-bouncer
+
+INSTALL MORE
+sudo cscli collections install crowdsecurity/haproxy
+
+GET STATS
+sudo cscli metrics
+
+sudo cscli alerts list
+
+sudo cscli decisions list
+
