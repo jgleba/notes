@@ -37,3 +37,48 @@ API key for 'firewall-bouncer':
 Please keep this key since you will not be able to retrieve it!
 
 sudo systemctl restart crowdsec-firewall-bouncer
+
+==
+
+email
+
+#sudo dnf install crowdsec-notifications-email
+
+#sudo cscli notifications install email
+
+sudo cscli notifications list
+
+sudo nano /etc/crowdsec/notifications/email.yaml
+
+sudo nano /etc/crowdsec/profiles.yaml
+
+Find your active profile (usually this one):
+
+name: default_ip_remediation
+
+Add:
+
+notifications:
+  - email_default
+
+Example full profile:
+
+name: default_ip_remediation
+filters:
+  - Alert.Remediation == true
+decisions:
+  - type: ban
+    duration: 4h
+notifications:
+  - email_default
+
+sudo systemctl restart crowdsec-firewall-bouncer
+
+
+test
+
+sudo cscli notifications inspect email_default
+sudo cscli notifications test email_default
+
+
+
