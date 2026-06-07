@@ -28,7 +28,7 @@ sudo cscli decisions list
 
 ==
 
-TO BLOCK
+TO MANUALLY BLOCK
 
 sudo cscli decisions add --ip YOUR.IP.ADDRESS
 
@@ -62,7 +62,7 @@ Find your active profile (usually this one):
 
 name: default_ip_remediation
 
-Add:
+ADD AFTER DECISIONS:
 
 notifications:
   - email_default
