@@ -16,7 +16,7 @@ ENABLE
 sudo systemctl enable --now crowdsec
 sudo systemctl enable --now crowdsec-firewall-bouncer
 
-INSTALL MORE
+INSTALL MORE - LATEST DID NOTHING 
 sudo cscli collections install crowdsecurity/haproxy
 
 GET STATS
@@ -27,6 +27,8 @@ sudo cscli alerts list
 sudo cscli decisions list
 
 ==
+
+TO BLOCK
 
 sudo cscli decisions add --ip YOUR.IP.ADDRESS
 
@@ -48,7 +50,11 @@ email
 
 sudo cscli notifications list
 
+ADD MAIL SERVER TO CONF FILE
+
 sudo nano /etc/crowdsec/notifications/email.yaml
+
+ADD EMAIL NOTOFICATION AS OPTION USING BELOW
 
 sudo nano /etc/crowdsec/profiles.yaml
 
