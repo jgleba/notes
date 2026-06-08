@@ -128,3 +128,13 @@ DROP       all  --  anywhere             anywhere             match-set crowdsec
 
 sudo cscli bouncers list
 
+==
+
+sudo cscli capi status
+Loaded credentials from /etc/crowdsec/online_api_credentials.yaml
+Trying to authenticate with username abc on https://api.crowdsec.net/
+You can successfully interact with Central API (CAPI)
+Sharing signals is enabled
+Pulling community blocklist is enabled
+Pulling blocklists from the console is enabled
+
