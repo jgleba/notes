@@ -10,7 +10,7 @@ curl -s https://install.crowdsec.net | sudo bash
 
 INSTALL
 #sudo dnf install crowdsec crowdsec-firewall-bouncer
-sudo dnf install crowdsec crowdsec-firewall-bouncer-iptables
+sudo dnf install crowdsec crowdsec-firewall-bouncer-iptables -y
 
 ENABLE
 sudo systemctl enable --now crowdsec
@@ -30,13 +30,14 @@ sudo cscli decisions list
 
 TO MANUALLY BLOCK
 
-sudo cscli decisions add --ip YOUR.IP.ADDRESS
-
-sudo cscli decisions add --ip 172.16.0.111
+sudo cscli decisions add --ip IPADDRESS
+sudo cscli decisions delete --ip IPADDRESS
 
 ==
+REGISTER BOUNCER
 
 sudo cscli bouncers add firewall-bouncer
+
 API key for 'firewall-bouncer':
 Please keep this key since you will not be able to retrieve it!
 
@@ -45,6 +46,7 @@ sudo nano /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
 
 RESTART
 sudo systemctl restart crowdsec-firewall-bouncer
+sudo systemctl status crowdsec-firewall-bouncer
 
 ==
 
@@ -89,6 +91,8 @@ decisions:
 notifications:
   - email_default
 
+CHANGE THIS IN BOTH SECTIONS OF THE FILE
+
 sudo systemctl restart crowdsec-firewall-bouncer
 
 
@@ -101,3 +105,26 @@ sudo cscli notifications test email_default
 
 sudo service crowdsec restart
 sudo service crowdsec status
+
+==
+
+ sudo iptables -L
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+CROWDSEC_CHAIN  all  --  anywhere             anywhere
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain CROWDSEC_CHAIN (1 references)
+target     prot opt source               destination
+DROP       all  --  anywhere             anywhere             match-set crowdsec-blacklists-0 src /* CrowdSec: crowdsec */
+
+
+==
+
+sudo cscli bouncers list
+
