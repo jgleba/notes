@@ -32,6 +32,8 @@ TO MANUALLY BLOCK
 
 sudo cscli decisions add --ip YOUR.IP.ADDRESS
 
+sudo cscli decisions add --ip 172.16.0.111
+
 ==
 
 sudo cscli bouncers add firewall-bouncer
@@ -57,6 +59,11 @@ sudo cscli notifications list
 ADD MAIL SERVER TO CONF FILE
 
 sudo nano /etc/crowdsec/notifications/email.yaml
+
+ALSO ADD
+
+timeout: 20s          # Time to wait for response from the plugin before considering the attempt a failure, eg "10s"
+filter: true
 
 ADD EMAIL NOTIFICATION AS OPTION USING BELOW
 
@@ -92,3 +99,5 @@ sudo cscli notifications test email_default
 
 
 
+sudo service crowdsec restart
+sudo service crowdsec status
