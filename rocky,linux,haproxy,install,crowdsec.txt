@@ -38,11 +38,15 @@ sudo cscli bouncers add firewall-bouncer
 API key for 'firewall-bouncer':
 Please keep this key since you will not be able to retrieve it!
 
+ADD API KEY
+sudo nano /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+
+RESTART
 sudo systemctl restart crowdsec-firewall-bouncer
 
 ==
 
-email
+EMAIL NOTIFICATIONS
 
 #sudo dnf install crowdsec-notifications-email
 
@@ -54,7 +58,7 @@ ADD MAIL SERVER TO CONF FILE
 
 sudo nano /etc/crowdsec/notifications/email.yaml
 
-ADD EMAIL NOTOFICATION AS OPTION USING BELOW
+ADD EMAIL NOTIFICATION AS OPTION USING BELOW
 
 sudo nano /etc/crowdsec/profiles.yaml
 
