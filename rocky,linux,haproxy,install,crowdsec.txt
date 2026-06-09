@@ -138,3 +138,6 @@ Sharing signals is enabled
 Pulling community blocklist is enabled
 Pulling blocklists from the console is enabled
 
+==
+
+sudo cscli alerts inspect <alert_id>
