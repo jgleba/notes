@@ -148,3 +148,6 @@ sudo cscli alerts inspect <alert_id>
 
 sudo systemctl stop crowdsec-firewall-bouncer
 sudo systemctl stop crowdsec
+
+sudo systemctl start crowdsec-firewall-bouncer
+sudo systemctl start crowdsec
