@@ -19,20 +19,6 @@ sudo systemctl enable --now crowdsec-firewall-bouncer
 INSTALL MORE - LATEST DID NOTHING 
 sudo cscli collections install crowdsecurity/haproxy
 
-GET STATS
-sudo cscli metrics
-
-sudo cscli alerts list
-
-sudo cscli decisions list
-
-==
-
-TO MANUALLY BLOCK
-
-sudo cscli decisions add --ip IPADDRESS
-sudo cscli decisions delete --ip IPADDRESS
-
 ==
 REGISTER BOUNCER
 
@@ -51,12 +37,6 @@ sudo systemctl status crowdsec-firewall-bouncer
 ==
 
 EMAIL NOTIFICATIONS
-
-#sudo dnf install crowdsec-notifications-email
-
-#sudo cscli notifications install email
-
-sudo cscli notifications list
 
 ADD MAIL SERVER TO CONF FILE
 
@@ -95,13 +75,18 @@ CHANGE THIS IN BOTH SECTIONS OF THE FILE
 
 sudo systemctl restart crowdsec-firewall-bouncer
 
+#sudo dnf install crowdsec-notifications-email
 
-test
+#sudo cscli notifications install email
+
+sudo cscli notifications list
+
+TEST EMAIL
 
 sudo cscli notifications inspect email_default
 sudo cscli notifications test email_default
 
-
+==
 
 sudo service crowdsec restart
 sudo service crowdsec status
@@ -153,3 +138,19 @@ sudo systemctl start crowdsec-firewall-bouncer
 sudo systemctl start crowdsec
 
 sudo systemctl restart crowdsec
+
+
+
+GET STATS
+sudo cscli metrics
+
+sudo cscli alerts list
+
+sudo cscli decisions list
+
+==
+
+TO MANUALLY BLOCK
+
+sudo cscli decisions add --ip IPADDRESS
+sudo cscli decisions delete --ip IPADDRESS
