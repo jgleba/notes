@@ -151,3 +151,5 @@ sudo systemctl stop crowdsec
 
 sudo systemctl start crowdsec-firewall-bouncer
 sudo systemctl start crowdsec
+
+sudo systemctl restart crowdsec
