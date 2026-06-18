@@ -290,6 +290,10 @@ sudo podman-compose run web bundle exec rails secret
 
 ==
 
+sudo podman-compose run web bundle exec rails db:setup
+
+==
+
 sudo podman-compose run web bundle exec rails mastodon:setup
 
 GO THROUGH WIZARD
