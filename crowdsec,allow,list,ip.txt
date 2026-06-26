@@ -1,0 +1,11 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CROWDSEC ADD ALLOWED LIST ADD IP 
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-06-26[Jun-Fri]16-11PM 
+
+
+
+sudo cscli allowlist create trusted-ips -d "TrustedIPs"
+sudo cscli allowlist add trusted-ips 1.1.1.1
