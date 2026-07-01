@@ -133,8 +133,8 @@ services:
     healthcheck:
       # prettier-ignore
       test: ['CMD-SHELL', "curl -s --noproxy localhost localhost:4000/api/v1/streaming/health | grep -q 'OK' || exit 1"]
-    ports:
-      - '4000:4000'
+#    ports:
+#      - ':4000'
     depends_on:
       - db
       - redis
@@ -180,6 +180,7 @@ services:
 #  external_network:
 #  internal_network:
 #    internal: true
+
 
 ==
 
@@ -258,6 +259,7 @@ VAPID_PUBLIC_KEY=
 #SMTP_PASSWORD=
 #SMTP_FROM_ADDRESS=
 
+#WORKING 2026-07-01
 SMTP_SERVER=ip
 SMTP_PORT=25
 ##SMTP_LOGIN=
