@@ -154,3 +154,30 @@ TO MANUALLY BLOCK
 
 sudo cscli decisions add --ip IPADDRESS
 sudo cscli decisions delete --ip IPADDRESS
+
+==
+
+MANUAL EMAIL NOTIFICATIONS FORMAT - ADD MORE INFO
+
+sudo nano /etc/crowdsec/notifications/email.yaml
+
+UNDER
+
+    {{range .Decisions -}}
+
+ADD
+
+      <p>IP: <a href="https://www.whois.com/whois/{{.Value}}">{{.Value}}</a><br />Scenario: {{.Scenario}}<br />Type: {{.Type}}<br />Duration: {{.Duration}}</p><p>GeoIP Info<br />Country: {{$alert.Source.Cn}}<br />ASN: {{$alert.Source.AsName}} ({{$alert.Source.AsNumber}})<br />Location: {{$alert.Source.Latitude}}, {{$alert.Source.Longitude}}</p><p>Activity<br />Trigger count: {{$alert.EventsCount}}<br />Start: {{$alert.StartAt}}<br />End: {{$alert.StopAt}}</p>
+
+==
+
+SMALL AMOUNT OF MORE INFO ADDING COUNTRY - ABOVE IS BETTER 
+
+<p>Country: {{$alert.Source.Cn}} <br /> ASN: {{$alert.Source.AsName}} ({{$alert.Source.AsNumber}}) < br/> Location: {{$alert.Source.Latitude}}, {{$alert.Source.Longitude}}</p>
+
+==
+
+CREATE TRUSTED IP LIST
+
+sudo cscli allowlist create trusted-ips -d "TrustedIPs"
+sudo cscli allowlist add trusted-ips ipaddresshere
