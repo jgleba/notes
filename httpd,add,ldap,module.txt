@@ -1,0 +1,9 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  INSTALL LDAP FOR HTTPD
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-07-18[Jul-Sat]16-01PM 
+
+sudo dnf install mod_ldap apr-util-ldap -y
+sudo service httpd restart
