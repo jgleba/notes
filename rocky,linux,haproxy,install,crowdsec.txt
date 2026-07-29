@@ -16,8 +16,22 @@ ENABLE
 sudo systemctl enable --now crowdsec
 sudo systemctl enable --now crowdsec-firewall-bouncer
 
-INSTALL MORE - LATEST DID NOTHING 
+INSTALL MORE - LATEST DID NOTHING ON FELB
 sudo cscli collections install crowdsecurity/haproxy
+
+
+##2026-07-28
+##postfix collections
+sudo cscli collections install crowdsecurity/postfix
+
+
+##PARSE FILE
+sudo nano /etc/crowdsec/acquis.d/postfix.yaml
+
+filenames:
+  - /var/log/maillog
+labels:
+  type: syslog
 
 ==
 REGISTER BOUNCER
@@ -33,6 +47,8 @@ sudo nano /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
 RESTART
 sudo systemctl restart crowdsec-firewall-bouncer
 sudo systemctl status crowdsec-firewall-bouncer
+
+
 
 ==
 
