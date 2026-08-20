@@ -29,3 +29,12 @@ REMOVE
 
 sudo firewall-cmd --zone=public --remove-port=3306/tcp --permanent
 sudo firewall-cmd --reload
+
+
+
+
+
+2026-08-19 21:16:00
+sudo firewall-cmd --zone=public --add-port=20000-20050/tcp --permanent
+sudo firewall-cmd --reload
+
