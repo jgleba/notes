@@ -9,3 +9,4 @@
 
 sudo cscli allowlist create trusted-ips -d "TrustedIPs"
 sudo cscli allowlist add trusted-ips 1.1.1.1
+
