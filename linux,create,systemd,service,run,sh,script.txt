@@ -1,0 +1,30 @@
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+#@  
+#@  CREATE SYSTEMD SERVICE
+#@  
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   2026-10-15[Oct-Thu]21-04PM 
+
+sudo nano /etc/systemd/system/jgleba-latency-check.service
+
+
+[Unit]
+Description=jgleba.com HTTP Latency Monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/script.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+==
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now jgleba-latency-check.service
+sudo systemctl restart jgleba-latency-check.service
+sudo systemctl status jgleba-latency-check.service
