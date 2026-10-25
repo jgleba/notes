@@ -1,14 +1,23 @@
 mount -o loop /mnt/fp/iso/Rocky-8.5-x86_64-minimal.iso /mnt/loop
+sudo mount -o loop /mnt/fp/iso/Rocky-10.2-x86_64-minimal.iso /mnt/loop
 
 sudo mkdir -p /tftpboot/os/rockylinux8
 
+sudo mkdir -p /tftpboot/os/rockylinux10
+
 sudo cp /mnt/loop/images/pxeboot/vmlinuz /tftpboot/os/rockylinux8/
 sudo cp /mnt/loop/images/pxeboot/initrd.img /tftpboot/os/rockylinux8/
+
+sudo cp /mnt/loop/images/pxeboot/vmlinuz /tftpboot/os/rockylinux10/
+sudo cp /mnt/loop/images/pxeboot/initrd.img /tftpboot/os/rockylinux10/
 
 ==
 
 sudo mkdir -p /images/os/rockylinux8
 sudo cp -R /mnt/loop/* /images/os/rockylinux8
+
+sudo mkdir -p /images/os/rockylinux10
+sudo cp -R /mnt/loop/* /images/os/rockylinux10
 
 ==
 
@@ -18,9 +27,98 @@ sudo umount /mnt/loop
 
 os.RockyLinux8-KS
 
+os.RockyLinux10-KS
+
 RockyLinux 8 KS
+
+RockyLinux 10 KS
 
 kernel tftp://${fog-ip}/os/rockylinux8/vmlinuz
 initrd tftp://${fog-ip}/os/rockylinux8/initrd.img
 imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/rockylinux8/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/rockylinux8 inst.ks=http://j:pass@172.16.0.45/0/rockylinux8/ks.cfg splash quiet
+boot || goto MENU
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/rockylinux10/LiveOS/squashfs.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/rockylinux10 inst.ks=http://j:pass@172.16.0.45/0/rockylinux10/ks.cfg splash quiet
+boot || goto MENU
+
+
+==
+
+mkdir -p /images/os/rockylinux10/mirror.dst.ca/rocky/10/BaseOS/x86_64/os
+
+sudo wget -r -P /images/os/rockylinux10 https://mirror.dst.ca/rocky/10/BaseOS/x86_64/os/
+sudo wget -r -np -nH --cut-dirs=5  -R 'index.html*' -r -P /images/os/rockylinux10/mirror.dst.ca https://mirror.dst.ca/rocky/10/BaseOS/x86_64/os/
+
+
+
+sudo wget -r -np -nH -e robots=off -R 'index.html*' -P /images/os/rockylinux10/mirror.dst.ca https://mirror.dst.ca/rocky/10/BaseOS/x86_64/os/
+
+
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}/images/os/rockylinux10 inst.ks=http://j:pass@172.16.0.45/0/rockylinux10/ks.cfg inst.text
+boot || goto MENU
+
+
+
+
+
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}/images/os/rockylinux10 inst.ks=http://j:pass@172.16.0.45/0/rockylinux10/ks.cfg inst.text edd=off rd.debug loglevel=7
+
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}/images/os/rockylinux10 inst.ks=http://j:pass@172.16.0.45/0/rockylinux10/ks.cfg inst.text edd=off rd.debug loglevel=7
+boot || goto MENU
+
+
+
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/rockylinux10 inst.ks=http://pass@172.16.0.45/0/rockylinux10/ks.cfg splash quiet
+boot || goto MENU
+
+
+
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img root=live:http://${fog-ip}:/images/os/rockylinux8/images/install.img ip=dhcp inst.repo=http://${fog-ip}:/images/os/rockylinux10 inst.ks=http://pass@172.16.0.45/0/rockylinux10/ks.cfg splash quiet
+boot || goto MENU
+
+
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://${fog-ip}/images/os/rockylinux10 inst.ks=http://pass@172.16.0.45/0/rockylinux10/ks.cfg inst.text edd=off rd.debug loglevel=7
+boot || goto MENU
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kernel tftp://${fog-ip}/os/rockylinux10/vmlinuz
+initrd tftp://${fog-ip}/os/rockylinux10/initrd.img
+imgargs vmlinuz initrd=initrd.img ip=dhcp inst.repo=http://172.16.0.45:/images/os/rockylinux10 inst.ks=http://pass@172.16.0.45/0/rockylinux10/ks.cfg splash
 boot || goto MENU
