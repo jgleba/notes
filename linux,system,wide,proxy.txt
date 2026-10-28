@@ -16,3 +16,13 @@ export https_proxy
 #for persistance use .bashrc
 #or /etc/profile
 
+==
+
+2026-10-28 10:25:42
+
+UNSET
+
+comment in /etc/profile
+
+unset http_proxy https_proxy ftp_proxy socks_proxy no_proxyy
+unset HTTP_PROXY HTTPS_PROXY FTP_PROXY SOCKS_PROXY NO_PROXY
