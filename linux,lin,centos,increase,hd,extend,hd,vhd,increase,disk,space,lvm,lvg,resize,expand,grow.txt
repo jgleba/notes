@@ -347,11 +347,19 @@ echo 1 | sudo tee /sys/class/block/sda/device/rescan
 
 sudo fdisk /dev/sda
 
+ON XCP-NG
+2026-11-04 15:25:05
+*sudo fdisk /dev/xvda
+
 delete sda3 partition
 
 create new primary 
 
-sudo pvresize /dev/sda3
+ON XCP-NG
+2026-11-04 15:25:05
+*sudo pvresize /dev/xvda3
+
+
 sudo lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
 sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 
